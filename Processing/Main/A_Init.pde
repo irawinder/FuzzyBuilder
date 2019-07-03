@@ -1,11 +1,14 @@
 // Initialize or Updated Backend
 
 ArrayList<TaggedPoint> control_points;
+int control_point_counter;
 Polygon site_boundary;
 Site site_test;
+float tile_size;
 
 // Update model state?
-boolean change_detected;
+boolean site_change_detected;
+boolean zone_change_detected;
 
 void init() {
   
@@ -15,17 +18,20 @@ void init() {
   
   // Init Raster-like Site Voxels
   site_test = new Site("Site_Test");
-  site_test.makeTiles(site_boundary, 10, "pixels");
+  tile_size = 10;
+  site_test.makeTiles(site_boundary, tile_size, "pixels");
   
   // Init Control Points
+  control_point_counter = 0;
   control_points = new ArrayList<TaggedPoint>();
   int i = 0;
   while (i<4) {
     float randomX = random(site_boundary.xMin(), site_boundary.xMax());
     float randomY = random(site_boundary.yMin(), site_boundary.yMax());
     TaggedPoint random = new TaggedPoint(randomX, randomY);
-    random.setTag("Zone " + (i+1));
     if (site_boundary.containsPoint(random)) {
+      control_point_counter++;
+      random.setTag("Zone " + control_point_counter);
       control_points.add(random);
       i++;
     }
@@ -35,13 +41,21 @@ void init() {
   site_test.makeZones(control_points);
   
   // Update model state?
-  change_detected = false;
+  site_change_detected = false;
+  zone_change_detected = false;
 }
 
 void update() {
-  if(change_detected) {
+  
+  if(site_change_detected) {
+    site_test.makeTiles(site_boundary, tile_size, "pixels");
+    site_test.makeZones(control_points);
+    site_change_detected = false;
+  }
+  
+  if(zone_change_detected) {
     // Init Voronoi Zones
     site_test.makeZones(control_points);
+    zone_change_detected = false;
   }
-  change_detected = false;
 }

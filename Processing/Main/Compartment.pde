@@ -68,6 +68,8 @@ class Site extends Compartment {
   //
   public void makeTiles(Polygon boundary, float scale, String units) {
     
+    clearTiles();
+    
     // Create a field of grid points that is certain 
     // to uniformly saturate polygon boundary
     //
@@ -99,8 +101,9 @@ class Site extends Compartment {
   //
   public void makeZones(ArrayList<TaggedPoint> points) {
     
+    clearZones();
+    
     // Initialize Zones Based Upon Tagged Point Collection
-    zone.clear();
     for(TaggedPoint p : points) {
       String zone_name = p.getTag();
       Zone z = new Zone(zone_name);
@@ -110,27 +113,34 @@ class Site extends Compartment {
     // Fore Each Tile in Site, Check Which Control Point (i.e. Zone Point)
     // it is closested to. This resembles a Voronoi algorithm
     //
-    for(Map.Entry e : getTiles().entrySet()) {
-      Tile t = (Tile)e.getValue();
-      float min_distance = Float.POSITIVE_INFINITY;
-      String closest_zone_name = "";
-      for(TaggedPoint p : points) {
-        float x_dist = p.x - t.location.x;
-        float y_dist = p.y - t.location.y;
-        float distance = sqrt( sq(x_dist) + sq(y_dist) );
-        if (distance < min_distance) {
-          min_distance = distance;
-          closest_zone_name = p.getTag();
+    if (zone.size() > 0) {
+      for(Map.Entry e : getTiles().entrySet()) {
+        Tile t = (Tile)e.getValue();
+        float min_distance = Float.POSITIVE_INFINITY;
+        String closest_zone_name = "";
+        for(TaggedPoint p : points) {
+          float x_dist = p.x - t.location.x;
+          float y_dist = p.y - t.location.y;
+          float distance = sqrt( sq(x_dist) + sq(y_dist) );
+          if (distance < min_distance) {
+            min_distance = distance;
+            closest_zone_name = p.getTag();
+          }
         }
+        Zone closest_zone = zone.get(closest_zone_name);
+        closest_zone.addTile(t);
       }
-      Zone closest_zone = zone.get(closest_zone_name);
-      closest_zone.addTile(t);
     }
   }
   
   // Return Zones
   public HashMap<String, Zone> getZones() {
     return zone;
+  }
+  
+  // Clear All Zones
+  public void clearZones() {
+    zone.clear();
   }
   
 }
