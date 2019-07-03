@@ -1,62 +1,5 @@
 import java.util.Map;
 
-// A Site is the largest compartment for a set of Tiles
-//
-class Site extends Compartment {
-  
-  Site(String name) {
-    super(name);
-  }
-  
-  // Populate a grid of site tiles that fits within
-  // an exact vector boundary that defines site
-  //
-  public void makeTilesFromPolygon(Polygon boundary, float scale, String units) {
-    
-    // Create a field of grid points that is certain 
-    // to uniformly saturate polygon boundary
-    //
-    float boundary_w = boundary.xMax() - boundary.xMin();
-    float boundary_h = boundary.yMax() - boundary.yMin();
-    int U = int(boundary_w / scale);
-    int V = int(boundary_h / scale);
-    
-    for (int u=0; u<U; u++) {
-      for (int v=0; v<V; v++) {
-        float x_0 = boundary.xMin() + u*scale;
-        float y_0 = boundary.yMin() + v*scale;
-        Point location = new Point(x_0, y_0);
-        
-        // Test which points are in the polygon boundary
-        // and add them to tile set
-        //
-        if(boundary.containsPoint(location)) {
-          Tile t = new Tile(u, v, location);
-          t.setScale(scale, units);
-          addTile(t);
-        }
-      }
-    }
-    
-  }
-  
-}
-
-// A Zone is a type of compartment that we 
-// can define with a Voronoi site point
-//
-class Zone extends Compartment {
-  
-  // user defined "center" of zone
-  // used to generate Voronoi inclusion
-  //
-  Point voronoi_site;
-  
-  Zone(String name) {
-    super(name);
-  }
-}
-
 // A Compartment is a collection of tiles
 //
 class Compartment {
@@ -99,54 +42,69 @@ class Compartment {
   }
 }
 
-// The smallest "particle" of our sketch analysis
+// A Zone is a type of compartment that we 
+// can define with a Voronoi site point
 //
-class Tile {
+class Zone extends Compartment {
   
-  // Center Point of Tile in real "geospatial" coordinates
-  Point location;
+  // user defined "center" of zone
+  // used to generate Voronoi inclusion
+  //
+  Point voronoi_site;
   
-  // Integer coordinates of tile
-  int u, v;
+  Zone(String name) {
+    super(name);
+  }
+}
+
+// A Site is the largest compartment for a set of Tiles
+//
+class Site extends Compartment {
   
-  // How many units a tile represents 
-  // i.e. [units/tile]
-  float scale;
-  String scale_unit;
+  ArrayList<Zone> zone;
   
-  // Unique Tile ID, composite of integer coordinates
-  String id;
-  
-  // Type of Tile
-  String type;
-  
-  // Adjacent Tiles' names
-  ArrayList<String> adjacent;
-  
-  // Construct Tile
-  Tile(int u, int v, Point p) {
-    this.location = p;
-    this.u = u;
-    this.v = v;
-    id = u + "," + v;
-    type = null;
-    scale = 1.0;
-    scale_unit = "";
+  Site(String name) {
+    super(name);
+    zone = new ArrayList<Zone>();
   }
   
-  // Define the scale of the tile
-  public void setScale(float scale, String unit) {
-    this.scale = scale;
-    this.scale_unit = unit;
+  // Populate a grid of site tiles that fits within
+  // an exact vector boundary that defines site
+  //
+  public void initTiles(Polygon boundary, float scale, String units) {
+    
+    // Create a field of grid points that is certain 
+    // to uniformly saturate polygon boundary
+    //
+    float boundary_w = boundary.xMax() - boundary.xMin();
+    float boundary_h = boundary.yMax() - boundary.yMin();
+    int U = int(boundary_w / scale) + 1;
+    int V = int(boundary_h / scale) + 1;
+    
+    for (int u=0; u<U; u++) {
+      for (int v=0; v<V; v++) {
+        float x_0 = boundary.xMin() + u*scale;
+        float y_0 = boundary.yMin() + v*scale;
+        Point location = new Point(x_0, y_0);
+        
+        // Test which points are in the polygon boundary
+        // and add them to tile set
+        //
+        if(boundary.containsPoint(location)) {
+          Tile t = new Tile(u, v, location);
+          t.setScale(scale, units);
+          addTile(t);
+        }
+      }
+    }
   }
   
-  // Adds name and elevation of neighbor to adjacency map
-  void addAdjacent(String _name) {
-    adjacent.add(_name);
+  // Subdivide the site into Zones that are defined
+  // by Voronoi-style nodes
+  //
+  public void initZones(ArrayList<TaggedPoint> points) {
+    int num = points.size();
+    //Zone 
   }
   
-  @Override
-  public String toString() {
-      return type + " Tile[" + u + "," + v +"] at " + location;
-  }
 }

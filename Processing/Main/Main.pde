@@ -1,23 +1,31 @@
-ArrayList<Point> control_points;
+ArrayList<TaggedPoint> control_points;
 Polygon site_boundary;
-Site test;
+Site site_test;
 
 void init() {
+  // Init Vector Site Polygon
   site_boundary = new Polygon();
   site_boundary.randomShape(200, 200, 5, 50, 190);
   
-  test = new Site("Test");
-  test.makeTilesFromPolygon(site_boundary, 10, "pixels");
+  // Init Raster-like Site Voxels
+  site_test = new Site("Site_Test");
+  site_test.initTiles(site_boundary, 10, "pixels");
   
-  control_points = new ArrayList<Point>();
+  // Init Control Points
+  control_points = new ArrayList<TaggedPoint>();
   int i = 0;
-  while (i<10) {
-    Point random = new Point(random(10, 390), random(10, 390));
+  while (i<4) {
+    float randomX = random(site_boundary.xMin(), site_boundary.xMax());
+    float randomY = random(site_boundary.yMin(), site_boundary.yMax());
+    TaggedPoint random = new TaggedPoint(randomX, randomY);
+    random.setTag("Zone " + (i+1));
     if (site_boundary.containsPoint(random)) {
       control_points.add(random);
       i++;
     }
   }
+  
+  site_test.initZones(control_points);
 }
 
 // Runs Once On Program Start
@@ -35,23 +43,30 @@ void draw() {
 }
 
 void render() {
-  background(0);
+  background(255);
   
-  fill(50); noStroke();
+  // Draw Vector Polygon
+  fill(225); noStroke();
   beginShape();
   for(Point p : site_boundary.vertex) vertex(p.x, p.y);
   endShape(CLOSE);
   
-  for (Point p : control_points) {
-    fill(0); stroke(200); strokeWeight(1);
-    line(p.x-5, p.y, p.x+5, p.y);
-    line(p.x, p.y-5, p.x, p.y+5);
+  // Draw Site Voxels
+  for(Map.Entry e : site_test.getTiles().entrySet()) {
+    Tile t = (Tile)e.getValue();
+    noFill(); fill(150); noStroke();
+    ellipse(t.location.x, t.location.y, 0.75*t.scale, 0.75*t.scale);
   }
   
-  for(Map.Entry e : test.getTiles().entrySet()) {
-    Tile t = (Tile)e.getValue();
-    noFill(); fill(255, 100); noStroke();
-    ellipse(t.location.x, t.location.y, 0.75*t.scale, 0.75*t.scale);
+  // Draw Tagged Control Points
+  for (TaggedPoint p : control_points) {
+    fill(0); stroke(0); strokeWeight(1);
+    line(p.x-5, p.y, p.x+5, p.y);
+    line(p.x, p.y-5, p.x, p.y+5);
+    fill(255); stroke(200);
+    rectMode(CENTER); rect(p.x + 30, p.y, 40, 10, 5);
+    fill(50); textSize(9); textAlign(CENTER, CENTER);
+    text(p.tag, p.x + 30, p.y - 1);
   }
 }
 
