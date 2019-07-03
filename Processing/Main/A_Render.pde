@@ -41,7 +41,7 @@ void render() {
     Zone z = (Zone)e_z.getValue();
     for(Map.Entry e_t : z.getTiles().entrySet()) {
       Tile t = (Tile)e_t.getValue();
-      colorMode(HSB); color col = color(hue, 150, 200);
+      colorMode(HSB); color col = color(hue%255, 150, 200);
       noFill(); fill(col); noStroke();
       ellipse(t.location.x, t.location.y, 0.75*t.scale, 0.75*t.scale);
     }
