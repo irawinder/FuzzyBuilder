@@ -2,14 +2,16 @@ import java.util.Random;
 import java.lang.Math.*;
 
 class Polygon {
-  ArrayList<Point> vertex;
-  ArrayList<Line> edge;
+  private ArrayList<Point> vertex;
+  private ArrayList<Line> edge;
+  private float xMin, xMax, yMin, yMax;
   
   Polygon() {
     vertex = new ArrayList<Point>();
     edge = new ArrayList<Line>();
   }
   
+  // Add a vertex to the polygon
   void addVertex(Point p) {
     vertex.add(p);
     
@@ -18,6 +20,10 @@ class Polygon {
     if(vertex.size() > 2) {
       createEdges();
     }
+    
+    // Generate Min-Max Values
+    //
+    calcMinMax();
   }
   
   // Create Polygon Edge Objects, Composed of vertices
@@ -30,6 +36,37 @@ class Polygon {
     }
     Line l = new Line( vertex.get(n-1), vertex.get(0) );
     edge.add(l);
+  }
+  
+  // Calculate minimum and maximum coordinate values
+  private void calcMinMax() {
+    xMin = Float.POSITIVE_INFINITY;
+    xMax = Float.NEGATIVE_INFINITY;
+    yMin = Float.POSITIVE_INFINITY;
+    yMax = Float.NEGATIVE_INFINITY;
+    
+    for (Point p : vertex) {
+      xMin = min(xMin, p.x);
+      xMax = max(xMax, p.x);
+      yMin = min(yMin, p.y);
+      yMax = max(yMax, p.y);
+    }
+  }
+  
+  float xMin() {
+    return this.xMin;
+  }
+  
+  float xMax() {
+    return this.xMax;
+  }
+  
+  float yMin() {
+    return this.yMin;
+  }
+  
+  float yMax() {
+    return this.yMax;
   }
   
   void clear() {
@@ -108,6 +145,10 @@ class Polygon {
       p.y += y;
       p.z += z;
     }
+    xMin += x;
+    xMax += x;
+    yMin += y;
+    yMax += y;
   }
   
   // Returns 'true' if Point p is inside of polygon
