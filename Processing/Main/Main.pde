@@ -1,20 +1,14 @@
-
-
 // Runs Once On Program Start
 //
 void setup() {
-  size(400, 400);
+  size(400, 400, P3D);
   init();
-  render();
 }
 
 // Runs on Infinite Loop after setup() completes
 //
 void draw() {
-  
-}
-
-void keyPressed() {
-  init();
+  listen3D();
+  update();
   render();
 }

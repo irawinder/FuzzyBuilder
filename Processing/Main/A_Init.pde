@@ -1,11 +1,17 @@
+// Initialize or Updated Backend
+
 ArrayList<TaggedPoint> control_points;
 Polygon site_boundary;
 Site site_test;
 
+// Update model state?
+boolean change_detected;
+
 void init() {
+  
   // Init Vector Site Polygon
   site_boundary = new Polygon();
-  site_boundary.randomShape(200, 200, 5, 50, 190);
+  site_boundary.randomShape(400, 200, 5, 100, 200);
   
   // Init Raster-like Site Voxels
   site_test = new Site("Site_Test");
@@ -25,5 +31,17 @@ void init() {
     }
   }
   
+  // Init Voronoi Zones
   site_test.makeZones(control_points);
+  
+  // Update model state?
+  change_detected = false;
+}
+
+void update() {
+  if(change_detected) {
+    // Init Voronoi Zones
+    site_test.makeZones(control_points);
+  }
+  change_detected = false;
 }
