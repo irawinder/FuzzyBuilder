@@ -34,6 +34,11 @@ class TaggedPoint extends Point {
     this.tag = tag;
   }
   
+  // Get the Tag Value of the Point
+  public String getTag() {
+    return tag;
+  }
+  
   @Override
   public String toString() {
       return tag + "; Point[" + x + ", " + y + ", " + z + "]";

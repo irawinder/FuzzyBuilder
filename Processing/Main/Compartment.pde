@@ -47,11 +47,6 @@ class Compartment {
 //
 class Zone extends Compartment {
   
-  // user defined "center" of zone
-  // used to generate Voronoi inclusion
-  //
-  Point voronoi_site;
-  
   Zone(String name) {
     super(name);
   }
@@ -61,17 +56,17 @@ class Zone extends Compartment {
 //
 class Site extends Compartment {
   
-  ArrayList<Zone> zone;
+  private HashMap<String, Zone> zone;
   
   Site(String name) {
     super(name);
-    zone = new ArrayList<Zone>();
+    zone = new HashMap<String, Zone>();
   }
   
   // Populate a grid of site tiles that fits within
   // an exact vector boundary that defines site
   //
-  public void initTiles(Polygon boundary, float scale, String units) {
+  public void makeTiles(Polygon boundary, float scale, String units) {
     
     // Create a field of grid points that is certain 
     // to uniformly saturate polygon boundary
@@ -102,9 +97,40 @@ class Site extends Compartment {
   // Subdivide the site into Zones that are defined
   // by Voronoi-style nodes
   //
-  public void initZones(ArrayList<TaggedPoint> points) {
-    int num = points.size();
-    //Zone 
+  public void makeZones(ArrayList<TaggedPoint> points) {
+    
+    // Initialize Zones Based Upon Tagged Point Collection
+    zone.clear();
+    for(TaggedPoint p : points) {
+      String zone_name = p.getTag();
+      Zone z = new Zone(zone_name);
+      zone.put(zone_name, z);
+    }
+    
+    // Fore Each Tile in Site, Check Which Control Point (i.e. Zone Point)
+    // it is closested to. This resembles a Voronoi algorithm
+    //
+    for(Map.Entry e : getTiles().entrySet()) {
+      Tile t = (Tile)e.getValue();
+      float min_distance = Float.POSITIVE_INFINITY;
+      String closest_zone_name = "";
+      for(TaggedPoint p : points) {
+        float x_dist = p.x - t.location.x;
+        float y_dist = p.y - t.location.y;
+        float distance = sqrt( sq(x_dist) + sq(y_dist) );
+        if (distance < min_distance) {
+          min_distance = distance;
+          closest_zone_name = p.getTag();
+        }
+      }
+      Zone closest_zone = zone.get(closest_zone_name);
+      closest_zone.addTile(t);
+    }
+  }
+  
+  // Return Zones
+  public HashMap<String, Zone> getZones() {
+    return zone;
   }
   
 }
