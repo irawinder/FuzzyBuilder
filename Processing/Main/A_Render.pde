@@ -61,19 +61,19 @@ void render() {
   // Draw Tagged Control Points Labels
   //
   for (TaggedPoint p : control_points) {
-    float x, y;
+    int x, y;
     if (cam3D) {
       cam3D();
-      x = screenX(p.x, p.y);
-      y = screenY(p.x, p.y);
+      x = (int)screenX(p.x, p.y);
+      y = (int)screenY(p.x, p.y);
     } else {
-      x = p.x;
-      y = p.y;
+      x = (int)p.x;
+      y = (int)p.y;
     }
     if(cam3D) cam2D(); // sets temporarily to 2D camera, if in 3D
     fill(255, 2000); stroke(200, 150); strokeWeight(1);
     rectMode(CENTER); rect(x + 40, y, 50, 15, 5);
-    fill(50); textSize(12); textAlign(CENTER, CENTER);
+    fill(50); textAlign(CENTER, CENTER);
     text(p.tag, x + 40, y - 1);
     if(cam3D) cam3D(); // sets back to 3D camera, if in 3D mode
   }
@@ -96,25 +96,37 @@ void render() {
     popMatrix();
   }
   
+  if(cam3D) cam2D(); // sets temporarily to 2D camera, if in 3D
+  
   // Draw Info Text
   //
-  fill(0);
-  if(cam3D) cam2D(); // sets temporarily to 2D camera, if in 3D
-  textAlign(LEFT, TOP); textSize(10);
+  fill(0); textAlign(LEFT, TOP);
   String info = "";
   info += "Click and drag zone nodes";
   info += "\n" + "Press 'a' to add zone node";
   info += "\n" + "Press 'x' to remove zone node";
   info += "\n" + "Press 'c' clear all zone nodes";
-  info += "\n" + "Press 's' to generate random site";
+  info += "\n" + "Press '-' or '+' to resize tiles";
+  info += "\n" + "Press '[' or ']' to rotate tiles";
+  info += "\n" + "Press 'r' to generate random site";
   info += "\n" + "Press 'm' to toggle 2D/3D view";
-  info += "\n" + "Press '-/+' to change tile size";
   text(info, 10, 10);
   text("Framerate: " + int(frameRate), 10, height - 20);
   
+  // Draw Summary
+  //
+  fill(0); textAlign(LEFT, TOP);
+  String summary_labels = "";
+  summary_labels += site_test;
+  for(Map.Entry e : site_test.getZones().entrySet()) {
+    Zone z = (Zone)e.getValue();
+    summary_labels += "\n" + z;
+  }
+  text(summary_labels, width - 225, 10);
+  
   // Mouse Cursor Info
   //
-  fill(50);
+  fill(50); textAlign(LEFT, TOP);
   if (addPoint) {
     text("NEW", mouseX + 10, mouseY - 20);
   } else if (removePoint) {

@@ -97,7 +97,7 @@ TaggedPoint pointAtMouse() {
 void keyPressed() {
   
   switch(key) {
-    case 's':
+    case 'r':
       init();
       break;
     case 'a':
@@ -127,11 +127,11 @@ void keyPressed() {
       site_change_detected = true;
       break;
     case '[':
-      tile_rotation -= 0.05;
+      tile_rotation -= 0.01;
       site_change_detected = true;;
       break;
     case ']':
-      tile_rotation += 0.05;
+      tile_rotation += 0.01;
       site_change_detected = true;
       break;
   }

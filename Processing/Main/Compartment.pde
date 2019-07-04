@@ -100,10 +100,10 @@ class Site extends Compartment {
         // translate origin, rotate, shift back, then translate
         float sin = (float)Math.sin(rotation);
         float cos = (float)Math.cos(rotation);
-        x_0 = + (x_0 - origin_x) * cos - (y_0 - origin_y) * sin + origin_x + t_x;
-        y_0 = + (x_0 - origin_x) * sin + (y_0 - origin_y) * cos + origin_y + t_y;
+        float x_f = + (x_0 - origin_x) * cos - (y_0 - origin_y) * sin + origin_x + t_x;
+        float y_f = + (x_0 - origin_x) * sin + (y_0 - origin_y) * cos + origin_y + t_y;
         
-        Point location = new Point(x_0, y_0);
+        Point location = new Point(x_f, y_f);
         
         // Test which points are in the polygon boundary
         // and add them to tile set
