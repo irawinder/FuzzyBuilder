@@ -30,7 +30,7 @@ void render() {
     Tile t = (Tile)e.getValue();
     noFill(); fill(150); noStroke();
     pushMatrix(); translate(0, 0, -1);
-    ellipse(t.location.x, t.location.y, 0.75*t.scale, 0.75*t.scale);
+    renderTile(t);
     popMatrix();
   }
   
@@ -43,7 +43,9 @@ void render() {
       Tile t = (Tile)e_t.getValue();
       colorMode(HSB); color col = color(hue%255, 150, 200);
       noFill(); fill(col); noStroke();
-      ellipse(t.location.x, t.location.y, 0.75*t.scale, 0.75*t.scale);
+      pushMatrix(); translate(0, 0, 0);
+      renderTile(t);
+      popMatrix();
     }
     hue += 40;
   }
@@ -52,8 +54,10 @@ void render() {
   //
   for (TaggedPoint p : control_points) {
     fill(0); stroke(0); strokeWeight(1);
+    pushMatrix(); translate(0, 0, 1);
     line(p.x-5, p.y, p.x+5, p.y);
     line(p.x, p.y-5, p.x, p.y+5);
+    popMatrix();
   }
   
   hint(DISABLE_DEPTH_TEST);
@@ -107,22 +111,24 @@ void render() {
   info += "\n" + "Press 'x' to remove zone node";
   info += "\n" + "Press 'c' clear all zone nodes";
   info += "\n" + "Press '-' or '+' to resize tiles";
-  info += "\n" + "Press '[' or ']' to rotate tiles";
+  info += "\n" + "Press '[', '{', ']', or '}' to rotate tiles";
   info += "\n" + "Press 'r' to generate random site";
   info += "\n" + "Press 'm' to toggle 2D/3D view";
+  info += "\n" + "Press 'v' to toggle View Model";
   text(info, 10, 10);
   text("Framerate: " + int(frameRate), 10, height - 20);
   
   // Draw Summary
   //
   fill(0); textAlign(LEFT, TOP);
-  String summary_labels = "";
-  summary_labels += site_test;
+  String summary = "";
+  summary += "View Model: " + viewModel;
+  summary += "\n" + site_test;
   for(Map.Entry e : site_test.getZones().entrySet()) {
     Zone z = (Zone)e.getValue();
-    summary_labels += "\n" + z;
+    summary += "\n" + z;
   }
-  text(summary_labels, width - 225, 10);
+  text(summary, width - 225, 10);
   
   // Mouse Cursor Info
   //
@@ -136,4 +142,15 @@ void render() {
   }
   
   if(cam3D) cam3D(); // sets back to 3D camera, if in 3D mode
+}
+
+void renderTile(Tile t) {
+  if (viewModel.equals("DOT")) {
+    ellipse(t.location.x, t.location.y, 0.75*t.scale, 0.75*t.scale);
+  } else if (viewModel.equals("VOXEL")) {
+    rectMode(CENTER);
+    rect(t.location.x, t.location.y, 0.75*t.scale, 0.75*t.scale);
+  } else {
+    ellipse(t.location.x, t.location.y, 0.75*t.scale, 0.75*t.scale);
+  }
 }

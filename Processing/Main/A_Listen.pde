@@ -1,17 +1,14 @@
 // Front-End Methods that rely heavily on Processing Library Functions
 
-// Point that is currently selected or hovering;
-TaggedPoint selected;
-TaggedPoint hovering;
-
-// Add or remove point via mouse click
-boolean addPoint, removePoint;
-
-// Is camera 3D? Otherwise it's 2D;
-boolean cam3D;
-
 // Designed to run every frame to check mouse position
 void listen() {
+  
+  if (cam3D) {
+    cam3D();
+  } else {
+    cam2D();
+  }
+  
   if (addPoint) {
     Point atMouse = newPointAtMouse();
     if (atMouse != null) {
@@ -98,7 +95,7 @@ void keyPressed() {
   
   switch(key) {
     case 'r':
-      init();
+      initModel();
       break;
     case 'a':
       addPoint = !addPoint;
@@ -118,6 +115,13 @@ void keyPressed() {
     case 'm':
       cam3D = !cam3D;
       break;
+    case 'v':
+      if (viewModel.equals("DOT")) {
+        viewModel = "VOXEL";
+      } else {
+        viewModel = "DOT";
+      }
+      break;
     case '-':
       if (tile_size > 1) tile_size--;
       site_change_detected = true;;
@@ -132,6 +136,14 @@ void keyPressed() {
       break;
     case ']':
       tile_rotation += 0.01;
+      site_change_detected = true;
+      break;
+    case '}':
+      tile_rotation -= 0.1;
+      site_change_detected = true;;
+      break;
+    case '{':
+      tile_rotation += 0.1;
       site_change_detected = true;
       break;
   }
