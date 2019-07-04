@@ -106,7 +106,7 @@ void render() {
   info += "\n" + "Press 'a' to add zone node";
   info += "\n" + "Press 'x' to remove zone node";
   info += "\n" + "Press 'c' clear all zone nodes";
-  info += "\n" + "Press 'r' to generate random site";
+  info += "\n" + "Press 's' to generate random site";
   info += "\n" + "Press 'm' to toggle 2D/3D view";
   info += "\n" + "Press '-/+' to change tile size";
   text(info, 10, 10);

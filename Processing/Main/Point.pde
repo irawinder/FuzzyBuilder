@@ -1,7 +1,7 @@
 import java.util.Collections;
 
 class Point {
-  float x, y, z;
+  public float x, y, z;
   
   Point(float x, float y) {
     this(x, y, 0.0);

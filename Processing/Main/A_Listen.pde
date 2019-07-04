@@ -97,7 +97,7 @@ TaggedPoint pointAtMouse() {
 void keyPressed() {
   
   switch(key) {
-    case 'r':
+    case 's':
       init();
       break;
     case 'a':
@@ -126,6 +126,33 @@ void keyPressed() {
       if (tile_size < 50) tile_size++;
       site_change_detected = true;
       break;
+    case '[':
+      tile_rotation -= 0.05;
+      site_change_detected = true;;
+      break;
+    case ']':
+      tile_rotation += 0.05;
+      site_change_detected = true;
+      break;
+  }
+  
+  if (key == CODED) { 
+    if (keyCode == LEFT) {
+      tile_translation.x--;
+      site_change_detected = true;
+    }  
+    if (keyCode == RIGHT) {
+      tile_translation.x++;
+      site_change_detected = true;
+    }  
+    if (keyCode == DOWN) {
+      tile_translation.y++;
+      site_change_detected = true;
+    }  
+    if (keyCode == UP) {
+      tile_translation.y--;
+      site_change_detected = true;
+    }
   }
 }  
 

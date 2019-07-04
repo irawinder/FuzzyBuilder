@@ -4,7 +4,8 @@ ArrayList<TaggedPoint> control_points;
 int control_point_counter;
 Polygon site_boundary;
 Site site_test;
-float tile_size;
+float tile_size, tile_rotation;
+Point tile_translation;
 
 // Update model state?
 boolean site_change_detected;
@@ -19,7 +20,9 @@ void init() {
   // Init Raster-like Site Voxels
   site_test = new Site("Site_Test");
   tile_size = 10;
-  site_test.makeTiles(site_boundary, tile_size, "pixels");
+  tile_translation = new Point(0,0);
+  tile_rotation = 0;
+  site_test.makeTiles(site_boundary, tile_size, "pixels", tile_rotation, tile_translation);
   
   // Init Control Points
   control_point_counter = 0;
@@ -48,7 +51,7 @@ void init() {
 void update() {
   
   if(site_change_detected) {
-    site_test.makeTiles(site_boundary, tile_size, "pixels");
+    site_test.makeTiles(site_boundary, tile_size, "pixels", tile_rotation, tile_translation);
     site_test.makeZones(control_points);
     site_change_detected = false;
   }

@@ -1,4 +1,5 @@
 import java.util.Map;
+import java.lang.Math;
 
 // A Compartment is a collection of tiles
 //
@@ -66,22 +67,42 @@ class Site extends Compartment {
   // Populate a grid of site tiles that fits within
   // an exact vector boundary that defines site
   //
-  public void makeTiles(Polygon boundary, float scale, String units) {
+  public void makeTiles(Polygon boundary, float scale, String units, float rotation, Point translation) {
     
     clearTiles();
     
     // Create a field of grid points that is certain 
     // to uniformly saturate polygon boundary
-    //
+    
+    // Polygon origin and rectangular bounding box extents
+    float origin_x = 0.5 * (boundary.xMax() + boundary.xMin());
+    float origin_y = 0.5 * (boundary.yMax() + boundary.yMin());
     float boundary_w = boundary.xMax() - boundary.xMin();
     float boundary_h = boundary.yMax() - boundary.yMin();
+    
+    // maximum additional bounding box dimensions if polygon is rotated 90 degrees
+    float easement = max(boundary_w, boundary_h) * (sqrt(2) - 1);
+    boundary_w += easement;
+    boundary_h += easement;
+    
     int U = int(boundary_w / scale) + 1;
     int V = int(boundary_h / scale) + 1;
+    float t_x = translation.x % scale;
+    float t_y = translation.y % scale;
     
     for (int u=0; u<U; u++) {
       for (int v=0; v<V; v++) {
-        float x_0 = boundary.xMin() + u*scale;
-        float y_0 = boundary.yMin() + v*scale;
+        
+        // grid coordinates before rotation is applied
+        float x_0 = boundary.xMin() - 0.5*easement + u*scale;
+        float y_0 = boundary.yMin() - 0.5*easement + v*scale;
+        
+        // translate origin, rotate, shift back, then translate
+        float sin = (float)Math.sin(rotation);
+        float cos = (float)Math.cos(rotation);
+        x_0 = + (x_0 - origin_x) * cos - (y_0 - origin_y) * sin + origin_x + t_x;
+        y_0 = + (x_0 - origin_x) * sin + (y_0 - origin_y) * cos + origin_y + t_y;
+        
         Point location = new Point(x_0, y_0);
         
         // Test which points are in the polygon boundary
