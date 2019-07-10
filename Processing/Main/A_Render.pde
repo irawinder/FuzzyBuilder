@@ -148,8 +148,11 @@ void renderTile(Tile t) {
   if (viewModel.equals("DOT")) {
     ellipse(t.location.x, t.location.y, 0.75*t.scale, 0.75*t.scale);
   } else if (viewModel.equals("VOXEL")) {
-    rectMode(CENTER);
-    rect(t.location.x, t.location.y, 0.75*t.scale, 0.75*t.scale);
+    pushMatrix(); 
+    translate(t.location.x, t.location.y); rotate(tile_rotation);
+    rectMode(CENTER); 
+    rect(0, 0, 0.75*t.scale, 0.75*t.scale);
+    popMatrix();
   } else {
     ellipse(t.location.x, t.location.y, 0.75*t.scale, 0.75*t.scale);
   }
