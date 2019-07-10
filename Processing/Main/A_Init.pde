@@ -22,11 +22,12 @@
     }
 
 // Initialize Backend:
-
+    
+    Site site_test;
+    
+    Polygon site_boundary;
     ArrayList<TaggedPoint> control_points;
     int control_point_counter;
-    Polygon site_boundary;
-    Site site_test;
     float tile_size, tile_rotation;
     Point tile_translation;
     

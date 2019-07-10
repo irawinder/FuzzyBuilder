@@ -1,18 +1,18 @@
 import java.util.Map;
 import java.lang.Math;
 
-// A Compartment is a collection of tiles
+// A TileArray is a collection of tiles
 //
-class Compartment {
+class TileArray {
   
-  // Name and Type of Compartment
+  // Name and Type of TileArray
   public String name;
   
   // Collection of Tiles
   private HashMap<String, Tile> tile;
   
-  // Construct Empty Compartment
-  public Compartment(String name) {
+  // Construct Empty TileArray
+  public TileArray(String name) {
     this.name = name;
     tile = new HashMap<String, Tile>();
   }
@@ -39,19 +39,19 @@ class Compartment {
   
   @Override
   public String toString() {
-      return "Compartment[" + this.name + ": " + tile.size() +  " tiles]";
+      return "TileArray[" + this.name + ": " + tile.size() +  " tiles]";
   }
 }
 
-// A Site is the largest compartment for a set of Tiles
+// A Site is a TileArray the represents piece of land that can be divided into zones
 //
-class Site extends Compartment {
+class Site extends TileArray {
   
-  private HashMap<String, Compartment> zone;
+  private HashMap<String, TileArray> zone;
   
   Site(String name) {
     super(name);
-    zone = new HashMap<String, Compartment>();
+    zone = new HashMap<String, TileArray>();
   }
   
   // Populate a grid of site tiles that fits within
@@ -117,7 +117,7 @@ class Site extends Compartment {
     // Initialize Zones Based Upon Tagged Point Collection
     for(TaggedPoint p : points) {
       String zone_name = p.getTag();
-      Compartment z = new Compartment(zone_name);
+      TileArray z = new TileArray(zone_name);
       zone.put(zone_name, z);
     }
     
@@ -138,14 +138,14 @@ class Site extends Compartment {
             closest_zone_name = p.getTag();
           }
         }
-        Compartment closest_zone = zone.get(closest_zone_name);
+        TileArray closest_zone = zone.get(closest_zone_name);
         closest_zone.addTile(t);
       }
     }
   }
   
   // Return Zones
-  public HashMap<String, Compartment> getZones() {
+  public HashMap<String, TileArray> getZones() {
     return zone;
   }
   
