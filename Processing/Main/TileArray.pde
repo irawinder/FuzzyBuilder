@@ -39,7 +39,7 @@ class TileArray {
   
   @Override
   public String toString() {
-      return "TileArray[" + this.name + ": " + tile.size() +  " tiles]";
+      return "TileArray [" + this.name + ": " + tile.size() +  " tiles]";
   }
 }
 
@@ -47,11 +47,11 @@ class TileArray {
 //
 class Site extends TileArray {
   
-  private HashMap<String, TileArray> zone;
+  private HashMap<String, Zone> zone;
   
   Site(String name) {
     super(name);
-    zone = new HashMap<String, TileArray>();
+    zone = new HashMap<String, Zone>();
   }
   
   // Populate a grid of site tiles that fits within
@@ -117,7 +117,7 @@ class Site extends TileArray {
     // Initialize Zones Based Upon Tagged Point Collection
     for(TaggedPoint p : points) {
       String zone_name = p.getTag();
-      TileArray z = new TileArray(zone_name);
+      Zone z = new Zone(zone_name);
       zone.put(zone_name, z);
     }
     
@@ -145,7 +145,7 @@ class Site extends TileArray {
   }
   
   // Return Zones
-  public HashMap<String, TileArray> getZones() {
+  public HashMap<String, Zone> getZones() {
     return zone;
   }
   
@@ -154,4 +154,14 @@ class Site extends TileArray {
     zone.clear();
   }
   
+}
+
+// A Zone is a type of compartment that we 
+// can define with a Voronoi site point
+//
+class Zone extends TileArray {
+  
+  Zone(String name) {
+    super(name);
+  }
 }

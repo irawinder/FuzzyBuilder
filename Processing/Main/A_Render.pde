@@ -38,7 +38,7 @@ void render() {
   //
   float hue = 0;
   for(Map.Entry e_z : site_test.getZones().entrySet()) {
-    TileArray z = (TileArray)e_z.getValue();
+    Zone z = (Zone)e_z.getValue();
     for(Map.Entry e_t : z.getTiles().entrySet()) {
       Tile t = (Tile)e_t.getValue();
       colorMode(HSB); color col = color(hue%255, 150, 200);
@@ -125,7 +125,7 @@ void render() {
   summary += "View Model: " + viewModel;
   summary += "\n" + site_test;
   for(Map.Entry e : site_test.getZones().entrySet()) {
-    TileArray z = (TileArray)e.getValue();
+    Zone z = (Zone)e.getValue();
     summary += "\n" + z;
   }
   text(summary, width - 225, 10);
