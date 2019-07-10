@@ -17,37 +17,43 @@ void render() {
   
   // Draw Vector Polygon
   //
-  fill(245); stroke(235); strokeWeight(1);
-  pushMatrix(); translate(0, 0, -2);
-  beginShape();
-  for(Point p : site_boundary.vertex) vertex(p.x, p.y);
-  endShape(CLOSE);
-  popMatrix();
-  
-  // Draw Site Voxels
-  //
-  for(Map.Entry e : site_test.getTiles().entrySet()) {
-    Tile t = (Tile)e.getValue();
-    noFill(); fill(150); noStroke();
-    pushMatrix(); translate(0, 0, -1);
-    renderTile(t);
+  if (showPolygons) {
+    fill(245); stroke(235); strokeWeight(1);
+    pushMatrix(); translate(0, 0, -2);
+    beginShape();
+    for(Point p : site_boundary.vertex) vertex(p.x, p.y);
+    endShape(CLOSE);
     popMatrix();
   }
   
-  // Draw Zone Voxels
+  // Draw Site Voxels
   //
-  float hue = 0;
-  for(Map.Entry e_z : site_test.getZones().entrySet()) {
-    Zone z = (Zone)e_z.getValue();
-    for(Map.Entry e_t : z.getTiles().entrySet()) {
-      Tile t = (Tile)e_t.getValue();
-      colorMode(HSB); color col = color(hue%255, 150, 200);
-      noFill(); fill(col); noStroke();
-      pushMatrix(); translate(0, 0, 0);
+  if (showTiles) {
+    
+    for(Map.Entry e : site_test.getTiles().entrySet()) {
+      Tile t = (Tile)e.getValue();
+      noFill(); fill(150); noStroke();
+      pushMatrix(); translate(0, 0, -1);
       renderTile(t);
       popMatrix();
     }
-    hue += 40;
+    
+    // Draw Zone Voxels
+    //
+    float hue = 0;
+    for(Map.Entry e_z : site_test.getZones().entrySet()) {
+      Zone z = (Zone)e_z.getValue();
+      for(Map.Entry e_t : z.getTiles().entrySet()) {
+        Tile t = (Tile)e_t.getValue();
+        colorMode(HSB); color col = color(hue%255, 150, 200);
+        noFill(); fill(col); noStroke();
+        pushMatrix(); translate(0, 0, 0);
+        renderTile(t);
+        popMatrix();
+      }
+      hue += 40;
+    }
+  
   }
   
   // Draw Tagged Control Points
@@ -115,20 +121,24 @@ void render() {
   info += "\n" + "Press 'r' to generate random site";
   info += "\n" + "Press 'm' to toggle 2D/3D view";
   info += "\n" + "Press 'v' to toggle View Model";
+  info += "\n" + "Press 't' to hide/show Tiles";
+  info += "\n" + "Press 'p' to hide/show Polygons";
   text(info, 10, 10);
   text("Framerate: " + int(frameRate), 10, height - 20);
   
   // Draw Summary
   //
-  fill(0); textAlign(LEFT, TOP);
-  String summary = "";
-  summary += "View Model: " + viewModel;
-  summary += "\n" + site_test;
-  for(Map.Entry e : site_test.getZones().entrySet()) {
-    Zone z = (Zone)e.getValue();
-    summary += "\n" + z;
+  if (showTiles) {
+    fill(0); textAlign(LEFT, TOP);
+    String summary = "";
+    summary += "View Model: " + viewModel;
+    summary += "\n" + site_test;
+    for(Map.Entry e : site_test.getZones().entrySet()) {
+      Zone z = (Zone)e.getValue();
+      summary += "\n" + z;
+    }
+    text(summary, width - 225, 10);
   }
-  text(summary, width - 225, 10);
   
   // Mouse Cursor Info
   //

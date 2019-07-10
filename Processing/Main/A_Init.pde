@@ -10,6 +10,9 @@
     // Is camera 3D? Otherwise it's 2D;
     boolean cam3D;
     
+    // Hide or Show Tiles or Polygons
+    boolean showTiles, showPolygons;
+    
     // Is there a specific view mode?
     String viewModel;
     
@@ -19,6 +22,8 @@
       viewModel = "DOT";
       addPoint = false;
       removePoint = false;
+      showTiles = true;
+      showPolygons = true;
     }
 
 // Initialize Backend:

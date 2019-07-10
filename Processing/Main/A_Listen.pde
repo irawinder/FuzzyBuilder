@@ -115,6 +115,12 @@ void keyPressed() {
     case 'm':
       cam3D = !cam3D;
       break;
+    case 't':
+      showTiles = !showTiles;
+      break;
+    case 'p':
+      showPolygons = !showPolygons;
+      break;
     case 'v':
       if (viewModel.equals("DOT")) {
         viewModel = "VOXEL";
