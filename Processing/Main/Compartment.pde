@@ -43,25 +43,15 @@ class Compartment {
   }
 }
 
-// A Zone is a type of compartment that we 
-// can define with a Voronoi site point
-//
-class Zone extends Compartment {
-  
-  Zone(String name) {
-    super(name);
-  }
-}
-
 // A Site is the largest compartment for a set of Tiles
 //
 class Site extends Compartment {
   
-  private HashMap<String, Zone> zone;
+  private HashMap<String, Compartment> zone;
   
   Site(String name) {
     super(name);
-    zone = new HashMap<String, Zone>();
+    zone = new HashMap<String, Compartment>();
   }
   
   // Populate a grid of site tiles that fits within
@@ -127,7 +117,7 @@ class Site extends Compartment {
     // Initialize Zones Based Upon Tagged Point Collection
     for(TaggedPoint p : points) {
       String zone_name = p.getTag();
-      Zone z = new Zone(zone_name);
+      Compartment z = new Compartment(zone_name);
       zone.put(zone_name, z);
     }
     
@@ -148,14 +138,14 @@ class Site extends Compartment {
             closest_zone_name = p.getTag();
           }
         }
-        Zone closest_zone = zone.get(closest_zone_name);
+        Compartment closest_zone = zone.get(closest_zone_name);
         closest_zone.addTile(t);
       }
     }
   }
   
   // Return Zones
-  public HashMap<String, Zone> getZones() {
+  public HashMap<String, Compartment> getZones() {
     return zone;
   }
   
