@@ -157,7 +157,7 @@ class NestedTileArray extends TileArray{
   
   // A Base is a building component that rests on a Footprint
   //
-  public void makeBase(int lowestFloor, int highestFloor, float floorHeight) {
+  public void makeBase(int lowestFloor, int highestFloor) {
     
     clearChildren();
     
@@ -170,7 +170,7 @@ class NestedTileArray extends TileArray{
         if(i==0) {
           base.addTile(t);
         } else {
-          Point newPoint = new Point(t.location.x, t.location.y, i*floorHeight);
+          Point newPoint = new Point(t.location.x, t.location.y, i*t.scale_w);
           Tile newTile = new Tile(t.u, t.v, i, newPoint);
           newTile.setScale(t.scale_uv, t.scale_w, t.scale_unit);
           base.addTile(newTile);

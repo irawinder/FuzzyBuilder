@@ -75,14 +75,12 @@ import java.util.Random;
       // Init Raster-like Site Voxels
       site_test = new NestedTileArray("Site_Test", "site");
       tileW = 15.0;
-      tileH = 3.0;
+      tileH = 5.0;
       tile_translation = new Point(0,0);
       tile_rotation = 0;
       
       // Update model state?
       site_change_detected = true;
-      zone_change_detected = true;
-      foot_change_detected = true;
       
       updateModel();
     }
@@ -114,7 +112,7 @@ import java.util.Random;
     }
     
     void initSite() {
-      site_test.makeTiles(site_boundary, tileW, tileH, "meters", tile_rotation, tile_translation);
+      site_test.makeTiles(site_boundary, tileW, tileH, "pixels", tile_rotation, tile_translation);
     }
     
     void initZones() {
@@ -134,7 +132,7 @@ import java.util.Random;
       int i = 0;
       for(NestedTileArray zone : site_test.getChildList()) {
         NestedTileArray footprint = zone.getChild("Building");
-        footprint.makeBase(min(0, -4 + i), 2*(1+i), 5.0);
+        footprint.makeBase(min(0, -4 + i), i);
         i++;
       }
     }

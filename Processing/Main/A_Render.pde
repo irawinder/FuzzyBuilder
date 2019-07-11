@@ -177,7 +177,7 @@ void render() {
         y = (int)p.y;
       }
       if(cam3D) cam2D(); // sets temporarily to 2D camera, if in 3D
-      fill(255, 2000); stroke(200, 150); strokeWeight(1);
+      fill(255, 150); stroke(200, 150); strokeWeight(1);
       rectMode(CENTER); rect(x + 40, y, 50, 15, 5);
       fill(50); textAlign(CENTER, CENTER);
       text(p.tag, x + 40, y - 1);
@@ -255,6 +255,9 @@ void render() {
     fill(100); textAlign(LEFT, TOP);
     String summary = "";
     summary += "View Model: " + viewModel;
+    summary += "\n" + "Tile Dimensions:";
+    summary += "\n" + tileW + " x " + tileW + " x " + tileH + " units";
+    summary += "\n";
     summary += "\n" + site_test;
     for(NestedTileArray zone : site_test.getChildList()) {
       summary += "\n-" + zone;
@@ -307,11 +310,12 @@ void renderTile(Tile t, color col, float z_offset) {
 
 void renderVoxel(Tile t, color col, float z_offset) {
   
-  float scaler = 0.85;
+  float scaler_uv = 0.85;
+  float scaler_w = 0.6;
   
   fill(col); stroke(0, 50); strokeWeight(0.5);
-  pushMatrix(); translate(t.location.x, t.location.y, t.location.z + z_offset + 0.5*t.scale_w);
+  pushMatrix(); translate(t.location.x, t.location.y, t.location.z + z_offset);
   rotate(tile_rotation);
-  box(scaler*t.scale_uv, scaler*t.scale_uv, scaler*t.scale_w);
+  box(scaler_uv*t.scale_uv, scaler_uv*t.scale_uv, scaler_w*t.scale_w);
   popMatrix();
 }
