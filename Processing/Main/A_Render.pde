@@ -32,6 +32,7 @@ void footprintState() {
   // Footprint Layer State
   offState();
   showTiles = true;
+  showSite = true;
   showFootprints = true;
   viewState = 3;
   editZones = true;
@@ -118,8 +119,8 @@ void render() {
       if (showZones) {
         for(Map.Entry e : zone.getTiles().entrySet()) {
           Tile t = (Tile)e.getValue();
-          colorMode(HSB); color col = color(hue%255, 150, 200, 255);
-          renderTile(t, col, 0);
+          colorMode(HSB); color col = color(hue%255, 100, 225);
+          renderTile(t, col, 0.5);
         }
       }
       
@@ -132,8 +133,8 @@ void render() {
         if (showFootprints) {
           for(Map.Entry e : footprint.getTiles().entrySet()) {
             Tile t = (Tile)e.getValue();
-            colorMode(HSB); color col = color(hue%255, 25, 200, 255);
-            if(footprint.name.equals("Building")) col = color(hue%255, 150, 200, 255);
+            colorMode(HSB); color col = color(hue%255, 100, 225, 255);
+            if(footprint.name.equals("Building")) col = color(hue%255, 150, 150);
             renderTile(t, col, 0.5);
           }
         }
@@ -147,8 +148,8 @@ void render() {
           if (showBases) {
             for(Map.Entry e : base.getTiles().entrySet()) {
               Tile t = (Tile)e.getValue();
-              colorMode(HSB); color col = color(hue%255, 150, 200, 150);
-              renderVoxel(t, col, 0);
+              colorMode(HSB); color col = color(hue%255, 150, 200);
+              if(t.location.z == 0 || cam3D) renderVoxel(t, col, 0);
             }
           }
         }
@@ -160,9 +161,9 @@ void render() {
   
   // Draw Vector Polygon
   //
-  fill(225, 200); noStroke(); 
+  fill(245, 225); noStroke(); 
   if (showPolygons) {
-    stroke(0, 50); 
+    stroke(0, 100); 
     strokeWeight(1);
   }
   pushMatrix(); translate(0, 0, -2);
@@ -323,7 +324,7 @@ void renderVoxel(Tile t, color col, float z_offset) {
   
   float scaler = 0.85;
   
-  fill(col); noStroke();
+  fill(col); stroke(0, 50); strokeWeight(0.5);
   pushMatrix(); translate(t.location.x, t.location.y, t.location.z + z_offset + 0.5*t.scale_w);
   rotate(tile_rotation);
   box(scaler*t.scale_uv, scaler*t.scale_uv, scaler*t.scale_w);
