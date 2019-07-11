@@ -5,23 +5,38 @@ import java.lang.Math;
 //
 class NestedTileArray extends TileArray{
   
-  private HashMap<String, NestedTileArray> childrenMap;
-  //private ArrayList<NestedTileArray> childrenList;
+  private HashMap<String, NestedTileArray> childMap;
+  private ArrayList<NestedTileArray> childList;
   
   NestedTileArray(String name, String type) {
     super(name, type);
-    childrenMap = new HashMap<String, NestedTileArray>();
-    //childrenList = new ArrayList<NestedTileArray>();
+    childMap = new HashMap<String, NestedTileArray>();
+    childList = new ArrayList<NestedTileArray>();
   }
   
-  // Return Children
-  public HashMap<String, NestedTileArray> getChildren() {
-    return childrenMap;
+  // Return Children Map
+  public HashMap<String, NestedTileArray> getChildMap() {
+    return childMap;
+  }
+  
+  // Return Children List
+  public ArrayList<NestedTileArray> getChildList() {
+    return childList;
   }
   
   // Clear All Children
   public void clearChildren() {
-    childrenMap.clear();
+    childMap.clear();
+    childList.clear();
+  }
+  
+  public void addChild(NestedTileArray child) {
+    childMap.put(child.name, child);
+    childList.add(child);
+  }
+  
+  public NestedTileArray getChild(String childKey) {
+    return childMap.get(childKey);
   }
   
   // Populate a grid of site tiles that fits within
@@ -88,14 +103,14 @@ class NestedTileArray extends TileArray{
     for(TaggedPoint p : points) {
       String zone_name = p.getTag();
       NestedTileArray z = new NestedTileArray(zone_name, "zone");
-      childrenMap.put(zone_name, z);
+      addChild(z);
     }
     
     // Fore Each Tile in Site, Check Which Control Point (i.e. Zone Point)
     // it is closested to. This resembles a Voronoi algorithm
     //
-    if (childrenMap.size() > 0) {
-      for(Map.Entry e : getTiles().entrySet()) {
+    if (childMap.size() > 0) {
+      for(Map.Entry e : getTileMap().entrySet()) {
         Tile t = (Tile)e.getValue();
         float min_distance = Float.POSITIVE_INFINITY;
         String closest_zone_name = "";
@@ -108,7 +123,7 @@ class NestedTileArray extends TileArray{
             closest_zone_name = p.getTag();
           }
         }
-        TileArray closest_zone = childrenMap.get(closest_zone_name);
+        TileArray closest_zone = childMap.get(closest_zone_name);
         closest_zone.addTile(t);
       }
     }
@@ -126,7 +141,7 @@ class NestedTileArray extends TileArray{
     NestedTileArray setback = new NestedTileArray("Setback", "footprint");
     
     // Add tiles that are not at edge of parent TileArray
-    for (Map.Entry e : getTiles().entrySet()) {
+    for (Map.Entry e : getTileMap().entrySet()) {
       Tile t = (Tile)e.getValue();
       if (getNeighbors(t).size() > 7) { // Tile is not an edge
         building.addTile(t);
@@ -136,8 +151,8 @@ class NestedTileArray extends TileArray{
     }
     
     // Add footprints to HashMap
-    childrenMap.put(building.name, building);
-    childrenMap.put(setback.name, setback);
+    addChild(building);
+    addChild(setback);
   }
   
   // A Base is a building component that rests on a Footprint
@@ -148,7 +163,7 @@ class NestedTileArray extends TileArray{
     
     // Initialize Base
     NestedTileArray base = new NestedTileArray("Podium", "base");
-    for(Map.Entry e : getTiles().entrySet()) {
+    for(Map.Entry e : getTileMap().entrySet()) {
       Tile t = (Tile)e.getValue();
       
       for(int i=lowestFloor; i<=highestFloor; i++) {
@@ -163,7 +178,7 @@ class NestedTileArray extends TileArray{
         
       }
     }
-    childrenMap.put(base.name, base);
+    addChild(base);
   }
   
   // A Tower is a building component that rests on a Base

@@ -101,62 +101,50 @@ void render() {
     // Draw Site Voxels
     //
     if (showSite) {
-      for(Map.Entry e : site_test.getTiles().entrySet()) {
-        Tile t = (Tile)e.getValue();
-        color col = color(0, 50);
-        renderTile(t, col, -1);
-      }
+      color col = color(0, 50);
+      for(Tile t : site_test.getTileList()) renderTile(t, col, -1);
     }
     
-    float hue = 0;
-    
     // Cycle Through Zones
-    for(Map.Entry e_z : site_test.getChildren().entrySet()) {
-      NestedTileArray zone = (NestedTileArray)e_z.getValue();
+    float hue = 0;
+    for(NestedTileArray zone : site_test.getChildList()) {
       
       // Draw Zone Voxels
       //
       if (showZones) {
-        for(Map.Entry e : zone.getTiles().entrySet()) {
-          Tile t = (Tile)e.getValue();
-          colorMode(HSB); color col = color(hue%255, 100, 225);
-          renderTile(t, col, 0.5);
-        }
+        colorMode(HSB); color col = color(hue%255, 100, 225);
+        for(Tile t : zone.getTileList()) renderTile(t, col, 0.5);
       }
       
       // Cycle Through Footprints
-      for(Map.Entry e_f : zone.getChildren().entrySet()) {
-        NestedTileArray footprint = (NestedTileArray)e_f.getValue();
+      for(NestedTileArray footprint : zone.getChildList()) {
         
         // Draw Footprint Voxels
         //
         if (showFootprints) {
-          for(Map.Entry e : footprint.getTiles().entrySet()) {
-            Tile t = (Tile)e.getValue();
-            colorMode(HSB); color col = color(hue%255, 100, 225, 255);
-            if(footprint.name.equals("Building")) col = color(hue%255, 150, 150);
-            renderTile(t, col, 0.5);
+          colorMode(HSB); color col;
+          if(footprint.name.equals("Building")) {
+            col = color(hue%255, 150, 150);
+          } else {
+            col = color(hue%255, 100, 225);
           }
+          for(Tile t : footprint.getTileList()) renderTile(t, col, 0.5);
         }
         
         // Cycle Through Bases
-        for(Map.Entry e_b : footprint.getChildren().entrySet()) {
-          NestedTileArray base = (NestedTileArray)e_b.getValue();
+        for(NestedTileArray base : footprint.getChildList()) {
           
           // Draw Base Voxels
           //
           if (showBases) {
-            for(Map.Entry e : base.getTiles().entrySet()) {
-              Tile t = (Tile)e.getValue();
-              colorMode(HSB); color col = color(hue%255, 150, 200);
-              if(t.location.z == 0 || cam3D) renderVoxel(t, col, 0);
-            }
+            colorMode(HSB); color col = color(hue%255, 150, 200);
+            for(Tile t : base.getTileList()) if(t.location.z == 0 || cam3D) renderVoxel(t, col, 0);
           }
         }
       }
+      // Consectutive zone hues differ by 40
       hue += 40;
     }
-  
   }
   
   // Draw Vector Polygon
@@ -268,14 +256,11 @@ void render() {
     String summary = "";
     summary += "View Model: " + viewModel;
     summary += "\n" + site_test;
-    for(Map.Entry e_z : site_test.getChildren().entrySet()) {
-      NestedTileArray zone = (NestedTileArray)e_z.getValue();
+    for(NestedTileArray zone : site_test.getChildList()) {
       summary += "\n-" + zone;
-      for(Map.Entry e_f : zone.getChildren().entrySet()) {
-        NestedTileArray footprint = (NestedTileArray)e_f.getValue();
+      for(NestedTileArray footprint : zone.getChildList()) {
         summary += "\n--" + footprint;
-        for(Map.Entry e_b : footprint.getChildren().entrySet()) {
-          NestedTileArray base = (NestedTileArray)e_b.getValue();
+        for(NestedTileArray base : footprint.getChildList()) {
           summary += "\n---" + base;
         }
       }

@@ -124,8 +124,7 @@ import java.util.Random;
     
     void initFootprints() {
       // Init Footprints
-      for(Map.Entry e : site_test.getChildren().entrySet()) {
-        NestedTileArray zone = (NestedTileArray)e.getValue();
+      for(NestedTileArray zone : site_test.getChildList()) {
         zone.makeFootprints();
       }
     }
@@ -133,12 +132,9 @@ import java.util.Random;
     void initBase() {
       // Init Base
       int i = 0;
-      for(Map.Entry e_z : site_test.getChildren().entrySet()) {
-        NestedTileArray zone = (NestedTileArray)e_z.getValue();
-        for(Map.Entry e_f : zone.getChildren().entrySet()) {
-          NestedTileArray footprint = zone.childrenMap.get("Building");
-          footprint.makeBase(min(0, -4 + i), 2*(1+i), 5.0);
-        }
+      for(NestedTileArray zone : site_test.getChildList()) {
+        NestedTileArray footprint = zone.getChild("Building");
+        footprint.makeBase(min(0, -4 + i), 2*(1+i), 5.0);
         i++;
       }
     }
