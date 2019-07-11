@@ -58,7 +58,7 @@ class TileArray {
   
   @Override
   public String toString() {
-      return "TileArray [" + this.name + ": " + tile.size() +  " tiles]";
+      return this.name + " (" + this.type + "):" + tile.size() +  "t";
   }
   
   // Inherit the Tiles from another TileArray

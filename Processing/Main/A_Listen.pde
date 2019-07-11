@@ -9,32 +9,36 @@ void listen() {
     cam2D();
   }
   
-  if (addPoint) {
-    Point atMouse = newPointAtMouse();
-    if (atMouse != null) {
-      TaggedPoint ghost = new TaggedPoint(atMouse.x, atMouse.y);
-      ghost.setTag("ghost");
-      hovering = ghost;
-    } else {
-      hovering = null;
-    }
-  } else {
-    hovering = pointAtMouse();
-  }
-  
-  if(mousePressed && selected != null) {
-    if(cam3D) {
-      Point new_location = newPointAtMouse();
-      if (new_location != null) {
-        selected.x = new_location.x;
-        selected.y = new_location.y;
+  if (editZones) {
+    
+    if (addPoint) {
+      Point atMouse = newPointAtMouse();
+      if (atMouse != null) {
+        TaggedPoint ghost = new TaggedPoint(atMouse.x, atMouse.y);
+        ghost.setTag("ghost");
+        hovering = ghost;
+      } else {
+        hovering = null;
       }
     } else {
-      selected.x = mouseX;
-      selected.y = mouseY;
+      hovering = pointAtMouse();
     }
-    zone_change_detected = true;
+    
+    if(mousePressed && selected != null) {
+      if(cam3D) {
+        Point new_location = newPointAtMouse();
+        if (new_location != null) {
+          selected.x = new_location.x;
+          selected.y = new_location.y;
+        }
+      } else {
+        selected.x = mouseX;
+        selected.y = mouseY;
+      }
+      zone_change_detected = true;
+    }
   }
+  
 }
 
 Point newPointAtMouse() {
@@ -109,9 +113,10 @@ void keyPressed() {
     case 'c':
       control_points.clear();
       control_point_counter = 0;
-      site_test.makeZones(control_points);
-      addPoint = false;
+      zone_change_detected = true;
+      addPoint = true;
       removePoint = false;
+      buildingZoneState();
       break;
     case 'm':
       cam3D = !cam3D;
@@ -168,12 +173,12 @@ void keyPressed() {
     case '5':
       buildingState();
       break;
-    case '6':
-      floorState();
-      break;
-    case '7':
-      roomState();
-      break;
+    //case '6':
+    //  floorState();
+    //  break;
+    //case '7':
+    //  roomState();
+    //  break;
   }
   
   if (key == CODED) { 
@@ -198,25 +203,28 @@ void keyPressed() {
 
 // Triggered once when any mouse button is pressed
 void mousePressed() {
-  if (addPoint) {
-    Point atMouse = newPointAtMouse();
-    addControlPoint(atMouse.x, atMouse.y);
-  } else {
-    selected = hovering;
-    if (removePoint) {
-      removeControlPoint(selected);
+  if(editZones) {
+    
+    if (addPoint) {
+      Point atMouse = newPointAtMouse();
+      addControlPoint(atMouse.x, atMouse.y);
+    } else {
+      selected = hovering;
+      if (removePoint) {
+        removeControlPoint(selected);
+      }
     }
   }
 }
 
 // Triggered once when any mouse button is released
 void mouseReleased() {
-  selected = null;
+  if(editZones) selected = null;
 }
 
 void addControlPoint(float x, float y) {
   control_point_counter++;
-  String name = "Zone " + control_point_counter;
+  String name = "Plot " + control_point_counter;
   TaggedPoint new_zone = new TaggedPoint(x, y);
   new_zone.setTag(name);
   control_points.add(new_zone);

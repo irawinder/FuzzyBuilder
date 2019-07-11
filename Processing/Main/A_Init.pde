@@ -7,7 +7,7 @@ import java.util.Random;
     TaggedPoint hovering;
     
     // Add or remove point via mouse click
-    boolean addPoint, removePoint;
+    boolean editZones, addPoint, removePoint;
     
     // Is camera 3D? Otherwise it's 2D;
     boolean cam3D;
@@ -16,6 +16,7 @@ import java.util.Random;
     boolean showTiles, showPolygons;
     
     // Hide or Show TileArray Nest Layers
+    int viewState;
     boolean showSite, showZones, showFootprints, showBases, showTowers, showFloors, showRooms;
     
     // Is there a specific view mode?
@@ -28,6 +29,7 @@ import java.util.Random;
       
       buildingZoneState();
       
+      editZones = true;
       addPoint = false;
       removePoint = false;
     }
@@ -63,7 +65,7 @@ import java.util.Random;
         TaggedPoint random = new TaggedPoint(randomX, randomY);
         if (site_boundary.containsPoint(random)) {
           control_point_counter++;
-          random.setTag("Zone " + control_point_counter);
+          random.setTag("Plot " + control_point_counter);
           control_points.add(random);
           i++;
         }
@@ -129,11 +131,13 @@ import java.util.Random;
     
     void initBase() {
       // Init Base
+      int i = 0;
       for(Map.Entry e_z : site_test.getChildren().entrySet()) {
         NestedTileArray zone = (NestedTileArray)e_z.getValue();
         for(Map.Entry e_f : zone.getChildren().entrySet()) {
-          NestedTileArray footprint = zone.childrenMap.get(zone.name + ": Building");
-          footprint.makeBase(-2, 4, 5.0);
+          NestedTileArray footprint = zone.childrenMap.get("Building");
+          footprint.makeBase(min(0, -4 + i), 2*(1+i), 5.0);
         }
+        i++;
       }
     }

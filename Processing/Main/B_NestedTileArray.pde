@@ -114,16 +114,16 @@ class NestedTileArray extends TileArray{
     }
   }
   
-  // A Footprint is a type of TileArray that we 
-  // can define with a Voronoi site point
+  // A Footprint is a type of TileArray that we
+  // can derive from an existing TileArray (i.e. zone)
   //
   public void makeFootprints() {
     
     clearChildren();
     
     // Initialize Footprints
-    NestedTileArray building = new NestedTileArray(this.name + ": Building", "building");
-    NestedTileArray setback = new NestedTileArray(this.name + ": Setback", "setback");
+    NestedTileArray building = new NestedTileArray("Building", "footprint");
+    NestedTileArray setback = new NestedTileArray("Setback", "footprint");
     
     // Add tiles that are not at edge of parent TileArray
     for (Map.Entry e : getTiles().entrySet()) {
@@ -147,7 +147,7 @@ class NestedTileArray extends TileArray{
     clearChildren();
     
     // Initialize Base
-    NestedTileArray base = new NestedTileArray(this.name + ": Base", "base");
+    NestedTileArray base = new NestedTileArray("Podium", "base");
     for(Map.Entry e : getTiles().entrySet()) {
       Tile t = (Tile)e.getValue();
       
