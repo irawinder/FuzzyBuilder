@@ -8,7 +8,7 @@
 // - Implement Use Types
 // - Integrate Control Points with NestedTileArray?
 // - Create ArrayList Version for Tile Array
-// - Implement native Java library for random (not Processing)
+// [Check] Implement native Java library for random (not Processing)
 
 // Runs Once On Program Start
 //

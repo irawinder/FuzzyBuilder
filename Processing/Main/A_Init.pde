@@ -58,10 +58,11 @@ import java.util.Random;
       // Init Control Points
       control_point_counter = 0;
       control_points = new ArrayList<TaggedPoint>();
+      Random rand = new Random();
       int i = 0;
       while (i<4) {
-        float randomX = random(site_boundary.xMin(), site_boundary.xMax());
-        float randomY = random(site_boundary.yMin(), site_boundary.yMax());
+        float randomX = rand.nextFloat() * (site_boundary.xMax() - site_boundary.xMin()) + site_boundary.xMin();
+        float randomY = rand.nextFloat() * (site_boundary.yMax() - site_boundary.yMin()) + site_boundary.yMin();
         TaggedPoint random = new TaggedPoint(randomX, randomY);
         if (site_boundary.containsPoint(random)) {
           control_point_counter++;
