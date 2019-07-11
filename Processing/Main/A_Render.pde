@@ -32,10 +32,8 @@ void render() {
     
     for(Map.Entry e : site_test.getTiles().entrySet()) {
       Tile t = (Tile)e.getValue();
-      noFill(); fill(150); noStroke();
-      pushMatrix(); translate(0, 0, -1);
-      renderTile(t);
-      popMatrix();
+      color col = color(150);
+      renderTile(t, col, -1);
     }
     
     // Draw Zone Voxels
@@ -43,15 +41,25 @@ void render() {
     float hue = 0;
     for(Map.Entry e_z : site_test.getZones().entrySet()) {
       Zone z = (Zone)e_z.getValue();
+      
       for(Map.Entry e_t : z.getTiles().entrySet()) {
         Tile t = (Tile)e_t.getValue();
         colorMode(HSB); color col = color(hue%255, 150, 200);
-        noFill(); fill(col); noStroke();
-        pushMatrix(); translate(0, 0, 0);
-        renderTile(t);
-        popMatrix();
+        renderTile(t, col, 0);
       }
-      hue += 40;
+      
+      // Draw Footprint Voxels
+      //
+      for(Map.Entry e_f : z.getFootprints().entrySet()) {
+        Footprint f = (Footprint)e_f.getValue();
+        
+        for(Map.Entry e_t : f.getTiles().entrySet()) {
+          Tile t = (Tile)e_t.getValue();
+          colorMode(HSB); color col = color(hue%255, 150, 200);
+          renderTile(t, col, 0.5);
+        }
+        hue += 40;
+      }
     }
   
   }
@@ -154,7 +162,11 @@ void render() {
   if(cam3D) cam3D(); // sets back to 3D camera, if in 3D mode
 }
 
-void renderTile(Tile t) {
+void renderTile(Tile t, color col, float z_offset) {
+  
+  fill(col); noStroke();
+  pushMatrix(); translate(0, 0, z_offset);
+  
   if (viewModel.equals("DOT")) {
     ellipse(t.location.x, t.location.y, 0.75*t.scale, 0.75*t.scale);
   } else if (viewModel.equals("VOXEL")) {
@@ -166,4 +178,6 @@ void renderTile(Tile t) {
   } else {
     ellipse(t.location.x, t.location.y, 0.75*t.scale, 0.75*t.scale);
   }
+  
+  popMatrix();
 }

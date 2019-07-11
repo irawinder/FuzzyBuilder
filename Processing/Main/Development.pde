@@ -2,7 +2,9 @@
 // all extend TileArray() class!
 
 import java.util.Map;
+import java.util.List;
 import java.lang.Math;
+import java.util.Random;
 
 // A Site is a TileArray the represents piece of land that can be divided into zones
 //
@@ -128,6 +130,46 @@ class Zone extends TileArray {
     super(name);
     footprint = new HashMap<String, Footprint>();
   }
+  
+  public void makeFootprints() {
+    
+    clearFootprints();
+    
+    // Initialize Footprints
+    Footprint building = new Footprint(this.name + ": Building");
+    Footprint setback = new Footprint(this.name + ": Setback");
+    
+    // Add tiles that are not at edge of zone
+    for (Map.Entry e_z : getTiles().entrySet()) {
+      Tile t = (Tile)e_z.getValue();
+      if (getNeighbors(t).size() < 7) { // Tile is not an edge
+        building.addTile(t);
+      } else {
+        setback.addTile(t);
+      }
+    }
+    
+    println(coverageRatio());
+    
+    // Add footprints to HashMap
+    footprint.put(building.name, building);
+    footprint.put(setback.name, setback);
+  }
+  
+  // return ratio of 
+  float coverageRatio() {
+    return (float)getFootprints().size() / getTiles().size();
+  }
+  
+  // Return Footprints
+  public HashMap<String, Footprint> getFootprints() {
+    return footprint;
+  }
+  
+  // Clear All Footprints
+  public void clearFootprints() {
+    footprint.clear();
+  }
 }
 
 // A Footprint is a type of compartment that we 
@@ -143,7 +185,7 @@ class Footprint extends TileArray {
   }
 }
 
-// A Base is a building component that rests on the ground
+// A Base is a building component that rests on a Footprint
 //
 class Base extends TileArray {
   
@@ -169,7 +211,7 @@ class Tower extends TileArray {
   }
 }
 
-// A Floor is a subcompenent of a Base or Podium
+// A Floor is a subcompenent of a Base or Tower
 //
 class Floor extends TileArray {
   

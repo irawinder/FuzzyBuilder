@@ -1,3 +1,5 @@
+import java.util.Random;
+
 // Initialize Front End:
 
     // Point that is currently selected or hovering;
@@ -20,10 +22,11 @@
     void initRender() {
       cam3D = true;
       viewModel = "DOT";
-      addPoint = false;
-      removePoint = false;
       showTiles = true;
       showPolygons = true;
+      
+      addPoint = false;
+      removePoint = false;
     }
 
 // Initialize Backend:
@@ -39,19 +42,13 @@
     // Update model state?
     boolean site_change_detected;
     boolean zone_change_detected;
+    boolean foot_change_detected;
     
     void initModel() {
       
       // Init Vector Site Polygon
       site_boundary = new Polygon();
       site_boundary.randomShape(400, 200, 5, 100, 200);
-      
-      // Init Raster-like Site Voxels
-      site_test = new Site("Site_Test");
-      tile_size = 10;
-      tile_translation = new Point(0,0);
-      tile_rotation = 0;
-      site_test.makeTiles(site_boundary, tile_size, "pixels", tile_rotation, tile_translation);
       
       // Init Control Points
       control_point_counter = 0;
@@ -69,12 +66,18 @@
         }
       }
       
-      // Init Voronoi Zones
-      site_test.makeZones(control_points);
+      // Init Raster-like Site Voxels
+      site_test = new Site("Site_Test");
+      tile_size = 10;
+      tile_translation = new Point(0,0);
+      tile_rotation = 0;
       
       // Update model state?
-      site_change_detected = false;
-      zone_change_detected = false;
+      site_change_detected = true;
+      zone_change_detected = true;
+      foot_change_detected = true;
+      
+      updateModel();
     }
 
 // Update Backend:
@@ -82,14 +85,37 @@
     void updateModel() {
       
       if(site_change_detected) {
-        site_test.makeTiles(site_boundary, tile_size, "pixels", tile_rotation, tile_translation);
-        site_test.makeZones(control_points);
+        initSite();
+        initZones();
+        initFootprints();
         site_change_detected = false;
       }
       
       if(zone_change_detected) {
-        // Init Voronoi Zones
-        site_test.makeZones(control_points);
+        initZones();
+        initFootprints();
         zone_change_detected = false;
+      }
+      
+      if(foot_change_detected) {
+        initFootprints();
+        foot_change_detected = false;
+      }
+    }
+    
+    void initSite() {
+      site_test.makeTiles(site_boundary, tile_size, "pixels", tile_rotation, tile_translation);
+    }
+    
+    void initZones() {
+      // Init Voronoi Zones
+      site_test.makeZones(control_points);
+    }
+    
+    void initFootprints() {
+      // Init Footprints
+      for(Map.Entry e : site_test.getZones().entrySet()) {
+        Zone z = (Zone)e.getValue();
+        z.makeFootprints();
       }
     }

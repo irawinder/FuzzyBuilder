@@ -21,6 +21,7 @@ void listen() {
   } else {
     hovering = pointAtMouse();
   }
+  
   if(mousePressed && selected != null) {
     if(cam3D) {
       Point new_location = newPointAtMouse();
@@ -198,9 +199,10 @@ void addControlPoint(float x, float y) {
   TaggedPoint new_zone = new TaggedPoint(x, y);
   new_zone.setTag(name);
   control_points.add(new_zone);
-  site_test.makeZones(control_points);
+  zone_change_detected = true;
 }
 
 void removeControlPoint(TaggedPoint point) {
   control_points.remove(point);
+  zone_change_detected = true;
 }
