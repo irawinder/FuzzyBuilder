@@ -136,29 +136,31 @@ class Zone extends TileArray {
     clearFootprints();
     
     // Initialize Footprints
-    Footprint building = new Footprint(this.name + ": Building");
-    Footprint setback = new Footprint(this.name + ": Setback");
+    Footprint building = new Footprint("Building");
+    Footprint setback = new Footprint("Setback");
     
     // Add tiles that are not at edge of zone
     for (Map.Entry e_z : getTiles().entrySet()) {
       Tile t = (Tile)e_z.getValue();
-      if (getNeighbors(t).size() < 7) { // Tile is not an edge
+      if (getNeighbors(t).size() > 7) { // Tile is not an edge
         building.addTile(t);
       } else {
         setback.addTile(t);
       }
     }
     
-    println(coverageRatio());
-    
     // Add footprints to HashMap
     footprint.put(building.name, building);
     footprint.put(setback.name, setback);
+    
+    println(coverageRatio());
   }
   
-  // return ratio of 
+  // return ratio of built area footprint to zone area
   float coverageRatio() {
-    return (float)getFootprints().size() / getTiles().size();
+    float buildingTiles = (float)footprint.get("Building").getTiles().size();
+    float zoneTiles = getTiles().size();
+    return buildingTiles / zoneTiles;
   }
   
   // Return Footprints
