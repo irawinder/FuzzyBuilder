@@ -145,11 +145,11 @@ void keyPressed() {
       site_change_detected = true;
       break;
     case '}':
-      tile_rotation -= 0.1;
+      tile_rotation += 0.1;
       site_change_detected = true;;
       break;
     case '{':
-      tile_rotation += 0.1;
+      tile_rotation -= 0.1;
       site_change_detected = true;
       break;
     case 't':
