@@ -88,17 +88,20 @@ import java.util.Random;
         initSite();
         initZones();
         initFootprints();
+        initBase();
         site_change_detected = false;
       }
       
       if(zone_change_detected) {
         initZones();
         initFootprints();
+        initBase();
         zone_change_detected = false;
       }
       
       if(foot_change_detected) {
         initFootprints();
+        initBase();
         foot_change_detected = false;
       }
     }
@@ -117,5 +120,16 @@ import java.util.Random;
       for(Map.Entry e : site_test.getChildren().entrySet()) {
         NestedTileArray zone = (NestedTileArray)e.getValue();
         zone.makeFootprints();
+      }
+    }
+    
+    void initBase() {
+      // Init Base
+      for(Map.Entry e_z : site_test.getChildren().entrySet()) {
+        NestedTileArray zone = (NestedTileArray)e_z.getValue();
+        for(Map.Entry e_f : zone.getChildren().entrySet()) {
+          NestedTileArray footprint = zone.childrenMap.get(zone.name + ": Building");
+          footprint.makeBase(-2, 4);
+        }
       }
     }

@@ -38,26 +38,41 @@ void render() {
     
     float hue = 0;
     
+    // Cycle Through Zones
     for(Map.Entry e_z : site_test.getChildren().entrySet()) {
       NestedTileArray zone = (NestedTileArray)e_z.getValue();
       
       // Draw Zone Voxels
       //
-      for(Map.Entry e_t : zone.getTiles().entrySet()) {
-        Tile t = (Tile)e_t.getValue();
+      for(Map.Entry e : zone.getTiles().entrySet()) {
+        Tile t = (Tile)e.getValue();
         colorMode(HSB); color col = color(hue%255, 150, 200);
         renderTile(t, col, 0);
       }
       
-      // Draw Footprint Voxels
-      //
+      // Cycle Through Footprints
       for(Map.Entry e_f : zone.getChildren().entrySet()) {
-        NestedTileArray f = (NestedTileArray)e_f.getValue();
+        NestedTileArray footprint = (NestedTileArray)e_f.getValue();
         
-        for(Map.Entry e_t : f.getTiles().entrySet()) {
-          Tile t = (Tile)e_t.getValue();
+        // Draw Footprint Voxels
+        //
+        for(Map.Entry e : footprint.getTiles().entrySet()) {
+          Tile t = (Tile)e.getValue();
           colorMode(HSB); color col = color(hue%255, 150, 200);
           renderTile(t, col, 0.5);
+        }
+        
+        // Cycle Through Bases
+        for(Map.Entry e_b : footprint.getChildren().entrySet()) {
+          NestedTileArray base = (NestedTileArray)e_b.getValue();
+          
+          // Draw Base Voxels
+          //
+          for(Map.Entry e : base.getTiles().entrySet()) {
+            Tile t = (Tile)e.getValue();
+            colorMode(HSB); color col = color(hue%255, 150, 200);
+            renderTile(t, col, 0.5);
+          }
         }
         hue += 40;
       }
@@ -166,18 +181,15 @@ void render() {
 void renderTile(Tile t, color col, float z_offset) {
   
   fill(col); noStroke();
-  pushMatrix(); translate(0, 0, z_offset);
+  pushMatrix(); translate(t.location.x, t.location.y, 5*t.location.z + z_offset);
   
   if (viewModel.equals("DOT")) {
-    ellipse(t.location.x, t.location.y, 0.75*t.scale, 0.75*t.scale);
+    ellipse(0, 0, 0.75*t.scale, 0.75*t.scale);
   } else if (viewModel.equals("VOXEL")) {
-    pushMatrix(); 
-    translate(t.location.x, t.location.y); rotate(tile_rotation);
-    rectMode(CENTER); 
-    rect(0, 0, 0.75*t.scale, 0.75*t.scale);
-    popMatrix();
+    rotate(tile_rotation);
+    rectMode(CENTER); rect(0, 0, 0.75*t.scale, 0.75*t.scale);
   } else {
-    ellipse(t.location.x, t.location.y, 0.75*t.scale, 0.75*t.scale);
+    ellipse(0, 0, 0.75*t.scale, 0.75*t.scale);
   }
   
   popMatrix();

@@ -6,7 +6,7 @@ class Tile {
   Point location;
   
   // Integer coordinates of tile
-  int u, v;
+  int u, v, w;
   
   // How many units a tile represents 
   // i.e. [units/tile]
@@ -27,10 +27,17 @@ class Tile {
     this.location = p;
     this.u = u;
     this.v = v;
-    id = u + "," + v;
+    this.w = 0;
+    id = u + "," + v + "," + w;
     type = null;
     scale = 1.0;
     scale_unit = "";
+  }
+  
+  // Construct Tile
+  Tile(int u, int v, int w, Point p) {
+    this(u, v, p);
+    this.w = w;
   }
   
   // Define the scale of the tile
@@ -46,6 +53,6 @@ class Tile {
   
   @Override
   public String toString() {
-      return type + " Tile[" + u + "," + v +"] at " + location;
+      return type + " Tile[" + u + "," + v + "," + w + "] at " + location;
   }
 }
