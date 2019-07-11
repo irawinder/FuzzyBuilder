@@ -9,13 +9,15 @@ class TileArray {
   
   // Name and Type of TileArray
   public String name;
+  public String type;
   
   // Collection of Tiles
   private HashMap<String, Tile> tile;
   
   // Construct Empty TileArray
-  public TileArray(String name) {
+  public TileArray(String name, String type) {
     this.name = name;
+    this.type = type;
     tile = new HashMap<String, Tile>();
   }
   

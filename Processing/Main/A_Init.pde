@@ -15,6 +15,9 @@ import java.util.Random;
     // Hide or Show Tiles or Polygons
     boolean showTiles, showPolygons;
     
+    // Hide or Show TileArray Nest Layers
+    boolean showSite, showZones, showFootprints, showBases, showTowers, showFloors, showRooms;
+    
     // Is there a specific view mode?
     String viewModel;
     
@@ -22,8 +25,8 @@ import java.util.Random;
     void initRender() {
       cam3D = true;
       viewModel = "DOT";
-      showTiles = true;
-      showPolygons = true;
+      
+      buildingZoneState();
       
       addPoint = false;
       removePoint = false;
@@ -36,7 +39,7 @@ import java.util.Random;
     Polygon site_boundary;
     ArrayList<TaggedPoint> control_points;
     int control_point_counter;
-    float tile_size, tile_rotation;
+    float tileW, tileH, tile_rotation;
     Point tile_translation;
     
     // Update model state?
@@ -67,8 +70,9 @@ import java.util.Random;
       }
       
       // Init Raster-like Site Voxels
-      site_test = new NestedTileArray("Site_Test");
-      tile_size = 10;
+      site_test = new NestedTileArray("Site_Test", "site");
+      tileW = 15.0;
+      tileH = 3.0;
       tile_translation = new Point(0,0);
       tile_rotation = 0;
       
@@ -107,7 +111,7 @@ import java.util.Random;
     }
     
     void initSite() {
-      site_test.makeTiles(site_boundary, tile_size, "pixels", tile_rotation, tile_translation);
+      site_test.makeTiles(site_boundary, tileW, tileH, "meters", tile_rotation, tile_translation);
     }
     
     void initZones() {
@@ -129,7 +133,7 @@ import java.util.Random;
         NestedTileArray zone = (NestedTileArray)e_z.getValue();
         for(Map.Entry e_f : zone.getChildren().entrySet()) {
           NestedTileArray footprint = zone.childrenMap.get(zone.name + ": Building");
-          footprint.makeBase(-2, 4);
+          footprint.makeBase(-2, 4, 5.0);
         }
       }
     }

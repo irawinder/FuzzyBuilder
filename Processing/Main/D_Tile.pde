@@ -10,7 +10,7 @@ class Tile {
   
   // How many units a tile represents 
   // i.e. [units/tile]
-  float scale;
+  float scale_uv, scale_w;
   String scale_unit;
   
   // Unique Tile ID, composite of integer coordinates
@@ -23,26 +23,27 @@ class Tile {
   ArrayList<String> adjacent;
   
   // Construct Tile
-  Tile(int u, int v, Point p) {
+  Tile(int u, int v, int w, Point p) {
     this.location = p;
     this.u = u;
     this.v = v;
-    this.w = 0;
+    this.w = w;
     id = u + "," + v + "," + w;
     type = null;
-    scale = 1.0;
+    scale_uv = 1.0;
+    scale_w = 0.5;
     scale_unit = "";
   }
   
   // Construct Tile
-  Tile(int u, int v, int w, Point p) {
-    this(u, v, p);
-    this.w = w;
+  Tile(int u, int v, Point p) {
+    this(u, v, 0, p);
   }
   
   // Define the scale of the tile
-  public void setScale(float scale, String unit) {
-    this.scale = scale;
+  public void setScale(float scale_uv, float scale_w, String unit) {
+    this.scale_uv = scale_uv;
+    this.scale_w = scale_w;
     this.scale_unit = unit;
   }
   

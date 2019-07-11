@@ -2,11 +2,78 @@
 
 void cam3D() {
   camera(200, 400, 200, 400, 200, 0, 0, 0, -1); 
-  lights();
+  lights(); colorMode(HSB); pointLight(0, 0, 100, 150, 150, 150);
 } 
 
 void cam2D() {
   camera(); noLights(); perspective();
+}
+
+void siteState() {
+  // Site Layer State
+  offState();
+  showTiles = true;
+  showPolygons = true;
+  showSite = true;
+}
+
+void zoneState() {
+  // Zone Layer State
+  offState();
+  showTiles = true;
+  showZones = true;
+}
+
+void footprintState() {
+  // Footprint Layer State
+  offState();
+  showTiles = true;
+  showFootprints = true;
+}
+
+void buildingZoneState() {
+  // Building + Zone Layer State
+  offState();
+  showTiles = true;
+  showZones = true;
+  showBases = true;
+}
+
+void buildingState() {
+  // Building Layer State
+  offState();
+  showTiles = true;
+  showPolygons = true;
+  showBases = true;
+  showTowers = true;
+}
+
+void floorState() {
+  // Floor Layer State
+  offState();
+  showTiles = true;
+  showPolygons = true;
+  showFloors = true;
+}
+
+void roomState() {
+  // Room Layer State
+  offState();
+  showTiles = true;
+  showPolygons = true;
+  showRooms = true;
+}
+
+void offState() {
+  showTiles = false;
+  showPolygons = false;
+  showSite = false;
+  showZones = false;
+  showFootprints = false;
+  showBases = false;
+  showTowers = false;
+  showFloors = false;
+  showRooms = false;
 }
 
 void render() {
@@ -15,25 +82,16 @@ void render() {
   
   background(255);
   
-  // Draw Vector Polygon
-  //
-  if (showPolygons) {
-    fill(245); stroke(235); strokeWeight(1);
-    pushMatrix(); translate(0, 0, -2);
-    beginShape();
-    for(Point p : site_boundary.vertex) vertex(p.x, p.y);
-    endShape(CLOSE);
-    popMatrix();
-  }
-  
-  // Draw Site Voxels
-  //
   if (showTiles) {
     
-    for(Map.Entry e : site_test.getTiles().entrySet()) {
-      Tile t = (Tile)e.getValue();
-      color col = color(150);
-      renderTile(t, col, -1);
+    // Draw Site Voxels
+    //
+    if (showSite) {
+      for(Map.Entry e : site_test.getTiles().entrySet()) {
+        Tile t = (Tile)e.getValue();
+        color col = color(0, 50);
+        renderTile(t, col, -1);
+      }
     }
     
     float hue = 0;
@@ -44,10 +102,12 @@ void render() {
       
       // Draw Zone Voxels
       //
-      for(Map.Entry e : zone.getTiles().entrySet()) {
-        Tile t = (Tile)e.getValue();
-        colorMode(HSB); color col = color(hue%255, 150, 200);
-        renderTile(t, col, 0);
+      if (showZones) {
+        for(Map.Entry e : zone.getTiles().entrySet()) {
+          Tile t = (Tile)e.getValue();
+          colorMode(HSB); color col = color(hue%255, 150, 200, 150);
+          renderTile(t, col, 0);
+        }
       }
       
       // Cycle Through Footprints
@@ -56,10 +116,13 @@ void render() {
         
         // Draw Footprint Voxels
         //
-        for(Map.Entry e : footprint.getTiles().entrySet()) {
-          Tile t = (Tile)e.getValue();
-          colorMode(HSB); color col = color(hue%255, 150, 200);
-          renderTile(t, col, 0.5);
+        if (showFootprints) {
+          for(Map.Entry e : footprint.getTiles().entrySet()) {
+            Tile t = (Tile)e.getValue();
+            colorMode(HSB); color col = color(hue%255, 150, 200, 255);
+            if(footprint.type.equals("building")) col = color(175);
+            renderTile(t, col, 0.5);
+          }
         }
         
         // Cycle Through Bases
@@ -68,27 +131,32 @@ void render() {
           
           // Draw Base Voxels
           //
-          for(Map.Entry e : base.getTiles().entrySet()) {
-            Tile t = (Tile)e.getValue();
-            colorMode(HSB); color col = color(hue%255, 150, 200);
-            renderTile(t, col, 0.5);
+          if (showBases) {
+            for(Map.Entry e : base.getTiles().entrySet()) {
+              Tile t = (Tile)e.getValue();
+              colorMode(HSB); color col = color(hue%255, 150, 200, 150);
+              renderVoxel(t, col, 0);
+            }
           }
         }
-        hue += 40;
       }
+      hue += 40;
     }
   
   }
   
-  // Draw Tagged Control Points
+  // Draw Vector Polygon
   //
-  for (TaggedPoint p : control_points) {
-    fill(0); stroke(0); strokeWeight(1);
-    pushMatrix(); translate(0, 0, 1);
-    line(p.x-5, p.y, p.x+5, p.y);
-    line(p.x, p.y-5, p.x, p.y+5);
-    popMatrix();
+  fill(225, 200); noStroke(); 
+  if (showPolygons) {
+    stroke(0, 50); 
+    strokeWeight(1);
   }
+  pushMatrix(); translate(0, 0, -2);
+  beginShape();
+  for(Point p : site_boundary.vertex) vertex(p.x, p.y);
+  endShape(CLOSE);
+  popMatrix();
   
   hint(DISABLE_DEPTH_TEST);
   
@@ -112,6 +180,17 @@ void render() {
     if(cam3D) cam3D(); // sets back to 3D camera, if in 3D mode
   }
   
+  // Draw Tagged Control Points
+  //
+  for (TaggedPoint p : control_points) {
+    fill(150, 100); stroke(0, 150); strokeWeight(1);
+    pushMatrix(); translate(0, 0, 1);
+    ellipse(p.x, p.y, 10, 10);
+    line(p.x-5, p.y, p.x+5, p.y);
+    line(p.x, p.y-5, p.x, p.y+5);
+    popMatrix();
+  }
+  
   // Draw Hovering Control Point
   //
   if (hovering != null) {
@@ -123,7 +202,7 @@ void render() {
       colorMode(RGB); 
       col = color(0, 255, 00);
     }
-    stroke(col); strokeWeight(3);
+    stroke(col); strokeWeight(2);
     pushMatrix(); translate(0, 0, 1);
     line(hovering.x-5, hovering.y, hovering.x+5, hovering.y);
     line(hovering.x, hovering.y-5, hovering.x, hovering.y+5);
@@ -180,17 +259,30 @@ void render() {
 
 void renderTile(Tile t, color col, float z_offset) {
   
+  float scaler = 0.85;
+  
   fill(col); noStroke();
-  pushMatrix(); translate(t.location.x, t.location.y, 5*t.location.z + z_offset);
+  pushMatrix(); translate(t.location.x, t.location.y, t.location.z + z_offset);
   
   if (viewModel.equals("DOT")) {
-    ellipse(0, 0, 0.75*t.scale, 0.75*t.scale);
+    ellipse(0, 0, scaler*t.scale_uv, scaler*t.scale_uv);
   } else if (viewModel.equals("VOXEL")) {
     rotate(tile_rotation);
-    rectMode(CENTER); rect(0, 0, 0.75*t.scale, 0.75*t.scale);
+    rectMode(CENTER); rect(0, 0, scaler*t.scale_uv, scaler*t.scale_uv);
   } else {
-    ellipse(0, 0, 0.75*t.scale, 0.75*t.scale);
+    ellipse(0, 0, scaler*t.scale_uv, scaler*t.scale_uv);
   }
   
+  popMatrix();
+}
+
+void renderVoxel(Tile t, color col, float z_offset) {
+  
+  float scaler = 0.85;
+  
+  fill(col); noStroke();
+  pushMatrix(); translate(t.location.x, t.location.y, t.location.z + z_offset + 0.5*t.scale_w);
+  rotate(tile_rotation);
+  box(scaler*t.scale_uv, scaler*t.scale_uv, scaler*t.scale_w);
   popMatrix();
 }

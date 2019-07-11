@@ -116,12 +116,6 @@ void keyPressed() {
     case 'm':
       cam3D = !cam3D;
       break;
-    case 't':
-      showTiles = !showTiles;
-      break;
-    case 'p':
-      showPolygons = !showPolygons;
-      break;
     case 'v':
       if (viewModel.equals("DOT")) {
         viewModel = "VOXEL";
@@ -130,11 +124,11 @@ void keyPressed() {
       }
       break;
     case '-':
-      if (tile_size > 1) tile_size--;
+      if (tileW > 1) tileW--;
       site_change_detected = true;;
       break;
     case '+':
-      if (tile_size < 50) tile_size++;
+      if (tileW < 50) tileW++;
       site_change_detected = true;
       break;
     case '[':
@@ -152,6 +146,33 @@ void keyPressed() {
     case '{':
       tile_rotation += 0.1;
       site_change_detected = true;
+      break;
+    case 't':
+      showTiles = !showTiles;
+      break;
+    case 'p':
+      showPolygons = !showPolygons;
+      break;
+    case '1':
+      siteState();
+      break;
+    case '2':
+      zoneState();
+      break;
+    case '3':
+      footprintState();
+      break;
+    case '4':
+      buildingZoneState();
+      break;
+    case '5':
+      buildingState();
+      break;
+    case '6':
+      floorState();
+      break;
+    case '7':
+      roomState();
       break;
   }
   

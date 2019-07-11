@@ -8,8 +8,8 @@ class NestedTileArray extends TileArray{
   private HashMap<String, NestedTileArray> childrenMap;
   //private ArrayList<NestedTileArray> childrenList;
   
-  NestedTileArray(String name) {
-    super(name);
+  NestedTileArray(String name, String type) {
+    super(name, type);
     childrenMap = new HashMap<String, NestedTileArray>();
     //childrenList = new ArrayList<NestedTileArray>();
   }
@@ -27,7 +27,7 @@ class NestedTileArray extends TileArray{
   // Populate a grid of site tiles that fits within
   // an exact vector boundary that defines site
   //
-  public void makeTiles(Polygon boundary, float scale, String units, float rotation, Point translation) {
+  public void makeTiles(Polygon boundary, float scale_uv, float scale_w, String units, float rotation, Point translation) {
     
     clearTiles();
     
@@ -45,17 +45,17 @@ class NestedTileArray extends TileArray{
     boundary_w += easement;
     boundary_h += easement;
     
-    int U = int(boundary_w / scale) + 1;
-    int V = int(boundary_h / scale) + 1;
-    float t_x = translation.x % scale;
-    float t_y = translation.y % scale;
+    int U = int(boundary_w / scale_uv) + 1;
+    int V = int(boundary_h / scale_uv) + 1;
+    float t_x = translation.x % scale_uv;
+    float t_y = translation.y % scale_uv;
     
     for (int u=0; u<U; u++) {
       for (int v=0; v<V; v++) {
         
         // grid coordinates before rotation is applied
-        float x_0 = boundary.xMin() - 0.5*easement + u*scale;
-        float y_0 = boundary.yMin() - 0.5*easement + v*scale;
+        float x_0 = boundary.xMin() - 0.5*easement + u*scale_uv;
+        float y_0 = boundary.yMin() - 0.5*easement + v*scale_uv;
         
         // translate origin, rotate, shift back, then translate
         float sin = (float)Math.sin(rotation);
@@ -70,7 +70,7 @@ class NestedTileArray extends TileArray{
         //
         if(boundary.containsPoint(location)) {
           Tile t = new Tile(u, v, location);
-          t.setScale(scale, units);
+          t.setScale(scale_uv, scale_w, units);
           addTile(t);
         }
       }
@@ -87,7 +87,7 @@ class NestedTileArray extends TileArray{
     // Initialize Zones Based Upon Tagged Point Collection
     for(TaggedPoint p : points) {
       String zone_name = p.getTag();
-      NestedTileArray z = new NestedTileArray(zone_name);
+      NestedTileArray z = new NestedTileArray(zone_name, "zone");
       childrenMap.put(zone_name, z);
     }
     
@@ -122,8 +122,8 @@ class NestedTileArray extends TileArray{
     clearChildren();
     
     // Initialize Footprints
-    NestedTileArray building = new NestedTileArray(this.name + ": Building");
-    NestedTileArray setback = new NestedTileArray(this.name + ": Setback");
+    NestedTileArray building = new NestedTileArray(this.name + ": Building", "building");
+    NestedTileArray setback = new NestedTileArray(this.name + ": Setback", "setback");
     
     // Add tiles that are not at edge of parent TileArray
     for (Map.Entry e : getTiles().entrySet()) {
@@ -142,29 +142,28 @@ class NestedTileArray extends TileArray{
   
   // A Base is a building component that rests on a Footprint
   //
-  public void makeBase(int lowestFloor, int highestFloor) {
+  public void makeBase(int lowestFloor, int highestFloor, float floorHeight) {
     
     clearChildren();
     
     // Initialize Base
-    NestedTileArray base = new NestedTileArray(this.name + ": Base");
+    NestedTileArray base = new NestedTileArray(this.name + ": Base", "base");
     for(Map.Entry e : getTiles().entrySet()) {
       Tile t = (Tile)e.getValue();
       
       for(int i=lowestFloor; i<=highestFloor; i++) {
         if(i==0) {
           base.addTile(t);
-          println(t);
         } else {
-          Point newPoint = new Point(t.location.x, t.location.y, i);
+          Point newPoint = new Point(t.location.x, t.location.y, i*floorHeight);
           Tile newTile = new Tile(t.u, t.v, i, newPoint);
+          newTile.setScale(t.scale_uv, t.scale_w, t.scale_unit);
           base.addTile(newTile);
         }
         
       }
     }
     childrenMap.put(base.name, base);
-    println(base.getTiles().size());
   }
   
   // A Tower is a building component that rests on a Base
