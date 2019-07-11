@@ -31,7 +31,7 @@ import java.util.Random;
 
 // Initialize Backend:
     
-    Site site_test;
+    NestedTileArray site_test;
     
     Polygon site_boundary;
     ArrayList<TaggedPoint> control_points;
@@ -67,7 +67,7 @@ import java.util.Random;
       }
       
       // Init Raster-like Site Voxels
-      site_test = new Site("Site_Test");
+      site_test = new NestedTileArray("Site_Test");
       tile_size = 10;
       tile_translation = new Point(0,0);
       tile_rotation = 0;
@@ -114,8 +114,8 @@ import java.util.Random;
     
     void initFootprints() {
       // Init Footprints
-      for(Map.Entry e : site_test.getZones().entrySet()) {
-        Zone z = (Zone)e.getValue();
-        z.makeFootprints();
+      for(Map.Entry e : site_test.getChildren().entrySet()) {
+        NestedTileArray zone = (NestedTileArray)e.getValue();
+        zone.makeFootprints();
       }
     }

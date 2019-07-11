@@ -36,13 +36,14 @@ void render() {
       renderTile(t, col, -1);
     }
     
-    // Draw Zone Voxels
-    //
     float hue = 0;
-    for(Map.Entry e_z : site_test.getZones().entrySet()) {
-      Zone z = (Zone)e_z.getValue();
+    
+    for(Map.Entry e_z : site_test.getChildren().entrySet()) {
+      NestedTileArray zone = (NestedTileArray)e_z.getValue();
       
-      for(Map.Entry e_t : z.getTiles().entrySet()) {
+      // Draw Zone Voxels
+      //
+      for(Map.Entry e_t : zone.getTiles().entrySet()) {
         Tile t = (Tile)e_t.getValue();
         colorMode(HSB); color col = color(hue%255, 150, 200);
         renderTile(t, col, 0);
@@ -50,8 +51,8 @@ void render() {
       
       // Draw Footprint Voxels
       //
-      for(Map.Entry e_f : z.getFootprints().entrySet()) {
-        Footprint f = (Footprint)e_f.getValue();
+      for(Map.Entry e_f : zone.getChildren().entrySet()) {
+        NestedTileArray f = (NestedTileArray)e_f.getValue();
         
         for(Map.Entry e_t : f.getTiles().entrySet()) {
           Tile t = (Tile)e_t.getValue();
@@ -141,9 +142,9 @@ void render() {
     String summary = "";
     summary += "View Model: " + viewModel;
     summary += "\n" + site_test;
-    for(Map.Entry e : site_test.getZones().entrySet()) {
-      Zone z = (Zone)e.getValue();
-      summary += "\n" + z;
+    for(Map.Entry e : site_test.getChildren().entrySet()) {
+      NestedTileArray zone = (NestedTileArray)e.getValue();
+      summary += "\n" + zone;
     }
     text(summary, width - 225, 10);
   }
