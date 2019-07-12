@@ -107,7 +107,7 @@ void render() {
       // Draw Zones
       //
       if (showZones && space.type.equals("zone")) {
-        colorMode(HSB); color col = color(space.hue%255, 100, 225);
+        colorMode(HSB); color col = color(space.hue, 100, 225);
         for(Tile t : space.tileList()) renderTile(t, col, -1);
       }
       
@@ -116,9 +116,9 @@ void render() {
       if (showFootprints && space.type.equals("footprint")) {
         colorMode(HSB); color col;
         if(space.name.equals("Building")) {
-          col = color(space.hue%255, 150, 150);
+          col = color(space.hue, 150, 150);
         } else {
-          col = color(space.hue%255, 100, 225);
+          col = color(space.hue, 100, 225);
         }
         for(Tile t : space.tileList()) renderTile(t, col, -1);
       }
@@ -126,9 +126,10 @@ void render() {
       // Draw Bases
       //
       if (showBases && space.type.equals("base")) {
-        colorMode(HSB); color col = color(space.hue%255, 150, 200);
+        colorMode(HSB); color col = color(space.hue, 150, 200);
         for(Tile t : space.tileList()) {
-          if(t.location.z == 0 || cam3D) { // only draws ground plane if in 2D view mode
+          // Only draws ground plane if in 2D view mode
+          if(t.location.z == 0 || cam3D) { 
             renderVoxel(t, col, 0);
           }
         }
