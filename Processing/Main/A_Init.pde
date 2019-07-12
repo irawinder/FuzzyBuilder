@@ -114,7 +114,8 @@ import java.util.Random;
     }
     
     void initSite() {
-      site_test.makeTiles(site_boundary, tileW, tileH, "pixels", tile_rotation, tile_translation);
+      // Init Site from Polygon
+      site_test.makeSite(site_boundary, tileW, tileH, "pixels", tile_rotation, tile_translation);
     }
     
     void initZones() {
@@ -133,8 +134,11 @@ import java.util.Random;
       // Init Base
       int i = 0;
       for(NestedTileArray zone : site_test.childList()) {
-        NestedTileArray footprint = zone.getChild("Building");
-        footprint.makeBase(min(0, -4 + i), i);
-        i++;
+        for(NestedTileArray foot : zone.childList()) {
+          if(foot.name.equals("Building")) {
+            foot.makeBase(min(0, -4 + i), i);
+            i++;
+          }
+        }
       }
     }

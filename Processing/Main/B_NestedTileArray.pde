@@ -1,5 +1,4 @@
 import java.util.Map;
-import java.lang.Math;
 
 // NestedTileArray allows TileArrays within TileArrays, indefinitely
 //
@@ -39,6 +38,12 @@ class NestedTileArray extends TileArray{
   // Return TileArray of certain name
   public NestedTileArray getChild(String childKey) {
     return childMap.get(childKey);
+  }
+  
+  // Create a set of tiles that fit the vector site
+  //
+  public void makeSite(Polygon boundary, float scale_uv, float scale_w, String units, float rotation, Point translation) {
+    makeTiles(site_boundary, tileW, tileH, "pixels", tile_rotation, tile_translation);
   }
   
   // Subdivide the site into Zones that are defined
