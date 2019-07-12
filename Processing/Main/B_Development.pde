@@ -12,12 +12,14 @@ class Development {
   
   // Dictionary for collection of ControlPoints that compose development
   private HashMap<String, ArrayList<ControlPoint>> pointMap;
+  private ArrayList<ArrayList<ControlPoint>> pointList;
   
   Development(String name) {
     this.name = name;
     spaceMap = new HashMap<String, TileArray>();
     spaceList = new ArrayList<TileArray>();
     pointMap = new HashMap<String, ArrayList<ControlPoint>>();
+    pointList = new ArrayList<ArrayList<ControlPoint>>();
   }
   
   Development() {
@@ -38,10 +40,27 @@ class Development {
     return spaceList;
   }
   
+  // Return Point Map
+  public HashMap<String, ArrayList<ControlPoint>> pointMap() {
+    return pointMap;
+  }
+  
+  // Return Point List
+  public ArrayList<ArrayList<ControlPoint>> pointList() {
+    return pointList;
+  }
+  
+  // Return Points for a Space
+  public ArrayList<ControlPoint> getControlPoints(TileArray space) {
+    return pointMap.get(space.hashKey());
+  }
+  
   // Clear All Space
   public void clear() {
     spaceMap.clear();
     spaceList.clear();
+    pointMap.clear();
+    pointList.clear();
   }
   
   // Remove all spaces of a certain type
@@ -60,6 +79,7 @@ class Development {
       spaceMap.remove(space);
       spaceList.remove(space);
       pointMap.remove(space.hashKey());
+      pointList.remove(space.hashKey());
     }
   }
   
@@ -68,6 +88,26 @@ class Development {
     spaceMap.put(space.hashKey(), space);
     spaceList.add(space);
     pointMap.put(space.hashKey(), new ArrayList<ControlPoint>());
+    pointList.add(new ArrayList<ControlPoint>());
+  }
+  
+  // Adds TileArray to Map and List dictionaries
+  public void addSpace(TileArray space, int numControlPoints) {
+    this.addSpace(space);
+    initControlPoints(space, numControlPoints);
+  }
+  
+  // inits N random control points to a space
+  public void initControlPoints(TileArray space, int num ) {
+    
+    // Retrieve the point list for the input space
+    ArrayList<ControlPoint> cPoints = getControlPoints(space);
+    
+    // Generate N points and add them to the list
+    for(int i=0; i<num; i++) {
+      ControlPoint point = space.randomPoint();
+      cPoints.add(point);
+    }
   }
   
   @Override

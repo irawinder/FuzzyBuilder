@@ -139,7 +139,10 @@ import java.util.Random;
       site.makeTiles(site_boundary, tileW, tileH, units, tile_rotation, tile_translation);
       
       // Add new spaces to Development
-      dev.addSpace(site);
+      // include 4 control points
+      dev.addSpace(site, 4);
+      
+      //control_points = dev.getControlPoints(site);
     }
     
     // Subdivide the site into Zones
@@ -187,8 +190,8 @@ import java.util.Random;
           setback.setName("Setback");
           setback.setType(type);
           
-          // Find a courtyard
-          TileArray courtyard = space.getClosestN(ctyd, 2700);
+          //// Find a courtyard
+          TileArray courtyard = space.getClosestN(ctyd, 0);
           courtyard.subtract(setback);
           courtyard.setName(ctyd.getTag());
           courtyard.setType(type);

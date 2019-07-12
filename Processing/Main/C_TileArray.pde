@@ -3,6 +3,7 @@
 
 import java.util.Map;
 import java.util.Collections;
+import java.util.Random;
 
 // A TileArray is a collection of tiles
 //
@@ -323,6 +324,20 @@ class TileArray {
       }
     }
     return extrusion;
+  }
+  
+  // Returns a random control point with a coordinate
+  // at an existing tile in the TileArray
+  //
+  public ControlPoint randomPoint() {
+    ControlPoint random_point = null;
+    if (tileList.size() > 0) {
+      Random rand = new Random();
+      int random_index = rand.nextInt(tileList.size());
+      Tile random_tile = tileList.get(random_index);
+      random_point = new ControlPoint(random_tile.location.x, random_tile.location.y);
+    }
+    return random_point;
   }
   
   @Override
