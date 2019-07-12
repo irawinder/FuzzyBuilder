@@ -117,6 +117,8 @@ void render() {
         colorMode(HSB); color col;
         if(space.name.equals("Building")) {
           col = color(space.hue, 150, 150);
+        } else if(space.name.equals("Courtyard")) {
+          col = color(space.hue, 100, 225);
         } else {
           col = color(space.hue, 100, 225);
         }

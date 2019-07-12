@@ -42,6 +42,8 @@ import java.util.Random;
     Polygon site_boundary;
     String site_name;
     
+    TaggedPoint ctyd;
+    
     ArrayList<TaggedPoint> control_points;
     int control_point_counter;
     float tileW, tileH, tile_rotation;
@@ -75,6 +77,9 @@ import java.util.Random;
           i++;
         }
       }
+      
+      ctyd = new TaggedPoint(400, 200);
+      ctyd.setTag("Courtyard");
       
       // Init Raster-like Site Voxels
       dev_name = "New Development";
@@ -173,7 +178,7 @@ import java.util.Random;
       dev.clearType(type);
       ArrayList<TileArray> new_foot = new ArrayList<TileArray>();
       
-      // Create new Footprints from Zones
+      // Create new Footprints from Zone Space
       for (TileArray space : dev.spaceList()) {
         if (space.type.equals("zone")) {
           
@@ -182,13 +187,21 @@ import java.util.Random;
           setback.setName("Setback");
           setback.setType(type);
           
+          // Find a courtyard
+          TileArray courtyard = space.getClosestN(ctyd, 2700);
+          courtyard.subtract(setback);
+          courtyard.setName(ctyd.getTag());
+          courtyard.setType(type);
+          
           // Building Footprint
           TileArray building = space.getDifference(setback);
+          building.subtract(courtyard);
           building.setName("Building");
           building.setType(type);
           
           new_foot.add(setback);
           new_foot.add(building);
+          new_foot.add(courtyard);
         }
       }
       
