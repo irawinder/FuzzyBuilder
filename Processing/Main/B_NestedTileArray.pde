@@ -30,11 +30,13 @@ class NestedTileArray extends TileArray{
     childList.clear();
   }
   
+  // Adds TileArray to Map and List dictionaries
   public void addChild(NestedTileArray child) {
     childMap.put(child.name, child);
     childList.add(child);
   }
   
+  // Return TileArray of certain name
   public NestedTileArray getChild(String childKey) {
     return childMap.get(childKey);
   }
