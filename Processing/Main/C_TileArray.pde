@@ -81,8 +81,7 @@ class TileArray {
   // Inherit the Tiles from another TileArray
   // so that they share the same location in memory
   public void inheritTiles(TileArray parent) {
-    for(Map.Entry e : parent.getTileMap().entrySet()) {
-      Tile t = (Tile)e.getValue();
+    for(Tile t : parent.getTileList()) {
       addTile(t);
     }
   }

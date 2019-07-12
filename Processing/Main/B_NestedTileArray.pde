@@ -141,8 +141,7 @@ class NestedTileArray extends TileArray{
     NestedTileArray setback = new NestedTileArray("Setback", "footprint");
     
     // Add tiles that are not at edge of parent TileArray
-    for (Map.Entry e : getTileMap().entrySet()) {
-      Tile t = (Tile)e.getValue();
+    for (Tile t : getTileList()) {
       if (getNeighbors(t).size() > 7) { // Tile is not an edge
         building.addTile(t);
       } else {
@@ -163,8 +162,7 @@ class NestedTileArray extends TileArray{
     
     // Initialize Base
     NestedTileArray base = new NestedTileArray("Podium", "base");
-    for(Map.Entry e : getTileMap().entrySet()) {
-      Tile t = (Tile)e.getValue();
+    for (Tile t : getTileList()) {
       
       for(int i=lowestFloor; i<=highestFloor; i++) {
         if(i==0) {
