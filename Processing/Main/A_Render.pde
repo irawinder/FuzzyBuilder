@@ -91,59 +91,60 @@ void offState() {
 }
 
 void render() {
-  
   hint(ENABLE_DEPTH_TEST);
-  
   background(255);
   
   if (showTiles) {
-    
-    // Draw Site Voxels
-    //
-    if (showSite) {
-      color col = color(0, 50);
-      for(Tile t : site_test.tileList()) renderTile(t, col, -1);
-    }
-    
-    // Cycle Through Zones
-    float hue = 0;
-    for(NestedTileArray zone : site_test.childList()) {
+    for (TileArray space : dev.spaceList()) {
       
-      // Draw Zone Voxels
+      // Draw Site Voxels
       //
-      if (showZones) {
-        colorMode(HSB); color col = color(hue%255, 100, 225);
-        for(Tile t : zone.tileList()) renderTile(t, col, 0.5);
+      if (showSite && space.name.equals(site_name)) {
+        color col = color(0, 50);
+        for(Tile t : space.tileList()) renderTile(t, col, -1);
       }
       
-      // Cycle Through Footprints
-      for(NestedTileArray footprint : zone.childList()) {
+      
+      // Cycle Through Zones
+      float hue = 0;
+      for(NestedTileArray zone : site_test.childList()) {
         
-        // Draw Footprint Voxels
+        // Draw Zone Voxels
         //
-        if (showFootprints) {
-          colorMode(HSB); color col;
-          if(footprint.name.equals("Building")) {
-            col = color(hue%255, 150, 150);
-          } else {
-            col = color(hue%255, 100, 225);
-          }
-          for(Tile t : footprint.tileList()) renderTile(t, col, 0.5);
+        if (showZones) {
+          colorMode(HSB); color col = color(hue%255, 100, 225);
+          for(Tile t : zone.tileList()) renderTile(t, col, 0.5);
         }
         
-        // Cycle Through Bases
-        for(NestedTileArray base : footprint.childList()) {
+        // Cycle Through Footprints
+        for(NestedTileArray footprint : zone.childList()) {
           
-          // Draw Base Voxels
+          // Draw Footprint Voxels
           //
-          if (showBases) {
-            colorMode(HSB); color col = color(hue%255, 150, 200);
-            for(Tile t : base.tileList()) if(t.location.z == 0 || cam3D) renderVoxel(t, col, 0);
+          if (showFootprints) {
+            colorMode(HSB); color col;
+            if(footprint.name.equals("Building")) {
+              col = color(hue%255, 150, 150);
+            } else {
+              col = color(hue%255, 100, 225);
+            }
+            for(Tile t : footprint.tileList()) renderTile(t, col, 0.5);
+          }
+          
+          // Cycle Through Bases
+          for(NestedTileArray base : footprint.childList()) {
+            
+            // Draw Base Voxels
+            //
+            if (showBases) {
+              colorMode(HSB); color col = color(hue%255, 150, 200);
+              for(Tile t : base.tileList()) if(t.location.z == 0 || cam3D) renderVoxel(t, col, 0);
+            }
           }
         }
+        // Consectutive zone hues differ by 40
+        hue += 40;
       }
-      // Consectutive zone hues differ by 40
-      hue += 40;
     }
   }
   

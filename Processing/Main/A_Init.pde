@@ -38,10 +38,16 @@ import java.util.Random;
     
     NestedTileArray site_test;
     
+    Development dev;
+    String dev_name;
+    
     Polygon site_boundary;
+    String site_name;
+    
     ArrayList<TaggedPoint> control_points;
     int control_point_counter;
     float tileW, tileH, tile_rotation;
+    String units;
     Point tile_translation;
     
     // Update model state?
@@ -74,8 +80,12 @@ import java.util.Random;
       
       // Init Raster-like Site Voxels
       site_test = new NestedTileArray("Site_Test", "site");
+      dev_name = "New Development";
+      dev = new Development(dev_name);
+      site_name = "New Property";
       tileW = 15.0;
       tileH = 5.0;
+      units = "pixels";
       tile_translation = new Point(0,0);
       tile_rotation = 0;
       
@@ -115,7 +125,10 @@ import java.util.Random;
     
     void initSite() {
       // Init Site from Polygon
-      site_test.makeSite(site_boundary, tileW, tileH, "pixels", tile_rotation, tile_translation);
+      site_test.makeSite(site_boundary, tileW, tileH, units, tile_rotation, tile_translation);
+      
+      dev.addSpace(site_name, "site");
+      dev.getSpace(site_name).makeTiles(site_boundary, tileW, tileH, units, tile_rotation, tile_translation);
     }
     
     void initZones() {
