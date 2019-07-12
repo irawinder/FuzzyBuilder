@@ -204,7 +204,7 @@ class TileArray {
     // Add tiles that are at edge of parent TileArray
     for (Tile t : tileList()) {
       // Tile is on edge of parent cluster (Tile surrounded on all sides has 8 neighbors)
-      if (getNeighbors(t).size() < 8) {
+      if (getNeighbors(t).size() < 7) {
         setback.addTile(t);
       }
     }

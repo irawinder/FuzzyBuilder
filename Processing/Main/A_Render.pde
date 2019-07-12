@@ -2,7 +2,7 @@
 
 void cam3D() {
   camera(200, 400, 200, 400, 200, 0, 0, 0, -1); 
-  lights(); colorMode(HSB); pointLight(0, 0, 100, 150, 150, 150);
+  lights(); colorMode(HSB); pointLight(0, 0, 100, 50, 50, 50);
 } 
 
 void cam2D() {
@@ -108,7 +108,7 @@ void render() {
       //
       if (showZones && space.type.equals("zone")) {
         colorMode(HSB); color col = color(space.hue, 100, 225);
-        //for(Tile t : space.tileList()) renderTile(t, col, -1);
+        for(Tile t : space.tileList()) renderTile(t, col, -1);
       }
       
       // Draw Footprints
@@ -116,13 +116,18 @@ void render() {
       if (showFootprints && space.type.equals("footprint")) {
         colorMode(HSB); color col;
         if(space.name.equals("Building")) {
-          col = color(200);
+          col = color(space.hue, 50, 150);
         } else if(space.name.equals("Setback")) {
-          col = color(space.hue, 100, 225);
+          col = color(space.hue, 50, 225);
         } else {
-          col = color(space.hue, 100, 225);
+          col = color(space.hue, 50, 225);
         }
-        for(Tile t : space.tileList()) renderTile(t, col, -1);
+        for (Tile t : space.tileList()) {
+          renderTile(t, col, -1);
+          if (space.name.substring(0,3).equals("Cou")) {
+            renderVoxel(t, col, -0.5*t.scale_w);
+          }
+        }
       }
       
       // Draw Bases

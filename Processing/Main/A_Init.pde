@@ -216,7 +216,7 @@ import java.util.Random;
       // Create new Bases from Footprints
       for (TileArray space : dev.spaceList()) {
         if (space.name.equals("Building") && space.type.equals("footprint")) {
-          TileArray base = space.getExtrusion(min(0, -4 + i), i);
+          TileArray base = space.getExtrusion(min(0, -1), i);
           base.setName("Podium");
           base.setType(type);
           new_bases.add(base);
