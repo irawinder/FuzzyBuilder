@@ -108,7 +108,7 @@ void render() {
       //
       if (showZones && space.type.equals("zone")) {
         colorMode(HSB); color col = color(space.hue, 100, 225);
-        for(Tile t : space.tileList()) renderTile(t, col, -1);
+        //for(Tile t : space.tileList()) renderTile(t, col, -1);
       }
       
       // Draw Footprints
@@ -116,8 +116,8 @@ void render() {
       if (showFootprints && space.type.equals("footprint")) {
         colorMode(HSB); color col;
         if(space.name.equals("Building")) {
-          col = color(space.hue, 150, 150);
-        } else if(space.name.equals("Courtyard")) {
+          col = color(200);
+        } else if(space.name.equals("Setback")) {
           col = color(space.hue, 100, 225);
         } else {
           col = color(space.hue, 100, 225);

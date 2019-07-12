@@ -3,11 +3,9 @@
 class Control {
   
   private ArrayList<ControlPoint> cPoints;
-  private int point_counter;
   
   Control() {
     cPoints = new ArrayList<ControlPoint>();
-    point_counter = 1;
   }
   
   public ArrayList<ControlPoint> points() {
@@ -47,10 +45,9 @@ class Control {
   // adds a pre-made control point 
   //
   private void addPoint(ControlPoint p, String prefix, String type) {
-    p.setTag(prefix + " " + point_counter);
+    p.setTag(prefix);
     p.setType(type);
     cPoints.add(p);
-    point_counter++;
   }
   
   // Returns a random control point with a coordinate
@@ -62,7 +59,10 @@ class Control {
       Random rand = new Random();
       int random_index = rand.nextInt(space.tileList.size());
       Tile random_tile = space.tileList.get(random_index);
-      random_point = new ControlPoint(random_tile.location.x, random_tile.location.y);
+      float jitter_x = rand.nextFloat() - 0.5;
+      float jitter_y = rand.nextFloat() - 0.5;
+      // jitter helps keep distance-based dictionary entries unique
+      random_point = new ControlPoint(random_tile.location.x + jitter_x, random_tile.location.y + jitter_y);
     }
     return random_point;
   }

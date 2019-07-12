@@ -169,27 +169,27 @@ import java.util.Random;
           setback.setName("Setback");
           setback.setType(type);
           
-          // Find a courtyard
+          // Courtyard Footprint(s)
           float yard_area = 2700;
           ArrayList<TileArray> courtyard = new ArrayList<TileArray>();
           ArrayList<ControlPoint> points = control.points(type);
           for (ControlPoint p : points) {
             if (space.pointInArray(p.x, p.y)) {
               TileArray t = space.getClosestN(p, yard_area);
+              t.subtract(setback);
               t.setName(p.getTag());
               t.setType(type);
-              
               //Subtract other courtyards from current to prevent overlap
               for(TileArray prev : courtyard) t.subtract(prev);
-              
               courtyard.add(t);
             }
           }
           
-          
           // Building Footprint
-          TileArray building = space.getDifference(setback);
-          for(TileArray cy : courtyard) building.subtract(cy);
+          TileArray building = space.getDiff(setback);
+          for(TileArray cy : courtyard) {
+            building.subtract(cy);
+          }
           building.setName("Building");
           building.setType(type);
           
@@ -230,22 +230,30 @@ import java.util.Random;
     
     // Initialize Control Points
     //
+    int zone_counter;
     void initSiteControl() {
+      zone_counter = 1;
       for (TileArray space : dev.spaceList) {
         if (space.type.equals("site")) {
           String point_prefix = "Plot";
-          for (int i=0; i<4; i++) control.addPoint(point_prefix, "zone", space);
+          for (int i=0; i<4; i++) {
+            control.addPoint(point_prefix + " " + zone_counter, "zone", space);
+            zone_counter++;
+          }
         }
       }
     }
     
     // Initialize Control Points
     //
+    int foot_counter;
     void initZoneControl() {
+      foot_counter = 1;
       for (TileArray space : dev.spaceList) {
         // Add Control Point to Zone
         if (space.type.equals("zone")) {
-          String point_prefix = "Courtyard";
+          String point_prefix = "Courtyard " + foot_counter;
+          foot_counter++;
           control.addPoint(point_prefix, "footprint", space);
         }
       }

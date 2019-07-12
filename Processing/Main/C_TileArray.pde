@@ -78,7 +78,7 @@ class TileArray {
     for (Tile t : tileList) {
       float dX = abs(t.location.x - x);
       float dY = abs(t.location.y - y);
-      if (dX < 0.5*t.scale_uv && dY < 0.5*t.scale_uv) {
+      if (dX < 0.51*t.scale_uv && dY < 0.51*t.scale_uv+1) {
         inArray = true;
         break;
       }
@@ -225,6 +225,9 @@ class TileArray {
     // Calculate all distance
     for (Tile t : tileList()) {
       float dist = sqrt( sq(t.location.x - point.x) + sq(t.location.y - point.y) );
+      Random rand = new Random();
+      float jitter = 0.01*rand.nextFloat();
+      dist += jitter; // makes it unlinkely that any two distances will be the same!
       distList.add(dist);
       tiles.put(dist, t);
     }
@@ -253,17 +256,18 @@ class TileArray {
   
   // Returns a new TileArray with child tiles subtracted from parent
   //
-  public TileArray getDifference(TileArray child) {
-    TileArray subtract = new TileArray();
-    subtract.inheritAttributes(this);
+  public TileArray getDiff(TileArray child) {
+    TileArray diff = new TileArray();
+    diff.inheritAttributes(this);
     
     // Unless child tile doesn't exists in parent tile, add parent Tile to new TileArray
+    diff.inheritTiles(this);
     for (Tile t : tileList()) {
-      if (!child.hasTile(t)) {
-        subtract.addTile(t);
+      if (child.hasTile(t)) {
+        diff.removeTile(t);
       }
     }
-    return subtract;
+    return diff;
   }
   
   // Returns a new TileArray with child tiles added to parent

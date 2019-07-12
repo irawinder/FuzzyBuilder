@@ -225,7 +225,8 @@ void mouseReleased() {
 
 void addControlPoint(float x, float y) {
   if (editModel) {
-    control.addPoint("Plot", "zone", x, y);
+    control.addPoint("Plot " + zone_counter, "zone", x, y);
+    zone_counter++;
     zone_change_detected = true;
   }
 }
