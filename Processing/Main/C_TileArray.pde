@@ -2,6 +2,7 @@
 // all use TileArray() class!
 
 import java.util.Map;
+import java.util.Collections;
 
 // A TileArray is a collection of tiles
 //
@@ -192,7 +193,7 @@ class TileArray {
   
   // Returns a TileArray that includes the N closest tiles to a point
   //
-  public TileArray getClosestN(TaggedPoint point, int numTiles) {
+  public TileArray getClosestN(TaggedPoint point, int area) {
     String p_name = point.getTag();
     TileArray closest = new TileArray(p_name, type);
     closest.inheritAttributes(this);
@@ -201,11 +202,32 @@ class TileArray {
     HashMap<Float, Tile> tiles = new HashMap<Float, Tile>();
     ArrayList<Float> distList = new ArrayList<Float>();
     
-    
+    // Calculate all distance
     for (Tile t : tileList()) {
-      //float dist = t.location
-      
+      float dist = sqrt( sq(t.location.x - point.x) + sq(t.location.y - point.y) );
+      distList.add(dist);
+      tiles.put(dist, t);
     }
+    
+    //Sort Distance list in Acending order
+    Collections.sort(distList);
+    
+    if (tileList().size() > 0) {
+      
+      // Calculate how many tiles to add
+      Tile sample = tileList().get(0);
+      int numTiles = area / (int)sq(sample.scale_uv);
+      
+      // Add closest N tiles to new array
+      for(int i=0; i<numTiles; i++) {
+        if (i < tileList.size()) {
+          float dist = distList.get(i);
+          Tile close = tiles.get(dist);
+          closest.addTile(close);
+        }
+      }
+    }
+    
     return closest;
   }
   
@@ -222,6 +244,16 @@ class TileArray {
       }
     }
     return subtract;
+  }
+  
+  // Removes tiles from an existing TileArray
+  //
+  public void subtract(TileArray child) {
+    for (Tile t : child.tileList()) {
+      if (hasTile(t)) {
+        removeTile(t);
+      }
+    }
   }
   
   // Returns a new List of TileArrays generated according to Voronoi logic

@@ -1,5 +1,3 @@
-import java.util.Collections;
-
 class Point {
   public float x, y, z;
   

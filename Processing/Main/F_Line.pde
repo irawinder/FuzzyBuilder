@@ -1,3 +1,5 @@
+import java.util.Collections;
+
 class Line {
   Point o, f;
   
