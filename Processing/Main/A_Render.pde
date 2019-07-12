@@ -175,9 +175,10 @@ void render() {
       }
       if(cam3D) cam2D(); // sets temporarily to 2D camera, if in 3D
       fill(255, 150); stroke(200, 150); strokeWeight(1);
-      rectMode(CENTER); rect(x + 40, y, 50, 15, 5);
+      int textWidth = 7*p.tag.length();
+      rectMode(CORNER); rect(x + 10, y - 7, textWidth, 15, 5);
       fill(50); textAlign(CENTER, CENTER);
-      text(p.tag, x + 40, y - 1);
+      text(p.tag, x + 10 + (int)textWidth/2, y - 1);
       if(cam3D) cam3D(); // sets back to 3D camera, if in 3D mode
     }
     
