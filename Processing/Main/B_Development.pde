@@ -1,6 +1,6 @@
 import java.util.Map;
 
-// An entire development project; (i.e. a dictionary of TileArray spaces)
+// An entire development project; (i.e. a dictionary of TileArray spaces and their ControlPoints)
 //
 class Development {
   
@@ -12,10 +12,6 @@ class Development {
   private HashMap<String, TileArray> spaceMap;
   private ArrayList<TileArray> spaceList;
   
-  // Dictionary for collection of ControlPoints that compose development
-  private HashMap<String, ArrayList<ControlPoint>> pointMap;
-  private ArrayList<ArrayList<ControlPoint>> pointList;
-  
   // Allows for Unique nameing of control points
   int control_point_counter;
   
@@ -23,9 +19,6 @@ class Development {
     this.name = name;
     spaceMap = new HashMap<String, TileArray>();
     spaceList = new ArrayList<TileArray>();
-    pointMap = new HashMap<String, ArrayList<ControlPoint>>();
-    pointList = new ArrayList<ArrayList<ControlPoint>>();
-    control_point_counter = 0;
   }
   
   Development() {
@@ -51,36 +44,10 @@ class Development {
     return spaceMap.get(hashKey);
   }
   
-  // Return Point Map
-  public HashMap<String, ArrayList<ControlPoint>> pointMap() {
-    return pointMap;
-  }
-  
-  // Return Point List
-  public ArrayList<ArrayList<ControlPoint>> pointList() {
-    return pointList;
-  }
-  
-  // Return Points for a Space
-  public ArrayList<ControlPoint> getControlPoints(TileArray space) {
-    return pointMap.get(space.hashKey());
-  }
-  
   // Clear All Space
   public void clearSpaces() {
     spaceMap.clear();
     spaceList.clear();
-    clearPoints();
-  }
-  
-  public void clearPoints() {
-    pointMap.clear();
-    pointList.clear();
-    control_point_counter = 0;
-    
-    for (TileArray space : spaceList) {
-      initPoints(space);
-    }
   }
   
   // Remove all spaces of a certain type
@@ -98,8 +65,6 @@ class Development {
     for (TileArray space : toClear) {
       spaceMap.remove(space);
       spaceList.remove(space);
-      pointMap.remove(space.hashKey());
-      pointList.remove(space.hashKey());
     }
   }
   
@@ -107,41 +72,6 @@ class Development {
   public void addSpace(TileArray space) {
     spaceMap.put(space.hashKey(), space);
     spaceList.add(space);
-    initPoints(space);
-  }
-  
-  // Init Control Point Maps and List
-  private void initPoints(TileArray space) {
-    pointMap.put(space.hashKey(), new ArrayList<ControlPoint>());
-    pointList.add(getControlPoints(space));
-  }
-  
-  // add a random control points to a space
-  public void addControlPoint(TileArray space, String prefix) {
-    ControlPoint point = space.randomPoint();
-    addPointToSpace(space, point, prefix);
-  }
-  
-  // add specific control points to a space
-  public void addControlPoint(TileArray space, String prefix, float x, float y) {
-    ControlPoint point = new ControlPoint(x, y, space.hashKey());
-    addPointToSpace(space, point, prefix);
-    
-  }
-  
-  // assign a known ControlPoint to a space
-  private void addPointToSpace(TileArray space, ControlPoint point, String prefix) {
-    // Retrieve the point list for the input space
-    ArrayList<ControlPoint> cPoints = getControlPoints(space);
-    control_point_counter++;
-    point.setTag(prefix + " " + control_point_counter);
-    cPoints.add(point);
-  }
-  
-  // remove a control points from a space
-  public void removeControlPoint(ControlPoint point) {
-    ArrayList<ControlPoint> cPoints = pointMap.get(point.hashKey);
-    cPoints.remove(point);
   }
   
   @Override

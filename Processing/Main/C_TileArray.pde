@@ -72,6 +72,20 @@ class TileArray {
     return tileMap.get(t.id) != null;
   }
   
+  // Returns true if a point is within the TileArray
+  public boolean pointInArray(float x, float y) {
+    boolean inArray = false;
+    for (Tile t : tileList) {
+      float dX = abs(t.location.x - x);
+      float dY = abs(t.location.y - y);
+      if (dX < 0.5*t.scale_uv && dY < 0.5*t.scale_uv) {
+        inArray = true;
+        break;
+      }
+    }
+    return inArray;
+  }
+  
   // Clear All Tiles
   public void clearTiles() {
     tileMap.clear();
@@ -240,10 +254,10 @@ class TileArray {
   // Returns a new TileArray with child tiles subtracted from parent
   //
   public TileArray getDifference(TileArray child) {
-    TileArray subtract = new TileArray(name, type);
+    TileArray subtract = new TileArray();
     subtract.inheritAttributes(this);
     
-    // If child tile doesn't exists in parent tile, add it to new TileArray
+    // Unless child tile doesn't exists in parent tile, add parent Tile to new TileArray
     for (Tile t : tileList()) {
       if (!child.hasTile(t)) {
         subtract.addTile(t);
@@ -252,12 +266,38 @@ class TileArray {
     return subtract;
   }
   
+  // Returns a new TileArray with child tiles added to parent
+  //
+  public TileArray getSum(TileArray child) {
+    TileArray add = new TileArray();
+    add.inheritAttributes(this);
+    
+    // If parent tile doesn't exists in child TileArray, add child Tile to new TileArray
+    add.inheritTiles(this);
+    for (Tile t : child.tileList()) {
+      if (!hasTile(t)) {
+        add.addTile(t);
+      }
+    }
+    return add;
+  }
+  
   // Removes tiles from an existing TileArray
   //
   public void subtract(TileArray child) {
     for (Tile t : child.tileList()) {
       if (hasTile(t)) {
         removeTile(t);
+      }
+    }
+  }
+  
+  // Add tiles from an existing TileArray
+  //
+  public void add(TileArray child) {
+    for (Tile t : child.tileList()) {
+      if (!hasTile(t)) {
+        addTile(t);
       }
     }
   }
@@ -324,20 +364,6 @@ class TileArray {
       }
     }
     return extrusion;
-  }
-  
-  // Returns a random control point with a coordinate
-  // at an existing tile in the TileArray
-  //
-  public ControlPoint randomPoint() {
-    ControlPoint random_point = null;
-    if (tileList.size() > 0) {
-      Random rand = new Random();
-      int random_index = rand.nextInt(tileList.size());
-      Tile random_tile = tileList.get(random_index);
-      random_point = new ControlPoint(random_tile.location.x, random_tile.location.y, hashKey());
-    }
-    return random_point;
   }
   
   @Override

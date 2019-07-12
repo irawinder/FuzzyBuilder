@@ -7,7 +7,7 @@ import java.util.Random;
     ControlPoint hovering;
     
     // Add or remove point via mouse click
-    boolean editZones, addPoint, removePoint;
+    boolean editModel, addPoint, removePoint;
     
     // Is camera 3D? Otherwise it's 2D;
     boolean cam3D;
@@ -29,7 +29,7 @@ import java.util.Random;
       
       buildingZoneState();
       
-      editZones = true;
+      editModel = true;
       addPoint = false;
       removePoint = false;
     }
@@ -41,6 +41,8 @@ import java.util.Random;
     
     Polygon site_boundary;
     String site_name;
+    
+    Control control;
     
     float tileW, tileH, tile_rotation;
     String units;
@@ -67,10 +69,14 @@ import java.util.Random;
       tile_translation = new Point(0,0);
       tile_rotation = 0;
       
-      // Update model state?
-      site_change_detected = true;
+      control = new Control();
       
-      updateModel();
+      initSite();
+      initSiteControl();
+      initZones();
+      initZoneControl();
+      initFootprints();
+      initBase();
     }
 
 // Update Backend:
@@ -116,10 +122,6 @@ import java.util.Random;
       
       // Add new spaces to Development
       dev.addSpace(site);
-      
-      // Add Control Points to Site
-      String point_prefix = "Plot";
-      for (int i=0; i<4; i++) dev.addControlPoint(site, point_prefix);
     }
     
     // Subdivide the site into Zones
@@ -131,11 +133,10 @@ import java.util.Random;
       dev.clearType(type);
       ArrayList<TileArray> new_zones = new ArrayList<TileArray>();
       
-      // Create new Zones from Sites
+      // Create new Zones from Voronoi Sites
       for (TileArray space : dev.spaceList()) {
         if (space.type.equals("site")) {
-          ArrayList<ControlPoint> pts = dev.getControlPoints(space);
-          ArrayList<TileArray> zones = space.getVoronoi(pts);
+          ArrayList<TileArray> zones = space.getVoronoi(control.points(type));
           int hue = 0;
           for (TileArray zone : zones) {
             zone.setType(type);
@@ -169,21 +170,32 @@ import java.util.Random;
           setback.setType(type);
           
           // Find a courtyard
-          ControlPoint ctyd = new ControlPoint(400, 200, "");
-          TileArray courtyard = space.getClosestN(ctyd, 0);
-          courtyard.subtract(setback);
-          courtyard.setName(ctyd.getTag());
-          courtyard.setType(type);
+          float yard_area = 2700;
+          ArrayList<TileArray> courtyard = new ArrayList<TileArray>();
+          ArrayList<ControlPoint> points = control.points(type);
+          for (ControlPoint p : points) {
+            if (space.pointInArray(p.x, p.y)) {
+              TileArray t = space.getClosestN(p, yard_area);
+              t.setName(p.getTag());
+              t.setType(type);
+              
+              //Subtract other courtyards from current to prevent overlap
+              for(TileArray prev : courtyard) t.subtract(prev);
+              
+              courtyard.add(t);
+            }
+          }
+          
           
           // Building Footprint
           TileArray building = space.getDifference(setback);
-          building.subtract(courtyard);
+          for(TileArray cy : courtyard) building.subtract(cy);
           building.setName("Building");
           building.setType(type);
           
           new_foot.add(setback);
           new_foot.add(building);
-          new_foot.add(courtyard);
+          for(TileArray cy : courtyard) new_foot.add(cy);
         }
       }
       
@@ -214,4 +226,27 @@ import java.util.Random;
       
       // Add new Spaces to Development
       for (TileArray base : new_bases) dev.addSpace(base);
+    }
+    
+    // Initialize Control Points
+    //
+    void initSiteControl() {
+      for (TileArray space : dev.spaceList) {
+        if (space.type.equals("site")) {
+          String point_prefix = "Plot";
+          for (int i=0; i<4; i++) control.addPoint(point_prefix, "zone", space);
+        }
+      }
+    }
+    
+    // Initialize Control Points
+    //
+    void initZoneControl() {
+      for (TileArray space : dev.spaceList) {
+        // Add Control Point to Zone
+        if (space.type.equals("zone")) {
+          String point_prefix = "Courtyard";
+          control.addPoint(point_prefix, "footprint", space);
+        }
+      }
     }

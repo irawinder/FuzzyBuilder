@@ -9,12 +9,12 @@ void listen() {
     cam2D();
   }
   
-  if (editZones) {
+  if (editModel) {
     
     if (addPoint) {
       Point atMouse = newPointAtMouse();
       if (atMouse != null) {
-        ControlPoint ghost = new ControlPoint(atMouse.x, atMouse.y, "");
+        ControlPoint ghost = new ControlPoint(atMouse.x, atMouse.y);
         ghost.setTag("ghost");
         hovering = ghost;
       } else {
@@ -35,6 +35,7 @@ void listen() {
         selected.x = mouseX;
         selected.y = mouseY;
       }
+      
       zone_change_detected = true;
     }
   }
@@ -75,22 +76,20 @@ Point newPointAtMouse() {
 ControlPoint pointAtMouse() {
   ControlPoint closest = null;
   float min_distance = Float.POSITIVE_INFINITY;
-  for (ArrayList<ControlPoint> points : dev.pointList) {
-    for (ControlPoint p : points) {
-      float dist_x, dist_y;
-      if(cam3D) {
-        dist_x = mouseX - screenX(p.x, p.y);
-        dist_y = mouseY - screenY(p.x, p.y);
-      } else {
-        dist_x = mouseX - p.x;
-        dist_y = mouseY - p.y;
-      }
-      float distance = sqrt( sq(dist_x) + sq(dist_y) );
-      if (distance < 15) {
-        if (distance < min_distance) {
-          min_distance = distance;
-          closest = p;
-        }
+  for (ControlPoint p : control.points()) {
+    float dist_x, dist_y;
+    if(cam3D) {
+      dist_x = mouseX - screenX(p.x, p.y);
+      dist_y = mouseY - screenY(p.x, p.y);
+    } else {
+      dist_x = mouseX - p.x;
+      dist_y = mouseY - p.y;
+    }
+    float distance = sqrt( sq(dist_x) + sq(dist_y) );
+    if (distance < 15) {
+      if (distance < min_distance) {
+        min_distance = distance;
+        closest = p;
       }
     }
   }
@@ -103,6 +102,8 @@ void keyPressed() {
   switch(key) {
     case 'r':
       initModel();
+      addPoint = false;
+      removePoint = false;
       break;
     case 'a':
       addPoint = !addPoint;
@@ -113,7 +114,7 @@ void keyPressed() {
       addPoint = false;
       break;
     case 'c':
-      dev.clearPoints();
+      control.clearPoints();
       zone_change_detected = true;
       addPoint = true;
       removePoint = false;
@@ -204,7 +205,7 @@ void keyPressed() {
 
 // Triggered once when any mouse button is pressed
 void mousePressed() {
-  if(editZones) {
+  if(editModel) {
     
     if (addPoint) {
       Point atMouse = newPointAtMouse();
@@ -220,19 +221,19 @@ void mousePressed() {
 
 // Triggered once when any mouse button is released
 void mouseReleased() {
-  if(editZones) selected = null;
+  if(editModel) selected = null;
 }
 
 void addControlPoint(float x, float y) {
-  if (editZones) {
-    dev.addControlPoint(dev.getSpace(dev_name + "/" + site_name), "Plot", x, y);
+  if (editModel) {
+    control.addPoint("Plot", "site", x, y);
     zone_change_detected = true;
   }
 }
 
 void removeControlPoint(ControlPoint point) {
-  if (editZones) {
-    dev.removeControlPoint(point);
+  if (editModel) {
+    control.removePoint(point);
     zone_change_detected = true;
   }
 }

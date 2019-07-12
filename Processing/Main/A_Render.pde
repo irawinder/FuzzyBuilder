@@ -25,7 +25,7 @@ void zoneState() {
   showSite = true;
   showZones = true;
   viewState = 2;
-  editZones = true;
+  editModel = true;
 }
 
 void footprintState() {
@@ -35,7 +35,7 @@ void footprintState() {
   showSite = true;
   showFootprints = true;
   viewState = 3;
-  editZones = true;
+  editModel = true;
 }
 
 void buildingZoneState() {
@@ -46,7 +46,7 @@ void buildingZoneState() {
   showFootprints = true;
   showBases = true;
   viewState = 4;
-  editZones = true;
+  editModel = true;
 }
 
 void buildingState() {
@@ -87,7 +87,7 @@ void offState() {
   showTowers = false;
   showFloors = false;
   showRooms = false;
-  editZones = false;
+  editModel = false;
 }
 
 void render() {
@@ -154,41 +154,37 @@ void render() {
   
   hint(DISABLE_DEPTH_TEST);
   
-  if (editZones) {
+  if (editModel) {
     
     // Draw Tagged Control Points Labels
     //
-    for (ArrayList<ControlPoint> points : dev.pointList()) {
-      for (ControlPoint p : points) {
-        int x, y;
-        if (cam3D) {
-          cam3D();
-          x = (int)screenX(p.x, p.y);
-          y = (int)screenY(p.x, p.y);
-        } else {
-          x = (int)p.x;
-          y = (int)p.y;
-        }
-        if(cam3D) cam2D(); // sets temporarily to 2D camera, if in 3D
-        fill(255, 150); stroke(200, 150); strokeWeight(1);
-        rectMode(CENTER); rect(x + 40, y, 50, 15, 5);
-        fill(50); textAlign(CENTER, CENTER);
-        text(p.tag, x + 40, y - 1);
-        if(cam3D) cam3D(); // sets back to 3D camera, if in 3D mode
+    for (ControlPoint p : control.points()) {
+      int x, y;
+      if (cam3D) {
+        cam3D();
+        x = (int)screenX(p.x, p.y);
+        y = (int)screenY(p.x, p.y);
+      } else {
+        x = (int)p.x;
+        y = (int)p.y;
       }
+      if(cam3D) cam2D(); // sets temporarily to 2D camera, if in 3D
+      fill(255, 150); stroke(200, 150); strokeWeight(1);
+      rectMode(CENTER); rect(x + 40, y, 50, 15, 5);
+      fill(50); textAlign(CENTER, CENTER);
+      text(p.tag, x + 40, y - 1);
+      if(cam3D) cam3D(); // sets back to 3D camera, if in 3D mode
     }
     
     // Draw Tagged Control Points
     //
-    for (ArrayList<ControlPoint> points : dev.pointList()) {
-      for (ControlPoint p : points) {
-        fill(150, 100); stroke(0, 150); strokeWeight(1);
-        pushMatrix(); translate(0, 0, 1);
-        ellipse(p.x, p.y, 10, 10);
-        line(p.x-5, p.y, p.x+5, p.y);
-        line(p.x, p.y-5, p.x, p.y+5);
-        popMatrix();
-      }
+    for (ControlPoint p : control.points()) {
+      fill(150, 100); stroke(0, 150); strokeWeight(1);
+      pushMatrix(); translate(0, 0, 1);
+      ellipse(p.x, p.y, 10, 10);
+      line(p.x-5, p.y, p.x+5, p.y);
+      line(p.x, p.y-5, p.x, p.y+5);
+      popMatrix();
     }
     
     // Draw Hovering Control Point
@@ -261,7 +257,7 @@ void render() {
   
   // Mouse Cursor Info
   //
-  if (editZones) {
+  if (editModel) {
     
     fill(50); textAlign(LEFT, TOP);
     if (addPoint) {
