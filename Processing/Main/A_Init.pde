@@ -42,10 +42,6 @@ import java.util.Random;
     Polygon site_boundary;
     String site_name;
     
-    ArrayList<ControlPoint> control_points;
-    int control_point_counter;
-    ControlPoint ctyd;
-    
     float tileW, tileH, tile_rotation;
     String units;
     Point tile_translation;
@@ -60,26 +56,6 @@ import java.util.Random;
       // Init Vector Site Polygon
       site_boundary = new Polygon();
       site_boundary.randomShape(400, 200, 5, 100, 200);
-      
-      // Init Control Points
-      control_point_counter = 0;
-      control_points = new ArrayList<ControlPoint>();
-      Random rand = new Random();
-      int i = 0;
-      while (i<4) {
-        float randomX = rand.nextFloat() * (site_boundary.xMax() - site_boundary.xMin()) + site_boundary.xMin();
-        float randomY = rand.nextFloat() * (site_boundary.yMax() - site_boundary.yMin()) + site_boundary.yMin();
-        ControlPoint random = new ControlPoint(randomX, randomY);
-        if (site_boundary.containsPoint(random)) {
-          control_point_counter++;
-          random.setTag("Plot " + control_point_counter);
-          control_points.add(random);
-          i++;
-        }
-      }
-      
-      ctyd = new ControlPoint(400, 200);
-      ctyd.setTag("Courtyard");
       
       // Init Raster-like Site Voxels
       dev_name = "New Development";
@@ -139,10 +115,11 @@ import java.util.Random;
       site.makeTiles(site_boundary, tileW, tileH, units, tile_rotation, tile_translation);
       
       // Add new spaces to Development
-      // include 4 control points
-      dev.addSpace(site, 4);
+      dev.addSpace(site);
       
-      //control_points = dev.getControlPoints(site);
+      // Add Control Points to Site
+      String point_prefix = "Plot";
+      for (int i=0; i<4; i++) dev.addControlPoint(site, point_prefix);
     }
     
     // Subdivide the site into Zones
@@ -157,7 +134,8 @@ import java.util.Random;
       // Create new Zones from Sites
       for (TileArray space : dev.spaceList()) {
         if (space.type.equals("site")) {
-          ArrayList<TileArray> zones = space.getVoronoi(control_points);
+          ArrayList<ControlPoint> pts = dev.getControlPoints(space);
+          ArrayList<TileArray> zones = space.getVoronoi(pts);
           int hue = 0;
           for (TileArray zone : zones) {
             zone.setType(type);
@@ -190,7 +168,8 @@ import java.util.Random;
           setback.setName("Setback");
           setback.setType(type);
           
-          //// Find a courtyard
+          // Find a courtyard
+          ControlPoint ctyd = new ControlPoint(400, 200, "");
           TileArray courtyard = space.getClosestN(ctyd, 0);
           courtyard.subtract(setback);
           courtyard.setName(ctyd.getTag());

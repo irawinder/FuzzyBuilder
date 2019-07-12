@@ -14,7 +14,7 @@ void listen() {
     if (addPoint) {
       Point atMouse = newPointAtMouse();
       if (atMouse != null) {
-        ControlPoint ghost = new ControlPoint(atMouse.x, atMouse.y);
+        ControlPoint ghost = new ControlPoint(atMouse.x, atMouse.y, "");
         ghost.setTag("ghost");
         hovering = ghost;
       } else {
@@ -75,20 +75,22 @@ Point newPointAtMouse() {
 ControlPoint pointAtMouse() {
   ControlPoint closest = null;
   float min_distance = Float.POSITIVE_INFINITY;
-  for (ControlPoint p : control_points) {
-    float dist_x, dist_y;
-    if(cam3D) {
-      dist_x = mouseX - screenX(p.x, p.y);
-      dist_y = mouseY - screenY(p.x, p.y);
-    } else {
-      dist_x = mouseX - p.x;
-      dist_y = mouseY - p.y;
-    }
-    float distance = sqrt( sq(dist_x) + sq(dist_y) );
-    if (distance < 15) {
-      if (distance < min_distance) {
-        min_distance = distance;
-        closest = p;
+  for (ArrayList<ControlPoint> points : dev.pointList) {
+    for (ControlPoint p : points) {
+      float dist_x, dist_y;
+      if(cam3D) {
+        dist_x = mouseX - screenX(p.x, p.y);
+        dist_y = mouseY - screenY(p.x, p.y);
+      } else {
+        dist_x = mouseX - p.x;
+        dist_y = mouseY - p.y;
+      }
+      float distance = sqrt( sq(dist_x) + sq(dist_y) );
+      if (distance < 15) {
+        if (distance < min_distance) {
+          min_distance = distance;
+          closest = p;
+        }
       }
     }
   }
@@ -111,8 +113,7 @@ void keyPressed() {
       addPoint = false;
       break;
     case 'c':
-      control_points.clear();
-      control_point_counter = 0;
+      dev.clearPoints();
       zone_change_detected = true;
       addPoint = true;
       removePoint = false;
@@ -223,15 +224,15 @@ void mouseReleased() {
 }
 
 void addControlPoint(float x, float y) {
-  control_point_counter++;
-  String name = "Plot " + control_point_counter;
-  ControlPoint new_zone = new ControlPoint(x, y);
-  new_zone.setTag(name);
-  control_points.add(new_zone);
-  zone_change_detected = true;
+  if (editZones) {
+    dev.addControlPoint(dev.getSpace(dev_name + "/" + site_name), "Plot", x, y);
+    zone_change_detected = true;
+  }
 }
 
 void removeControlPoint(ControlPoint point) {
-  control_points.remove(point);
-  zone_change_detected = true;
+  if (editZones) {
+    dev.removeControlPoint(point);
+    zone_change_detected = true;
+  }
 }

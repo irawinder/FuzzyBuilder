@@ -155,36 +155,40 @@ void render() {
   hint(DISABLE_DEPTH_TEST);
   
   if (editZones) {
-  
+    
     // Draw Tagged Control Points Labels
     //
-    for (ControlPoint p : control_points) {
-      int x, y;
-      if (cam3D) {
-        cam3D();
-        x = (int)screenX(p.x, p.y);
-        y = (int)screenY(p.x, p.y);
-      } else {
-        x = (int)p.x;
-        y = (int)p.y;
+    for (ArrayList<ControlPoint> points : dev.pointList()) {
+      for (ControlPoint p : points) {
+        int x, y;
+        if (cam3D) {
+          cam3D();
+          x = (int)screenX(p.x, p.y);
+          y = (int)screenY(p.x, p.y);
+        } else {
+          x = (int)p.x;
+          y = (int)p.y;
+        }
+        if(cam3D) cam2D(); // sets temporarily to 2D camera, if in 3D
+        fill(255, 150); stroke(200, 150); strokeWeight(1);
+        rectMode(CENTER); rect(x + 40, y, 50, 15, 5);
+        fill(50); textAlign(CENTER, CENTER);
+        text(p.tag, x + 40, y - 1);
+        if(cam3D) cam3D(); // sets back to 3D camera, if in 3D mode
       }
-      if(cam3D) cam2D(); // sets temporarily to 2D camera, if in 3D
-      fill(255, 150); stroke(200, 150); strokeWeight(1);
-      rectMode(CENTER); rect(x + 40, y, 50, 15, 5);
-      fill(50); textAlign(CENTER, CENTER);
-      text(p.tag, x + 40, y - 1);
-      if(cam3D) cam3D(); // sets back to 3D camera, if in 3D mode
     }
     
     // Draw Tagged Control Points
     //
-    for (ControlPoint p : control_points) {
-      fill(150, 100); stroke(0, 150); strokeWeight(1);
-      pushMatrix(); translate(0, 0, 1);
-      ellipse(p.x, p.y, 10, 10);
-      line(p.x-5, p.y, p.x+5, p.y);
-      line(p.x, p.y-5, p.x, p.y+5);
-      popMatrix();
+    for (ArrayList<ControlPoint> points : dev.pointList()) {
+      for (ControlPoint p : points) {
+        fill(150, 100); stroke(0, 150); strokeWeight(1);
+        pushMatrix(); translate(0, 0, 1);
+        ellipse(p.x, p.y, 10, 10);
+        line(p.x-5, p.y, p.x+5, p.y);
+        line(p.x, p.y-5, p.x, p.y+5);
+        popMatrix();
+      }
     }
     
     // Draw Hovering Control Point

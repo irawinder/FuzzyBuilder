@@ -335,7 +335,7 @@ class TileArray {
       Random rand = new Random();
       int random_index = rand.nextInt(tileList.size());
       Tile random_tile = tileList.get(random_index);
-      random_point = new ControlPoint(random_tile.location.x, random_tile.location.y);
+      random_point = new ControlPoint(random_tile.location.x, random_tile.location.y, hashKey());
     }
     return random_point;
   }

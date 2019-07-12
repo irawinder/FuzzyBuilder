@@ -19,16 +19,22 @@ class Point {
 
 class ControlPoint extends Point {
   
+  // Hash Key Value for Control Point
+  // Used to link point to a TileArray
+  //
+  final String hashKey;
+  
   // String tag of point
   String tag;
   
   // Numerical weight of point
   Float weight;
   
-  ControlPoint(float x, float y) {
+  ControlPoint(float x, float y, String hashKey) {
     super(x,y);
     tag = "";
     weight = 1.0;
+    this.hashKey = hashKey;
   }
   
   // Set the Tag Value of the Point
