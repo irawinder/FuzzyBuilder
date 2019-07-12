@@ -122,7 +122,7 @@ import java.util.Random;
     
     void initFootprints() {
       // Init Footprints
-      for(NestedTileArray zone : site_test.getChildList()) {
+      for(NestedTileArray zone : site_test.childList()) {
         zone.makeFootprints();
       }
     }
@@ -130,7 +130,7 @@ import java.util.Random;
     void initBase() {
       // Init Base
       int i = 0;
-      for(NestedTileArray zone : site_test.getChildList()) {
+      for(NestedTileArray zone : site_test.childList()) {
         NestedTileArray footprint = zone.getChild("Building");
         footprint.makeBase(min(0, -4 + i), i);
         i++;
