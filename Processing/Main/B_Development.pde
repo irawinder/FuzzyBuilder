@@ -52,7 +52,7 @@ class Development {
       }
     }
     
-    // Clear all spaces from map and list disctionaries
+    // Clear all spaces from Map and List dictionaries
     for (TileArray space : toClear) {
       spaceMap.remove(space);
       spaceList.remove(space);
