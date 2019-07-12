@@ -10,6 +10,8 @@ class TileArray {
   // Name and Type of TileArray
   public String name;
   public String type;
+  
+  // Hue Color of array, a number between 0-255
   public float hue;
   
   // Collection of Tiles
@@ -26,7 +28,7 @@ class TileArray {
   }
   
   public void setHue(float hue) {
-    this.hue = hue;
+    this.hue = hue%255;
   }
   
   // Return Tiles
