@@ -10,6 +10,7 @@ class TileArray {
   // Name and Type of TileArray
   public String name;
   public String type;
+  public float hue;
   
   // Collection of Tiles
   private HashMap<String, Tile> tileMap;
@@ -21,6 +22,11 @@ class TileArray {
     this.type = type;
     tileMap = new HashMap<String, Tile>();
     tileList = new ArrayList<Tile>();
+    hue = 0;
+  }
+  
+  public void setHue(float hue) {
+    this.hue = hue;
   }
   
   // Return Tiles
