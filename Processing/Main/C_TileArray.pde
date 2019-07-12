@@ -24,13 +24,18 @@ class TileArray {
   }
   
   // Return Tiles
-  public HashMap<String, Tile> getTileMap() {
+  public HashMap<String, Tile> tileMap() {
     return tileMap;
   }
   
   // Return Tiles
-  public ArrayList<Tile> getTileList() {
+  public ArrayList<Tile> tileList() {
     return tileList;
+  }
+  
+  // Returns true if TileArray contains Tile
+  public boolean hasTile(Tile t) {
+    return tileMap.get(t.id) != null;
   }
   
   // Clear All Tiles
@@ -58,31 +63,154 @@ class TileArray {
     tileMap.remove(t.id);
   }
   
+  // Inherit the Tiles from another TileArray
+  // so that they share the same location in memory
+  //
+  public void inheritTiles(TileArray parent) {
+    for(Tile t : parent.tileList()) {
+      addTile(t);
+    }
+  }
+  
+  // Populate a grid of site tiles that fits within
+  // an exact vector boundary that defines site
+  //
+  public void makeTiles(Polygon boundary, float scale_uv, float scale_w, String units, float rotation, Point translation) {
+    
+    clearTiles();
+    
+    // Create a field of grid points that is certain 
+    // to uniformly saturate polygon boundary
+    
+    // Polygon origin and rectangular bounding box extents
+    float origin_x = 0.5 * (boundary.xMax() + boundary.xMin());
+    float origin_y = 0.5 * (boundary.yMax() + boundary.yMin());
+    float boundary_w = boundary.xMax() - boundary.xMin();
+    float boundary_h = boundary.yMax() - boundary.yMin();
+    
+    // maximum additional bounding box dimensions if polygon is rotated 90 degrees
+    float easement = max(boundary_w, boundary_h) * (sqrt(2) - 1);
+    boundary_w += easement;
+    boundary_h += easement;
+    
+    int U = int(boundary_w / scale_uv) + 1;
+    int V = int(boundary_h / scale_uv) + 1;
+    float t_x = translation.x % scale_uv;
+    float t_y = translation.y % scale_uv;
+    
+    for (int u=0; u<U; u++) {
+      for (int v=0; v<V; v++) {
+        
+        // grid coordinates before rotation is applied
+        float x_0 = boundary.xMin() - 0.5*easement + u*scale_uv;
+        float y_0 = boundary.yMin() - 0.5*easement + v*scale_uv;
+        
+        // translate origin, rotate, shift back, then translate
+        float sin = (float)Math.sin(rotation);
+        float cos = (float)Math.cos(rotation);
+        float x_f = + (x_0 - origin_x) * cos - (y_0 - origin_y) * sin + origin_x + t_x;
+        float y_f = + (x_0 - origin_x) * sin + (y_0 - origin_y) * cos + origin_y + t_y;
+        
+        Point location = new Point(x_f, y_f);
+        
+        // Test which points are in the polygon boundary
+        // and add them to tile set
+        //
+        if(boundary.containsPoint(location)) {
+          Tile t = new Tile(u, v, location);
+          t.setScale(scale_uv, scale_w, units);
+          addTile(t);
+        }
+      }
+    }
+  }
+  
   // Return Adjacent Tiles from a TileArray
-  public HashMap<String, Tile> getNeighbors(Tile t) {
-    HashMap<String, Tile> adjacent = new HashMap<String, Tile>();
+  //
+  public ArrayList<Tile> getNeighbors(Tile t) {
+    ArrayList<Tile> adjacent = new ArrayList<Tile>();
     for(int dU = -1; dU <= +1; dU++) {
       for(int dV = -1; dV <= +1; dV++) {
         if ( !(dU == 0 && dV == 0) ) { // tile skips itself
           String tileKey = (t.u + dU) + "," + (t.v + dV) + "," + t.w;
           Tile adj = tileMap.get(tileKey);
-          if(adj != null) adjacent.put(tileKey, adj);
+          if(adj != null) adjacent.add(adj);
         }
       }
     }
     return adjacent;
   }
   
+  // Given an input TileArray, returns a new TileArray with just the edges
+  //
+  public TileArray getSetback(String name, String type) {
+    TileArray setback = new TileArray(name, type);
+    // Add tiles that are at edge of parent TileArray
+    for (Tile t : tileList()) {
+      // Tile is on edge of parent cluster (Tile surrounded on all sides has 8 neighbors)
+      if (getNeighbors(t).size() < 8) {
+        setback.addTile(t);
+      }
+    }
+    return setback;
+  }
+  
+  // Returns a new TileArray with child tiles subtracted from parent
+  //
+  public TileArray getDifference(TileArray child, String name, String type) {
+    TileArray subtract = new TileArray(name, type);
+    // If child tile doesn't exists in parent tile, add it to new TileArray
+    for (Tile t : tileList()) {
+      if (!child.hasTile(t)) {
+        subtract.addTile(t);
+      }
+    }
+    return subtract;
+  }
+  
+  // Returns a new List of TileArrays generated according to Voronoi logic
+  // Need input of Tagged control points, where points are the nodes of Voronoi Cells
+  // https://en.wikipedia.org/wiki/Voronoi_diagram
+  //
+  public ArrayList<TileArray> getVoronoi(ArrayList<TaggedPoint> points, String type) {
+    HashMap<String, TileArray> voronoiMap = new HashMap<String, TileArray>();
+    ArrayList<TileArray> voronoiList = new ArrayList<TileArray>();
+    
+    // Initialize Voronoi "Cells" Based Upon Tagged Point Collection
+    for(TaggedPoint p : points) {
+      String p_name = p.getTag();
+      TileArray cell = new TileArray(p_name, type);
+      voronoiMap.put(p_name, cell);
+      voronoiList.add(cell);
+    }
+    
+    // Fore Each Tile in Site, Check Which Control Point (i.e. Voronoi Site Point)
+    // it is closested to. This resembles a Voronoi algorithm
+    //
+    if (points.size() > 0) {
+      for(Tile t : tileList()) {
+        float min_distance = Float.POSITIVE_INFINITY;
+        String closest_cell_name = "";
+        for(TaggedPoint p : points) {
+          float distance = sqrt( sq( p.x - t.location.x ) + sq( p.y - t.location.y ) );
+          if (distance < min_distance) {
+            min_distance = distance;
+            closest_cell_name = p.getTag();
+          }
+        }
+        TileArray closest_cell = voronoiMap.get(closest_cell_name);
+        closest_cell.addTile(t);
+      }
+    }
+    
+    return voronoiList;
+  }
+  
+  // Return New 3D TileArray of Extruded Tiles
+  //
+  
   @Override
   public String toString() {
       return this.name + " (" + this.type + "):" + tileMap.size() +  "t";
-  }
-  
-  // Inherit the Tiles from another TileArray
-  // so that they share the same location in memory
-  public void inheritTiles(TileArray parent) {
-    for(Tile t : parent.getTileList()) {
-      addTile(t);
-    }
   }
 }

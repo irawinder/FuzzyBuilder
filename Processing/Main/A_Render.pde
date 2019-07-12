@@ -102,22 +102,22 @@ void render() {
     //
     if (showSite) {
       color col = color(0, 50);
-      for(Tile t : site_test.getTileList()) renderTile(t, col, -1);
+      for(Tile t : site_test.tileList()) renderTile(t, col, -1);
     }
     
     // Cycle Through Zones
     float hue = 0;
-    for(NestedTileArray zone : site_test.getChildList()) {
+    for(NestedTileArray zone : site_test.childList()) {
       
       // Draw Zone Voxels
       //
       if (showZones) {
         colorMode(HSB); color col = color(hue%255, 100, 225);
-        for(Tile t : zone.getTileList()) renderTile(t, col, 0.5);
+        for(Tile t : zone.tileList()) renderTile(t, col, 0.5);
       }
       
       // Cycle Through Footprints
-      for(NestedTileArray footprint : zone.getChildList()) {
+      for(NestedTileArray footprint : zone.childList()) {
         
         // Draw Footprint Voxels
         //
@@ -128,17 +128,17 @@ void render() {
           } else {
             col = color(hue%255, 100, 225);
           }
-          for(Tile t : footprint.getTileList()) renderTile(t, col, 0.5);
+          for(Tile t : footprint.tileList()) renderTile(t, col, 0.5);
         }
         
         // Cycle Through Bases
-        for(NestedTileArray base : footprint.getChildList()) {
+        for(NestedTileArray base : footprint.childList()) {
           
           // Draw Base Voxels
           //
           if (showBases) {
             colorMode(HSB); color col = color(hue%255, 150, 200);
-            for(Tile t : base.getTileList()) if(t.location.z == 0 || cam3D) renderVoxel(t, col, 0);
+            for(Tile t : base.tileList()) if(t.location.z == 0 || cam3D) renderVoxel(t, col, 0);
           }
         }
       }
@@ -259,11 +259,11 @@ void render() {
     summary += "\n" + tileW + " x " + tileW + " x " + tileH + " units";
     summary += "\n";
     summary += "\n" + site_test;
-    for(NestedTileArray zone : site_test.getChildList()) {
+    for(NestedTileArray zone : site_test.childList()) {
       summary += "\n-" + zone;
-      for(NestedTileArray footprint : zone.getChildList()) {
+      for(NestedTileArray footprint : zone.childList()) {
         summary += "\n--" + footprint;
-        for(NestedTileArray base : footprint.getChildList()) {
+        for(NestedTileArray base : footprint.childList()) {
           summary += "\n---" + base;
         }
       }
