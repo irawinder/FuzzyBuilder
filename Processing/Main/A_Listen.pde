@@ -35,7 +35,6 @@ void listen() {
         selected.x = mouseX;
         selected.y = mouseY;
       }
-      
       zone_change_detected = true;
     }
   }
@@ -226,7 +225,7 @@ void mouseReleased() {
 
 void addControlPoint(float x, float y) {
   if (editModel) {
-    control.addPoint("Plot", "site", x, y);
+    control.addPoint("Plot", "zone", x, y);
     zone_change_detected = true;
   }
 }
