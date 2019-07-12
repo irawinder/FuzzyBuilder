@@ -128,6 +128,7 @@ import java.util.Random;
       String type = "site";
       dev.clearType(type);
       TileArray site = new TileArray(site_name, type);
+      site.setParent(dev_name);
       
       // Create new Site from polygon
       site.makeTiles(site_boundary, tileW, tileH, units, tile_rotation, tile_translation);
@@ -148,9 +149,10 @@ import java.util.Random;
       // Create new Zones from Sites
       for (TileArray space : dev.spaceList()) {
         if (space.type.equals("site")) {
-          ArrayList<TileArray> zones = space.getVoronoi(control_points, type);
+          ArrayList<TileArray> zones = space.getVoronoi(control_points);
           int hue = 0;
           for (TileArray zone : zones) {
+            zone.setType(type);
             zone.setHue(hue);
             new_zones.add(zone);
             hue += 40;
@@ -174,9 +176,17 @@ import java.util.Random;
       // Create new Footprints from Zones
       for (TileArray space : dev.spaceList()) {
         if (space.type.equals("zone")) {
-          // Initialize Footprints
-          TileArray setback = space.getSetback("Setback", type);
-          TileArray building = space.getDifference(setback, "Building", type);
+          
+          // Setback Footprint
+          TileArray setback = space.getSetback();
+          setback.setName("Setback");
+          setback.setType(type);
+          
+          // Building Footprint
+          TileArray building = space.getDifference(setback);
+          building.setName("Building");
+          building.setType(type);
+          
           new_foot.add(setback);
           new_foot.add(building);
         }
@@ -199,7 +209,9 @@ import java.util.Random;
       // Create new Bases from Footprints
       for (TileArray space : dev.spaceList()) {
         if (space.name.equals("Building") && space.type.equals("footprint")) {
-          TileArray base = space.getExtrusion(min(0, -4 + i), i, "Podium", type);
+          TileArray base = space.getExtrusion(min(0, -4 + i), i);
+          base.setName("Podium");
+          base.setType(type);
           new_bases.add(base);
           i++;
         }

@@ -20,6 +20,11 @@ class TileArray {
   private ArrayList<Tile> tileList;
   
   // Construct Empty TileArray
+  public TileArray() {
+    this("New Array", "TileArray");
+  }
+  
+  // Construct Empty TileArray
   public TileArray(String name, String type) {
     this.name = name;
     this.type = type;
@@ -27,6 +32,14 @@ class TileArray {
     tileList = new ArrayList<Tile>();
     this.parent_name = "";
     hue = 0;
+  }
+  
+  public void setName(String name) {
+    this.name = name;
+  }
+  
+  public void setType(String type) {
+    this.type = type;
   }
   
   public void setHue(float hue) {
@@ -81,9 +94,15 @@ class TileArray {
   // so that they share the same location in memory
   //
   public void inheritTiles(TileArray parent) {
-    for(Tile t : parent.tileList()) {
-      addTile(t);
-    }
+    inheritAttributes(parent);
+    for(Tile t : parent.tileList()) addTile(t);
+  }
+  
+  // Inherit Attributes of another TileArray
+  //
+  public void inheritAttributes(TileArray parent) {
+    setHue(parent.hue);
+    setParent(parent.parent_name + "/" + parent.name);
   }
   
   // Populate a grid of site tiles that fits within
@@ -157,10 +176,10 @@ class TileArray {
   
   // Given an input TileArray, returns a new TileArray with just the edges
   //
-  public TileArray getSetback(String name, String type) {
-    TileArray setback = new TileArray(name, type);
-    setback.setHue(hue);
-    setback.setParent(name);
+  public TileArray getSetback() {
+    TileArray setback = new TileArray();
+    setback.inheritAttributes(this);
+    
     // Add tiles that are at edge of parent TileArray
     for (Tile t : tileList()) {
       // Tile is on edge of parent cluster (Tile surrounded on all sides has 8 neighbors)
@@ -171,12 +190,31 @@ class TileArray {
     return setback;
   }
   
+  // Returns a TileArray that includes the N closest tiles to a point
+  //
+  public TileArray getClosestN(TaggedPoint point, int numTiles) {
+    String p_name = point.getTag();
+    TileArray closest = new TileArray(p_name, type);
+    closest.inheritAttributes(this);
+    
+    // Dictionaries of tiles to sort by distance
+    HashMap<Float, Tile> tiles = new HashMap<Float, Tile>();
+    ArrayList<Float> distList = new ArrayList<Float>();
+    
+    
+    for (Tile t : tileList()) {
+      //float dist = t.location
+      
+    }
+    return closest;
+  }
+  
   // Returns a new TileArray with child tiles subtracted from parent
   //
-  public TileArray getDifference(TileArray child, String name, String type) {
+  public TileArray getDifference(TileArray child) {
     TileArray subtract = new TileArray(name, type);
-    subtract.setHue(hue);
-    subtract.setParent(name);
+    subtract.inheritAttributes(this);
+    
     // If child tile doesn't exists in parent tile, add it to new TileArray
     for (Tile t : tileList()) {
       if (!child.hasTile(t)) {
@@ -190,7 +228,7 @@ class TileArray {
   // Need input of Tagged control points, where points are the nodes of Voronoi Cells
   // https://en.wikipedia.org/wiki/Voronoi_diagram
   //
-  public ArrayList<TileArray> getVoronoi(ArrayList<TaggedPoint> points, String type) {
+  public ArrayList<TileArray> getVoronoi(ArrayList<TaggedPoint> points) {
     HashMap<String, TileArray> voronoiMap = new HashMap<String, TileArray>();
     ArrayList<TileArray> voronoiList = new ArrayList<TileArray>();
     
@@ -198,8 +236,7 @@ class TileArray {
     for(TaggedPoint p : points) {
       String p_name = p.getTag();
       TileArray cell = new TileArray(p_name, type);
-      cell.setHue(hue);
-      cell.setParent(name);
+      cell.inheritAttributes(this);
       voronoiMap.put(p_name, cell);
       voronoiList.add(cell);
     }
@@ -228,10 +265,9 @@ class TileArray {
   
   // Return New 3D TileArray of Extruded Tiles
   //
-  public TileArray getExtrusion(int lowestFloor, int highestFloor, String name, String type) {
-    TileArray extrusion = new TileArray(name, type);
-    extrusion.setHue(hue);
-    extrusion.setParent(name);
+  public TileArray getExtrusion(int lowestFloor, int highestFloor) {
+    TileArray extrusion = new TileArray();
+    extrusion.inheritAttributes(this);
       
     // Build Extrusion
     //
