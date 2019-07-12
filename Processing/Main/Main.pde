@@ -37,4 +37,6 @@ void draw() {
   
   // Render the ViewModel "Front End" and GUI to canvas
   render();
+  
+  noLoop();
 }

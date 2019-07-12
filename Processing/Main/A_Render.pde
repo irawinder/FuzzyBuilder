@@ -245,7 +245,7 @@ void render() {
   //info += "\n" + "Press '7' to show Rooms";
   //if(viewState == 7) info += " <--";
   text(info, 10, 10);
-  text("Framerate: " + int(frameRate), 10, height - 20);
+  //text("Framerate: " + int(frameRate), 10, height - 20);
   
   // Draw Summary
   //

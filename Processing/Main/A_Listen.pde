@@ -200,6 +200,8 @@ void keyPressed() {
       site_change_detected = true;
     }
   }
+  
+  loop();
 }  
 
 // Triggered once when any mouse button is pressed
@@ -216,11 +218,23 @@ void mousePressed() {
       }
     }
   }
+  
+  loop();
 }
 
 // Triggered once when any mouse button is released
 void mouseReleased() {
   if(editModel) selected = null;
+  
+  loop();
+}
+
+void mouseMoved() {
+  loop();
+}
+
+void mouseDragged() {
+  loop();
 }
 
 void addControlPoint(float x, float y) {
