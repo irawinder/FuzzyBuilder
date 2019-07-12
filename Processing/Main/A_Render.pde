@@ -97,53 +97,41 @@ void render() {
   if (showTiles) {
     for (TileArray space : dev.spaceList()) {
       
-      // Draw Site Voxels
+      // Draw Sites
       //
-      if (showSite && space.name.equals(site_name)) {
+      if (showSite && space.type.equals("site")) {
         color col = color(0, 50);
         for(Tile t : space.tileList()) renderTile(t, col, -1);
       }
       
+      // Draw Zones
+      //
+      if (showZones && space.type.equals("zone")) {
+        colorMode(HSB); color col = color(space.hue%255, 100, 225);
+        for(Tile t : space.tileList()) renderTile(t, col, -1);
+      }
       
-      // Cycle Through Zones
-      float hue = 0;
-      for(NestedTileArray zone : site_test.childList()) {
-        
-        // Draw Zone Voxels
-        //
-        if (showZones) {
-          colorMode(HSB); color col = color(hue%255, 100, 225);
-          for(Tile t : zone.tileList()) renderTile(t, col, 0.5);
+      // Draw Footprints
+      //
+      if (showFootprints && space.type.equals("footprint")) {
+        colorMode(HSB); color col;
+        if(space.name.equals("Building")) {
+          col = color(space.hue%255, 150, 150);
+        } else {
+          col = color(space.hue%255, 100, 225);
         }
-        
-        // Cycle Through Footprints
-        for(NestedTileArray footprint : zone.childList()) {
-          
-          // Draw Footprint Voxels
-          //
-          if (showFootprints) {
-            colorMode(HSB); color col;
-            if(footprint.name.equals("Building")) {
-              col = color(hue%255, 150, 150);
-            } else {
-              col = color(hue%255, 100, 225);
-            }
-            for(Tile t : footprint.tileList()) renderTile(t, col, 0.5);
-          }
-          
-          // Cycle Through Bases
-          for(NestedTileArray base : footprint.childList()) {
-            
-            // Draw Base Voxels
-            //
-            if (showBases) {
-              colorMode(HSB); color col = color(hue%255, 150, 200);
-              for(Tile t : base.tileList()) if(t.location.z == 0 || cam3D) renderVoxel(t, col, 0);
-            }
+        for(Tile t : space.tileList()) renderTile(t, col, -1);
+      }
+      
+      // Draw Bases
+      //
+      if (showBases && space.type.equals("base")) {
+        colorMode(HSB); color col = color(space.hue%255, 150, 200);
+        for(Tile t : space.tileList()) {
+          if(t.location.z == 0 || cam3D) { // only draws ground plane if in 2D view mode
+            renderVoxel(t, col, 0);
           }
         }
-        // Consectutive zone hues differ by 40
-        hue += 40;
       }
     }
   }
@@ -259,16 +247,8 @@ void render() {
     summary += "\n" + "Tile Dimensions:";
     summary += "\n" + tileW + " x " + tileW + " x " + tileH + " units";
     summary += "\n";
-    summary += "\n" + site_test;
-    for(NestedTileArray zone : site_test.childList()) {
-      summary += "\n-" + zone;
-      for(NestedTileArray footprint : zone.childList()) {
-        summary += "\n--" + footprint;
-        for(NestedTileArray base : footprint.childList()) {
-          summary += "\n---" + base;
-        }
-      }
-    }
+    summary += "\n" + dev;
+    for(TileArray space : dev.spaceList()) summary += "\n" + space;
     text(summary, width - 175, 10);
   }
   

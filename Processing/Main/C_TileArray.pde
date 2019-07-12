@@ -1,5 +1,5 @@
 // Site -> Zone -> Footprint -> Podium -> Tower -> Floor -> Room
-// all use NestedTileArray() class!
+// all use TileArray() class!
 
 import java.util.Map;
 
@@ -9,6 +9,7 @@ class TileArray {
   
   // Name and Type of TileArray
   public String name;
+  public String parent_name;
   public String type;
   
   // Hue Color of array, a number between 0-255
@@ -24,11 +25,16 @@ class TileArray {
     this.type = type;
     tileMap = new HashMap<String, Tile>();
     tileList = new ArrayList<Tile>();
+    this.parent_name = "";
     hue = 0;
   }
   
   public void setHue(float hue) {
     this.hue = hue%255;
+  }
+  
+  public void setParent(String parent) {
+    this.parent_name = parent;
   }
   
   // Return Tiles
@@ -151,8 +157,10 @@ class TileArray {
   
   // Given an input TileArray, returns a new TileArray with just the edges
   //
-  public NestedTileArray getSetback(String name, String type) {
-    NestedTileArray setback = new NestedTileArray(name, type);
+  public TileArray getSetback(String name, String type) {
+    TileArray setback = new TileArray(name, type);
+    setback.setHue(hue);
+    setback.setParent(name);
     // Add tiles that are at edge of parent TileArray
     for (Tile t : tileList()) {
       // Tile is on edge of parent cluster (Tile surrounded on all sides has 8 neighbors)
@@ -165,8 +173,10 @@ class TileArray {
   
   // Returns a new TileArray with child tiles subtracted from parent
   //
-  public NestedTileArray getDifference(NestedTileArray child, String name, String type) {
-    NestedTileArray subtract = new NestedTileArray(name, type);
+  public TileArray getDifference(TileArray child, String name, String type) {
+    TileArray subtract = new TileArray(name, type);
+    subtract.setHue(hue);
+    subtract.setParent(name);
     // If child tile doesn't exists in parent tile, add it to new TileArray
     for (Tile t : tileList()) {
       if (!child.hasTile(t)) {
@@ -180,14 +190,16 @@ class TileArray {
   // Need input of Tagged control points, where points are the nodes of Voronoi Cells
   // https://en.wikipedia.org/wiki/Voronoi_diagram
   //
-  public ArrayList<NestedTileArray> getVoronoi(ArrayList<TaggedPoint> points, String type) {
-    HashMap<String, NestedTileArray> voronoiMap = new HashMap<String, NestedTileArray>();
-    ArrayList<NestedTileArray> voronoiList = new ArrayList<NestedTileArray>();
+  public ArrayList<TileArray> getVoronoi(ArrayList<TaggedPoint> points, String type) {
+    HashMap<String, TileArray> voronoiMap = new HashMap<String, TileArray>();
+    ArrayList<TileArray> voronoiList = new ArrayList<TileArray>();
     
     // Initialize Voronoi "Cells" Based Upon Tagged Point Collection
     for(TaggedPoint p : points) {
       String p_name = p.getTag();
-      NestedTileArray cell = new NestedTileArray(p_name, type);
+      TileArray cell = new TileArray(p_name, type);
+      cell.setHue(hue);
+      cell.setParent(name);
       voronoiMap.put(p_name, cell);
       voronoiList.add(cell);
     }
@@ -216,9 +228,11 @@ class TileArray {
   
   // Return New 3D TileArray of Extruded Tiles
   //
-  public NestedTileArray getExtrusion(int lowestFloor, int highestFloor, String name, String type) {
-    NestedTileArray extrusion = new NestedTileArray(name, type);
-    
+  public TileArray getExtrusion(int lowestFloor, int highestFloor, String name, String type) {
+    TileArray extrusion = new TileArray(name, type);
+    extrusion.setHue(hue);
+    extrusion.setParent(name);
+      
     // Build Extrusion
     //
     for (Tile t : tileList()) {

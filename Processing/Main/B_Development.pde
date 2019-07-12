@@ -1,6 +1,6 @@
 import java.util.Map;
 
-// An entire development project
+// An entire development project; (i.e. a dictionary of TileArray spaces)
 //
 class Development {
   
@@ -36,9 +36,27 @@ class Development {
   }
   
   // Clear All Space
-  public void clearSpace() {
+  public void clear() {
     spaceMap.clear();
     spaceList.clear();
+  }
+  
+  // Remove all spaces of a certain type
+  public void clearType(String type) {
+    ArrayList<TileArray> toClear = new ArrayList<TileArray>();
+    
+    // Populate list of spaces to clear, based on type
+    for (TileArray space : spaceList) {
+      if (space.type.equals(type)) {
+        toClear.add(space);
+      }
+    }
+    
+    // Clear all spaces from map and list disctionaries
+    for (TileArray space : toClear) {
+      spaceMap.remove(space);
+      spaceList.remove(space);
+    }
   }
   
   // Adds TileArray to Map and List dictionaries
@@ -57,5 +75,10 @@ class Development {
   // Return TileArray of certain name
   public TileArray getSpace(String spaceKey) {
     return spaceMap.get(spaceKey);
+  }
+  
+  @Override
+  public String toString() {
+      return this.name;
   }
 }

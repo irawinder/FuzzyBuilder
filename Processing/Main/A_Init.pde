@@ -36,8 +36,6 @@ import java.util.Random;
 
 // Initialize Backend:
     
-    NestedTileArray site_test;
-    
     Development dev;
     String dev_name;
     
@@ -79,10 +77,9 @@ import java.util.Random;
       }
       
       // Init Raster-like Site Voxels
-      site_test = new NestedTileArray("Site_Test", "site");
       dev_name = "New Development";
       dev = new Development(dev_name);
-      site_name = "New Property";
+      site_name = "Property";
       tileW = 15.0;
       tileH = 5.0;
       units = "pixels";
@@ -123,35 +120,91 @@ import java.util.Random;
       }
     }
     
+    // Initialize Site
+    //
     void initSite() {
-      // Init Site from Polygon
-      site_test.makeSite(site_boundary, tileW, tileH, units, tile_rotation, tile_translation);
       
-      dev.addSpace(site_name, "site");
-      dev.getSpace(site_name).makeTiles(site_boundary, tileW, tileH, units, tile_rotation, tile_translation);
+      //Define new Space Type
+      String type = "site";
+      dev.clearType(type);
+      TileArray site = new TileArray(site_name, type);
+      
+      // Create new Site from polygon
+      site.makeTiles(site_boundary, tileW, tileH, units, tile_rotation, tile_translation);
+      
+      // Add new spaces to Development
+      dev.addSpace(site);
     }
     
+    // Subdivide the site into Zones
+    //
     void initZones() {
-      // Init Voronoi Zones
-      site_test.makeZones(control_points);
-    }
-    
-    void initFootprints() {
-      // Init Footprints
-      for(NestedTileArray zone : site_test.childList()) {
-        zone.makeFootprints();
-      }
-    }
-    
-    void initBase() {
-      // Init Base
-      int i = 0;
-      for(NestedTileArray zone : site_test.childList()) {
-        for(NestedTileArray foot : zone.childList()) {
-          if(foot.name.equals("Building")) {
-            foot.makeBase(min(0, -4 + i), i);
-            i++;
+      
+      //Define new Space Type
+      String type = "zone";
+      dev.clearType(type);
+      ArrayList<TileArray> new_zones = new ArrayList<TileArray>();
+      
+      // Create new Zones from Sites
+      for (TileArray space : dev.spaceList()) {
+        if (space.type.equals("site")) {
+          ArrayList<TileArray> zones = space.getVoronoi(control_points, type);
+          int hue = 0;
+          for (TileArray zone : zones) {
+            zone.setHue(hue);
+            new_zones.add(zone);
+            hue += 40;
           }
         }
       }
+      
+      // Add new Spaces to Development
+      for (TileArray zone : new_zones) dev.addSpace(zone);
+    }
+    
+    // Subdivide Zones into Footprints
+    //
+    void initFootprints() {
+      
+      //Define new Space Type
+      String type = "footprint";
+      dev.clearType(type);
+      ArrayList<TileArray> new_foot = new ArrayList<TileArray>();
+      
+      // Create new Footprints from Zones
+      for (TileArray space : dev.spaceList()) {
+        if (space.type.equals("zone")) {
+          // Initialize Footprints
+          TileArray setback = space.getSetback("Setback", type);
+          TileArray building = space.getDifference(setback, "Building", type);
+          new_foot.add(setback);
+          new_foot.add(building);
+        }
+      }
+      
+      // Add new Spaces to Development
+      for (TileArray foot : new_foot) dev.addSpace(foot);
+    }
+    
+    // A Base is a building component that rests on a Footprint
+    //
+    void initBase() {
+      
+      //Define new Space Type
+      String type = "base";
+      dev.clearType(type);
+      ArrayList<TileArray> new_bases = new ArrayList<TileArray>();
+      int i = 0;
+      
+      // Create new Bases from Footprints
+      for (TileArray space : dev.spaceList()) {
+        if (space.name.equals("Building") && space.type.equals("footprint")) {
+          TileArray base = space.getExtrusion(min(0, -4 + i), i, "Podium", type);
+          new_bases.add(base);
+          i++;
+        }
+      }
+      
+      // Add new Spaces to Development
+      for (TileArray base : new_bases) dev.addSpace(base);
     }
