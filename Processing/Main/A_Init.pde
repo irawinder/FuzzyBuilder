@@ -89,25 +89,27 @@ import java.util.Random;
     
     void updateModel() {
       
-      if(site_change_detected) {
-        initSite();
-        initZones();
-        initFootprints();
-        initBase();
+      char change = '0';
+      if (site_change_detected) {
         site_change_detected = false;
-      }
-      
-      if(zone_change_detected) {
-        initZones();
-        initFootprints();
-        initBase();
+        change = 's';
+      } else if (zone_change_detected) {
         zone_change_detected = false;
+        change = 'z';
+      } else if (foot_change_detected) {
+        foot_change_detected = false;
+        change = 'f';
       }
       
-      if(foot_change_detected) {
-        initFootprints();
-        initBase();
-        foot_change_detected = false;
+      switch(change) {
+        case 's':
+          initSite();
+        case 'z':
+          initZones();
+        case 'f':
+          initFootprints();
+          initBase();
+          break;
       }
     }
     

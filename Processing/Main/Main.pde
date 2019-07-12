@@ -7,6 +7,7 @@
 // - Implement Tower
 // - Implement Use Types
 // - Integrate Control Points with NestedTileArray?
+// - Flatten NestedTileArray?
 // [Check] Create ArrayList Version for Tile Array
 // [Check] Implement native Java library for random (not Processing)
 
