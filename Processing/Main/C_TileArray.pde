@@ -143,8 +143,8 @@ class TileArray {
   
   // Given an input TileArray, returns a new TileArray with just the edges
   //
-  public TileArray getSetback(String name, String type) {
-    TileArray setback = new TileArray(name, type);
+  public NestedTileArray getSetback(String name, String type) {
+    NestedTileArray setback = new NestedTileArray(name, type);
     // Add tiles that are at edge of parent TileArray
     for (Tile t : tileList()) {
       // Tile is on edge of parent cluster (Tile surrounded on all sides has 8 neighbors)
@@ -157,8 +157,8 @@ class TileArray {
   
   // Returns a new TileArray with child tiles subtracted from parent
   //
-  public TileArray getDifference(TileArray child, String name, String type) {
-    TileArray subtract = new TileArray(name, type);
+  public NestedTileArray getDifference(NestedTileArray child, String name, String type) {
+    NestedTileArray subtract = new NestedTileArray(name, type);
     // If child tile doesn't exists in parent tile, add it to new TileArray
     for (Tile t : tileList()) {
       if (!child.hasTile(t)) {
@@ -172,14 +172,14 @@ class TileArray {
   // Need input of Tagged control points, where points are the nodes of Voronoi Cells
   // https://en.wikipedia.org/wiki/Voronoi_diagram
   //
-  public ArrayList<TileArray> getVoronoi(ArrayList<TaggedPoint> points, String type) {
-    HashMap<String, TileArray> voronoiMap = new HashMap<String, TileArray>();
-    ArrayList<TileArray> voronoiList = new ArrayList<TileArray>();
+  public ArrayList<NestedTileArray> getVoronoi(ArrayList<TaggedPoint> points, String type) {
+    HashMap<String, NestedTileArray> voronoiMap = new HashMap<String, NestedTileArray>();
+    ArrayList<NestedTileArray> voronoiList = new ArrayList<NestedTileArray>();
     
     // Initialize Voronoi "Cells" Based Upon Tagged Point Collection
     for(TaggedPoint p : points) {
       String p_name = p.getTag();
-      TileArray cell = new TileArray(p_name, type);
+      NestedTileArray cell = new NestedTileArray(p_name, type);
       voronoiMap.put(p_name, cell);
       voronoiList.add(cell);
     }
