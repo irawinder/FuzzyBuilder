@@ -14,7 +14,7 @@ void listen() {
     if (addPoint) {
       Point atMouse = newPointAtMouse();
       if (atMouse != null) {
-        TaggedPoint ghost = new TaggedPoint(atMouse.x, atMouse.y);
+        ControlPoint ghost = new ControlPoint(atMouse.x, atMouse.y);
         ghost.setTag("ghost");
         hovering = ghost;
       } else {
@@ -72,10 +72,10 @@ Point newPointAtMouse() {
 
 // Return Tagged Point Nearest to Mouse
 //
-TaggedPoint pointAtMouse() {
-  TaggedPoint closest = null;
+ControlPoint pointAtMouse() {
+  ControlPoint closest = null;
   float min_distance = Float.POSITIVE_INFINITY;
-  for (TaggedPoint p : control_points) {
+  for (ControlPoint p : control_points) {
     float dist_x, dist_y;
     if(cam3D) {
       dist_x = mouseX - screenX(p.x, p.y);
@@ -225,13 +225,13 @@ void mouseReleased() {
 void addControlPoint(float x, float y) {
   control_point_counter++;
   String name = "Plot " + control_point_counter;
-  TaggedPoint new_zone = new TaggedPoint(x, y);
+  ControlPoint new_zone = new ControlPoint(x, y);
   new_zone.setTag(name);
   control_points.add(new_zone);
   zone_change_detected = true;
 }
 
-void removeControlPoint(TaggedPoint point) {
+void removeControlPoint(ControlPoint point) {
   control_points.remove(point);
   zone_change_detected = true;
 }

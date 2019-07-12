@@ -158,7 +158,7 @@ void render() {
   
     // Draw Tagged Control Points Labels
     //
-    for (TaggedPoint p : control_points) {
+    for (ControlPoint p : control_points) {
       int x, y;
       if (cam3D) {
         cam3D();
@@ -178,7 +178,7 @@ void render() {
     
     // Draw Tagged Control Points
     //
-    for (TaggedPoint p : control_points) {
+    for (ControlPoint p : control_points) {
       fill(150, 100); stroke(0, 150); strokeWeight(1);
       pushMatrix(); translate(0, 0, 1);
       ellipse(p.x, p.y, 10, 10);

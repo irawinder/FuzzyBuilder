@@ -193,7 +193,7 @@ class TileArray {
   
   // Returns a TileArray that includes the N closest tiles to a point
   //
-  public TileArray getClosestN(TaggedPoint point, int area) {
+  public TileArray getClosestN(ControlPoint point, float area) {
     String p_name = point.getTag();
     TileArray closest = new TileArray(p_name, type);
     closest.inheritAttributes(this);
@@ -216,7 +216,7 @@ class TileArray {
       
       // Calculate how many tiles to add
       Tile sample = tileList().get(0);
-      int numTiles = area / (int)sq(sample.scale_uv);
+      int numTiles = (int)( area / sq(sample.scale_uv) );
       
       // Add closest N tiles to new array
       for(int i=0; i<numTiles; i++) {
@@ -260,12 +260,12 @@ class TileArray {
   // Need input of Tagged control points, where points are the nodes of Voronoi Cells
   // https://en.wikipedia.org/wiki/Voronoi_diagram
   //
-  public ArrayList<TileArray> getVoronoi(ArrayList<TaggedPoint> points) {
+  public ArrayList<TileArray> getVoronoi(ArrayList<ControlPoint> points) {
     HashMap<String, TileArray> voronoiMap = new HashMap<String, TileArray>();
     ArrayList<TileArray> voronoiList = new ArrayList<TileArray>();
     
     // Initialize Voronoi "Cells" Based Upon Tagged Point Collection
-    for(TaggedPoint p : points) {
+    for(ControlPoint p : points) {
       String p_name = p.getTag();
       TileArray cell = new TileArray(p_name, type);
       cell.inheritAttributes(this);
@@ -280,7 +280,7 @@ class TileArray {
       for(Tile t : tileList()) {
         float min_distance = Float.POSITIVE_INFINITY;
         String closest_cell_name = "";
-        for(TaggedPoint p : points) {
+        for(ControlPoint p : points) {
           float distance = sqrt( sq( p.x - t.location.x ) + sq( p.y - t.location.y ) );
           if (distance < min_distance) {
             min_distance = distance;

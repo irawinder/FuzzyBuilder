@@ -3,8 +3,8 @@ import java.util.Random;
 // Initialize Front End:
 
     // Point that is currently selected or hovering;
-    TaggedPoint selected;
-    TaggedPoint hovering;
+    ControlPoint selected;
+    ControlPoint hovering;
     
     // Add or remove point via mouse click
     boolean editZones, addPoint, removePoint;
@@ -42,9 +42,9 @@ import java.util.Random;
     Polygon site_boundary;
     String site_name;
     
-    TaggedPoint ctyd;
+    ControlPoint ctyd;
     
-    ArrayList<TaggedPoint> control_points;
+    ArrayList<ControlPoint> control_points;
     int control_point_counter;
     float tileW, tileH, tile_rotation;
     String units;
@@ -63,13 +63,13 @@ import java.util.Random;
       
       // Init Control Points
       control_point_counter = 0;
-      control_points = new ArrayList<TaggedPoint>();
+      control_points = new ArrayList<ControlPoint>();
       Random rand = new Random();
       int i = 0;
       while (i<4) {
         float randomX = rand.nextFloat() * (site_boundary.xMax() - site_boundary.xMin()) + site_boundary.xMin();
         float randomY = rand.nextFloat() * (site_boundary.yMax() - site_boundary.yMin()) + site_boundary.yMin();
-        TaggedPoint random = new TaggedPoint(randomX, randomY);
+        ControlPoint random = new ControlPoint(randomX, randomY);
         if (site_boundary.containsPoint(random)) {
           control_point_counter++;
           random.setTag("Plot " + control_point_counter);
@@ -78,7 +78,7 @@ import java.util.Random;
         }
       }
       
-      ctyd = new TaggedPoint(400, 200);
+      ctyd = new ControlPoint(400, 200);
       ctyd.setTag("Courtyard");
       
       // Init Raster-like Site Voxels

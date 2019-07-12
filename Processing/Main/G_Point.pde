@@ -17,14 +17,18 @@ class Point {
   }
 }
 
-class TaggedPoint extends Point {
+class ControlPoint extends Point {
   
   // String tag of point
   String tag;
   
-  TaggedPoint(float x, float y) {
+  // Numerical weight of point
+  Float weight;
+  
+  ControlPoint(float x, float y) {
     super(x,y);
     tag = "";
+    weight = 1.0;
   }
   
   // Set the Tag Value of the Point
@@ -35,6 +39,16 @@ class TaggedPoint extends Point {
   // Get the Tag Value of the Point
   public String getTag() {
     return tag;
+  }
+  
+  // Set the Weight of the Point
+  public void setWeight(float weight) {
+    this.weight = weight;
+  }
+  
+  // Get the Weight of the Point
+  public float getWeight() {
+    return weight;
   }
   
   @Override
