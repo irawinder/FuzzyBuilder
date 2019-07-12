@@ -3,12 +3,12 @@
 
 // To Do:
 // - Implement Variable Setback
-// - Implement Courtyard
+// [Check] Implement Courtyard
 // - Implement Tower
 // - Implement Use Types
-// - Integrate Control Points with NestedTileArray?
+// [Check] Integrate Control Points into own class
 // [Check] Flatten NestedTileArray?
-// [Check] Create ArrayList Version for Tile Array
+// [Check] Create ArrayList Version for TileArray
 // [Check] Implement native Java library for random (not Processing)
 
 // Runs Once On Program Start
