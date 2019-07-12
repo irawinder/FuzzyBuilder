@@ -43,7 +43,6 @@ class NestedTileArray extends TileArray{
   // by Voronoi-style nodes
   //
   public void makeZones(ArrayList<TaggedPoint> points) {
-    
     clearChildren();
     
     // Initialize Zones
@@ -58,7 +57,6 @@ class NestedTileArray extends TileArray{
   // can derive from an existing TileArray (i.e. zone)
   //
   public void makeFootprints() {
-    
     clearChildren();
     
     // Initialize Footprints
@@ -74,24 +72,13 @@ class NestedTileArray extends TileArray{
   // A Base is a building component that rests on a Footprint
   //
   public void makeBase(int lowestFloor, int highestFloor) {
-    
     clearChildren();
     
     // Initialize Base
-    NestedTileArray base = new NestedTileArray("Podium", "base");
-    for (Tile t : tileList()) {
-      
-      for(int i=lowestFloor; i<=highestFloor; i++) {
-        if(i==0) {
-          base.addTile(t);
-        } else {
-          Point newPoint = new Point(t.location.x, t.location.y, i*t.scale_w);
-          Tile newTile = new Tile(t.u, t.v, i, newPoint);
-          newTile.setScale(t.scale_uv, t.scale_w, t.scale_unit);
-          base.addTile(newTile);
-        }
-      }
-    }
+    String type = "base";
+    NestedTileArray base = getExtrusion(lowestFloor, highestFloor, "Podium", type);
+    
+    // Add new Tilemaps to children
     addChild(base);
   }
   

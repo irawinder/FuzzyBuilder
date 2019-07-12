@@ -208,6 +208,27 @@ class TileArray {
   
   // Return New 3D TileArray of Extruded Tiles
   //
+  public NestedTileArray getExtrusion(int lowestFloor, int highestFloor, String name, String type) {
+    NestedTileArray extrusion = new NestedTileArray(name, type);
+    
+    // Build Extrusion
+    //
+    for (Tile t : tileList()) {
+      for(int i=lowestFloor; i<=highestFloor; i++) {
+        if(i==0) {
+          // Existing Ground-level tiles are referenced
+          extrusion.addTile(t);
+        } else {
+          // New Tile must be created above and below ground
+          Point newPoint = new Point(t.location.x, t.location.y, i*t.scale_w);
+          Tile newTile = new Tile(t.u, t.v, i, newPoint);
+          newTile.setScale(t.scale_uv, t.scale_w, t.scale_unit);
+          extrusion.addTile(newTile);
+        }
+      }
+    }
+    return extrusion;
+  }
   
   @Override
   public String toString() {
