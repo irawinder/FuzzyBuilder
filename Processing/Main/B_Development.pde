@@ -7,14 +7,17 @@ class Development {
   String name;
   
   // Dictionaries for collection of TileArrays that compose development
-  //
   private HashMap<String, TileArray> spaceMap;
   private ArrayList<TileArray> spaceList;
   
+  // Dictionary for collection of ControlPoints that compose development
+  private HashMap<String, ArrayList<ControlPoint>> pointMap;
+  
   Development(String name) {
+    this.name = name;
     spaceMap = new HashMap<String, TileArray>();
     spaceList = new ArrayList<TileArray>();
-    this.name = name;
+    pointMap = new HashMap<String, ArrayList<ControlPoint>>();
   }
   
   Development() {
@@ -56,25 +59,15 @@ class Development {
     for (TileArray space : toClear) {
       spaceMap.remove(space);
       spaceList.remove(space);
+      pointMap.remove(space.hashKey());
     }
   }
   
   // Adds TileArray to Map and List dictionaries
   public void addSpace(TileArray space) {
-    spaceMap.put(space.name, space);
+    spaceMap.put(space.hashKey(), space);
     spaceList.add(space);
-  }
-  
-  // Adds Empty TileArray to Map and List dictionaries
-  public void addSpace(String name, String type) {
-    TileArray space = new TileArray(name, type);
-    spaceMap.put(space.name, space);
-    spaceList.add(space);
-  }
-  
-  // Return TileArray of certain name
-  public TileArray getSpace(String spaceKey) {
-    return spaceMap.get(spaceKey);
+    pointMap.put(space.hashKey(), new ArrayList<ControlPoint>());
   }
   
   @Override

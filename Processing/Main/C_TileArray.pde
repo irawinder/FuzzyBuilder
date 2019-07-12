@@ -51,6 +51,11 @@ class TileArray {
     this.parent_name = parent;
   }
   
+  // The HashMap key used for entire TileArray
+  public String hashKey() {
+    return parent_name + "/" + name;
+  }
+  
   // Return Tiles
   public HashMap<String, Tile> tileMap() {
     return tileMap;

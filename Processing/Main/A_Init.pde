@@ -42,10 +42,10 @@ import java.util.Random;
     Polygon site_boundary;
     String site_name;
     
-    ControlPoint ctyd;
-    
     ArrayList<ControlPoint> control_points;
     int control_point_counter;
+    ControlPoint ctyd;
+    
     float tileW, tileH, tile_rotation;
     String units;
     Point tile_translation;
