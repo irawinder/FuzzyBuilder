@@ -2,10 +2,12 @@
 // Ira Winder, jiw@mit.edu
 
 // To Do:
-// - Implement Variable Setback
-// [Check] Implement Courtyard
 // - Implement Tower
+// - Implement Variable Setback
 // - Implement Use Types
+// - Make ControlPoint types independent from Space types
+//   (i.e. Space: Site, Zone, Footprint != Vertex, Plot, Void)
+// [Check] Implement Courtyard
 // [Check] Add ControlPoints for Site Polygon
 // [Check] Layered and selectable ControlPoints
 // [Check] Integrate Control Points into own class

@@ -155,7 +155,11 @@ void render() {
         for(Tile t : space.tileList()) {
           // Only draws ground plane if in 2D view mode
           if(t.location.z == 0 || cam3D) { 
-            renderVoxel(t, col, 0);
+            if (space.name.substring(0, 3).equals("Cou")) {
+              renderTile(t, col, 0);
+            } else {
+              renderVoxel(t, col, 0);
+            }
           }
         }
       }

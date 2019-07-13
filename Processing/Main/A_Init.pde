@@ -190,9 +190,9 @@ import java.util.Random;
           setback.setName("Setback");
           setback.setType(type);
           
-          // Courtyard Footprint(s)
+          // Void Footprint(s)
           float yard_area = 2700;
-          ArrayList<TileArray> courtyard = new ArrayList<TileArray>();
+          ArrayList<TileArray> voidSpace = new ArrayList<TileArray>();
           ArrayList<ControlPoint> points = control.points(type);
           for (ControlPoint p : points) {
             if (space.pointInArray(p.x, p.y)) {
@@ -200,23 +200,23 @@ import java.util.Random;
               t.subtract(setback);
               t.setName(p.getTag());
               t.setType(type);
-              //Subtract other courtyards from current to prevent overlap
-              for(TileArray prev : courtyard) t.subtract(prev);
-              courtyard.add(t);
+              //Subtract other voids from current to prevent overlap
+              for(TileArray prev : voidSpace) t.subtract(prev);
+              voidSpace.add(t);
             }
           }
           
           // Building Footprint
           TileArray building = space.getDiff(setback);
-          for(TileArray cy : courtyard) {
-            building.subtract(cy);
+          for(TileArray v : voidSpace) {
+            building.subtract(v);
           }
           building.setName("Building");
           building.setType(type);
           
           new_foot.add(setback);
           new_foot.add(building);
-          for(TileArray cy : courtyard) new_foot.add(cy);
+          for(TileArray v : voidSpace) new_foot.add(v);
         }
       }
       
@@ -236,12 +236,22 @@ import java.util.Random;
       
       // Create new Bases from Footprints
       for (TileArray space : dev.spaceList()) {
+        
+        // Building
         if (space.name.equals("Building") && space.type.equals("footprint")) {
-          TileArray base = space.getExtrusion(min(0, -1), i);
+          TileArray base = space.getExtrusion(-1, i);
           base.setName("Podium");
           base.setType(type);
           new_bases.add(base);
           i++;
+        }
+        
+        // OpenSpace
+        if (space.name.substring(0, 3).equals("Voi") && space.type.equals("footprint")) {
+          TileArray base = space.getExtrusion(0, 0);
+          base.setName("Courtyard");
+          base.setType(type);
+          new_bases.add(base);
         }
       }
       
@@ -267,7 +277,7 @@ import java.util.Random;
       for (TileArray space : dev.spaceList) {
         if (space.type.equals("site")) {
           String point_prefix = "Plot";
-          for (int i=0; i<4; i++) {
+          for (int i=0; i<3; i++) {
             control.addPoint(point_prefix + " " + zone_counter, "zone", space);
             zone_counter++;
           }
@@ -282,7 +292,7 @@ import java.util.Random;
       for (TileArray space : dev.spaceList) {
         // Add Control Point to Zone
         if (space.type.equals("zone")) {
-          String point_prefix = "Courtyard " + foot_counter;
+          String point_prefix = "Void " + foot_counter;
           foot_counter++;
           control.addPoint(point_prefix, "footprint", space);
         }

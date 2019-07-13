@@ -279,7 +279,10 @@ void toggleSiteEditing() {
   editFootprints = false;
   new_control_type = "site";
   control.off();
-  if (editSites) control.on(new_control_type);
+  if (editSites) {
+    control.on(new_control_type);
+    showPolygons = true;
+  }
 }
 
 void toggleZoneEditing() {
