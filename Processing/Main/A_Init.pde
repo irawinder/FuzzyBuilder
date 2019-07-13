@@ -7,7 +7,10 @@ import java.util.Random;
     ControlPoint hovering;
     
     // Add or remove point via mouse click
-    boolean editModel, addPoint, removePoint;
+    boolean addPoint, removePoint;
+    
+    // Which control point set are we editing?
+    boolean editZones, editFootprints;
     
     // Is camera 3D? Otherwise it's 2D;
     boolean cam3D;
@@ -29,7 +32,6 @@ import java.util.Random;
       
       buildingZoneState();
       
-      editModel = true;
       addPoint = false;
       removePoint = false;
     }
@@ -43,6 +45,9 @@ import java.util.Random;
     String site_name;
     
     Control control;
+    String new_control_type;
+    int zone_counter;
+    int foot_counter;
     
     float tileW, tileH, tile_rotation;
     String units;
@@ -69,14 +74,19 @@ import java.util.Random;
       tile_translation = new Point(0,0);
       tile_rotation = 0;
       
+      // Init Control Points
       control = new Control();
+      new_control_type = "zone";
+      editZones = false;
+      editFootprints = false;
       
-      initSite();
-      initSiteControl();
+      // Init Random Model and Control Points
+      initSites();
+      initZonesControl();
       initZones();
-      initZoneControl();
+      initFootprintsControl();
       initFootprints();
-      initBase();
+      initBases();
     }
 
 // Update Backend:
@@ -97,19 +107,19 @@ import java.util.Random;
       
       switch(change) {
         case 's':
-          initSite();
+          initSites();
         case 'z':
           initZones();
         case 'f':
           initFootprints();
-          initBase();
+          initBases();
           break;
       }
     }
     
     // Initialize Site
     //
-    void initSite() {
+    void initSites() {
       
       //Define new Space Type
       String type = "site";
@@ -205,7 +215,7 @@ import java.util.Random;
     
     // A Base is a building component that rests on a Footprint
     //
-    void initBase() {
+    void initBases() {
       
       //Define new Space Type
       String type = "base";
@@ -230,8 +240,7 @@ import java.util.Random;
     
     // Initialize Control Points
     //
-    int zone_counter;
-    void initSiteControl() {
+    void initZonesControl() {
       zone_counter = 1;
       for (TileArray space : dev.spaceList) {
         if (space.type.equals("site")) {
@@ -246,8 +255,7 @@ import java.util.Random;
     
     // Initialize Control Points
     //
-    int foot_counter;
-    void initZoneControl() {
+    void initFootprintsControl() {
       foot_counter = 1;
       for (TileArray space : dev.spaceList) {
         // Add Control Point to Zone

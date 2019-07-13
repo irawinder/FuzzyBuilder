@@ -25,7 +25,9 @@ void zoneState() {
   showSite = true;
   showZones = true;
   viewState = 2;
-  editModel = true;
+  
+  editZones = true;
+  control.on("zone");
 }
 
 void footprintState() {
@@ -35,7 +37,9 @@ void footprintState() {
   showSite = true;
   showFootprints = true;
   viewState = 3;
-  editModel = true;
+  
+  editFootprints = true;
+  control.on("footprint");
 }
 
 void buildingZoneState() {
@@ -46,7 +50,9 @@ void buildingZoneState() {
   showFootprints = true;
   showBases = true;
   viewState = 4;
-  editModel = true;
+  
+  editZones = true;
+  control.on("zone");
 }
 
 void buildingState() {
@@ -87,7 +93,11 @@ void offState() {
   showTowers = false;
   showFloors = false;
   showRooms = false;
-  editModel = false;
+  
+  addPoint = false;
+  editZones = false;
+  editFootprints = false;
+  control.off();
 }
 
 void render() {
@@ -159,11 +169,22 @@ void render() {
   
   hint(DISABLE_DEPTH_TEST);
   
-  if (editModel) {
-    
-    // Draw Tagged Control Points Labels
-    //
-    for (ControlPoint p : control.points()) {
+  // Draw Tagged Control Points
+  //
+  for (ControlPoint p : control.points()) {
+    fill(150, 100); stroke(0, 150); strokeWeight(1);
+    if (!p.active()) stroke(0, 75);
+    pushMatrix(); translate(0, 0, 1);
+    if (p.active()) ellipse(p.x, p.y, 10, 10);
+    line(p.x-5, p.y-5, p.x+5, p.y+5);
+    line(p.x-5, p.y+5, p.x+5, p.y-5);
+    popMatrix();
+  }
+  
+  // Draw Tagged Control Points Labels
+  //
+  for (ControlPoint p : control.points()) {
+    if (p.active()) {
       int x, y;
       if (cam3D) {
         cam3D();
@@ -181,35 +202,20 @@ void render() {
       text(p.tag, x + 10 + (int)textWidth/2, y - 1);
       if(cam3D) cam3D(); // sets back to 3D camera, if in 3D mode
     }
-    
-    // Draw Tagged Control Points
-    //
-    for (ControlPoint p : control.points()) {
-      fill(150, 100); stroke(0, 150); strokeWeight(1);
-      pushMatrix(); translate(0, 0, 1);
-      ellipse(p.x, p.y, 10, 10);
-      line(p.x-5, p.y, p.x+5, p.y);
-      line(p.x, p.y-5, p.x, p.y+5);
-      popMatrix();
+  }
+  
+  // Draw Hovering Control Point
+  //
+  if (hovering != null && hovering.active()) {
+    color col = color(50);
+    if (removePoint) {
+      colorMode(RGB); 
+      col = color(255, 0, 0);
+    } else if (addPoint) {
+      colorMode(RGB); 
+      col = color(0, 255, 00);
     }
-    
-    // Draw Hovering Control Point
-    //
-    if (hovering != null) {
-      color col = color(50);
-      if (removePoint) {
-        colorMode(RGB); 
-        col = color(255, 0, 0);
-      } else if (addPoint) {
-        colorMode(RGB); 
-        col = color(0, 255, 00);
-      }
-      stroke(col); strokeWeight(2);
-      pushMatrix(); translate(0, 0, 1);
-      line(hovering.x-5, hovering.y, hovering.x+5, hovering.y);
-      line(hovering.x, hovering.y-5, hovering.x, hovering.y+5);
-      popMatrix();
-    }
+    renderCross(hovering.x, hovering.y, 5, col, 2, 1);
   }
   
   if(cam3D) cam2D(); // sets temporarily to 2D camera, if in 3D
@@ -219,16 +225,20 @@ void render() {
   fill(0); textAlign(LEFT, TOP);
   String info = "";
   info += "Click and drag zone nodes";
-  info += "\n" + "Press 'a' to add zone node";
-  info += "\n" + "Press 'x' to remove zone node";
-  info += "\n" + "Press 'c' clear all zone nodes";
+  info += "\n" + "Press 'a' to add control point";
+  if(addPoint) info += " <--";
+  info += "\n" + "Press 'x' to remove control point";
+  if(removePoint) info += " <--";
+  info += "\n" + "Press 'c' clear all control points";
   info += "\n" + "Press '-' or '+' to resize tiles";
   info += "\n" + "Press '[', '{', ']', or '}' to rotate tiles";
   info += "\n" + "Press 'r' to generate random site";
   info += "\n" + "Press 'm' to toggle 2D/3D view";
   info += "\n" + "Press 'v' to toggle View Model";
   info += "\n" + "Press 't' to hide/show Tiles";
+  if(showTiles) info += " <--";
   info += "\n" + "Press 'p' to hide/show Polygons";
+  if(showPolygons) info += " <--";
   info += "\n";
   info += "\n" + "Press '1' to show Site";
   if(viewState == 1) info += " <--";
@@ -244,6 +254,11 @@ void render() {
   //if(viewState == 6) info += " <--";
   //info += "\n" + "Press '7' to show Rooms";
   //if(viewState == 7) info += " <--";
+  info += "\n";
+  info += "\n" + "Press 'z' to edit Zones";
+  if(editZones) info += " <--";
+  info += "\n" + "Press 'f' to edit Building Footprints";
+  if(editFootprints) info += " <--";
   text(info, 10, 10);
   //text("Framerate: " + int(frameRate), 10, height - 20);
   
@@ -263,17 +278,13 @@ void render() {
   
   // Mouse Cursor Info
   //
-  if (editModel) {
-    
-    fill(50); textAlign(LEFT, TOP);
-    if (addPoint) {
-      text("NEW", mouseX + 10, mouseY - 20);
-    } else if (removePoint) {
-      text("REMOVE", mouseX + 10, mouseY - 20);
-    } else if (hovering != null) {
-      text("MOVE", mouseX + 10, mouseY - 20);
-    }
-    
+  fill(50); textAlign(LEFT, TOP);
+  if (addPoint) {
+    text("NEW (" + new_control_type + ")", mouseX + 10, mouseY - 20);
+  } else if (removePoint) {
+    text("REMOVE", mouseX + 10, mouseY - 20);
+  } else if (hovering != null && hovering.active()) {
+    text("MOVE", mouseX + 10, mouseY - 20);
   }
   
   if(cam3D) cam3D(); // sets back to 3D camera, if in 3D mode
@@ -307,5 +318,13 @@ void renderVoxel(Tile t, color col, float z_offset) {
   pushMatrix(); translate(t.location.x, t.location.y, t.location.z + z_offset);
   rotate(tile_rotation);
   box(scaler_uv*t.scale_uv, scaler_uv*t.scale_uv, scaler_w*t.scale_w);
+  popMatrix();
+}
+
+void renderCross(float x, float y, float size, color col, float stroke, float z_offset) {
+  stroke(col); strokeWeight(stroke);
+  pushMatrix(); translate(0, 0, z_offset);
+  line(x-5, y-5, x+5, y+5);
+  line(x-5, y+5, x+5, y-5);
   popMatrix();
 }

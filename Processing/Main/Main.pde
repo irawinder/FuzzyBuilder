@@ -18,11 +18,11 @@ void setup() {
   // Set the canvas size to 800px by 400px
   size(800, 400, P3D);
   
-  // Initialize ViewModel "Front End" Settings
-  initRender();
-  
   // Initialize Model "Backend"
   initModel();
+  
+  // Initialize ViewModel "Front End" Settings
+  initRender();
 }
 
 // Runs on Infinite Loop after setup() completes

@@ -9,34 +9,31 @@ void listen() {
     cam2D();
   }
   
-  if (editModel) {
-    
-    if (addPoint) {
-      Point atMouse = newPointAtMouse();
-      if (atMouse != null) {
-        ControlPoint ghost = new ControlPoint(atMouse.x, atMouse.y);
-        ghost.setTag("ghost");
-        hovering = ghost;
-      } else {
-        hovering = null;
+  if (addPoint) {
+    Point atMouse = newPointAtMouse();
+    if (atMouse != null) {
+      ControlPoint ghost = new ControlPoint(atMouse.x, atMouse.y);
+      ghost.setTag("ghost");
+      hovering = ghost;
+    } else {
+      hovering = null;
+    }
+  } else {
+    hovering = pointAtMouse();
+  }
+  
+  if(mousePressed && selected != null && selected.active()) {
+    if(cam3D) {
+      Point new_location = newPointAtMouse();
+      if (new_location != null) {
+        selected.x = new_location.x;
+        selected.y = new_location.y;
       }
     } else {
-      hovering = pointAtMouse();
+      selected.x = mouseX;
+      selected.y = mouseY;
     }
-    
-    if(mousePressed && selected != null) {
-      if(cam3D) {
-        Point new_location = newPointAtMouse();
-        if (new_location != null) {
-          selected.x = new_location.x;
-          selected.y = new_location.y;
-        }
-      } else {
-        selected.x = mouseX;
-        selected.y = mouseY;
-      }
-      zone_change_detected = true;
-    }
+    zone_change_detected = true;
   }
   
 }
@@ -101,16 +98,24 @@ void keyPressed() {
   switch(key) {
     case 'r':
       initModel();
+      initRender();
       addPoint = false;
       removePoint = false;
       break;
     case 'a':
       addPoint = !addPoint;
       removePoint = false;
+      if (addPoint) activateEditor();
       break;
     case 'x':
       removePoint = !removePoint;
       addPoint = false;
+      break;
+    case 'z':
+      toggleZoneEditing();
+      break;
+    case 'f':
+      toggleFootprintEditing();
       break;
     case 'c':
       control.clearPoints();
@@ -206,16 +211,13 @@ void keyPressed() {
 
 // Triggered once when any mouse button is pressed
 void mousePressed() {
-  if(editModel) {
-    
-    if (addPoint) {
-      Point atMouse = newPointAtMouse();
-      addControlPoint(atMouse.x, atMouse.y);
-    } else {
-      selected = hovering;
-      if (removePoint) {
-        removeControlPoint(selected);
-      }
+  if (addPoint) {
+    Point atMouse = newPointAtMouse();
+    addControlPoint(atMouse.x, atMouse.y);
+  } else {
+    selected = hovering;
+    if (removePoint) {
+      removeControlPoint(selected);
     }
   }
   
@@ -224,7 +226,7 @@ void mousePressed() {
 
 // Triggered once when any mouse button is released
 void mouseReleased() {
-  if(editModel) selected = null;
+  selected = null;
   
   loop();
 }
@@ -238,18 +240,51 @@ void mouseDragged() {
 }
 
 void addControlPoint(float x, float y) {
-  if (editModel) {
-    control.addPoint("Plot " + zone_counter, "zone", x, y);
-    control.addPoint("Courtyard " + foot_counter, "footprint", x-10, y+20);
+  if (new_control_type.equals("zone")) {
+    control.addPoint("Plot " + zone_counter, new_control_type, x, y);
     zone_counter++;
-    foot_counter++;
     zone_change_detected = true;
+  } else if (new_control_type.equals("footprint")) {
+    control.addPoint("Courtyard " + foot_counter, new_control_type, x, y);
+    foot_counter++;
+    foot_change_detected = true;
   }
 }
 
 void removeControlPoint(ControlPoint point) {
-  if (editModel) {
-    control.removePoint(point);
+  control.removePoint(point);
+  if (point.type.equals("zone")) {
     zone_change_detected = true;
+  } else if (point.type.equals("footprint")) {
+    foot_change_detected = true;
   }
+}
+
+void toggleZoneEditing() {
+  editZones = !editZones;
+  editFootprints = false;
+  new_control_type = "zone";
+  control.off();
+  if (editZones) control.on(new_control_type);
+}
+
+void toggleFootprintEditing() {
+  editFootprints = !editFootprints;
+  editZones = false;
+  new_control_type = "footprint";
+  control.off();
+  if (editFootprints) control.on(new_control_type);
+}
+
+// Activate Editor
+void activateEditor() {
+  editZones = false;
+  editFootprints = false;
+  if (new_control_type.equals("zone")) {
+    editZones = true;
+  } else if (new_control_type.equals("footprints")) {
+    editFootprints = true;
+  }
+  control.off();
+  control.on(new_control_type);
 }

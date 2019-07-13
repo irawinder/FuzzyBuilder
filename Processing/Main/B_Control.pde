@@ -12,6 +12,30 @@ class Control {
     return cPoints;
   }
   
+  // Turns all control points on()
+  public void on() {
+    for (ControlPoint p : cPoints) p.on();
+  }
+  
+  // Turns all control points on()
+  public void off() {
+    for (ControlPoint p : cPoints) p.off();
+  }
+  
+  // Turns all control points of a specific type on()
+  public void on(String type) {
+    for (ControlPoint p : cPoints) {
+      if (p.type.equals(type)) p.on();
+    }
+  }
+  
+  // Turns all control points of a specific type off()
+  public void off(String type) {
+    for (ControlPoint p : cPoints) {
+      if (p.type.equals(type)) p.off();
+    }
+  }
+  
   // Returns a subset of control points according to their type
   //
   public ArrayList<ControlPoint> points(String type) {
@@ -80,6 +104,75 @@ class Control {
     String out = "";
     for (ControlPoint p : cPoints) out += p + "\n";
     return out;
+  }
+}
+
+class ControlPoint extends Point {
+  
+  // String tag of point
+  private String tag;
+  
+  // The type of control point
+  private String type;
+  
+  // Numerical weight of point
+  private Float weight;
+  
+  // Activate control point
+  private boolean active;
+  
+  ControlPoint(float x, float y) {
+    super(x,y);
+    tag = "";
+    weight = 1.0;
+    active = true;
+  }
+  
+  public void on() {
+    active = true;
+  }
+  
+  public void off() {
+    active = false;
+  }
+  
+  public boolean active() {
+    return active;
+  }
+  
+  // Set the Tag Value of the Point
+  public void setTag(String tag) {
+    this.tag = tag;
+  }
+  
+  // Get the Tag Value of the Point
+  public String getTag() {
+    return tag;
+  }
+  
+  // Set the Type Value of the Point
+  public void setType(String type) {
+    this.type = type;
+  }
+  
+  // Get the Type Value of the Point
+  public String getType() {
+    return type;
+  }
+  
+  // Set the Weight of the Point
+  public void setWeight(float weight) {
+    this.weight = weight;
+  }
+  
+  // Get the Weight of the Point
+  public float getWeight() {
+    return weight;
+  }
+  
+  @Override
+  public String toString() {
+      return tag + "; Point[" + x + ", " + y + ", " + z + "]";
   }
   
 }
