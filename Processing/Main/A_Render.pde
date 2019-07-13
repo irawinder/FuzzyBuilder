@@ -16,6 +16,10 @@ void siteState() {
   showPolygons = true;
   showSite = true;
   viewState = 1;
+  
+  editSites = true;
+  new_control_type = "site";
+  control.on(new_control_type);
 }
 
 void zoneState() {
@@ -27,7 +31,8 @@ void zoneState() {
   viewState = 2;
   
   editZones = true;
-  control.on("zone");
+  new_control_type = "zone";
+  control.on(new_control_type);
 }
 
 void footprintState() {
@@ -39,7 +44,8 @@ void footprintState() {
   viewState = 3;
   
   editFootprints = true;
-  control.on("footprint");
+  new_control_type = "footprint";
+  control.on(new_control_type);
 }
 
 void buildingZoneState() {
@@ -52,7 +58,8 @@ void buildingZoneState() {
   viewState = 4;
   
   editZones = true;
-  control.on("zone");
+  new_control_type = "zone";
+  control.on(new_control_type);
 }
 
 void buildingState() {
@@ -96,6 +103,7 @@ void offState() {
   
   addPoint = false;
   editZones = false;
+  editSites = false;
   editFootprints = false;
   control.off();
 }
@@ -173,11 +181,15 @@ void render() {
   //
   for (ControlPoint p : control.points()) {
     fill(150, 100); stroke(0, 150); strokeWeight(1);
-    if (!p.active()) stroke(0, 75);
     pushMatrix(); translate(0, 0, 1);
     if (p.active()) ellipse(p.x, p.y, 10, 10);
-    line(p.x-5, p.y-5, p.x+5, p.y+5);
-    line(p.x-5, p.y+5, p.x+5, p.y-5);
+    int size = 4;
+    if (!p.active()) {
+      stroke(0, 75);
+      size = 2;
+    }
+    line(p.x-size, p.y-size, p.x+size, p.y+size);
+    line(p.x-size, p.y+size, p.x+size, p.y-size);
     popMatrix();
   }
   
@@ -215,7 +227,7 @@ void render() {
       colorMode(RGB); 
       col = color(0, 255, 00);
     }
-    renderCross(hovering.x, hovering.y, 5, col, 2, 1);
+    renderCross(hovering.x, hovering.y, 4, col, 2, 1);
   }
   
   if(cam3D) cam2D(); // sets temporarily to 2D camera, if in 3D
@@ -255,6 +267,8 @@ void render() {
   //info += "\n" + "Press '7' to show Rooms";
   //if(viewState == 7) info += " <--";
   info += "\n";
+  info += "\n" + "Press 's' to edit Site";
+  if(editSites) info += " <--";
   info += "\n" + "Press 'z' to edit Zones";
   if(editZones) info += " <--";
   info += "\n" + "Press 'f' to edit Building Footprints";

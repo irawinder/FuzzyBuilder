@@ -6,6 +6,8 @@
 // [Check] Implement Courtyard
 // - Implement Tower
 // - Implement Use Types
+// [Check] Add ControlPoints for Site Polygon
+// [Check] Layered and selectable ControlPoints
 // [Check] Integrate Control Points into own class
 // [Check] Flatten NestedTileArray?
 // [Check] Create ArrayList Version for TileArray

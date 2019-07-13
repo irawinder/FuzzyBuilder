@@ -33,7 +33,7 @@ void listen() {
       selected.x = mouseX;
       selected.y = mouseY;
     }
-    zone_change_detected = true;
+    detectChange(selected.type);
   }
   
 }
@@ -117,12 +117,16 @@ void keyPressed() {
     case 'f':
       toggleFootprintEditing();
       break;
+    case 's':
+      toggleSiteEditing();
+      break;
     case 'c':
       control.clearPoints();
       zone_change_detected = true;
-      addPoint = true;
       removePoint = false;
       buildingZoneState();
+      addPoint = true;
+      toggleZoneEditing();
       break;
     case 'm':
       cam3D = !cam3D;
@@ -240,27 +244,46 @@ void mouseDragged() {
 }
 
 void addControlPoint(float x, float y) {
-  if (new_control_type.equals("zone")) {
+  if (new_control_type.equals("site")) {
+    control.addPoint("Vertex " + zone_counter, new_control_type, x, y);
+    site_counter++;
+  } else if (new_control_type.equals("zone")) {
     control.addPoint("Plot " + zone_counter, new_control_type, x, y);
     zone_counter++;
-    zone_change_detected = true;
   } else if (new_control_type.equals("footprint")) {
     control.addPoint("Courtyard " + foot_counter, new_control_type, x, y);
     foot_counter++;
-    foot_change_detected = true;
   }
+  detectChange(new_control_type);
 }
 
 void removeControlPoint(ControlPoint point) {
   control.removePoint(point);
-  if (point.type.equals("zone")) {
+  detectChange(point.type);
+}
+
+// detect change based upon a type string
+void detectChange(String type) {
+  if (type.equals("site")) {
+    site_change_detected = true;
+  } else if (type.equals("zone")) {
     zone_change_detected = true;
-  } else if (point.type.equals("footprint")) {
+  } else if (type.equals("footprint")) {
     foot_change_detected = true;
   }
 }
 
+void toggleSiteEditing() {
+  editSites = !editSites;
+  editZones = false;
+  editFootprints = false;
+  new_control_type = "site";
+  control.off();
+  if (editSites) control.on(new_control_type);
+}
+
 void toggleZoneEditing() {
+  editSites = false;
   editZones = !editZones;
   editFootprints = false;
   new_control_type = "zone";
@@ -269,8 +292,9 @@ void toggleZoneEditing() {
 }
 
 void toggleFootprintEditing() {
-  editFootprints = !editFootprints;
+  editSites = false;
   editZones = false;
+  editFootprints = !editFootprints;
   new_control_type = "footprint";
   control.off();
   if (editFootprints) control.on(new_control_type);
@@ -278,12 +302,15 @@ void toggleFootprintEditing() {
 
 // Activate Editor
 void activateEditor() {
+  editSites = false;
   editZones = false;
   editFootprints = false;
   if (new_control_type.equals("zone")) {
     editZones = true;
-  } else if (new_control_type.equals("footprints")) {
+  } else if (new_control_type.equals("footprint")) {
     editFootprints = true;
+  } else if (new_control_type.equals("site")) {
+    editSites = true;
   }
   control.off();
   control.on(new_control_type);

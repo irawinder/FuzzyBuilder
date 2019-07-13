@@ -11,6 +11,10 @@ class Polygon {
     edge = new ArrayList<Line>();
   }
   
+  public ArrayList<Point> getCorners() {
+    return vertex;
+  }
+  
   // Add a vertex to the polygon
   void addVertex(Point p) {
     vertex.add(p);

@@ -10,7 +10,7 @@ import java.util.Random;
     boolean addPoint, removePoint;
     
     // Which control point set are we editing?
-    boolean editZones, editFootprints;
+    boolean editSites, editZones, editFootprints;
     
     // Is camera 3D? Otherwise it's 2D;
     boolean cam3D;
@@ -46,6 +46,7 @@ import java.util.Random;
     
     Control control;
     String new_control_type;
+    int site_counter;
     int zone_counter;
     int foot_counter;
     
@@ -77,10 +78,12 @@ import java.util.Random;
       // Init Control Points
       control = new Control();
       new_control_type = "zone";
+      editSites = false;
       editZones = false;
       editFootprints = false;
       
       // Init Random Model and Control Points
+      initSitesControl();
       initSites();
       initZonesControl();
       initZones();
@@ -126,6 +129,14 @@ import java.util.Random;
       dev.clearType(type);
       TileArray site = new TileArray(site_name, type);
       site.setParent(dev_name);
+      
+      // Update Polygon according to control points
+      site_boundary.clear();
+      for(ControlPoint p : control.points()) {
+        if (p.getType().equals("site")) {
+          site_boundary.addVertex(p);
+        }
+      }
       
       // Create new Site from polygon
       site.makeTiles(site_boundary, tileW, tileH, units, tile_rotation, tile_translation);
@@ -236,6 +247,17 @@ import java.util.Random;
       
       // Add new Spaces to Development
       for (TileArray base : new_bases) dev.addSpace(base);
+    }
+    
+    // Initialize Control Points
+    //
+    void initSitesControl() {
+      site_counter = 1;
+      String point_prefix = "Vertex";
+      for (Point p : site_boundary.getCorners()) {
+        control.addPoint(point_prefix + " " + site_counter, "site", p.x, p.y);
+        site_counter++;
+      }
     }
     
     // Initialize Control Points
