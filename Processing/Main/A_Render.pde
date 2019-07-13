@@ -116,15 +116,15 @@ void render() {
       if (showFootprints && space.type.equals("footprint")) {
         colorMode(HSB); color col;
         if(space.name.equals("Building")) {
-          col = color(space.hue, 50, 150);
+          col = color(space.hue, 150, 200);
         } else if(space.name.equals("Setback")) {
           col = color(space.hue, 50, 225);
         } else {
-          col = color(space.hue, 50, 225);
+          col = color(space.hue, 150, 200);
         }
         for (Tile t : space.tileList()) {
           renderTile(t, col, -1);
-          if (space.name.substring(0,3).equals("Cou")) {
+          if (space.name.equals("Building")) {
             renderVoxel(t, col, -0.5*t.scale_w);
           }
         }
@@ -300,10 +300,10 @@ void renderTile(Tile t, color col, float z_offset) {
 
 void renderVoxel(Tile t, color col, float z_offset) {
   
-  float scaler_uv = 0.85;
+  float scaler_uv = 0.9;
   float scaler_w = 0.6;
   
-  fill(col); stroke(0, 50); strokeWeight(0.5);
+  fill(col); stroke(0, 50); strokeWeight(1);
   pushMatrix(); translate(t.location.x, t.location.y, t.location.z + z_offset);
   rotate(tile_rotation);
   box(scaler_uv*t.scale_uv, scaler_uv*t.scale_uv, scaler_w*t.scale_w);
