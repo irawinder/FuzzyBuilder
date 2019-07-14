@@ -3,10 +3,9 @@
 
 // To Do:
 // - Implement Tower
-// - Implement Variable Setback
+// - Implement Variable Setback and Void
 // - Implement Use Types
-// - Make ControlPoint types independent from Space types
-//   (i.e. Space: Site, Zone, Footprint != Vertex, Plot, Void)
+// [Check] Make ControlPoint types independent from Space types
 // [Check] Implement Courtyard
 // [Check] Add ControlPoints for Site Polygon
 // [Check] Layered and selectable ControlPoints

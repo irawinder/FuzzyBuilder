@@ -10,7 +10,7 @@ import java.util.Random;
     boolean addPoint, removePoint;
     
     // Which control point set are we editing?
-    boolean editSites, editZones, editFootprints;
+    boolean editVertices, editPlots, editVoids;
     
     // Is camera 3D? Otherwise it's 2D;
     boolean cam3D;
@@ -46,9 +46,9 @@ import java.util.Random;
     
     Control control;
     String new_control_type;
-    int site_counter;
-    int zone_counter;
-    int foot_counter;
+    int vert_counter;
+    int plot_counter;
+    int void_counter;
     
     float tileW, tileH, tile_rotation;
     String units;
@@ -78,16 +78,16 @@ import java.util.Random;
       // Init Control Points
       control = new Control();
       new_control_type = "zone";
-      editSites = false;
-      editZones = false;
-      editFootprints = false;
+      editVertices = false;
+      editPlots = false;
+      editVoids = false;
       
       // Init Random Model and Control Points
-      initSitesControl();
+      initVertexControl();
       initSites();
-      initZonesControl();
+      initPlotControl();
       initZones();
-      initFootprintsControl();
+      initVoidControl();
       initFootprints();
       initBases();
     }
@@ -132,11 +132,8 @@ import java.util.Random;
       
       // Update Polygon according to control points
       site_boundary.clear();
-      for(ControlPoint p : control.points()) {
-        if (p.getType().equals("site")) {
-          site_boundary.addVertex(p);
-        }
-      }
+      ArrayList<ControlPoint> vertex_control = control.points("Vertex");
+      for(ControlPoint p : vertex_control) site_boundary.addVertex(p);
       
       // Create new Site from polygon
       site.makeTiles(site_boundary, tileW, tileH, units, tile_rotation, tile_translation);
@@ -157,7 +154,8 @@ import java.util.Random;
       // Create new Zones from Voronoi Sites
       for (TileArray space : dev.spaceList()) {
         if (space.type.equals("site")) {
-          ArrayList<TileArray> zones = space.getVoronoi(control.points(type));
+          ArrayList<ControlPoint> plot_control = control.points("Plot");
+          ArrayList<TileArray> zones = space.getVoronoi(plot_control);
           int hue = 0;
           for (TileArray zone : zones) {
             zone.setType(type);
@@ -193,8 +191,8 @@ import java.util.Random;
           // Void Footprint(s)
           float yard_area = 2700;
           ArrayList<TileArray> voidSpace = new ArrayList<TileArray>();
-          ArrayList<ControlPoint> points = control.points(type);
-          for (ControlPoint p : points) {
+          ArrayList<ControlPoint> void_control = control.points("Void");
+          for (ControlPoint p : void_control) {
             if (space.pointInArray(p.x, p.y)) {
               TileArray t = space.getClosestN(p, yard_area);
               t.subtract(setback);
@@ -208,9 +206,7 @@ import java.util.Random;
           
           // Building Footprint
           TileArray building = space.getDiff(setback);
-          for(TileArray v : voidSpace) {
-            building.subtract(v);
-          }
+          for(TileArray v : voidSpace) building.subtract(v);
           building.setName("Building");
           building.setType(type);
           
@@ -259,42 +255,42 @@ import java.util.Random;
       for (TileArray base : new_bases) dev.addSpace(base);
     }
     
-    // Initialize Control Points
+    // Initialize Vertex Control Points
     //
-    void initSitesControl() {
-      site_counter = 1;
+    void initVertexControl() {
+      vert_counter = 1;
       String point_prefix = "Vertex";
       for (Point p : site_boundary.getCorners()) {
-        control.addPoint(point_prefix + " " + site_counter, "site", p.x, p.y);
-        site_counter++;
+        control.addPoint(point_prefix + " " + vert_counter, point_prefix, p.x, p.y);
+        vert_counter++;
       }
     }
     
-    // Initialize Control Points
+    // Initialize Plot Control Points
     //
-    void initZonesControl() {
-      zone_counter = 1;
+    void initPlotControl() {
+      plot_counter = 1;
       for (TileArray space : dev.spaceList) {
         if (space.type.equals("site")) {
           String point_prefix = "Plot";
           for (int i=0; i<3; i++) {
-            control.addPoint(point_prefix + " " + zone_counter, "zone", space);
-            zone_counter++;
+            control.addPoint(point_prefix + " " + plot_counter, point_prefix, space);
+            plot_counter++;
           }
         }
       }
     }
     
-    // Initialize Control Points
+    // Initialize Void Control Points
     //
-    void initFootprintsControl() {
-      foot_counter = 1;
+    void initVoidControl() {
+      void_counter = 1;
       for (TileArray space : dev.spaceList) {
         // Add Control Point to Zone
         if (space.type.equals("zone")) {
-          String point_prefix = "Void " + foot_counter;
-          foot_counter++;
-          control.addPoint(point_prefix, "footprint", space);
+          String point_prefix = "Void";
+          void_counter++;
+          control.addPoint(point_prefix + " " + void_counter, point_prefix, space);
         }
       }
     }

@@ -17,8 +17,8 @@ void siteState() {
   showSite = true;
   viewState = 1;
   
-  editSites = true;
-  new_control_type = "site";
+  editVertices = true;
+  new_control_type = "Vertex";
   control.on(new_control_type);
 }
 
@@ -30,8 +30,8 @@ void zoneState() {
   showZones = true;
   viewState = 2;
   
-  editZones = true;
-  new_control_type = "zone";
+  editPlots = true;
+  new_control_type = "Plot";
   control.on(new_control_type);
 }
 
@@ -43,8 +43,8 @@ void footprintState() {
   showFootprints = true;
   viewState = 3;
   
-  editFootprints = true;
-  new_control_type = "footprint";
+  editVoids = true;
+  new_control_type = "Void";
   control.on(new_control_type);
 }
 
@@ -57,8 +57,8 @@ void buildingZoneState() {
   showBases = true;
   viewState = 4;
   
-  editZones = true;
-  new_control_type = "zone";
+  editPlots = true;
+  new_control_type = "Plot";
   control.on(new_control_type);
 }
 
@@ -102,9 +102,9 @@ void offState() {
   showRooms = false;
   
   addPoint = false;
-  editZones = false;
-  editSites = false;
-  editFootprints = false;
+  editPlots = false;
+  editVertices = false;
+  editVoids = false;
   control.off();
 }
 
@@ -113,52 +113,55 @@ void render() {
   background(255);
   
   if (showTiles) {
+    
     for (TileArray space : dev.spaceList()) {
+      if (showSpace(space)) {
       
-      // Draw Sites
-      //
-      if (showSite && space.type.equals("site")) {
-        color col = color(0, 50);
-        for(Tile t : space.tileList()) renderTile(t, col, -1);
-      }
-      
-      // Draw Zones
-      //
-      if (showZones && space.type.equals("zone")) {
-        colorMode(HSB); color col = color(space.hue, 100, 225);
-        for(Tile t : space.tileList()) renderTile(t, col, -1);
-      }
-      
-      // Draw Footprints
-      //
-      if (showFootprints && space.type.equals("footprint")) {
-        colorMode(HSB); color col;
-        if(space.name.equals("Building")) {
-          col = color(space.hue, 150, 200);
-        } else if(space.name.equals("Setback")) {
-          col = color(space.hue, 50, 225);
-        } else {
-          col = color(space.hue, 150, 200);
+        // Draw Sites
+        //
+        if (space.isType("site")) {
+          color col = color(0, 50);
+          for(Tile t : space.tileList()) renderTile(t, col, -1);
         }
-        for (Tile t : space.tileList()) {
-          renderTile(t, col, -1);
-          if (space.name.equals("Building")) {
-            renderVoxel(t, col, -0.5*t.scale_w);
+        
+        // Draw Zones
+        //
+        if (space.isType("zone")) {
+          colorMode(HSB); color col = color(space.hue, 100, 225);
+          for(Tile t : space.tileList()) renderTile(t, col, -1);
+        }
+        
+        // Draw Footprints
+        //
+        if (space.isType("footprint")) {
+          colorMode(HSB); color col;
+          if(space.name.equals("Building")) {
+            col = color(space.hue, 150, 200);
+          } else if(space.name.equals("Setback")) {
+            col = color(space.hue, 50, 225);
+          } else {
+            col = color(space.hue, 150, 200);
+          }
+          for (Tile t : space.tileList()) {
+            renderTile(t, col, -1);
+            if (space.name.equals("Building")) {
+              renderVoxel(t, col, -0.5*t.scale_w);
+            }
           }
         }
-      }
-      
-      // Draw Bases
-      //
-      if (showBases && space.type.equals("base")) {
-        colorMode(HSB); color col = color(space.hue, 150, 200);
-        for(Tile t : space.tileList()) {
-          // Only draws ground plane if in 2D view mode
-          if(t.location.z == 0 || cam3D) { 
-            if (space.name.substring(0, 3).equals("Cou")) {
-              renderTile(t, col, 0);
-            } else {
-              renderVoxel(t, col, 0);
+        
+        // Draw Bases
+        //
+        if (space.isType("base")) {
+          colorMode(HSB); color col = color(space.hue, 150, 200);
+          for(Tile t : space.tileList()) {
+            // Only draws ground plane if in 2D view mode
+            if(t.location.z == 0 || cam3D) { 
+              if (space.name.substring(0, 3).equals("Cou")) {
+                renderTile(t, col, 0);
+              } else {
+                renderVoxel(t, col, 0);
+              }
             }
           }
         }
@@ -240,12 +243,20 @@ void render() {
   //
   fill(0); textAlign(LEFT, TOP);
   String info = "";
-  info += "Click and drag zone nodes";
+  info += "Click and drag control points";
+  info += "\n";
   info += "\n" + "Press 'a' to add control point";
   if(addPoint) info += " <--";
   info += "\n" + "Press 'x' to remove control point";
   if(removePoint) info += " <--";
+  info += "\n" + "Press 'i' to edit Site";
+  if(editVertices) info += " <--";
+  info += "\n" + "Press 'p' to edit Plots";
+  if(editPlots) info += " <--";
+  info += "\n" + "Press 'o' to edit Voids";
+  if(editVoids) info += " <--";
   info += "\n" + "Press 'c' clear all control points";
+  info += "\n";
   info += "\n" + "Press '-' or '+' to resize tiles";
   info += "\n" + "Press '[', '{', ']', or '}' to rotate tiles";
   info += "\n" + "Press 'r' to generate random site";
@@ -253,7 +264,7 @@ void render() {
   info += "\n" + "Press 'v' to toggle View Model";
   info += "\n" + "Press 't' to hide/show Tiles";
   if(showTiles) info += " <--";
-  info += "\n" + "Press 'p' to hide/show Polygons";
+  info += "\n" + "Press 'l' to hide/show PolyLines";
   if(showPolygons) info += " <--";
   info += "\n";
   info += "\n" + "Press '1' to show Site";
@@ -270,13 +281,6 @@ void render() {
   //if(viewState == 6) info += " <--";
   //info += "\n" + "Press '7' to show Rooms";
   //if(viewState == 7) info += " <--";
-  info += "\n";
-  info += "\n" + "Press 's' to edit Site";
-  if(editSites) info += " <--";
-  info += "\n" + "Press 'z' to edit Zones";
-  if(editZones) info += " <--";
-  info += "\n" + "Press 'f' to edit Building Footprints";
-  if(editFootprints) info += " <--";
   text(info, 10, 10);
   //text("Framerate: " + int(frameRate), 10, height - 20);
   
@@ -289,8 +293,13 @@ void render() {
     summary += "\n" + "Tile Dimensions:";
     summary += "\n" + tileW + " x " + tileW + " x " + tileH + " units";
     summary += "\n";
-    summary += "\n" + dev;
-    for(TileArray space : dev.spaceList()) summary += "\n" + space;
+    summary += "\n" + dev + "/...";
+    for(TileArray space : dev.spaceList()) {
+      if (showSpace(space)) {
+        summary += "\n~/" + space;
+        //summary += "\n" + space.parent_name + "/" + space;
+      }
+    }
     text(summary, width - 175, 10);
   }
   
@@ -345,4 +354,22 @@ void renderCross(float x, float y, float size, color col, float stroke, float z_
   line(x-5, y-5, x+5, y+5);
   line(x-5, y+5, x+5, y-5);
   popMatrix();
+}
+
+boolean showSpace(TileArray space) {
+  if (showSite && space.type.equals("site")) {
+    return true;
+  } else if (showZones && space.type.equals("zone")) {
+    return true;
+  } else if (showFootprints && space.type.equals("footprint")) {
+    return true;
+  } else if (showBases && space.type.equals("base")) {
+    return true;
+  } else if (showFloors && space.type.equals("floor")) {
+    return true;
+  } else if (showRooms && space.type.equals("room")) {
+    return true;
+  } else {
+    return false;
+  }
 }

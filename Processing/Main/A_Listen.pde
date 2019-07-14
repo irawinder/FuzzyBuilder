@@ -111,22 +111,22 @@ void keyPressed() {
       removePoint = !removePoint;
       addPoint = false;
       break;
-    case 'z':
-      toggleZoneEditing();
+    case 'p':
+      togglePlotEditing();
       break;
-    case 'f':
-      toggleFootprintEditing();
+    case 'o':
+      toggleVoidEditing();
       break;
-    case 's':
-      toggleSiteEditing();
+    case 'i':
+      toggleVertexEditing();
       break;
     case 'c':
       control.clearPoints();
-      zone_change_detected = true;
+      site_change_detected = true;
       removePoint = false;
       buildingZoneState();
       addPoint = true;
-      toggleZoneEditing();
+      toggleVertexEditing();
       break;
     case 'm':
       cam3D = !cam3D;
@@ -165,7 +165,7 @@ void keyPressed() {
     case 't':
       showTiles = !showTiles;
       break;
-    case 'p':
+    case 'l':
       showPolygons = !showPolygons;
       break;
     case '1':
@@ -244,15 +244,15 @@ void mouseDragged() {
 }
 
 void addControlPoint(float x, float y) {
-  if (new_control_type.equals("site")) {
-    control.addPoint("Vertex " + zone_counter, new_control_type, x, y);
-    site_counter++;
-  } else if (new_control_type.equals("zone")) {
-    control.addPoint("Plot " + zone_counter, new_control_type, x, y);
-    zone_counter++;
-  } else if (new_control_type.equals("footprint")) {
-    control.addPoint("Courtyard " + foot_counter, new_control_type, x, y);
-    foot_counter++;
+  if (new_control_type.equals("Vertex")) {
+    control.addPoint(new_control_type + " " + vert_counter, new_control_type, x, y);
+    vert_counter++;
+  } else if (new_control_type.equals("Plot")) {
+    control.addPoint(new_control_type + " " + plot_counter, new_control_type, x, y);
+    plot_counter++;
+  } else if (new_control_type.equals("Void")) {
+    control.addPoint(new_control_type + " " + void_counter, new_control_type, x, y);
+    void_counter++;
   }
   detectChange(new_control_type);
 }
@@ -264,57 +264,65 @@ void removeControlPoint(ControlPoint point) {
 
 // detect change based upon a type string
 void detectChange(String type) {
-  if (type.equals("site")) {
+  if (type.equals("Vertex")) {
     site_change_detected = true;
-  } else if (type.equals("zone")) {
+  } else if (type.equals("Plot")) {
     zone_change_detected = true;
-  } else if (type.equals("footprint")) {
+  } else if (type.equals("Void")) {
     foot_change_detected = true;
   }
 }
 
-void toggleSiteEditing() {
-  editSites = !editSites;
-  editZones = false;
-  editFootprints = false;
-  new_control_type = "site";
+void toggleVertexEditing() {
+  editVertices = !editVertices;
+  editPlots = false;
+  editVoids = false;
+  new_control_type = "Vertex";
   control.off();
-  if (editSites) {
+  if (editVertices) {
     control.on(new_control_type);
+    // auto add points if list is empty
+    if (control.points(new_control_type).size() == 0) addPoint = true;
     showPolygons = true;
   }
 }
 
-void toggleZoneEditing() {
-  editSites = false;
-  editZones = !editZones;
-  editFootprints = false;
-  new_control_type = "zone";
+void togglePlotEditing() {
+  editVertices = false;
+  editPlots = !editPlots;
+  editVoids = false;
+  new_control_type = "Plot";
   control.off();
-  if (editZones) control.on(new_control_type);
+  if (editPlots) control.on(new_control_type);
+  // auto add points if list is empty
+  if (control.points(new_control_type).size() == 0) addPoint = true;
 }
 
-void toggleFootprintEditing() {
-  editSites = false;
-  editZones = false;
-  editFootprints = !editFootprints;
-  new_control_type = "footprint";
+void toggleVoidEditing() {
+  editVertices = false;
+  editPlots = false;
+  editVoids = !editVoids;
+  new_control_type = "Void";
   control.off();
-  if (editFootprints) control.on(new_control_type);
+  if (editVoids) {
+    control.on(new_control_type);
+    // auto add points if list is empty
+    if (control.points(new_control_type).size() == 0) addPoint = true;
+  }
 }
 
 // Activate Editor
 void activateEditor() {
-  editSites = false;
-  editZones = false;
-  editFootprints = false;
-  if (new_control_type.equals("zone")) {
-    editZones = true;
-  } else if (new_control_type.equals("footprint")) {
-    editFootprints = true;
-  } else if (new_control_type.equals("site")) {
-    editSites = true;
-  }
+  editVertices = false;
+  editPlots = false;
+  editVoids = false;
+  if (new_control_type.equals("Vertex")) {
+    editVertices = true;
+  } else if (new_control_type.equals("Plot")) {
+    editPlots = true;
+  } else if (new_control_type.equals("Void")) {
+    editVoids = true;
+  } 
   control.off();
   control.on(new_control_type);
 }

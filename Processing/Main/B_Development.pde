@@ -39,6 +39,18 @@ class Development {
     return spaceList;
   }
   
+  // Returns a subset of spacess according to their type
+  //
+  public ArrayList<TileArray> spaceList(String type) {
+    ArrayList<TileArray> subset = new ArrayList<TileArray>();
+    for (TileArray space : spaceList) {
+      if (space.type.equals(type)) {
+        subset.add(space);
+      }
+    }
+    return subset;
+  }
+  
   // Get Specific Space
   public TileArray getSpace(String hashKey) {
     return spaceMap.get(hashKey);

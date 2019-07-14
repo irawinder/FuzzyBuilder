@@ -12,6 +12,18 @@ class Control {
     return cPoints;
   }
   
+  // Returns a subset of control points according to their type
+  //
+  public ArrayList<ControlPoint> points(String type) {
+    ArrayList<ControlPoint> subset = new ArrayList<ControlPoint>();
+    for (ControlPoint p : cPoints) {
+      if (p.getType().equals(type)) {
+        subset.add(p);
+      }
+    }
+    return subset;
+  }
+  
   // Turns all control points on()
   public void on() {
     for (ControlPoint p : cPoints) p.on();
@@ -34,18 +46,6 @@ class Control {
     for (ControlPoint p : cPoints) {
       if (p.type.equals(type)) p.off();
     }
-  }
-  
-  // Returns a subset of control points according to their type
-  //
-  public ArrayList<ControlPoint> points(String type) {
-    ArrayList<ControlPoint> subset = new ArrayList<ControlPoint>();
-    for (ControlPoint p : cPoints) {
-      if (p.getType().equals(type)) {
-        subset.add(p);
-      }
-    }
-    return subset;
   }
   
   // adds a control point randomly located inside a space

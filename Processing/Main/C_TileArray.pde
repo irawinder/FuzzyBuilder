@@ -72,6 +72,11 @@ class TileArray {
     return tileMap.get(t.id) != null;
   }
   
+  // Returns true if type match
+  public boolean isType(String type) {
+    return this.type.equals(type);
+  }
+  
   // Returns true if a point is within the TileArray
   public boolean pointInArray(float x, float y) {
     boolean inArray = false;
@@ -317,7 +322,7 @@ class TileArray {
     // Initialize Voronoi "Cells" Based Upon Tagged Point Collection
     for(ControlPoint p : points) {
       String p_name = p.getTag();
-      TileArray cell = new TileArray(p_name, type);
+      TileArray cell = new TileArray(p_name, this.type);
       cell.inheritAttributes(this);
       voronoiMap.put(p_name, cell);
       voronoiList.add(cell);
