@@ -3,8 +3,11 @@
 
 // To Do:
 // - Implement Tower
-// - Implement Variable Setback and Void
+// - Implement Variable Setback
 // - Implement Use Types
+// - Implement Variable Void size
+// - Implement ControlPoint weight interface
+// - Fix Bug : When two vertex points have same y coordinate
 // [Check] Make ControlPoint types independent from Space types
 // [Check] Implement Courtyard
 // [Check] Add ControlPoints for Site Polygon
