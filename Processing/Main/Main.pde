@@ -9,11 +9,11 @@
 // - Implement ControlPoint weight interface
 // - Fix Bug : When two vertex points have same y coordinate
 // [Check] Make ControlPoint types independent from Space types
-// [Check] Implement Courtyard
+// [Check] Implement Void/Courtyard
 // [Check] Add ControlPoints for Site Polygon
 // [Check] Layered and selectable ControlPoints
-// [Check] Integrate Control Points into own class
-// [Check] Flatten NestedTileArray?
+// [Check] Create Control() class to manage multiple ControlPoints()
+// [Check] Create Development() class to manage multple TileArray() Spaces
 // [Check] Create ArrayList Version for TileArray
 // [Check] Implement native Java library for random (not Processing)
 
