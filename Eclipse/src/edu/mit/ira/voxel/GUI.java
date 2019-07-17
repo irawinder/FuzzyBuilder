@@ -95,7 +95,7 @@ public class GUI extends PApplet{
 	
 	/**
 	 * 
-	 * @return new ControlPoint at mouse
+	 * @return new ControlPoint at mouse  (Requires processing.core)
 	 */
 	Point newPointAtMouse() {
 		Point mousePoint = null;
@@ -130,7 +130,7 @@ public class GUI extends PApplet{
 	}
 
 	/**
-	 * Return Tagged Point Nearest to Mouse
+	 * Return Tagged Point Nearest to Mouse  (Requires processing.core)
 	 * @return ControlPoint closest to mouse
 	 */
 	ControlPoint pointAtMouse() {
