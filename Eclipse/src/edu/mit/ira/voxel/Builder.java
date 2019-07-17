@@ -5,6 +5,8 @@ import processing.core.PApplet;
 
 /**
  * A Processing GUI that opens a window and allow user interaction
+ * @author ira
+ * 
  */
 public class Builder extends PApplet{
 

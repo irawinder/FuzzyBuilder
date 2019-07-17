@@ -1,7 +1,9 @@
 package edu.mit.ira.voxel;
 
 /**
- * A 3D Point Object
+ * A 3D Point object with x, y, and z value
+ * @author ira
+ *
  */
 public class Point {
 	public float x, y, z;

@@ -5,7 +5,7 @@ import java.util.Random;
 
 /**
  * Control Class is for managing Control Points
- * @author Ira Winder
+ * @author ira
  *
  */
 public class Control {

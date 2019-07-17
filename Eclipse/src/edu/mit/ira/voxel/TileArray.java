@@ -7,7 +7,8 @@ import java.util.Random;
 
 /**
  * A TileArray is a collection of tiles
- * @author Ira Winder
+ * @author ira
+ * 
  */
 public class TileArray {
 

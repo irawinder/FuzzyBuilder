@@ -1,8 +1,9 @@
 package edu.mit.ira.voxel;
 
 /**
- * ControlPoint class
- * @author Ira Winder
+ * ControlPoint class, a point with associated abstract attributes of 
+ * tag, type, and weight
+ * @author ira
  *
  */
 public class ControlPoint extends Point {

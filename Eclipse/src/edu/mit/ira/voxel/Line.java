@@ -5,6 +5,8 @@ import java.util.Collections;
 
 /**
  * Line Segment class
+ * @author ira
+ * 
  */
 public class Line {
 	Point o, f;

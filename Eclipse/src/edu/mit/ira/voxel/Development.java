@@ -6,7 +6,7 @@ import java.util.HashMap;
 /**
  * An entire development project; (i.e. a dictionary of 
  * TileArray spaces and their ControlPoints)
- * @author Ira Winder
+ * @author ira
  *
  */
 public class Development {
@@ -107,7 +107,7 @@ public class Development {
 
 		// Clear all spaces from Map and List dictionaries
 		for (TileArray space : toClear) {
-			spaceMap.remove(space);
+			spaceMap.remove(space.hashKey());
 			spaceList.remove(space);
 		}
 	}

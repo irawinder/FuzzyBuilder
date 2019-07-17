@@ -4,7 +4,8 @@ import java.util.ArrayList;
 
 /**
  * A Tile is a primitive particle of space
- * @author Ira Winder
+ * @author ira
+ * 
  */
 public class Tile {
 

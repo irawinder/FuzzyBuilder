@@ -5,6 +5,8 @@ import java.util.Random;
 
 /**
  * Polygon class: a series of connected, closed points
+ * @author ira
+ * 
  */
 public class Polygon {
 	private ArrayList<Point> vertex;
