@@ -1,3 +1,8 @@
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Random;
+import java.util.HashMap;
+
 // Demonstration of low-fidelity zone creation with Voronoi Algorithm
 // Ira Winder, jiw@mit.edu
 

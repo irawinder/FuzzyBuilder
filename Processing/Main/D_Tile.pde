@@ -1,59 +1,81 @@
-// The smallest "particle" of our sketch analysis
-//
-class Tile {
-  
+/**
+ * A Tile is a primitive particle of space
+ * @author ira
+ * 
+ */
+public class Tile {
+
   // Center Point of Tile in real "geospatial" coordinates
-  Point location;
-  
+  public Point location;
+
   // Integer coordinates of tile
-  int u, v, w;
-  
+  public int u, v, w;
+
   // How many units a tile represents 
   // i.e. [units/tile]
-  float scale_uv, scale_w;
-  String scale_unit;
-  
+  public float scale_uv, scale_w;
+  public String scale_unit;
+
   // Unique Tile ID, composite of integer coordinates
-  String id;
-  
+  public String id;
+
   // Type of Tile
-  String type;
-  
+  public String type;
+
   // Adjacent Tiles' names
-  ArrayList<String> adjacent;
-  
-  // Construct Tile
-  Tile(int u, int v, int w, Point p) {
+  public ArrayList<String> adjacent;
+
+  /**
+   * Constructs a Tile
+   * @param u integer 'u' coordinate (horizontal)
+   * @param v integer 'v' coordinate (horizontal)
+   * @param w integer 'w' coordinate (vertical)
+   * @param p center-point of Tile
+   */
+  public Tile(int u, int v, int w, Point p) {
     this.location = p;
     this.u = u;
     this.v = v;
     this.w = w;
     id = u + "," + v + "," + w;
     type = null;
-    scale_uv = 1.0;
-    scale_w = 0.5;
+    scale_uv = 1;
+    scale_w = (float)0.5;
     scale_unit = "";
   }
-  
-  // Construct Tile
-  Tile(int u, int v, Point p) {
+
+  /**
+   * Constructs a Tile with vertical coordinate 'w' set to zero
+   * @param u integer 'u' coordinate (horizontal)
+   * @param v integer 'v' coordinate (horizontal)
+   * @param p center-point of Tile
+   */
+  public Tile(int u, int v, Point p) {
     this(u, v, 0, p);
   }
-  
-  // Define the scale of the tile
+
+  /**
+   * Define the scale of the tile
+   * @param scale_uv horizontal units per tile
+   * @param scale_w vertical units per tile
+   * @param unit friendly name for units (e.g. "meters")
+   */
   public void setScale(float scale_uv, float scale_w, String unit) {
     this.scale_uv = scale_uv;
     this.scale_w = scale_w;
     this.scale_unit = unit;
   }
-  
-  // Adds name and elevation of neighbor to adjacency map
-  void addAdjacent(String _name) {
-    adjacent.add(_name);
+
+  /**
+   * Adds name and elevation of neighbor to adjacency map
+   * @param _id the id value of an adjacent Tile
+   */
+  public void addAdjacent(String _id) {
+    adjacent.add(_id);
   }
-  
+
   @Override
   public String toString() {
-      return type + " Tile[" + u + "," + v + "," + w + "] at " + location;
+    return type + " Tile[" + u + "," + v + "," + w + "] at " + location;
   }
 }
