@@ -9,8 +9,35 @@ import java.util.ArrayList;
  *
  */
 public class Builder {
-	// Initialize Front End:
+	
+	// Development of spaces
+	public Development dev;
+	public String dev_name;
+	
+	// Intermediate Polygon used to generate Development()
+	public Polygon site_boundary;
+	public String site_name;
+	
+	// Intermediate ControlPoints used to generate Development()
+	public Control control;
+	
+	// Intermediate Raster Grid Options to generate Development
+	// (dimensions, scale, rotation, translation, units)
+	public float tileW, tileH, tile_rotation;
+	public String units;
+	public Point tile_translation;
+	
+	// Track attributes for any new control points
+	public String new_control_type;
+	private int vert_counter;
+	private int plot_counter;
+	private int void_counter;
 
+	// Update model state?
+	private boolean site_change_detected;
+	private boolean zone_change_detected;
+	private boolean foot_change_detected;
+	
 	// Point that is currently selected or hovering;
 	public ControlPoint selected;
 	public ControlPoint hovering;
@@ -33,9 +60,17 @@ public class Builder {
 
 	// Is there a specific view mode?
 	String viewModel;
-
+	
 	/**
 	 * Initialize the Render Options
+	 */
+	public Builder() {
+		initModel();
+		initRender();
+	}
+	
+	/**
+	 * Initial Build State
 	 */
 	public void initRender() {
 		cam3D = true;
@@ -46,29 +81,7 @@ public class Builder {
 		addPoint = false;
 		removePoint = false;
 	}
-
-	public Development dev;
-	public String dev_name;
-
-	public Polygon site_boundary;
-	public String site_name;
-
-	public Control control;
 	
-	public String new_control_type;
-	private int vert_counter;
-	private int plot_counter;
-	private int void_counter;
-
-	public float tileW, tileH, tile_rotation;
-	public String units;
-	public Point tile_translation;
-
-	// Update model state?
-	private boolean site_change_detected;
-	private boolean zone_change_detected;
-	private boolean foot_change_detected;
-
 	/**
 	 * Initialize the Model
 	 */
@@ -580,7 +593,7 @@ public class Builder {
 	}
 
 	/**
-	 * Allow eiting of voids
+	 * Allow editing of voids
 	 */
 	void toggleVoidEditing() {
 		editVertices = false;

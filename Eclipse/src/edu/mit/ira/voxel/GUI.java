@@ -36,12 +36,6 @@ public class GUI extends PApplet{
 		frame.setTitle("Space Builder GUI");
 		
 		builder = new Builder();
-		
-		// Initialize Model "Backend"
-		builder.initModel();
-
-		// Initialize ViewModel "Front End" Settings
-		builder.initRender();
 	}
 
 	/**
