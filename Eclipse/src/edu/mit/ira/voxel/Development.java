@@ -24,7 +24,7 @@ public class Development {
 	 * 
 	 * @param name Name of Development
 	 */
-	Development(String name) {
+	public Development(String name) {
 		this.name = name;
 		spaceMap = new HashMap<String, TileArray>();
 		spaceList = new ArrayList<TileArray>();
@@ -33,7 +33,7 @@ public class Development {
 	/**
 	 * Constructor for new Development
 	 */
-	Development() {
+	public Development() {
 		this("New Development");
 	}
 

@@ -1,5 +1,9 @@
-package edu.mit.ira.voxel;
+package edu.mit.ira.builder;
 
+import edu.mit.ira.voxel.ControlPoint;
+import edu.mit.ira.voxel.Point;
+import edu.mit.ira.voxel.Tile;
+import edu.mit.ira.voxel.TileArray;
 import processing.core.PApplet;
 
 /**
@@ -8,7 +12,7 @@ import processing.core.PApplet;
  * @author ira
  * 
  */
-public class GUI extends PApplet {
+public class P_GUI extends PApplet {
 
 	Builder builder;
 
@@ -18,7 +22,7 @@ public class GUI extends PApplet {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		PApplet.main("edu.mit.ira.voxel.GUI");
+		PApplet.main("edu.mit.ira.builder.P_GUI");
 	}
 
 	/**
@@ -35,7 +39,7 @@ public class GUI extends PApplet {
 	 */
 	public void setup() {
 
-		frame.setTitle("Space Builder GUI");
+		frame.setTitle("Space Builder");
 
 		builder = new Builder();
 	}

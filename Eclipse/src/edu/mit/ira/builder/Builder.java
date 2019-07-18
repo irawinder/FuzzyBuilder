@@ -1,6 +1,12 @@
-package edu.mit.ira.voxel;
+package edu.mit.ira.builder;
 
 import java.util.ArrayList;
+import edu.mit.ira.voxel.Control;
+import edu.mit.ira.voxel.ControlPoint;
+import edu.mit.ira.voxel.Development;
+import edu.mit.ira.voxel.Point;
+import edu.mit.ira.voxel.Polygon;
+import edu.mit.ira.voxel.TileArray;
 
 /**
  * Builder facilitates the making of various TileArrays via Polygons and/or
