@@ -12,7 +12,7 @@ import processing.core.PApplet;
  * @author ira
  * 
  */
-public class P_GUI extends PApplet {
+public class PGUI extends PApplet {
 
 	Builder builder;
 
@@ -22,7 +22,7 @@ public class P_GUI extends PApplet {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		PApplet.main("edu.mit.ira.builder.P_GUI");
+		PApplet.main("edu.mit.ira.builder.PGUI");
 	}
 
 	/**
