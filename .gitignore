@@ -1,10 +1,20 @@
 
-Eclipse/bin/
+Eclipse/space-builder/bin/
+Eclipse/space-builder-javafx/bin/
+Eclipse/space-builder-processing/bin/
 
-Eclipse/lib/
+Eclipse/space-builder/lib/
+Eclipse/space-builder-javafx/lib/
+Eclipse/space-builder-processing/lib/
 
-Eclipse/.settings/
+Eclipse/space-builder/.settings/
+Eclipse/space-builder-javafx/.settings/
+Eclipse/space-builder-processing/.settings/
 
-Eclipse/.classpath
+Eclipse/space-builder/.classpath
+Eclipse/space-builder-javafx/.classpath
+Eclipse/space-builder-processing/.classpath
 
-Eclipse/.project
+Eclipse/space-builder/.project
+Eclipse/space-builder-javafx/.project
+Eclipse/space-builder-processing/.project
