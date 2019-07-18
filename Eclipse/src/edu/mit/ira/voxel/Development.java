@@ -4,8 +4,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
- * An entire development project; (i.e. a dictionary of 
- * TileArray spaces and their ControlPoints)
+ * An entire development project; (i.e. a dictionary of TileArray spaces and
+ * their ControlPoints)
+ * 
  * @author ira
  *
  */
@@ -20,6 +21,7 @@ public class Development {
 
 	/**
 	 * Constructor for new Development
+	 * 
 	 * @param name Name of Development
 	 */
 	Development(String name) {
@@ -27,16 +29,17 @@ public class Development {
 		spaceMap = new HashMap<String, TileArray>();
 		spaceList = new ArrayList<TileArray>();
 	}
-	
+
 	/**
 	 * Constructor for new Development
 	 */
 	Development() {
 		this("New Development");
 	}
-	
+
 	/**
 	 * Set Name of Development
+	 * 
 	 * @param name name
 	 */
 	public void setName(String name) {
@@ -45,6 +48,7 @@ public class Development {
 
 	/**
 	 * Return Space Map
+	 * 
 	 * @return HashMap of TileArray spaces within development
 	 */
 	public HashMap<String, TileArray> spaceMap() {
@@ -53,6 +57,7 @@ public class Development {
 
 	/**
 	 * Return Space List
+	 * 
 	 * @return ArrayList of TileArray spaces within development
 	 */
 	public ArrayList<TileArray> spaceList() {
@@ -61,6 +66,7 @@ public class Development {
 
 	/**
 	 * Returns a subset of spaces according to their type
+	 * 
 	 * @param type Type of spaces to Return
 	 * @return TileArray spaces of 'type'
 	 */
@@ -76,7 +82,9 @@ public class Development {
 
 	/**
 	 * Get Specific Space
-	 * @param hashKey hash key value of a TileArray space, same as TileArray.hashKey()
+	 * 
+	 * @param hashKey hash key value of a TileArray space, same as
+	 *                TileArray.hashKey()
 	 * @return matching Tile Array Space
 	 */
 	public TileArray getSpace(String hashKey) {
@@ -93,6 +101,7 @@ public class Development {
 
 	/**
 	 * Remove all spaces of a certain type from development
+	 * 
 	 * @param type Type of space to remove
 	 */
 	public void clearType(String type) {
@@ -114,6 +123,7 @@ public class Development {
 
 	/**
 	 * Adds TileArray to Map and List dictionaries
+	 * 
 	 * @param space TileArray space to add
 	 */
 	public void addSpace(TileArray space) {

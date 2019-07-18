@@ -5,6 +5,7 @@ import java.util.Random;
 
 /**
  * Control Class is for managing Control Points
+ * 
  * @author ira
  *
  */
@@ -21,6 +22,7 @@ public class Control {
 
 	/**
 	 * Return List of ControlPoints
+	 * 
 	 * @return all Control Points
 	 */
 	public ArrayList<ControlPoint> points() {
@@ -29,6 +31,7 @@ public class Control {
 
 	/**
 	 * Returns a subset of control points according to their type
+	 * 
 	 * @param type Type of Control Point to Return
 	 * @return ControlPoints of parameter 'type'
 	 */
@@ -46,40 +49,47 @@ public class Control {
 	 * Turns all control points on()
 	 */
 	public void on() {
-		for (ControlPoint p : cPoints) p.on();
+		for (ControlPoint p : cPoints)
+			p.on();
 	}
 
 	/**
 	 * Turns all control points off()
 	 */
 	public void off() {
-		for (ControlPoint p : cPoints) p.off();
+		for (ControlPoint p : cPoints)
+			p.off();
 	}
 
 	/**
 	 * Turns all control points of a specific type on()
+	 * 
 	 * @param type Type of ControlPoints to turn on
 	 */
 	public void on(String type) {
 		for (ControlPoint p : cPoints) {
-			if (p.getType().equals(type)) p.on();
+			if (p.getType().equals(type))
+				p.on();
 		}
 	}
 
 	/**
 	 * Turns all control points of a specific type off()
+	 * 
 	 * @param type Type of ControlPoints to turn off
 	 */
 	public void off(String type) {
 		for (ControlPoint p : cPoints) {
-			if (p.getType().equals(type)) p.off();
+			if (p.getType().equals(type))
+				p.off();
 		}
 	}
 
-	/** 
+	/**
 	 * Adds a control point randomly located inside a space
-	 * @param tag Tag value of control point
-	 * @param type Type value of control point
+	 * 
+	 * @param tag   Tag value of control point
+	 * @param type  Type value of control point
 	 * @param space TileArray to randomly place point within
 	 */
 	public void addPoint(String tag, String type, TileArray space) {
@@ -93,10 +103,11 @@ public class Control {
 
 	/**
 	 * Adds a control point at the given xy coordinates
-	 * @param tag Tag value of control point
+	 * 
+	 * @param tag  Tag value of control point
 	 * @param type Type value of control point
-	 * @param x x
-	 * @param y y
+	 * @param x    x
+	 * @param y    y
 	 */
 	public void addPoint(String tag, String type, float x, float y) {
 		ControlPoint p = new ControlPoint(x, y);
@@ -105,8 +116,9 @@ public class Control {
 
 	/**
 	 * Adds a pre-made control point
-	 * @param p pre-made ControlPoint to add to collection
-	 * @param tag Tag value of control point
+	 * 
+	 * @param p    pre-made ControlPoint to add to collection
+	 * @param tag  Tag value of control point
 	 * @param type Type value of control point
 	 */
 	private void addPoint(ControlPoint p, String tag, String type) {
@@ -116,8 +128,9 @@ public class Control {
 	}
 
 	/**
-	 * Returns a random control point with a coordinate
-	 * at an existing tile in the TileArray
+	 * Returns a random control point with a coordinate at an existing tile in the
+	 * TileArray
+	 * 
 	 * @param space TileArray to randomly place point within
 	 * @return a ControlPoint within the array
 	 */
@@ -153,7 +166,8 @@ public class Control {
 	@Override
 	public String toString() {
 		String out = "";
-		for (ControlPoint p : cPoints) out += p + "\n";
+		for (ControlPoint p : cPoints)
+			out += p + "\n";
 		return out;
 	}
 }

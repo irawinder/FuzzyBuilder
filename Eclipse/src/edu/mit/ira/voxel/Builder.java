@@ -3,30 +3,31 @@ package edu.mit.ira.voxel;
 import java.util.ArrayList;
 
 /**
- * Builder facilitates the making of various TileArrays 
- * via Polygons and/or ControlPoints
+ * Builder facilitates the making of various TileArrays via Polygons and/or
+ * ControlPoints
+ * 
  * @author ira
  *
  */
 public class Builder {
-	
+
 	// Development of spaces
 	public Development dev;
 	public String dev_name;
-	
+
 	// Intermediate Polygon used to generate Development()
 	public Polygon site_boundary;
 	public String site_name;
-	
+
 	// Intermediate ControlPoints used to generate Development()
 	public Control control;
-	
+
 	// Intermediate Raster Grid Options to generate Development
 	// (dimensions, scale, rotation, translation, units)
 	public float tileW, tileH, tile_rotation;
 	public String units;
 	public Point tile_translation;
-	
+
 	// Track attributes for any new control points
 	public String new_control_type;
 	private int vert_counter;
@@ -37,7 +38,7 @@ public class Builder {
 	private boolean site_change_detected;
 	private boolean zone_change_detected;
 	private boolean foot_change_detected;
-	
+
 	// Point that is currently selected or hovering;
 	public ControlPoint selected;
 	public ControlPoint hovering;
@@ -60,7 +61,7 @@ public class Builder {
 
 	// Is there a specific view mode?
 	String viewModel;
-	
+
 	/**
 	 * Initialize the Render Options
 	 */
@@ -68,7 +69,7 @@ public class Builder {
 		initModel();
 		initRender();
 	}
-	
+
 	/**
 	 * Initial Build State
 	 */
@@ -81,7 +82,7 @@ public class Builder {
 		addPoint = false;
 		removePoint = false;
 	}
-	
+
 	/**
 	 * Initialize the Model
 	 */
@@ -98,7 +99,7 @@ public class Builder {
 		tileW = 15;
 		tileH = 5;
 		units = "pixels";
-		tile_translation = new Point(0,0);
+		tile_translation = new Point(0, 0);
 		tile_rotation = 0;
 
 		// Init Control Points
@@ -135,7 +136,7 @@ public class Builder {
 			change = 'f';
 		}
 
-		switch(change) {
+		switch (change) {
 		case 's':
 			initSites();
 		case 'z':
@@ -152,7 +153,7 @@ public class Builder {
 	 */
 	void initSites() {
 
-		//Define new Space Type
+		// Define new Space Type
 		String type = "site";
 		dev.clearType(type);
 		TileArray site = new TileArray(site_name, type);
@@ -161,7 +162,8 @@ public class Builder {
 		// Update Polygon according to control points
 		site_boundary.clear();
 		ArrayList<ControlPoint> vertex_control = control.points("Vertex");
-		for(ControlPoint p : vertex_control) site_boundary.addVertex(p);
+		for (ControlPoint p : vertex_control)
+			site_boundary.addVertex(p);
 
 		// Create new Site from polygon
 		site.makeTiles(site_boundary, tileW, tileH, units, tile_rotation, tile_translation);
@@ -175,7 +177,7 @@ public class Builder {
 	 */
 	void initZones() {
 
-		//Define new Space Type
+		// Define new Space Type
 		String type = "zone";
 		dev.clearType(type);
 		ArrayList<TileArray> new_zones = new ArrayList<TileArray>();
@@ -196,7 +198,8 @@ public class Builder {
 		}
 
 		// Add new Spaces to Development
-		for (TileArray zone : new_zones) dev.addSpace(zone);
+		for (TileArray zone : new_zones)
+			dev.addSpace(zone);
 	}
 
 	/**
@@ -204,7 +207,7 @@ public class Builder {
 	 */
 	void initFootprints() {
 
-		//Define new Space Type
+		// Define new Space Type
 		String type = "footprint";
 		dev.clearType(type);
 		ArrayList<TileArray> new_foot = new ArrayList<TileArray>();
@@ -228,26 +231,30 @@ public class Builder {
 						t.subtract(setback);
 						t.setName(p.getTag());
 						t.setType(type);
-						//Subtract other voids from current to prevent overlap
-						for(TileArray prev : voidSpace) t.subtract(prev);
+						// Subtract other voids from current to prevent overlap
+						for (TileArray prev : voidSpace)
+							t.subtract(prev);
 						voidSpace.add(t);
 					}
 				}
 
 				// Building Footprint
 				TileArray building = space.getDiff(setback);
-				for(TileArray v : voidSpace) building.subtract(v);
+				for (TileArray v : voidSpace)
+					building.subtract(v);
 				building.setName("Building");
 				building.setType(type);
 
 				new_foot.add(setback);
 				new_foot.add(building);
-				for(TileArray v : voidSpace) new_foot.add(v);
+				for (TileArray v : voidSpace)
+					new_foot.add(v);
 			}
 		}
 
 		// Add new Spaces to Development
-		for (TileArray foot : new_foot) dev.addSpace(foot);
+		for (TileArray foot : new_foot)
+			dev.addSpace(foot);
 	}
 
 	/**
@@ -255,7 +262,7 @@ public class Builder {
 	 */
 	void initBases() {
 
-		//Define new Space Type
+		// Define new Space Type
 		String type = "base";
 		dev.clearType(type);
 		ArrayList<TileArray> new_bases = new ArrayList<TileArray>();
@@ -283,7 +290,8 @@ public class Builder {
 		}
 
 		// Add new Spaces to Development
-		for (TileArray base : new_bases) dev.addSpace(base);
+		for (TileArray base : new_bases)
+			dev.addSpace(base);
 	}
 
 	/**
@@ -306,7 +314,7 @@ public class Builder {
 		for (TileArray space : dev.spaceList()) {
 			if (space.type.equals("site")) {
 				String point_prefix = "Plot";
-				for (int i=0; i<3; i++) {
+				for (int i = 0; i < 3; i++) {
 					control.addPoint(point_prefix + " " + plot_counter, point_prefix, space);
 					plot_counter++;
 				}
@@ -331,11 +339,12 @@ public class Builder {
 
 	/**
 	 * Designed to run every GUI frame to check mouse position
+	 * 
 	 * @param mousePressed true if mouse button is pressed down
-	 * @param mouseX x-coordinate of mouse on screen
-	 * @param mouseY y-coordinate of mouse on screen
-	 * @param existing ControlPoint closest to mouse
-	 * @param new_point new Point() at mouse, passed to function from GUI()
+	 * @param mouseX       x-coordinate of mouse on screen
+	 * @param mouseY       y-coordinate of mouse on screen
+	 * @param existing     ControlPoint closest to mouse
+	 * @param new_point    new Point() at mouse, passed to function from GUI()
 	 */
 	void listen(boolean mousePressed, int mouseX, int mouseY, ControlPoint point, Point new_point) {
 
@@ -352,8 +361,8 @@ public class Builder {
 			hovering = point;
 		}
 
-		if(mousePressed && selected != null && selected.active()) {
-			if(cam3D) {
+		if (mousePressed && selected != null && selected.active()) {
+			if (cam3D) {
 				Point new_location = new_point;
 				if (new_location != null) {
 					selected.x = new_location.x;
@@ -370,17 +379,18 @@ public class Builder {
 
 	/**
 	 * Trigger when any key is pressed, parameters passed from GUI
-	 * @param key character that user pressed, passed from GUI
+	 * 
+	 * @param key     character that user pressed, passed from GUI
 	 * @param keyCode number code of user key input
-	 * @param coded static value to check if key is coded
-	 * @param left code value for LEFT arrow
-	 * @param right code value for RIGHT arrow
-	 * @param down code value for DOWN arrow
-	 * @param up code value for UP arrow
+	 * @param coded   static value to check if key is coded
+	 * @param left    code value for LEFT arrow
+	 * @param right   code value for RIGHT arrow
+	 * @param down    code value for DOWN arrow
+	 * @param up      code value for UP arrow
 	 */
 	public void keyPressed(char key, int keyCode, int coded, int left, int right, int down, int up) {
 
-		switch(key) {
+		switch (key) {
 		case 'r':
 			initModel();
 			initRender();
@@ -390,7 +400,8 @@ public class Builder {
 		case 'a':
 			addPoint = !addPoint;
 			removePoint = false;
-			if (addPoint) activateEditor();
+			if (addPoint)
+				activateEditor();
 			break;
 		case 'x':
 			removePoint = !removePoint;
@@ -424,16 +435,20 @@ public class Builder {
 			}
 			break;
 		case '-':
-			if (tileW > 1) tileW--;
-			site_change_detected = true;;
+			if (tileW > 1)
+				tileW--;
+			site_change_detected = true;
+			;
 			break;
 		case '+':
-			if (tileW < 50) tileW++;
+			if (tileW < 50)
+				tileW++;
 			site_change_detected = true;
 			break;
 		case '[':
 			tile_rotation -= 0.01;
-			site_change_detected = true;;
+			site_change_detected = true;
+			;
 			break;
 		case ']':
 			tile_rotation += 0.01;
@@ -441,7 +456,8 @@ public class Builder {
 			break;
 		case '}':
 			tile_rotation += 0.1;
-			site_change_detected = true;;
+			site_change_detected = true;
+			;
 			break;
 		case '{':
 			tile_rotation -= 0.1;
@@ -468,36 +484,37 @@ public class Builder {
 		case '5':
 			buildingState();
 			break;
-			//case '6':
-			//  floorState();
-			//  break;
-			//case '7':
-			//  roomState();
-			//  break;
+		// case '6':
+		// floorState();
+		// break;
+		// case '7':
+		// roomState();
+		// break;
 		}
 
-		if (key == coded) { 
+		if (key == coded) {
 			if (keyCode == left) {
 				tile_translation.x--;
 				site_change_detected = true;
-			}  
+			}
 			if (keyCode == right) {
 				tile_translation.x++;
 				site_change_detected = true;
-			}  
+			}
 			if (keyCode == down) {
 				tile_translation.y++;
 				site_change_detected = true;
-			}  
+			}
 			if (keyCode == up) {
 				tile_translation.y--;
 				site_change_detected = true;
 			}
 		}
-	}  
+	}
 
 	/**
 	 * Triggered once when any mouse button is pressed
+	 * 
 	 * @param new_point New Point at mouse location
 	 */
 	public void mousePressed(Point new_point) {
@@ -521,6 +538,7 @@ public class Builder {
 
 	/**
 	 * Add a new Control point at (x,y)
+	 * 
 	 * @param x
 	 * @param y
 	 */
@@ -540,6 +558,7 @@ public class Builder {
 
 	/**
 	 * Remove a given ControlPoint
+	 * 
 	 * @param point
 	 */
 	void removeControlPoint(ControlPoint point) {
@@ -549,6 +568,7 @@ public class Builder {
 
 	/**
 	 * detect change based upon a type string
+	 * 
 	 * @param type type of ControlPoint
 	 */
 	void detectChange(String type) {
@@ -560,7 +580,7 @@ public class Builder {
 			foot_change_detected = true;
 		}
 	}
-	
+
 	/**
 	 * Allow editing of vertices
 	 */
@@ -573,11 +593,12 @@ public class Builder {
 		if (editVertices) {
 			control.on(new_control_type);
 			// auto add points if list is empty
-			if (control.points(new_control_type).size() == 0) addPoint = true;
+			if (control.points(new_control_type).size() == 0)
+				addPoint = true;
 			showPolygons = true;
 		}
 	}
-	
+
 	/**
 	 * Allow editing of Plots
 	 */
@@ -587,9 +608,11 @@ public class Builder {
 		editVoids = false;
 		new_control_type = "Plot";
 		control.off();
-		if (editPlots) control.on(new_control_type);
+		if (editPlots)
+			control.on(new_control_type);
 		// auto add points if list is empty
-		if (control.points(new_control_type).size() == 0) addPoint = true;
+		if (control.points(new_control_type).size() == 0)
+			addPoint = true;
 	}
 
 	/**
@@ -604,7 +627,8 @@ public class Builder {
 		if (editVoids) {
 			control.on(new_control_type);
 			// auto add points if list is empty
-			if (control.points(new_control_type).size() == 0) addPoint = true;
+			if (control.points(new_control_type).size() == 0)
+				addPoint = true;
 		}
 	}
 
@@ -621,7 +645,7 @@ public class Builder {
 			editPlots = true;
 		} else if (new_control_type.equals("Void")) {
 			editVoids = true;
-		} 
+		}
 		control.off();
 		control.on(new_control_type);
 	}
@@ -657,9 +681,9 @@ public class Builder {
 		new_control_type = "Plot";
 		control.on(new_control_type);
 	}
-	
+
 	/**
-	 * A pre-defined layer state for  footprints
+	 * A pre-defined layer state for footprints
 	 */
 	void footprintState() {
 		// Footprint Layer State
@@ -673,7 +697,7 @@ public class Builder {
 		new_control_type = "Void";
 		control.on(new_control_type);
 	}
-	
+
 	/**
 	 * A pre-defined layer state for buildings and zones together
 	 */
@@ -703,7 +727,7 @@ public class Builder {
 		showTowers = true;
 		viewState = 5;
 	}
-	
+
 	/**
 	 * A pre-defined layer state for floors
 	 */
@@ -715,7 +739,7 @@ public class Builder {
 		showFloors = true;
 		viewState = 6;
 	}
-	
+
 	/**
 	 * A pre-defined layer state for Rooms
 	 */
@@ -748,9 +772,10 @@ public class Builder {
 		editVoids = false;
 		control.off();
 	}
-	
+
 	/**
 	 * Determine if a space is to be rendered in a given state
+	 * 
 	 * @param space space to evaluate for rendering
 	 * @return true if GUI should render
 	 */
