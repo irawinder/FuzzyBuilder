@@ -1,6 +1,7 @@
 package edu.mit.ira.builder;
 
 import java.util.ArrayList;
+
 import edu.mit.ira.voxel.Control;
 import edu.mit.ira.voxel.ControlPoint;
 import edu.mit.ira.voxel.Development;
@@ -66,7 +67,7 @@ public class Builder {
 	public boolean showSite, showZones, showFootprints, showBases, showTowers, showFloors, showRooms;
 
 	// Is there a specific view mode?
-	String viewModel;
+	public String viewModel;
 
 	/**
 	 * Initialize the Render Options
@@ -128,7 +129,7 @@ public class Builder {
 	/**
 	 * Update Model:
 	 */
-	void updateModel() {
+	public void updateModel() {
 
 		char change = '0';
 		if (site_change_detected) {
@@ -157,7 +158,7 @@ public class Builder {
 	/**
 	 * Initialize Site Model
 	 */
-	void initSites() {
+	public void initSites() {
 
 		// Define new Space Type
 		String type = "site";
@@ -181,7 +182,7 @@ public class Builder {
 	/**
 	 * Subdivide the site into Zones
 	 */
-	void initZones() {
+	public void initZones() {
 
 		// Define new Space Type
 		String type = "zone";
@@ -211,7 +212,7 @@ public class Builder {
 	/**
 	 * Subdivide Zones into Footprints
 	 */
-	void initFootprints() {
+	public void initFootprints() {
 
 		// Define new Space Type
 		String type = "footprint";
@@ -266,7 +267,7 @@ public class Builder {
 	/**
 	 * A Base is a building component that rests on a Footprint
 	 */
-	void initBases() {
+	public void initBases() {
 
 		// Define new Space Type
 		String type = "base";
@@ -303,7 +304,7 @@ public class Builder {
 	/**
 	 * Initialize Vertex Control Points
 	 */
-	void initVertexControl() {
+	public void initVertexControl() {
 		vert_counter = 1;
 		String point_prefix = "Vertex";
 		for (Point p : site_boundary.getCorners()) {
@@ -315,7 +316,7 @@ public class Builder {
 	/**
 	 * Initialize Plot Control Points
 	 */
-	void initPlotControl() {
+	public void initPlotControl() {
 		plot_counter = 1;
 		for (TileArray space : dev.spaceList()) {
 			if (space.type.equals("site")) {
@@ -331,7 +332,7 @@ public class Builder {
 	/**
 	 * Initialize Void Control Points
 	 */
-	void initVoidControl() {
+	public void initVoidControl() {
 		void_counter = 1;
 		for (TileArray space : dev.spaceList()) {
 			// Add Control Point to Zone
@@ -352,7 +353,7 @@ public class Builder {
 	 * @param existing     ControlPoint closest to mouse
 	 * @param new_point    new Point() at mouse, passed to function from GUI()
 	 */
-	void listen(boolean mousePressed, int mouseX, int mouseY, ControlPoint point, Point new_point) {
+	public void listen(boolean mousePressed, int mouseX, int mouseY, ControlPoint point, Point new_point) {
 
 		if (addPoint) {
 			Point atMouse = new_point;
@@ -548,7 +549,7 @@ public class Builder {
 	 * @param x
 	 * @param y
 	 */
-	void addControlPoint(float x, float y) {
+	public void addControlPoint(float x, float y) {
 		if (new_control_type.equals("Vertex")) {
 			control.addPoint(new_control_type + " " + vert_counter, new_control_type, x, y);
 			vert_counter++;
@@ -567,7 +568,7 @@ public class Builder {
 	 * 
 	 * @param point
 	 */
-	void removeControlPoint(ControlPoint point) {
+	public void removeControlPoint(ControlPoint point) {
 		control.removePoint(point);
 		detectChange(point.getType());
 	}
@@ -577,7 +578,7 @@ public class Builder {
 	 * 
 	 * @param type type of ControlPoint
 	 */
-	void detectChange(String type) {
+	public void detectChange(String type) {
 		if (type.equals("Vertex")) {
 			site_change_detected = true;
 		} else if (type.equals("Plot")) {
@@ -590,7 +591,7 @@ public class Builder {
 	/**
 	 * Allow editing of vertices
 	 */
-	void toggleVertexEditing() {
+	public void toggleVertexEditing() {
 		editVertices = !editVertices;
 		editPlots = false;
 		editVoids = false;
@@ -608,7 +609,7 @@ public class Builder {
 	/**
 	 * Allow editing of Plots
 	 */
-	void togglePlotEditing() {
+	public void togglePlotEditing() {
 		editVertices = false;
 		editPlots = !editPlots;
 		editVoids = false;
@@ -624,7 +625,7 @@ public class Builder {
 	/**
 	 * Allow editing of voids
 	 */
-	void toggleVoidEditing() {
+	public void toggleVoidEditing() {
 		editVertices = false;
 		editPlots = false;
 		editVoids = !editVoids;
@@ -641,7 +642,7 @@ public class Builder {
 	/**
 	 * Force Activation of editor, toggling to most relevant/recent type
 	 */
-	void activateEditor() {
+	public void activateEditor() {
 		editVertices = false;
 		editPlots = false;
 		editVoids = false;
@@ -659,7 +660,7 @@ public class Builder {
 	/**
 	 * A pre-defined layer state for site
 	 */
-	void siteState() {
+	public void siteState() {
 		// Site Layer State
 		offState();
 		showTiles = true;
@@ -675,7 +676,7 @@ public class Builder {
 	/**
 	 * A pre-defined layer state for zones
 	 */
-	void zoneState() {
+	public void zoneState() {
 		// Zone Layer State
 		offState();
 		showTiles = true;
@@ -691,7 +692,7 @@ public class Builder {
 	/**
 	 * A pre-defined layer state for footprints
 	 */
-	void footprintState() {
+	public void footprintState() {
 		// Footprint Layer State
 		offState();
 		showTiles = true;
@@ -707,7 +708,7 @@ public class Builder {
 	/**
 	 * A pre-defined layer state for buildings and zones together
 	 */
-	void buildingZoneState() {
+	public void buildingZoneState() {
 		// Building + Zone Layer State
 		offState();
 		showTiles = true;
@@ -724,7 +725,7 @@ public class Builder {
 	/**
 	 * A pre-defined layer state for buildings
 	 */
-	void buildingState() {
+	public void buildingState() {
 		// Building Layer State
 		offState();
 		showTiles = true;
@@ -737,7 +738,7 @@ public class Builder {
 	/**
 	 * A pre-defined layer state for floors
 	 */
-	void floorState() {
+	public void floorState() {
 		// Floor Layer State
 		offState();
 		showTiles = true;
@@ -749,7 +750,7 @@ public class Builder {
 	/**
 	 * A pre-defined layer state for Rooms
 	 */
-	void roomState() {
+	public void roomState() {
 		// Room Layer State
 		offState();
 		showTiles = true;
@@ -761,7 +762,7 @@ public class Builder {
 	/*
 	 * A pre-defined layer state for everything off
 	 */
-	void offState() {
+	public void offState() {
 		showTiles = false;
 		showPolygons = false;
 		showSite = false;
@@ -785,7 +786,7 @@ public class Builder {
 	 * @param space space to evaluate for rendering
 	 * @return true if GUI should render
 	 */
-	boolean showSpace(TileArray space) {
+	public boolean showSpace(TileArray space) {
 		if (showSite && space.type.equals("site")) {
 			return true;
 		} else if (showZones && space.type.equals("zone")) {

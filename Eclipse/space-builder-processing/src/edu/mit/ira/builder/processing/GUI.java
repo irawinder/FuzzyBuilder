@@ -1,5 +1,6 @@
-package edu.mit.ira.builder;
+package edu.mit.ira.builder.processing;
 
+import edu.mit.ira.builder.Builder;
 import edu.mit.ira.voxel.ControlPoint;
 import edu.mit.ira.voxel.Point;
 import edu.mit.ira.voxel.Tile;
@@ -12,7 +13,7 @@ import processing.core.PApplet;
  * @author ira
  * 
  */
-public class PGUI extends PApplet {
+public class GUI extends PApplet {
 
 	Builder builder;
 
@@ -22,7 +23,7 @@ public class PGUI extends PApplet {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		PApplet.main("edu.mit.ira.builder.PGUI");
+		PApplet.main("edu.mit.ira.builder.processing.GUI");
 	}
 
 	/**
