@@ -4,7 +4,8 @@ import javafx.stage.Stage;
 
 public class GUI extends Application {
 	
-	TestScene boxes = new TestScene();
+	ViewModel boxes = new ViewModel();
+	//TestScene boxes = new TestScene();
 
     @Override
     public void start(Stage stage) {
