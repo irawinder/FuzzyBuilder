@@ -33,6 +33,9 @@ public class GUI extends Application {
     // Default Horizontal Rotation
     private static final Rotate DEFAULT_ROTATE_H = new Rotate(-20, Rotate.Y_AXIS);
     
+    // Default Vertical Rotation
+    private static final Rotate DEFAULT_ROTATE_V = new Rotate(-20, Rotate.X_AXIS);
+    
     // Zoom level of Camera
     private Translate zoom = new Translate(0, 0, -30);
 
@@ -73,7 +76,7 @@ public class GUI extends Application {
 
         // Create and position camera
         PerspectiveCamera camera = new PerspectiveCamera(true);
-        camera.getTransforms().addAll(DEFAULT_ROTATE_H, rotateV, zoom);
+        camera.getTransforms().addAll(DEFAULT_ROTATE_H, DEFAULT_ROTATE_V, rotateV, zoom);
 
         // Build the Scene Graph
         Group root = new Group();
@@ -131,6 +134,14 @@ public class GUI extends Application {
         launch(args);
     }
     
+    /**
+     * Returns a value capped to a specified minimum and maximum value
+     * 
+     * @param value input value
+     * @param min minimum allowable value
+     * @param max maximum allowable value
+     * @return constrained value
+     */
     double ensureRange(double value, double min, double max) {
     	return Math.min(Math.max(value, min), max);
     }
