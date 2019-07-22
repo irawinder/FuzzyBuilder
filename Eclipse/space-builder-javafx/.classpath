@@ -6,6 +6,7 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/JavaFX 12"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/space-builder"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
