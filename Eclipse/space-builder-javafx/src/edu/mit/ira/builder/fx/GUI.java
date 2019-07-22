@@ -15,16 +15,14 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
 import javafx.scene.transform.Rotate;
-import javafx.scene.transform.Transform;
 import javafx.scene.transform.Translate;
 import javafx.stage.Stage;
-
 
 public class GUI extends Application {
 
 	private ArrayList<Box> boxArray;
     
-	private Scene scene3D;
+	private Scene scene;
 	
 	// Vertical Rotation (JavaFX uses X_AXIS)
     private Rotate rotateV = new Rotate(0, Rotate.X_AXIS);
@@ -95,12 +93,12 @@ public class GUI extends Application {
      * Handle all mouse events (Pressed, dragged, etc)
      */
     private void handleMouseEvents() {
-        scene3D.setOnMousePressed((MouseEvent me) -> {
+        scene.setOnMousePressed((MouseEvent me) -> {
             mousePosX = me.getSceneX();
             mousePosY = me.getSceneY();
         });
 
-        scene3D.setOnMouseDragged((MouseEvent me) -> {
+        scene.setOnMouseDragged((MouseEvent me) -> {
             double dx = + (mousePosX - me.getSceneX());
             double dy = - (mousePosY - me.getSceneY());
             if (me.isPrimaryButtonDown()) {
@@ -123,9 +121,9 @@ public class GUI extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         primaryStage.setResizable(false);
-        scene3D = new Scene(testContent());
+        scene = new Scene(testContent());
         handleMouseEvents();
-        primaryStage.setScene(scene3D);
+        primaryStage.setScene(scene);
         primaryStage.show();
     }
 
