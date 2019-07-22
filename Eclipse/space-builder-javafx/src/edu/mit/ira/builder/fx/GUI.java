@@ -15,32 +15,57 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
 import javafx.scene.transform.Rotate;
+import javafx.scene.transform.Transform;
 import javafx.scene.transform.Translate;
 import javafx.stage.Stage;
 
 
 public class GUI extends Application {
-	private ArrayList<Box> boxArray;
-    private Scene scene;
-    private Rotate rotateX = new Rotate(0, Rotate.X_AXIS);
-    private Rotate rotateY = new Rotate(0, Rotate.Y_AXIS);
 
-    public Parent createContent() throws Exception {
+	private ArrayList<Box> boxArray;
+    
+	private Scene scene3D;
+	
+	// Vertical Rotation (JavaFX uses X_AXIS)
+    private Rotate rotateV = new Rotate(0, Rotate.X_AXIS);
+    
+    // Horizontal Rotation (JavaFX uses Y_AXIS)
+    private Rotate rotateH = new Rotate(0, Rotate.Y_AXIS);
+    
+    // Default Horizontal Rotation
+    private static final Rotate DEFAULT_ROTATE_H = new Rotate(-20, Rotate.Y_AXIS);
+    
+    // Zoom level of Camera
+    private Translate zoom = new Translate(0, 0, -30);
+
+    // Center of Entire 3D Scene
+    private static final Translate ORIGIN = new Translate(-5, 0, -5);
+    
+    // Mouse locations on Canvas
+    private double mousePosX, mousePosY = 0;
+    
+    /**
+     * Create a View Model for some test geometry
+     * 
+     * @return a collection of JavaFX nodes (3D objects)
+     */
+    public Parent testContent() {
         
-        // Box Array
-        Translate origin = new Translate(-5, 0, -5);
+        // Box Array:
+    	double boxW = 0.85;
+    	double gridW = 1.0;
         boxArray = new ArrayList<Box>();
         for (int i=0; i<11; i++ ) {
         	for (int j=0; j<11; j++ ) {
         		
-        		// Box Dimension and location
+        		// Box Dimensions and Locations with Random Height
         		Random rand = new Random();
-        		double h = rand.nextFloat();
-        		Box b = new Box(0.85, h, 0.85);
-        		Translate pos = new Translate(i, -0.5*h, j);
-        		b.getTransforms().addAll(rotateY, origin, pos);
+        		double boxH = rand.nextFloat();
+        		Box b = new Box(boxW, boxH, boxW);
+        		Translate pos = new Translate(i*gridW, -0.5*boxH, j*gridW);
+        		b.getTransforms().addAll(rotateH, ORIGIN, pos);
         		
-        		// Box Color
+        		// Box Color (random hue and 90% opacity)
         		double hue = 360 * rand.nextFloat();
         		PhongMaterial material = new PhongMaterial(Color.hsb(hue, 1.0, 1.0, 0.9));
         		b.setMaterial(material);
@@ -50,8 +75,7 @@ public class GUI extends Application {
 
         // Create and position camera
         PerspectiveCamera camera = new PerspectiveCamera(true);
-        camera.getTransforms().addAll(
-        new Rotate(-20, Rotate.Y_AXIS), rotateX, new Translate(0, 0, -50));
+        camera.getTransforms().addAll(DEFAULT_ROTATE_H, rotateV, zoom);
 
         // Build the Scene Graph
         Group root = new Group();
@@ -66,28 +90,30 @@ public class GUI extends Application {
 
         return new Group(subScene);
     }
-
-    private double mousePosX, mousePosY = 0;
+    
+    /**
+     * Handle all mouse events (Pressed, dragged, etc)
+     */
     private void handleMouseEvents() {
-        scene.setOnMousePressed((MouseEvent me) -> {
+        scene3D.setOnMousePressed((MouseEvent me) -> {
             mousePosX = me.getSceneX();
             mousePosY = me.getSceneY();
         });
 
-        scene.setOnMouseDragged((MouseEvent me) -> {
+        scene3D.setOnMouseDragged((MouseEvent me) -> {
             double dx = + (mousePosX - me.getSceneX());
             double dy = - (mousePosY - me.getSceneY());
             if (me.isPrimaryButtonDown()) {
             	
-            	double angleX = rotateX.getAngle() - (dy / 10 * 360) * (Math.PI / 180);
-            	double angleY = rotateY.getAngle() - (dx / 10 * -360) * (Math.PI / 180);
+            	double angleV = rotateV.getAngle() - (dy / 10 * 360) * (Math.PI / 180);
+            	double angleH = rotateH.getAngle() - (dx / 10 * -360) * (Math.PI / 180);
             	
             	// Can view above and below model, but
             	// Don't allow view to flip upside down
-            	angleX = ensureRange(angleX, -90, 90);
+            	angleV = ensureRange(angleV, -90, 90);
             	
-                rotateX.setAngle(angleX);
-                rotateY.setAngle(angleY);
+                rotateV.setAngle(angleV);
+                rotateH.setAngle(angleH);
             }
             mousePosX = me.getSceneX();
             mousePosY = me.getSceneY();
@@ -97,9 +123,9 @@ public class GUI extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         primaryStage.setResizable(false);
-        scene = new Scene(createContent());
+        scene3D = new Scene(testContent());
         handleMouseEvents();
-        primaryStage.setScene(scene);
+        primaryStage.setScene(scene3D);
         primaryStage.show();
     }
 
