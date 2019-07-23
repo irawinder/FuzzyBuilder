@@ -16,7 +16,7 @@ void render() {
   pushMatrix();
   translate(0, 0, -5);
   float scaler = 800.0/2880;
-  if (builder.showPolygons) image(site_map, 0, 0, scaler*2880, scaler*1638);
+  if (builder.showMap) image(site_map, 0, 0, scaler*2880, scaler*1638);
   popMatrix();
   
   if (builder.showTiles) {

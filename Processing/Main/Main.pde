@@ -25,6 +25,8 @@ import java.util.HashMap;
 /* JR Site Settings:
 
   Site PNG Dimensions: 800 x 455
+  
+  Site 1a
   Vertex 1; Point[218.0, 223.0, 0.0]
   Vertex 2; Point[166.0, 202.0, 0.0]
   Vertex 3; Point[20.0, 146.0, 0.0]
