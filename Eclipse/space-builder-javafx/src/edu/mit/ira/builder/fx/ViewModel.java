@@ -12,6 +12,7 @@ import javafx.scene.Node;
 import javafx.scene.PerspectiveCamera;
 import javafx.scene.Scene;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
@@ -30,13 +31,11 @@ public class ViewModel {
 	// Master Camera
 	private Camera camera;
 	
+	// background color of infinity
 	private Color background;
-	
-	// Vertical Rotation (JavaFX uses X_AXIS)
-    private Rotate rotateV = new Rotate(0, Rotate.X_AXIS);
     
-    // Horizontal Rotation (JavaFX uses Y_AXIS)
-    private Rotate rotateH = new Rotate(0, Rotate.Y_AXIS);
+	// Center of Entire 3D Scene
+    private static final Translate ORIGIN = new Translate(-400, 0, 200);
     
     // Default Horizontal Rotation
     private static final Rotate DEFAULT_ROTATE_H = new Rotate(-20, Rotate.Y_AXIS);
@@ -46,26 +45,32 @@ public class ViewModel {
     
     // Zoom level of Camera
     private Translate zoom = new Translate(0, 0, -500);
-
-    // Center of Entire 3D Scene
-    private static final Translate ORIGIN = new Translate(-400, 0, 200);
+    
+    // Amount of panning initiated by mouse secondary button
+    private Translate pan = new Translate(0, 0, 0);
+    
+    // Vertical Rotation (JavaFX uses X_AXIS)
+    private Rotate rotateV = new Rotate(0, Rotate.X_AXIS);
+    
+    // Horizontal Rotation (JavaFX uses Y_AXIS)
+    private Rotate rotateH = new Rotate(0, Rotate.Y_AXIS);
     
     /**
      * Test Scene Constructor
      */
     public ViewModel() {
-    	this.camera = setUpCamera(rotateV, zoom);
+    	this.camera = setUpCamera(rotateV, zoom, pan);
         this.background = Color.TRANSPARENT;
         buildSite();
     }
     
-    private static Camera setUpCamera(Rotate rotateV, Translate zoom) {
+    private static Camera setUpCamera(Rotate rotateV, Translate zoom, Translate pan) {
         Camera _camera = new PerspectiveCamera(true);
         // Create and position camera
         _camera = new PerspectiveCamera(true);
-        _camera.getTransforms().addAll(DEFAULT_ROTATE_H, DEFAULT_ROTATE_V, rotateV, zoom);
+        _camera.getTransforms().addAll(DEFAULT_ROTATE_H, DEFAULT_ROTATE_V, pan, rotateV, zoom);
         _camera.setNearClip(10);
-        _camera.setFarClip(1000);
+        _camera.setFarClip(10000);
         return _camera;
     }
     
@@ -207,7 +212,7 @@ public class ViewModel {
     	return r;
     }
     
- // Mouse locations on Canvas
+    // Mouse locations on Canvas
     private double mousePosX, mousePosY = 0;
     public void handleMouseEvents(Scene scene) {
     	scene.setOnMousePressed((MouseEvent me) -> {
@@ -218,7 +223,11 @@ public class ViewModel {
         scene.setOnMouseDragged((MouseEvent me) -> {
             double dx = + (mousePosX - me.getSceneX());
             double dy = - (mousePosY - me.getSceneY());
-            if (me.isPrimaryButtonDown()) {
+            
+            
+            if (me.isSecondaryButtonDown()) {
+            	
+            	// Rotate View
             	
             	double angleV = rotateV.getAngle() - (dy / 10 * 360) * (Math.PI / 180);
             	double angleH = rotateH.getAngle() - (dx / 10 * -360) * (Math.PI / 180);
@@ -229,9 +238,30 @@ public class ViewModel {
             	
                 rotateV.setAngle(angleV);
                 rotateH.setAngle(angleH);
+            
+            
+            } else if (me.isMiddleButtonDown()) {
+            	
+            	// Pan View
+            	
+            	double panU = pan.getX() + dx / 10;
+            	double panV = pan.getY() - dy / 10;
+            	
+            	pan.setX(panU);
+            	pan.setY(panV);
+            	
+            	
             }
             mousePosX = me.getSceneX();
             mousePosY = me.getSceneY();
+        });
+        
+        // Enable Zoom in and Zoom Out
+        scene.setOnScroll((ScrollEvent se) -> {
+            double dy = se.getDeltaY();
+        	double new_zoom = zoom.getZ() - dy;
+        	new_zoom = ensureRange(new_zoom, -1000, -100);
+        	zoom.setZ(new_zoom);
         });
     }
     
