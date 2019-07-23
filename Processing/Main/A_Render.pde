@@ -12,7 +12,13 @@ void cam2D() {
 void render() {
   hint(ENABLE_DEPTH_TEST);
   background(255);
-
+  
+  pushMatrix();
+  translate(0, 0, -5);
+  float scaler = 800.0/2880;
+  if (builder.showPolygons) image(site_map, 0, 0, scaler*2880, scaler*1638);
+  popMatrix();
+  
   if (builder.showTiles) {
 
     for (TileArray space : builder.dev.spaceList()) {
@@ -72,7 +78,7 @@ void render() {
 
   // Draw Vector Polygon
   //
-  fill(245, 225); noStroke(); 
+  fill(245, 50); noStroke(); 
   if (builder.showPolygons) {
     stroke(0, 100); 
     strokeWeight(1);
@@ -142,7 +148,7 @@ void render() {
 
   // Draw Info Text
   //
-  fill(0); textAlign(LEFT, TOP);
+  fill(100); textAlign(LEFT, TOP);
   String info = "";
   info += "Click and drag control points";
   info += "\n";
@@ -182,7 +188,7 @@ void render() {
   //if(viewState == 6) info += " <--";
   //info += "\n" + "Press '7' to show Rooms";
   //if(viewState == 7) info += " <--";
-  text(info, 10, 10);
+  if (builder.showText) text(info, 10, 10);
   //text("Framerate: " + int(frameRate), 10, height - 20);
 
   // Draw Summary
@@ -201,7 +207,7 @@ void render() {
         //summary += "\n" + space.parent_name + "/" + space;
       }
     }
-    text(summary, width - 175, 10);
+    if (builder.showText) text(summary, width - 175, 10);
   }
 
   // Mouse Cursor Info

@@ -22,7 +22,45 @@ import java.util.HashMap;
 // [Check] Create ArrayList Version for TileArray
 // [Check] Implement native Java library for random (not Processing)
 
+/* JR Site Settings:
+
+  Site PNG Dimensions: 800 x 455
+  Vertex 1; Point[218.0, 223.0, 0.0]
+  Vertex 2; Point[166.0, 202.0, 0.0]
+  Vertex 3; Point[20.0, 146.0, 0.0]
+  Vertex 4; Point[12.0, 120.0, 0.0]
+  Vertex 5; Point[37.0, 117.0, 0.0]
+  Plot 1; Point[46.0, 131.0, 0.0]
+  Plot 2; Point[130.0, 170.0, 0.0]
+  Plot 3; Point[204.0, 198.0, 0.0]
+  Void 2; Point[355.0, 255.0, 0.0]
+  Void 3; Point[18.0, 121.0, 0.0]
+  Void 4; Point[190.0, 180.0, 0.0]
+  Vertex 6; Point[101.0, 127.0, 0.0]
+  Vertex 7; Point[217.0, 160.0, 0.0]
+  Vertex 8; Point[355.0, 198.0, 0.0]
+  Vertex 9; Point[497.0, 248.0, 0.0]
+  Vertex 10; Point[637.0, 300.0, 0.0]
+  Vertex 11; Point[717.0, 320.0, 0.0]
+  Vertex 12; Point[712.0, 350.0, 0.0]
+  Vertex 13; Point[617.0, 346.0, 0.0]
+  Vertex 14; Point[548.0, 342.0, 0.0]
+  Vertex 15; Point[462.0, 321.0, 0.0]
+  Vertex 16; Point[392.0, 300.0, 0.0]
+  Vertex 17; Point[280.0, 255.0, 0.0]
+  Plot 4; Point[365.0, 257.0, 0.0]
+  Plot 5; Point[543.0, 301.0, 0.0]
+  Plot 6; Point[570.0, 302.0, 0.0]
+  --Other Grid Attributes
+  Grid Size: 11.0
+  Grid Rotation: 0.32
+  Grid Pan: Point[0.0, 2.0, 0.0]
+
+*/
+
 Builder builder;
+
+PImage site_map;
 
 /**
  * Runs before everything else in PApplet
@@ -30,7 +68,7 @@ Builder builder;
 public void settings(){
 
   // Set size of canvas to (X, Y) pixels
-  size(800, 400, P3D);
+  size(800, 455, P3D);
 }
 
 /**
@@ -41,6 +79,8 @@ public void setup(){
   frame.setTitle("Space Builder GUI");
   
   builder = new Builder();
+  
+  site_map = loadImage("takanawa.png");
 }
 
 /**

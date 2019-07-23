@@ -49,7 +49,7 @@ public class Builder {
   public boolean cam3D;
 
   // Hide or Show Tiles or Polygons
-  public boolean showTiles, showPolygons;
+  public boolean showTiles, showPolygons, showText;
 
   // Hide or Show TileArray Nest Layers
   public int viewState;
@@ -71,6 +71,7 @@ public class Builder {
    */
   public void initRender() {
     cam3D = true;
+    showText = true;
     viewModel = "DOT";
 
     buildingZoneState();
@@ -486,6 +487,19 @@ public class Builder {
     // case '7':
     // roomState();
     // break;
+    case 'h':
+      showText = !showText;
+      break;
+    case '0':
+      println("--Site Vertices");
+      println("--Zone Points");
+      for(ControlPoint c : control.points()) println(c);
+      println("--Other Grid Attributes");
+      println("Grid Size: " + tileW);
+      println("Grid Rotation: " + tile_rotation);
+      println("Grid Pan: " + tile_translation);
+      
+      break;
     }
 
     if (key == coded) {
