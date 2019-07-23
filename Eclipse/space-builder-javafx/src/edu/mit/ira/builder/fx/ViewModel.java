@@ -10,7 +10,6 @@ import javafx.scene.Camera;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.PerspectiveCamera;
-import javafx.scene.PointLight;
 import javafx.scene.Scene;
 import javafx.scene.SceneAntialiasing;
 import javafx.scene.SubScene;
@@ -25,7 +24,7 @@ import javafx.scene.transform.Translate;
 public class ViewModel {
 	
 	private Builder builder;
-	private ArrayList<Node> boxArray;
+	private ArrayList<Node> nodeArray;
 	
 	// Master scene;
 	private Scene scene;
@@ -49,7 +48,7 @@ public class ViewModel {
     private static final Rotate DEFAULT_ROTATE_V = new Rotate(-20, Rotate.X_AXIS);
     
     // Zoom level of Camera
-    private Translate zoom = new Translate(0, 0, -1000);
+    private Translate zoom = new Translate(0, 0, -500);
 
     // Center of Entire 3D Scene
     private static final Translate ORIGIN = new Translate(-400, 0, 200);
@@ -85,55 +84,76 @@ public class ViewModel {
     public void createContent() {
     	
         // Box Array:
-    	boxArray = new ArrayList<Node>();
+    	nodeArray = new ArrayList<Node>();
     	
-    	// Draw Test
-    	for (TileArray space : builder.dev.spaceList()) {
-    		Color col = Color.hsb(space.getHueDegree(), 1.0, 1.0, 1.0);
-    		for (Tile t : space.tileList()) {
-    			if(space.isType("zone")) {
-    				boxArray.add(renderTile(t, col, 0));
-    			}
-    		}
-    	}
-    	
-//    	// Box Array:
-//    	double boxW = 0.85;
-//    	double gridW = 1.0;
-//        for (int i=0; i<11; i++ ) {
-//        	for (int j=0; j<11; j++ ) {
-//        		
-//        		// Box Dimensions and Locations with Random Height
-//        		Random rand = new Random();
-//        		double boxH = rand.nextFloat();
-//        		Box b = new Box(boxW, boxH, boxW);
-//        		Translate pos = new Translate(i*gridW, -0.5*boxH, j*gridW);
-//        		b.getTransforms().addAll(rotateH, ORIGIN, pos);
-//        		
-//        		// Box Color (random hue and 90% opacity)
-//        		double hue = 360 * rand.nextFloat();
-//        		PhongMaterial material = new PhongMaterial(Color.hsb(hue, 1.0, 1.0, 0.9));
-//        		b.setMaterial(material);
-//        		boxArray.add(b);
-//        	}
-//        }
+    	if (builder.showTiles) {
+			for (TileArray space : builder.dev.spaceList()) {
+				if (builder.showSpace(space)) {
+
+					// Draw Sites
+					//
+					if (space.isType("site")) {
+						Color col = Color.gray(0, 0.2);
+						for (Tile t : space.tileList())
+							nodeArray.add(renderTile(t, col, -1));
+					}
+
+					// Draw Zones
+					//
+					if (space.isType("zone")) {
+						Color col = Color.hsb(space.getHueDegree(), 0.3, 0.9);
+						for (Tile t : space.tileList())
+							nodeArray.add(renderTile(t, col, -1));
+					}
+
+					// Draw Footprints
+					//
+					if (space.isType("footprint")) {
+						Color col;
+						if (space.name.equals("Building")) {
+							col = Color.hsb(space.getHueDegree(), 0.5, 0.8);
+						} else if (space.name.equals("Setback")) {
+							col = Color.hsb(space.getHueDegree(), 0.3, 0.9);
+						} else {
+							col = Color.hsb(space.getHueDegree(), 0.5, 0.8);
+						}
+						for (Tile t : space.tileList()) {
+							nodeArray.add(renderTile(t, col, -1));
+							if (space.name.equals("Building")) {
+								nodeArray.add(renderVoxel(t, col, 0));
+							}
+						}
+					}
+
+					// Draw Bases
+					//
+					if (space.isType("base")) {
+						Color col = Color.hsb(space.getHueDegree(), 0.5, 0.8);
+						for (Tile t : space.tileList()) {
+							// Only draws ground plane if in 2D view mode
+							if (t.location.z == 0 || builder.cam3D) {
+								if (space.name.substring(0, 3).equals("Cou")) {
+									nodeArray.add(renderTile(t, col, 0));
+								} else {
+									nodeArray.add(renderVoxel(t, col, 0));
+								}
+							}
+						}
+					}
+				}
+			}
+		}
     	
         // Create and position camera
         camera = new PerspectiveCamera(true);
         camera.getTransforms().addAll(DEFAULT_ROTATE_H, DEFAULT_ROTATE_V, rotateV, zoom);
-        camera.setFarClip(10000);
-        camera.setNearClip(0);
-        
-//        PointLight light = new PointLight();
-//        light.setColor(Color.gray(1));
-//        light.setTranslateX(-400);
-//        light.setTranslateY(-200);
-//        light.setTranslateZ(200);
+        camera.setNearClip(10);
+        camera.setFarClip(1000);
 
         // Build the Scene Graph
         Group root = new Group();
         root.getChildren().addAll(camera);
-        for (Node b : boxArray) root.getChildren().add(b);
+        for (Node b : nodeArray) root.getChildren().add(b);
 
         // Use a SubScene
         SubScene subScene = new SubScene(root, 1000, 600, true, 
@@ -181,9 +201,10 @@ public class ViewModel {
     	float scaler_uv = (float) 0.9;
     	
     	float rectW = scaler_uv * t.scale_uv;
+    	
     	Rectangle r = new Rectangle(rectW, rectW);
     	Rotate rotateFlat = new Rotate(90, Rotate.X_AXIS);
-    	Translate pos = new Translate(t.location.x, - t.location.z - z_offset, - t.location.y);
+    	Translate pos = new Translate(t.location.x - 0.5*rectW, - t.location.z - z_offset, - t.location.y - 0.5*rectW);
     	Rotate rot = new Rotate(180*builder.tile_rotation);
     	r.getTransforms().addAll(rotateH, ORIGIN, pos, rot, rotateFlat);
 
