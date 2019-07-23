@@ -64,6 +64,15 @@ public class TileArray {
 	public void setType(String type) {
 		this.type = type;
 	}
+	
+	/**
+	 * Get the Tile Array Type
+	 * 
+	 * @return String of tile array type
+	 */
+	public String getType() {
+		return this.type;
+	}
 
 	/**
 	 * Set Hue Value of TileArray
@@ -72,6 +81,24 @@ public class TileArray {
 	 */
 	public void setHue(float hue) {
 		this.hue = hue % 255;
+	}
+	
+	/**
+	 * Get the hue color of the zone
+	 * 
+	 * @return a hue value between 0 and 255
+	 */
+	public float getHue() {
+		return this.hue;
+	}
+	
+	/**
+	 * get the hue color of the zone
+	 * 
+	 * @return a hue value between 0 and 360
+	 */
+	public float getHueDegree() {
+		return 360 * this.hue / 255;
 	}
 
 	/**

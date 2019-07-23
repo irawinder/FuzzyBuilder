@@ -5,11 +5,12 @@ import edu.mit.ira.voxel.Tile;
 import edu.mit.ira.voxel.TileArray;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 import javafx.scene.Camera;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.PerspectiveCamera;
+import javafx.scene.PointLight;
 import javafx.scene.Scene;
 import javafx.scene.SceneAntialiasing;
 import javafx.scene.SubScene;
@@ -17,13 +18,14 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
 
 public class ViewModel {
 	
 	private Builder builder;
-	private ArrayList<Box> boxArray;
+	private ArrayList<Node> boxArray;
 	
 	// Master scene;
 	private Scene scene;
@@ -47,10 +49,10 @@ public class ViewModel {
     private static final Rotate DEFAULT_ROTATE_V = new Rotate(-20, Rotate.X_AXIS);
     
     // Zoom level of Camera
-    private Translate zoom = new Translate(0, 0, -30);
+    private Translate zoom = new Translate(0, 0, -1000);
 
     // Center of Entire 3D Scene
-    private static final Translate ORIGIN = new Translate(-5, 0, -5);
+    private static final Translate ORIGIN = new Translate(-400, 0, 200);
     
     // Mouse locations on Canvas
     private double mousePosX, mousePosY = 0;
@@ -81,17 +83,15 @@ public class ViewModel {
      * @return a collection of JavaFX groups (3D objects)
      */
     public void createContent() {
-        
-    	System.out.println("hi");
     	
         // Box Array:
-    	boxArray = new ArrayList<Box>();
+    	boxArray = new ArrayList<Node>();
     	
-    	// Draw Sites
+    	// Draw Test
     	for (TileArray space : builder.dev.spaceList()) {
-    		Color col = Color.gray(0.5, 0.5);
+    		Color col = Color.hsb(space.getHueDegree(), 1.0, 1.0, 1.0);
     		for (Tile t : space.tileList()) {
-    			if(space.isType("site")) {
+    			if(space.isType("zone")) {
     				boxArray.add(renderTile(t, col, 0));
     			}
     		}
@@ -121,11 +121,19 @@ public class ViewModel {
         // Create and position camera
         camera = new PerspectiveCamera(true);
         camera.getTransforms().addAll(DEFAULT_ROTATE_H, DEFAULT_ROTATE_V, rotateV, zoom);
+        camera.setFarClip(10000);
+        camera.setNearClip(0);
+        
+//        PointLight light = new PointLight();
+//        light.setColor(Color.gray(1));
+//        light.setTranslateX(-400);
+//        light.setTranslateY(-200);
+//        light.setTranslateZ(200);
 
         // Build the Scene Graph
         Group root = new Group();
-        root.getChildren().add(camera);
-        for (Box b : boxArray) root.getChildren().add(b);
+        root.getChildren().addAll(camera);
+        for (Node b : boxArray) root.getChildren().add(b);
 
         // Use a SubScene
         SubScene subScene = new SubScene(root, 1000, 600, true, 
@@ -137,23 +145,52 @@ public class ViewModel {
         scene = new Scene(group);
     }
     
-    private Box renderTile(Tile t, Color col, double z_offset) {
+    /**
+     * Construct a 3D pixel (i.e. "Voxel") from tile attributes
+     * @param t Tile to render
+     * @param col Color of voxel
+     * @param z_offset manual z_offset for rendering some layers above others even when their z_attributes are the same
+     * @return a JavaFX Box Node
+     */
+    private Box renderVoxel(Tile t, Color col, double z_offset) {
     	float scaler_uv = (float) 0.9;
     	float scaler_w = (float) 0.6;
     	
-    	System.out.println(scaler_uv * t.scale_uv + "," + scaler_w * t.scale_w + "," + scaler_uv * t.scale_uv);
-    	System.out.println(t.location.x + "," + t.location.z + z_offset + "," + t.location.y);
-    	
-    	Box b = new Box(scaler_uv * t.scale_uv, scaler_w * t.scale_w, scaler_uv * t.scale_uv);
-    	Translate pos = new Translate(t.location.x, t.location.z + z_offset, t.location.y);
-    	//Rotate rot = new Rotate(180*builder.tile_rotation);
-    	//b.getTransforms().addAll(rotateH, ORIGIN, pos, rot);
+    	float boxW = scaler_uv * t.scale_uv;
+    	float boxH = scaler_w * t.scale_w;
+    	Box b = new Box(boxW, boxH, boxW);
+    	Translate pos = new Translate(t.location.x, - t.location.z - z_offset - 0.5*boxH, - t.location.y);
+    	Rotate rot = new Rotate(180*builder.tile_rotation);
+    	b.getTransforms().addAll(rotateH, ORIGIN, pos, rot);
 
     	// Box Color
     	PhongMaterial material = new PhongMaterial(col);
     	b.setMaterial(material);
 
     	return b;
+    }
+    
+    /**
+     * Construct a 2D pixel (i.e. "Tile") from tile attributes
+     * @param t Tile to render
+     * @param col Color of tile
+     * @param z_offset manual z_offset for rendering some layers above others even when their z_attributes are the same
+     * @return a JavaFX Rectangle Node
+     */
+    private Rectangle renderTile(Tile t, Color col, double z_offset) {
+    	float scaler_uv = (float) 0.9;
+    	
+    	float rectW = scaler_uv * t.scale_uv;
+    	Rectangle r = new Rectangle(rectW, rectW);
+    	Rotate rotateFlat = new Rotate(90, Rotate.X_AXIS);
+    	Translate pos = new Translate(t.location.x, - t.location.z - z_offset, - t.location.y);
+    	Rotate rot = new Rotate(180*builder.tile_rotation);
+    	r.getTransforms().addAll(rotateH, ORIGIN, pos, rot, rotateFlat);
+
+    	// Box Color
+    	r.setFill(col);
+
+    	return r;
     }
     
     /**
