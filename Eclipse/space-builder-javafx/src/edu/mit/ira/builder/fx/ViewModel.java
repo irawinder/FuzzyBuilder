@@ -11,8 +11,6 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.PerspectiveCamera;
 import javafx.scene.Scene;
-import javafx.scene.SceneAntialiasing;
-import javafx.scene.SubScene;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
@@ -24,16 +22,15 @@ import javafx.scene.transform.Translate;
 public class ViewModel {
 	
 	private Builder builder;
-	private ArrayList<Node> nodeArray;
-	
-	// Master scene;
-	private Scene scene;
 	
 	// Master Group
-	private Group group; 
+	private Group blockSet; 
+	private ArrayList<Node> blockArray;
 	
 	// Master Camera
-	private PerspectiveCamera camera;
+	private Camera camera;
+	
+	private Color background;
 	
 	// Vertical Rotation (JavaFX uses X_AXIS)
     private Rotate rotateV = new Rotate(0, Rotate.X_AXIS);
@@ -53,27 +50,35 @@ public class ViewModel {
     // Center of Entire 3D Scene
     private static final Translate ORIGIN = new Translate(-400, 0, 200);
     
-    // Mouse locations on Canvas
-    private double mousePosX, mousePosY = 0;
-    
     /**
      * Test Scene Constructor
      */
     public ViewModel() {
-    	group = new Group();
-    	builder = new Builder();
+    	this.camera = setUpCamera(rotateV, zoom);
+        this.background = Color.TRANSPARENT;
+        buildSite();
     }
     
-    public Scene getScene() {
-    	return scene;
+    private static Camera setUpCamera(Rotate rotateV, Translate zoom) {
+        Camera _camera = new PerspectiveCamera(true);
+        // Create and position camera
+        _camera = new PerspectiveCamera(true);
+        _camera.getTransforms().addAll(DEFAULT_ROTATE_H, DEFAULT_ROTATE_V, rotateV, zoom);
+        _camera.setNearClip(10);
+        _camera.setFarClip(1000);
+        return _camera;
     }
     
     public Group getGroup() {
-    	return group;
+    	return blockSet;
     }
     
     public Camera getCamera() {
     	return camera;
+    }
+    
+    public Color getBackground() {
+        return background;
     }
     
     /**
@@ -81,10 +86,14 @@ public class ViewModel {
      * 
      * @return a collection of JavaFX groups (3D objects)
      */
-    public void createContent() {
+    public void buildSite() {
+    	
+    	this.blockSet = new Group();
+    	
+    	builder = new Builder();
     	
         // Box Array:
-    	nodeArray = new ArrayList<Node>();
+    	blockArray = new ArrayList<Node>();
     	
     	if (builder.showTiles) {
 			for (TileArray space : builder.dev.spaceList()) {
@@ -95,7 +104,7 @@ public class ViewModel {
 					if (space.isType("site")) {
 						Color col = Color.gray(0, 0.2);
 						for (Tile t : space.tileList())
-							nodeArray.add(renderTile(t, col, -1));
+							blockArray.add(renderTile(t, col, -1));
 					}
 
 					// Draw Zones
@@ -103,7 +112,7 @@ public class ViewModel {
 					if (space.isType("zone")) {
 						Color col = Color.hsb(space.getHueDegree(), 0.3, 0.9);
 						for (Tile t : space.tileList())
-							nodeArray.add(renderTile(t, col, -1));
+							blockArray.add(renderTile(t, col, -1));
 					}
 
 					// Draw Footprints
@@ -118,9 +127,9 @@ public class ViewModel {
 							col = Color.hsb(space.getHueDegree(), 0.5, 0.8);
 						}
 						for (Tile t : space.tileList()) {
-							nodeArray.add(renderTile(t, col, -1));
+							blockArray.add(renderTile(t, col, -1));
 							if (space.name.equals("Building")) {
-								nodeArray.add(renderVoxel(t, col, 0));
+								blockArray.add(renderVoxel(t, col, 0));
 							}
 						}
 					}
@@ -133,9 +142,9 @@ public class ViewModel {
 							// Only draws ground plane if in 2D view mode
 							if (t.location.z == 0 || builder.cam3D) {
 								if (space.name.substring(0, 3).equals("Cou")) {
-									nodeArray.add(renderTile(t, col, 0));
+									blockArray.add(renderTile(t, col, 0));
 								} else {
-									nodeArray.add(renderVoxel(t, col, 0));
+									blockArray.add(renderVoxel(t, col, 0));
 								}
 							}
 						}
@@ -143,28 +152,12 @@ public class ViewModel {
 				}
 			}
 		}
-    	
-        // Create and position camera
-        camera = new PerspectiveCamera(true);
-        camera.getTransforms().addAll(DEFAULT_ROTATE_H, DEFAULT_ROTATE_V, rotateV, zoom);
-        camera.setNearClip(10);
-        camera.setFarClip(1000);
 
         // Build the Scene Graph
-        Group root = new Group();
-        root.getChildren().addAll(camera);
-        for (Node b : nodeArray) root.getChildren().add(b);
-
-        // Use a SubScene
-        SubScene subScene = new SubScene(root, 1000, 600, true, 
-             SceneAntialiasing.BALANCED);
-        subScene.setFill(Color.TRANSPARENT);
-        subScene.setCamera(camera);
-
-        group = new Group(subScene);
-        scene = new Scene(group);
+        blockSet = new Group();
+        blockSet.getChildren().addAll(camera);
+        for (Node b : blockArray) blockSet.getChildren().add(b);
     }
-    
     /**
      * Construct a 3D pixel (i.e. "Voxel") from tile attributes
      * @param t Tile to render
@@ -214,15 +207,14 @@ public class ViewModel {
     	return r;
     }
     
-    /**
-     * Handle all mouse events (Pressed, dragged, etc)
-     */
-    public void handleMouseEvents() {
-        scene.setOnMousePressed((MouseEvent me) -> {
+ // Mouse locations on Canvas
+    private double mousePosX, mousePosY = 0;
+    public void handleMouseEvents(Scene scene) {
+    	scene.setOnMousePressed((MouseEvent me) -> {
             mousePosX = me.getSceneX();
             mousePosY = me.getSceneY();
         });
-
+        
         scene.setOnMouseDragged((MouseEvent me) -> {
             double dx = + (mousePosX - me.getSceneX());
             double dy = - (mousePosY - me.getSceneY());
@@ -251,7 +243,7 @@ public class ViewModel {
      * @param max maximum allowable value
      * @return constrained value
      */
-    double ensureRange(double value, double min, double max) {
+    private double ensureRange(double value, double min, double max) {
     	return Math.min(Math.max(value, min), max);
     }
 }

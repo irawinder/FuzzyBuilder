@@ -120,7 +120,7 @@ public class TestScene {
     /**
      * Handle all mouse events (Pressed, dragged, etc)
      */
-    public void handleMouseEvents() {
+    public void handleEvents() {
         scene.setOnMousePressed((MouseEvent me) -> {
             mousePosX = me.getSceneX();
             mousePosY = me.getSceneY();
