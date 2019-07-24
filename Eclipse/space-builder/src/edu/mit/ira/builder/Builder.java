@@ -70,13 +70,17 @@ public class Builder {
 	public String viewModel;
 
 	/**
-	 * Initialize the Render Options
+	 * Make the Space Building Environment
 	 */
 	public Builder(String model_mode) {
 		initModel(model_mode);
 		initRender();
 	}
 
+	/**
+	 * Make the Space Building Environment
+	 * Random by default
+	 */
 	public Builder() {
 		this("random");
 	}
