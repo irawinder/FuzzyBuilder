@@ -68,9 +68,16 @@ PImage site_map;
  * Runs before everything else in PApplet
  */
 public void settings(){
-
+  
+  site_map = loadImage("takanawa.png");
+  
+  // Init Application canvas size to match site_map
+  int w = (int) (0.5 * site_map.width);
+  int h = (int) (0.5 * site_map.height);
+  size(w, h, P3D);
+  
   // Set size of canvas to (X, Y) pixels
-  size(800, 455, P3D);
+  //size(800, 400, P3D);
 }
 
 /**
@@ -81,8 +88,6 @@ public void setup(){
   frame.setTitle("Space Builder GUI");
   
   builder = new Builder();
-  
-  site_map = loadImage("takanawa.png");
 }
 
 /**
