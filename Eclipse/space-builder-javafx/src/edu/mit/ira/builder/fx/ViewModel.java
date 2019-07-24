@@ -23,6 +23,7 @@ import javafx.scene.transform.Translate;
 public class ViewModel {
 	
 	private Builder builder;
+	String model_mode;
 	
 	// Master Group
 	private Group blockSet; 
@@ -61,6 +62,7 @@ public class ViewModel {
     public ViewModel() {
     	this.camera = setUpCamera(rotateV, zoom, pan);
         this.background = Color.TRANSPARENT;
+        model_mode = "JR";
         buildSite();
     }
     
@@ -95,7 +97,7 @@ public class ViewModel {
     	
     	this.blockSet = new Group();
     	
-    	builder = new Builder();
+    	builder = new Builder(model_mode);
     	
         // Box Array:
     	blockArray = new ArrayList<Node>();
@@ -178,7 +180,7 @@ public class ViewModel {
     	float boxH = scaler_w * t.scale_w;
     	Box b = new Box(boxW, boxH, boxW);
     	Translate pos = new Translate(t.location.x, - t.location.z - z_offset - 0.5*boxH, - t.location.y);
-    	Rotate rot = new Rotate(180*builder.tile_rotation);
+    	Rotate rot = new Rotate(RadianToDegree(builder.tile_rotation), Rotate.Y_AXIS);
     	b.getTransforms().addAll(rotateH, ORIGIN, pos, rot);
 
     	// Box Color
@@ -203,7 +205,7 @@ public class ViewModel {
     	Rectangle r = new Rectangle(rectW, rectW);
     	Rotate rotateFlat = new Rotate(90, Rotate.X_AXIS);
     	Translate pos = new Translate(t.location.x - 0.5*rectW, - t.location.z - z_offset, - t.location.y - 0.5*rectW);
-    	Rotate rot = new Rotate(180*builder.tile_rotation);
+    	Rotate rot = new Rotate(RadianToDegree(builder.tile_rotation), Rotate.Y_AXIS);
     	r.getTransforms().addAll(rotateH, ORIGIN, pos, rot, rotateFlat);
 
     	// Box Color
@@ -225,7 +227,7 @@ public class ViewModel {
             double dy = - (mousePosY - me.getSceneY());
             
             
-            if (me.isSecondaryButtonDown()) {
+            if (me.isPrimaryButtonDown()) {
             	
             	// Rotate View
             	
@@ -275,5 +277,9 @@ public class ViewModel {
      */
     private double ensureRange(double value, double min, double max) {
     	return Math.min(Math.max(value, min), max);
+    }
+    
+    private double RadianToDegree(float radian) {
+    	return 180 * radian / Math.PI;
     }
 }

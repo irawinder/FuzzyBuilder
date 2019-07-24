@@ -72,9 +72,13 @@ public class Builder {
 	/**
 	 * Initialize the Render Options
 	 */
-	public Builder() {
-		initModel();
+	public Builder(String model_mode) {
+		initModel(model_mode);
 		initRender();
+	}
+	
+	public Builder() {
+		this("random");
 	}
 
 	/**
@@ -93,11 +97,10 @@ public class Builder {
 	/**
 	 * Initialize the Model
 	 */
-	public void initModel() {
+	public void initModel(String mode) {
 
 		// Init Vector Site Polygon
 		site_boundary = new Polygon();
-		site_boundary.randomShape(400, 200, 5, 100, 200);
 
 		// Init Raster-like Site Voxels
 		dev_name = "New Development";
@@ -115,9 +118,98 @@ public class Builder {
 		editVertices = false;
 		editPlots = false;
 		editVoids = false;
-
+		
+		if(mode.equals("JR")) {
+			loadModel();
+		} else {
+			loadRandomModel();
+		}
+	}
+	
+	/** 
+	 * Load specific ControlPoints (i.e. hard-coded, not random)
+	 */
+	public void loadModel() {
+		
+		vert_counter = 1;
+		String vertex_prefix = "Vertex";
+		control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 218, 223);
+		vert_counter++;
+		control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 166, 202);
+		vert_counter++;
+		control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 20, 146);
+		vert_counter++;
+		control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 12, 120);
+		vert_counter++;
+		control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 37, 117);
+		vert_counter++;
+		control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 101, 127);
+		vert_counter++;
+		control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 217, 160);
+		vert_counter++;
+		control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 355, 198);
+		vert_counter++;
+		control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 497, 248);
+		vert_counter++;
+		control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 637, 300);
+		vert_counter++;
+		control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 717, 320);
+		vert_counter++;
+		control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 712, 350);
+		vert_counter++;
+		control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 617, 346);
+		vert_counter++;
+		control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 548, 342);
+		vert_counter++;
+		control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 462, 321);
+		vert_counter++;
+		control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 392, 300);
+		vert_counter++;
+		control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 280, 255);
+		vert_counter++;
+		
+		plot_counter = 1;
+		String plot_prefix = "Plot";
+		control.addPoint(plot_prefix + " " + plot_counter, plot_prefix, 46, 131);
+		plot_counter++;
+		control.addPoint(plot_prefix + " " + plot_counter, plot_prefix, 130, 170);
+		plot_counter++;
+		control.addPoint(plot_prefix + " " + plot_counter, plot_prefix, 204, 198);
+		plot_counter++;
+		control.addPoint(plot_prefix + " " + plot_counter, plot_prefix, 365, 257);
+		plot_counter++;
+		control.addPoint(plot_prefix + " " + plot_counter, plot_prefix, 543, 301);
+		plot_counter++;
+		control.addPoint(plot_prefix + " " + plot_counter, plot_prefix, 570, 302);
+		plot_counter++;
+		
+		// Init Polygon
+		for(ControlPoint p : control.points()) { 
+			if(p.getType().equals("Vertex")) {
+				site_boundary.addVertex(p);
+			}
+		}
+		
+		// Override default Grid Properties
+		tileW = 11;
+		tile_rotation = (float) 0.32;
+		tile_translation = new Point(0, 2, 0);
+		
+		// Init Model from Control Points
+		initSites();
+		initZones();
+		initFootprints();
+		initBases();
+		
+	}
+	
+	/**
+	 * Generates a randomly configured model 
+	 */
+	public void loadRandomModel() {
 		// Init Random Model and Control Points
-		initVertexControl();
+		site_boundary.randomShape(400, 200, 5, 100, 200);
+		initVertexControl(site_boundary);
 		initSites();
 		initPlotControl();
 		initZones();
@@ -304,10 +396,10 @@ public class Builder {
 	/**
 	 * Initialize Vertex Control Points
 	 */
-	public void initVertexControl() {
+	public void initVertexControl(Polygon boundary) {
 		vert_counter = 1;
 		String point_prefix = "Vertex";
-		for (Point p : site_boundary.getCorners()) {
+		for (Point p : boundary.getCorners()) {
 			control.addPoint(point_prefix + " " + vert_counter, point_prefix, p.x, p.y);
 			vert_counter++;
 		}
@@ -399,7 +491,7 @@ public class Builder {
 
 		switch (key) {
 		case 'r':
-			initModel();
+			initModel("random");
 			initRender();
 			addPoint = false;
 			removePoint = false;

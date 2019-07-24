@@ -40,10 +40,15 @@ public class GUI extends Application {
     	
         master.setOnKeyPressed(e -> {
             if (e.getCode() == KeyCode.R) {
+            	site.model_mode = "random";
+                site.buildSite();
+                scene3D.setRoot(site.getGroup());
+            } else if (e.getCode() == KeyCode.L) {
+            	site.model_mode = "JR";
                 site.buildSite();
                 scene3D.setRoot(site.getGroup());
             }
-        });
+        }); 
         
         stage.setScene(master);
         stage.show();
