@@ -22,52 +22,6 @@ import java.util.HashMap;
 // [Check] Create ArrayList Version for TileArray
 // [Check] Implement native Java library for random (not Processing)
 
-/* JR Site Settings:
-
-  Site PNG Dimensions: 1438 x 820
-  
-  --Site Vertices
-  --Zone Points
-  Vertex 1; Point[1056.0, 509.0, 0.0]
-  Vertex 2; Point[950.0, 509.0, 0.0]
-  Vertex 3; Point[887.0, 504.0, 0.0]
-  Vertex 4; Point[794.0, 488.0, 0.0]
-  Vertex 5; Point[725.0, 468.0, 0.0]
-  Plot 1; Point[350.0, 276.0, 0.0]
-  Plot 2; Point[406.0, 297.0, 0.0]
-  Plot 3; Point[454.0, 327.0, 0.0]
-  Void 2; Point[760.0, 577.0, 0.0]
-  Void 3; Point[565.0, 538.0, 0.0]
-  Void 4; Point[650.0, 574.0, 0.0]
-  Vertex 6; Point[589.0, 425.0, 0.0]
-  Vertex 7; Point[505.0, 387.0, 0.0]
-  Vertex 8; Point[518.0, 368.0, 0.0]
-  Vertex 9; Point[434.0, 331.0, 0.0]
-  Vertex 10; Point[405.0, 323.0, 0.0]
-  Vertex 11; Point[303.0, 260.0, 0.0]
-  Vertex 12; Point[307.0, 242.0, 0.0]
-  Vertex 13; Point[407.0, 280.0, 0.0]
-  Vertex 14; Point[471.0, 294.0, 0.0]
-  Vertex 15; Point[567.0, 321.0, 0.0]
-  Vertex 16; Point[673.0, 357.0, 0.0]
-  Vertex 17; Point[746.0, 382.0, 0.0]
-  Vertex 18; Point[888.0, 435.0, 0.0]
-  Vertex 19; Point[970.0, 463.0, 0.0]
-  Vertex 20; Point[1053.0, 480.0, 0.0]
-  Plot 4; Point[596.0, 388.0, 0.0]
-  Plot 5; Point[633.0, 401.0, 0.0]
-  Plot 6; Point[788.0, 442.0, 0.0]
-  Plot 7; Point[843.0, 465.0, 0.0]
-  Plot 8; Point[703.0, 347.0, 0.0]
-  Plot 9; Point[945.0, 484.0, 0.0]
-  Plot 10; Point[1010.0, 498.0, 0.0]
-  --Other Grid Attributes
-  Grid Size: 11.0
-  Grid Rotation: 0.34000006
-  Grid Pan: Point[0.0, 0.0, 0.0]
-
-*/
-
 Builder builder;
 Underlay map;
 
@@ -92,7 +46,7 @@ public void setup(){
   
   frame.setTitle("Space Builder GUI");
   
-  builder = new Builder();
+  builder = new Builder("random");
 }
 
 /**

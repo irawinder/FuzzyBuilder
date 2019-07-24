@@ -61,9 +61,13 @@ public class Builder {
   /**
    * Initialize the Render Options
    */
-  public Builder() {
-    initModel();
+  public Builder(String model_mode) {
+    initModel(model_mode);
     initRender();
+  }
+  
+  public Builder() {
+    this("random");
   }
 
   /**
@@ -83,11 +87,10 @@ public class Builder {
   /**
    * Initialize the Model
    */
-  public void initModel() {
+  public void initModel(String mode) {
 
     // Init Vector Site Polygon
     site_boundary = new Polygon();
-    site_boundary.randomShape(400, 200, 5, 100, 200);
 
     // Init Raster-like Site Voxels
     dev_name = "New Development";
@@ -105,9 +108,112 @@ public class Builder {
     editVertices = false;
     editPlots = false;
     editVoids = false;
-
+    
+    if(mode.equals("JR")) {
+      loadModel();
+    } else {
+      loadRandomModel();
+    }
+  }
+  
+  /** 
+   * Load specific ControlPoints (i.e. hard-coded, not random)
+   */
+  public void loadModel() {
+    
+    vert_counter = 1;
+    String vertex_prefix = "Vertex";
+    control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 1056, 509);
+    vert_counter++;
+    control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 950, 509);
+    vert_counter++;
+    control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 887, 504);
+    vert_counter++;
+    control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 794, 488);
+    vert_counter++;
+    control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 717, 466);
+    vert_counter++;
+    control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 589, 425);
+    vert_counter++;
+    control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 510, 385);
+    vert_counter++;
+    control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 518, 368);
+    vert_counter++;
+    control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 432, 336);
+    vert_counter++;
+    control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 405, 323);
+    vert_counter++;
+    control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 303, 260);
+    vert_counter++;
+    control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 307, 242);
+    vert_counter++;
+    control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 407, 280);
+    vert_counter++;
+    control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 471, 294);
+    vert_counter++;
+    control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 567, 321);
+    vert_counter++;
+    control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 673, 357);
+    vert_counter++;
+    control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 746, 382);
+    vert_counter++;
+    control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 888, 435);
+    vert_counter++;
+    control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 970, 463);
+    vert_counter++;
+    control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 1053, 480);
+    vert_counter++;
+    
+    plot_counter = 1;
+    String plot_prefix = "Plot";
+    control.addPoint(plot_prefix + " " + plot_counter, plot_prefix, 350, 276);
+    plot_counter++;
+    control.addPoint(plot_prefix + " " + plot_counter, plot_prefix, 406, 297);
+    plot_counter++;
+    control.addPoint(plot_prefix + " " + plot_counter, plot_prefix, 458, 318);
+    plot_counter++;
+    control.addPoint(plot_prefix + " " + plot_counter, plot_prefix, 597, 385);
+    plot_counter++;
+    control.addPoint(plot_prefix + " " + plot_counter, plot_prefix, 633, 401);
+    plot_counter++;
+    control.addPoint(plot_prefix + " " + plot_counter, plot_prefix, 788, 442);
+    plot_counter++;
+    control.addPoint(plot_prefix + " " + plot_counter, plot_prefix, 843, 465);
+    plot_counter++;
+    control.addPoint(plot_prefix + " " + plot_counter, plot_prefix, 703, 347);
+    plot_counter++;
+    control.addPoint(plot_prefix + " " + plot_counter, plot_prefix, 945, 484);
+    plot_counter++;
+    control.addPoint(plot_prefix + " " + plot_counter, plot_prefix, 1010, 498);
+    plot_counter++;
+    
+    // Init Polygon
+    for(ControlPoint p : control.points()) { 
+      if(p.getType().equals("Vertex")) {
+        site_boundary.addVertex(p);
+      }
+    }
+    
+    // Override default Grid Properties
+    tileW = 11;
+    tile_rotation = (float) 0.34;
+    tile_translation = new Point(0, 0, 0);
+    
+    // Init Model from Control Points
+    initSites();
+    initZones();
+    initFootprints();
+    initBases();
+    
+  }
+  
+  /**
+   * Generates a randomly configured model 
+   */
+  public void loadRandomModel() {
     // Init Random Model and Control Points
-    initVertexControl();
+    site_boundary.randomShape(400, 200, 5, 100, 200);
+    initVertexControl(site_boundary);
     initSites();
     initPlotControl();
     initZones();
@@ -294,10 +400,10 @@ public class Builder {
   /**
    * Initialize Vertex Control Points
    */
-  public void initVertexControl() {
+  public void initVertexControl(Polygon boundary) {
     vert_counter = 1;
     String point_prefix = "Vertex";
-    for (Point p : site_boundary.getCorners()) {
+    for (Point p : boundary.getCorners()) {
       control.addPoint(point_prefix + " " + vert_counter, point_prefix, p.x, p.y);
       vert_counter++;
     }
@@ -388,11 +494,14 @@ public class Builder {
   public void keyPressed(char key, int keyCode, int coded, int left, int right, int down, int up) {
 
     switch (key) {
-    case 'h':
-      showText = !showText;
-      break;
     case 'r':
-      initModel();
+      initModel("random");
+      initRender();
+      addPoint = false;
+      removePoint = false;
+      break;
+    case 'L':
+      initModel("JR");
       initRender();
       addPoint = false;
       removePoint = false;
@@ -469,6 +578,9 @@ public class Builder {
     case 'l':
       showPolygons = !showPolygons;
       break;
+    case 'h':
+      showText = !showText;
+      break;
     case '1':
       siteState();
       break;
@@ -499,7 +611,6 @@ public class Builder {
       println("Grid Rotation: " + tile_rotation);
       println("Grid Pan: " + tile_translation);
       break;
-    
     }
 
     if (key == coded) {
