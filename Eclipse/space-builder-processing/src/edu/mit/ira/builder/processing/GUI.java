@@ -33,7 +33,7 @@ public class GUI extends PApplet {
 	 */
 	public void settings() {
 
-		map = new Underlay("20190724_takanawa.png", (float) 0.5);
+		map = new Underlay("../../data/20190724_takanawa.png", (float) 0.5);
 
 		// Init Application canvas size to match site_map
 		size(map.getWidth(), map.getHeight(), P3D);
