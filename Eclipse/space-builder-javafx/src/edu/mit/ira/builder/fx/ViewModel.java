@@ -63,7 +63,8 @@ public class ViewModel {
     	this.camera = setUpCamera(rotateV, zoom, pan);
         this.background = Color.TRANSPARENT;
         model_mode = "JR";
-        buildSite();
+        builder = new Builder(model_mode);
+        renderSite();
     }
     
     private static Camera setUpCamera(Rotate rotateV, Translate zoom, Translate pan) {
@@ -88,12 +89,17 @@ public class ViewModel {
         return background;
     }
     
+    public void buildSite() {
+    	builder.initModel(model_mode);
+    	builder.resetRender();
+    }
+    
     /**
      * Create a scene Model for some test geometry
      * 
      * @return a collection of JavaFX groups (3D objects)
      */
-    public void buildSite() {
+    public void renderSite() {
     	
     	this.blockSet = new Group();
     	
@@ -227,7 +233,7 @@ public class ViewModel {
             double dy = - (mousePosY - me.getSceneY());
             
             
-            if (me.isPrimaryButtonDown()) {
+            if (me.isSecondaryButtonDown()) {
             	
             	// Rotate View
             	
@@ -242,16 +248,15 @@ public class ViewModel {
                 rotateH.setAngle(angleH);
             
             
-            } else if (me.isMiddleButtonDown()) {
+            } else if (me.isPrimaryButtonDown()) {
             	
             	// Pan View
             	
-            	double panU = pan.getX() + dx / 10;
-            	double panV = pan.getY() - dy / 10;
+            	double panU = pan.getX() + dx / 5;
+            	double panV = pan.getY() - dy / 5;
             	
             	pan.setX(panU);
             	pan.setY(panV);
-            	
             	
             }
             mousePosX = me.getSceneX();

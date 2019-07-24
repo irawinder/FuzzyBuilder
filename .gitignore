@@ -7,14 +7,6 @@ Eclipse/space-builder/lib/
 Eclipse/space-builder-javafx/lib/
 Eclipse/space-builder-processing/lib/
 
-Eclipse/space-builder/.settings/
-Eclipse/space-builder-javafx/.settings/
-Eclipse/space-builder-processing/.settings/
-
-Eclipse/space-builder/.classpath
-Eclipse/space-builder-javafx/.classpath
-Eclipse/space-builder-processing/.classpath
-
-Eclipse/space-builder/.project
-Eclipse/space-builder-javafx/.project
-Eclipse/space-builder-processing/.project
+*.class
+*.project
+*.settings

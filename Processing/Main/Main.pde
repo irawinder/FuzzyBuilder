@@ -52,7 +52,6 @@ public void setup(){
 /**
  * Runs every frame unless "noLoop()" is run
  */
-boolean hasRun = false;
 public void draw(){
   
   // listen for user inputs and mouse location
@@ -64,11 +63,7 @@ public void draw(){
   // Render the ViewModel "Front End" and GUI to canvas
   render();
   
-  if(hasRun) {
-    noLoop();
-  } else {
-    hasRun = true;
-  }
+  noLoop();
 }
 
 /**

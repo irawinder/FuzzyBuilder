@@ -60,7 +60,7 @@ public class Builder {
 	public boolean cam3D;
 
 	// Hide or Show Tiles or Polygons
-	public boolean showTiles, showPolygons;
+	public boolean showTiles, showPolygons, showText;
 
 	// Hide or Show TileArray Nest Layers
 	public int viewState;
@@ -76,7 +76,7 @@ public class Builder {
 		initModel(model_mode);
 		initRender();
 	}
-	
+
 	public Builder() {
 		this("random");
 	}
@@ -86,13 +86,20 @@ public class Builder {
 	 */
 	public void initRender() {
 		cam3D = true;
+		showText = true;
 		viewModel = "DOT";
-
+		resetRender();
+	}
+	
+	/**
+	 * Build State When new model is loaded or randomly generated during application operation
+	 */
+	public void resetRender() {
 		buildingZoneState();
-
 		addPoint = false;
 		removePoint = false;
 	}
+	
 
 	/**
 	 * Initialize the Model
@@ -118,19 +125,19 @@ public class Builder {
 		editVertices = false;
 		editPlots = false;
 		editVoids = false;
-		
+
 		if(mode.equals("JR")) {
 			loadModel();
 		} else {
 			loadRandomModel();
 		}
 	}
-	
+
 	/** 
 	 * Load specific ControlPoints (i.e. hard-coded, not random)
 	 */
 	public void loadModel() {
-		
+
 		vert_counter = 1;
 		String vertex_prefix = "Vertex";
 		control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 1056, 509);
@@ -173,7 +180,7 @@ public class Builder {
 		vert_counter++;
 		control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 1053, 480);
 		vert_counter++;
-		
+
 		plot_counter = 1;
 		String plot_prefix = "Plot";
 		control.addPoint(plot_prefix + " " + plot_counter, plot_prefix, 350, 276);
@@ -196,27 +203,27 @@ public class Builder {
 		plot_counter++;
 		control.addPoint(plot_prefix + " " + plot_counter, plot_prefix, 1010, 498);
 		plot_counter++;
-		
+
 		// Init Polygon
 		for(ControlPoint p : control.points()) { 
 			if(p.getType().equals("Vertex")) {
 				site_boundary.addVertex(p);
 			}
 		}
-		
+
 		// Override default Grid Properties
 		tileW = 11;
 		tile_rotation = (float) 0.34;
 		tile_translation = new Point(0, 0, 0);
-		
+
 		// Init Model from Control Points
 		initSites();
 		initZones();
 		initFootprints();
 		initBases();
-		
+
 	}
-	
+
 	/**
 	 * Generates a randomly configured model 
 	 */
@@ -506,9 +513,11 @@ public class Builder {
 		switch (key) {
 		case 'r':
 			initModel("random");
-			initRender();
-			addPoint = false;
-			removePoint = false;
+			resetRender();
+			break;
+		case 'L':
+			initModel("JR");
+			resetRender();
 			break;
 		case 'a':
 			addPoint = !addPoint;
@@ -582,6 +591,9 @@ public class Builder {
 		case 'l':
 			showPolygons = !showPolygons;
 			break;
+		case 'h':
+			showText = !showText;
+			break;
 		case '1':
 			siteState();
 			break;
@@ -597,12 +609,21 @@ public class Builder {
 		case '5':
 			buildingState();
 			break;
-		// case '6':
-		// floorState();
-		// break;
-		// case '7':
-		// roomState();
-		// break;
+			// case '6':
+			// floorState();
+			// break;
+			// case '7':
+			// roomState();
+			// break;
+		case '0':
+			System.out.println("--Site Vertices");
+			System.out.println("--Zone Points");
+			for(ControlPoint c : control.points()) System.out.println(c);
+			System.out.println("--Other Grid Attributes");
+			System.out.println("Grid Size: " + tileW);
+			System.out.println("Grid Rotation: " + tile_rotation);
+			System.out.println("Grid Pan: " + tile_translation);
+			break;
 		}
 
 		if (key == coded) {

@@ -42,10 +42,12 @@ public class GUI extends Application {
             if (e.getCode() == KeyCode.R) {
             	site.model_mode = "random";
                 site.buildSite();
+                site.renderSite();
                 scene3D.setRoot(site.getGroup());
             } else if (e.getCode() == KeyCode.L) {
             	site.model_mode = "JR";
-                site.buildSite();
+            	site.buildSite();
+                site.renderSite();
                 scene3D.setRoot(site.getGroup());
             }
         }); 
