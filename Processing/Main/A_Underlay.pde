@@ -8,7 +8,7 @@ public class Underlay {
   int w, h;
     
   public Underlay(String file_path, float scaler) {
-    show = true;
+    show = false;
     underlay = loadImage(file_path);
     w = (int) (scaler * underlay.width);
     h = (int) (scaler * underlay.height);
