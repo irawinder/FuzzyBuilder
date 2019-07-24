@@ -36,7 +36,7 @@ public class ViewModel {
 	private Color background;
     
 	// Center of Entire 3D Scene
-    private static final Translate ORIGIN = new Translate(-400, 0, 200);
+    private static final Translate ORIGIN = new Translate(-719, 0, 410);
     
     // Default Horizontal Rotation
     private static final Rotate DEFAULT_ROTATE_H = new Rotate(-20, Rotate.Y_AXIS);

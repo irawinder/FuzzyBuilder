@@ -133,54 +133,68 @@ public class Builder {
 		
 		vert_counter = 1;
 		String vertex_prefix = "Vertex";
-		control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 218, 223);
+		control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 1056, 509);
 		vert_counter++;
-		control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 166, 202);
+		control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 950, 509);
 		vert_counter++;
-		control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 20, 146);
+		control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 887, 504);
 		vert_counter++;
-		control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 12, 120);
+		control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 794, 488);
 		vert_counter++;
-		control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 37, 117);
+		control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 717, 466);
 		vert_counter++;
-		control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 101, 127);
+		control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 589, 425);
 		vert_counter++;
-		control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 217, 160);
+		control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 510, 385);
 		vert_counter++;
-		control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 355, 198);
+		control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 518, 368);
 		vert_counter++;
-		control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 497, 248);
+		control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 432, 336);
 		vert_counter++;
-		control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 637, 300);
+		control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 405, 323);
 		vert_counter++;
-		control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 717, 320);
+		control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 303, 260);
 		vert_counter++;
-		control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 712, 350);
+		control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 307, 242);
 		vert_counter++;
-		control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 617, 346);
+		control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 407, 280);
 		vert_counter++;
-		control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 548, 342);
+		control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 471, 294);
 		vert_counter++;
-		control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 462, 321);
+		control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 567, 321);
 		vert_counter++;
-		control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 392, 300);
+		control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 673, 357);
 		vert_counter++;
-		control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 280, 255);
+		control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 746, 382);
+		vert_counter++;
+		control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 888, 435);
+		vert_counter++;
+		control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 970, 463);
+		vert_counter++;
+		control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 1053, 480);
 		vert_counter++;
 		
 		plot_counter = 1;
 		String plot_prefix = "Plot";
-		control.addPoint(plot_prefix + " " + plot_counter, plot_prefix, 46, 131);
+		control.addPoint(plot_prefix + " " + plot_counter, plot_prefix, 350, 276);
 		plot_counter++;
-		control.addPoint(plot_prefix + " " + plot_counter, plot_prefix, 130, 170);
+		control.addPoint(plot_prefix + " " + plot_counter, plot_prefix, 406, 297);
 		plot_counter++;
-		control.addPoint(plot_prefix + " " + plot_counter, plot_prefix, 204, 198);
+		control.addPoint(plot_prefix + " " + plot_counter, plot_prefix, 458, 318);
 		plot_counter++;
-		control.addPoint(plot_prefix + " " + plot_counter, plot_prefix, 365, 257);
+		control.addPoint(plot_prefix + " " + plot_counter, plot_prefix, 597, 385);
 		plot_counter++;
-		control.addPoint(plot_prefix + " " + plot_counter, plot_prefix, 543, 301);
+		control.addPoint(plot_prefix + " " + plot_counter, plot_prefix, 633, 401);
 		plot_counter++;
-		control.addPoint(plot_prefix + " " + plot_counter, plot_prefix, 570, 302);
+		control.addPoint(plot_prefix + " " + plot_counter, plot_prefix, 788, 442);
+		plot_counter++;
+		control.addPoint(plot_prefix + " " + plot_counter, plot_prefix, 843, 465);
+		plot_counter++;
+		control.addPoint(plot_prefix + " " + plot_counter, plot_prefix, 703, 347);
+		plot_counter++;
+		control.addPoint(plot_prefix + " " + plot_counter, plot_prefix, 945, 484);
+		plot_counter++;
+		control.addPoint(plot_prefix + " " + plot_counter, plot_prefix, 1010, 498);
 		plot_counter++;
 		
 		// Init Polygon
@@ -192,8 +206,8 @@ public class Builder {
 		
 		// Override default Grid Properties
 		tileW = 11;
-		tile_rotation = (float) 0.32;
-		tile_translation = new Point(0, 2, 0);
+		tile_rotation = (float) 0.34;
+		tile_translation = new Point(0, 0, 0);
 		
 		// Init Model from Control Points
 		initSites();
