@@ -61,20 +61,17 @@ import java.util.HashMap;
 */
 
 Builder builder;
-
-PImage site_map;
+Underlay map;
 
 /**
  * Runs before everything else in PApplet
  */
 public void settings(){
   
-  site_map = loadImage("20190724_takanawa.png");
+  map = new Underlay("20190724_takanawa.png", 0.5);
   
   // Init Application canvas size to match site_map
-  int w = (int) (0.5 * site_map.width);
-  int h = (int) (0.5 * site_map.height);
-  size(w, h, P3D);
+  size(map.getWidth(), map.getHeight(), P3D);
   
   // Set size of canvas to (X, Y) pixels
   //size(800, 400, P3D);
@@ -100,10 +97,10 @@ public void draw(){
 
   // Update Model "Backend" with New State (if any)
   builder.updateModel();
-
+  
   // Render the ViewModel "Front End" and GUI to canvas
   render();
-
+  
   noLoop();
 }
 
@@ -112,6 +109,7 @@ public void draw(){
  */
 public void keyPressed() {
   builder.keyPressed(key, keyCode, CODED, LEFT, RIGHT, DOWN, UP);
+  map.keyPressed(key);
   loop();
 }
 

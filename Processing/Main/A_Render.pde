@@ -13,12 +13,10 @@ void render() {
   hint(ENABLE_DEPTH_TEST);
   background(255);
   
-  pushMatrix();
-  translate(0, 0, -5);
-  float scaler = (float) width / site_map.width;
-  if (builder.showMap) image(site_map, 0, 0, scaler * site_map.width, scaler * site_map.height);
-  popMatrix();
+  // Draw Underlay
+  renderUnderlay();
   
+  // Draw Tiles and Voxels
   if (builder.showTiles) {
 
     for (TileArray space : builder.dev.spaceList()) {
@@ -260,5 +258,15 @@ void renderCross(float x, float y, float size, int col, float stroke, float z_of
   pushMatrix(); translate(0, 0, z_offset);
   line(x-5, y-5, x+5, y+5);
   line(x-5, y+5, x+5, y-5);
+  popMatrix();
+}
+
+/**
+ * Renders a Raster Image Underlay
+ */
+public void renderUnderlay() {
+  pushMatrix();
+  translate(0, 0, -5);
+  if (map.show) image(map.getImg(), 0, 0);
   popMatrix();
 }

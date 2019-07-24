@@ -49,7 +49,7 @@ public class Builder {
   public boolean cam3D;
 
   // Hide or Show Tiles or Polygons
-  public boolean showTiles, showPolygons, showText, showMap;
+  public boolean showTiles, showPolygons, showText;
 
   // Hide or Show TileArray Nest Layers
   public int viewState;
@@ -72,7 +72,6 @@ public class Builder {
   public void initRender() {
     cam3D = true;
     showText = true;
-    showMap = false;
     viewModel = "DOT";
 
     buildingZoneState();
@@ -499,9 +498,6 @@ public class Builder {
       println("Grid Size: " + tileW);
       println("Grid Rotation: " + tile_rotation);
       println("Grid Pan: " + tile_translation);
-      break;
-    case 'M':
-      showMap = !showMap;
       break;
     
     }
