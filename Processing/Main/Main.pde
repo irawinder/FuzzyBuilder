@@ -69,7 +69,7 @@ PImage site_map;
  */
 public void settings(){
   
-  site_map = loadImage("takanawa.png");
+  site_map = loadImage("20190724_takanawa.png");
   
   // Init Application canvas size to match site_map
   int w = (int) (0.5 * site_map.width);

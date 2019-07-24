@@ -15,8 +15,8 @@ void render() {
   
   pushMatrix();
   translate(0, 0, -5);
-  float scaler = width/2880.0;
-  if (builder.showMap) image(site_map, 0, 0, scaler*2880, scaler*1638);
+  float scaler = (float) width / site_map.width;
+  if (builder.showMap) image(site_map, 0, 0, scaler * site_map.width, scaler * site_map.height);
   popMatrix();
   
   if (builder.showTiles) {
