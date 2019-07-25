@@ -22,8 +22,9 @@ public class Underlay {
 	 * 
 	 * @param file_path relative path location of file
 	 * @param scaler scale the image up or down from its native resolution
+	 * @param opacity opacity value of underlay (0 - 1)
 	 */
-	public Underlay(String file_path, double scaler) {
+	public Underlay(String file_path, double scaler, double opacity) {
 		show = false;
 		
 		InputStream is;
@@ -36,6 +37,7 @@ public class Underlay {
 			double h = scaler * underlay.getHeight();
 			underlayView.setFitWidth(w);
 			underlayView.setFitHeight(h);
+			underlayView.setOpacity(opacity);
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
