@@ -16,8 +16,13 @@ public class Underlay {
 	private Image underlay;
 	private ImageView underlayView;
 	private boolean show;
-	double w, h;
 
+	/**
+	 * Construct and Underlay Image for JavaFX
+	 * 
+	 * @param file_path relative path location of file
+	 * @param scaler scale the image up or down from its native resolution
+	 */
 	public Underlay(String file_path, double scaler) {
 		show = false;
 		
@@ -27,8 +32,8 @@ public class Underlay {
 			underlay = new Image(is);
 			underlayView = new ImageView();
 			underlayView.setImage(underlay);
-			w = scaler * underlay.getWidth();
-			h = scaler * underlay.getHeight();
+			double w = scaler * underlay.getWidth();
+			double h = scaler * underlay.getHeight();
 			underlayView.setFitWidth(w);
 			underlayView.setFitHeight(h);
 		} catch (FileNotFoundException e) {
@@ -37,39 +42,50 @@ public class Underlay {
 		}
 		
 	}
-
-	public Image getImage() {
-		return underlay;
-	}
 	
+	/**
+	 * Get the Image as ImageView Node
+	 * 
+	 * @return ImageView node of underlay
+	 */
 	public ImageView getImageView() {
 		return underlayView;
 	}
 
-	public double getWidth() {
-		return w;
-	}
-
-	public double getHeight() {
-		return h;
-	}
-
+	/**
+	 * switches show true to false, or false to true
+	 */
 	private void toggle() {
 		show = !show;
 	}
-
+	
+	/**
+	 * Show we show the map?
+	 * 
+	 * @return true or false
+	 */
 	public boolean show() {
 		return show;
 	}
-
+	
+	/**
+	 * Execute methods based upon key that is passed
+	 * 
+	 * @param key
+	 */
 	public void keyPressed(char key) {
 		switch (key) {
-		case 'M':
+		case 'u': // set show to false
 			toggle();
 			break;
 		}
 	}
 	
+	/**
+	 * Transform the image in 3D space
+	 * 
+	 * @param t
+	 */
 	public void applyTransform(Transform t) {
 		
 	}
