@@ -10,9 +10,6 @@ import javafx.stage.Stage;
 
 public class GUI extends Application {
 	
-	ViewModel site = new ViewModel();
-	//TestScene boxes = new TestScene();
-	
 	static final int WINDOW_WIDTH = 1280;
     static final int WINDOW_HEIGHT = 720;
     static final Color TEXT_COLOR = Color.gray(0.8);
@@ -20,7 +17,8 @@ public class GUI extends Application {
     @Override
     public void start(Stage stage) {
         
-    	ViewModel site = new ViewModel();
+    	ViewModel site = new ViewModel("JR");
+    	//TestScene boxes = new TestScene();
     	
     	stage.setTitle("Space Builder FX");
     	
@@ -40,13 +38,11 @@ public class GUI extends Application {
     	
         master.setOnKeyPressed(e -> {
             if (e.getCode() == KeyCode.R) {
-            	site.model_mode = "random";
-                site.buildSite();
+                site.buildSite("random");
                 site.renderSite();
                 scene3D.setRoot(site.getGroup());
             } else if (e.getCode() == KeyCode.L) {
-            	site.model_mode = "JR";
-            	site.buildSite();
+            	site.buildSite("JR");
                 site.renderSite();
                 scene3D.setRoot(site.getGroup());
             }

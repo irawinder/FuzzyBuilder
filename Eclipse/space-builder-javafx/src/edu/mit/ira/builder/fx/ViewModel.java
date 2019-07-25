@@ -11,6 +11,7 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.PerspectiveCamera;
 import javafx.scene.Scene;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.paint.Color;
@@ -22,12 +23,12 @@ import javafx.scene.transform.Translate;
 
 public class ViewModel {
 	
+	// Form Model Classes by Ira
+	private Underlay underlay;
 	private Builder builder;
-	String model_mode;
 	
 	// Master Group
-	private Group blockSet; 
-	private ArrayList<Node> blockArray;
+	private Group nodeSet; 
 	
 	// Master Camera
 	private Camera camera;
@@ -35,6 +36,9 @@ public class ViewModel {
 	// background color of infinity
 	private Color background;
     
+	// Map File Path
+	private static final String MAP_FILE_PATH = "../../data/site.png";
+	
 	// Center of Entire 3D Scene
     private static final Translate ORIGIN = new Translate(-719, 0, 410);
     
@@ -59,11 +63,11 @@ public class ViewModel {
     /**
      * Test Scene Constructor
      */
-    public ViewModel() {
+    public ViewModel(String model_mode) {
     	this.camera = setUpCamera(rotateV, zoom, pan);
         this.background = Color.TRANSPARENT;
-        model_mode = "JR";
         builder = new Builder(model_mode);
+        underlay  = new Underlay(MAP_FILE_PATH, 0.5);
         renderSite();
     }
     
@@ -78,7 +82,7 @@ public class ViewModel {
     }
     
     public Group getGroup() {
-    	return blockSet;
+    	return nodeSet;
     }
     
     public Camera getCamera() {
@@ -89,7 +93,7 @@ public class ViewModel {
         return background;
     }
     
-    public void buildSite() {
+    public void buildSite(String model_mode) {
     	builder.initModel(model_mode);
     	builder.resetRender();
     }
@@ -101,12 +105,10 @@ public class ViewModel {
      */
     public void renderSite() {
     	
-    	this.blockSet = new Group();
+    	this.nodeSet = new Group();
     	
-    	builder = new Builder(model_mode);
-    	
-        // Box Array:
-    	blockArray = new ArrayList<Node>();
+    	// Box Array:
+    	ArrayList<Node> blockArray = new ArrayList<Node>();
     	
     	if (builder.showTiles) {
 			for (TileArray space : builder.dev.spaceList()) {
@@ -165,11 +167,17 @@ public class ViewModel {
 				}
 			}
 		}
-
-        // Build the Scene Graph
-        blockSet = new Group();
-        blockSet.getChildren().addAll(camera);
-        for (Node b : blockArray) blockSet.getChildren().add(b);
+    	
+    	// Make and position the Basemap Image
+    	ImageView map = underlay.getImageView();
+    	Rotate rotateFlat = new Rotate(-90, Rotate.X_AXIS);
+    	Translate pos = new Translate(0, 2, 0);
+    	map.getTransforms().addAll(rotateH, ORIGIN, pos, rotateFlat);
+    	
+        // Build the Scene Graph (Camera, Base Map, and Blocks)
+        nodeSet = new Group();
+        nodeSet.getChildren().addAll(camera, map);
+        for (Node b : blockArray) nodeSet.getChildren().add(b);
     }
     /**
      * Construct a 3D pixel (i.e. "Voxel") from tile attributes
@@ -185,7 +193,12 @@ public class ViewModel {
     	float boxW = scaler_uv * t.scale_uv;
     	float boxH = scaler_w * t.scale_w;
     	Box b = new Box(boxW, boxH, boxW);
-    	Translate pos = new Translate(t.location.x, - t.location.z - z_offset - 0.5*boxH, - t.location.y);
+    	
+    	// not quite sure why "0.15*boxW" helps with alignment, but it does ...
+    	Translate pos = new Translate(
+    			+ t.location.x - 0.15*boxW, 
+    			- t.location.z - z_offset - 0.5*boxH, 
+    			- t.location.y - 0.15*boxW);
     	Rotate rot = new Rotate(RadianToDegree(builder.tile_rotation), Rotate.Y_AXIS);
     	b.getTransforms().addAll(rotateH, ORIGIN, pos, rot);
 
@@ -209,8 +222,11 @@ public class ViewModel {
     	float rectW = scaler_uv * t.scale_uv;
     	
     	Rectangle r = new Rectangle(rectW, rectW);
-    	Rotate rotateFlat = new Rotate(90, Rotate.X_AXIS);
-    	Translate pos = new Translate(t.location.x - 0.5*rectW, - t.location.z - z_offset, - t.location.y - 0.5*rectW);
+    	Rotate rotateFlat = new Rotate(-90, Rotate.X_AXIS);
+    	Translate pos = new Translate(
+    			+ t.location.x - 0.5*rectW, 
+    			- t.location.z - z_offset, 
+    			- t.location.y + 0.5*rectW);
     	Rotate rot = new Rotate(RadianToDegree(builder.tile_rotation), Rotate.Y_AXIS);
     	r.getTransforms().addAll(rotateH, ORIGIN, pos, rot, rotateFlat);
 
@@ -219,6 +235,7 @@ public class ViewModel {
 
     	return r;
     }
+    
     
     // Mouse locations on Canvas
     private double mousePosX, mousePosY = 0;
