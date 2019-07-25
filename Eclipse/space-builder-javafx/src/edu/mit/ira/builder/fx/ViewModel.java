@@ -43,10 +43,10 @@ public class ViewModel {
     private static final Translate ORIGIN = new Translate(-719, 0, 410);
     
     // Default Horizontal Rotation
-    private static final Rotate DEFAULT_ROTATE_H = new Rotate(-20, Rotate.Y_AXIS);
+    private static final Rotate DEFAULT_ROTATE_H = new Rotate(0, Rotate.Y_AXIS);
     
     // Default Vertical Rotation
-    private static final Rotate DEFAULT_ROTATE_V = new Rotate(-20, Rotate.X_AXIS);
+    private static final Rotate DEFAULT_ROTATE_V = new Rotate(0, Rotate.X_AXIS);
     
     // Zoom level of Camera
     private Translate zoom = new Translate(0, 0, -500);
@@ -55,15 +55,16 @@ public class ViewModel {
     private Translate pan = new Translate(0, 0, 0);
     
     // Vertical Rotation (JavaFX uses X_AXIS)
-    private Rotate rotateV = new Rotate(0, Rotate.X_AXIS);
+    private Rotate rotateV = new Rotate(-20, Rotate.X_AXIS);
     
     // Horizontal Rotation (JavaFX uses Y_AXIS)
-    private Rotate rotateH = new Rotate(0, Rotate.Y_AXIS);
+    private Rotate rotateH = new Rotate(-20, Rotate.Y_AXIS);
     
     /**
      * Test Scene Constructor
      */
     public ViewModel(String model_mode) {
+    	
     	this.camera = setUpCamera(rotateV, zoom, pan);
         this.background = Color.TRANSPARENT;
         builder = new Builder(model_mode);
@@ -239,6 +240,11 @@ public class ViewModel {
     
     // Mouse locations on Canvas
     private double mousePosX, mousePosY = 0;
+    /**
+     * Actions to take when mouse events are detected
+     * 
+     * @param scene
+     */
     public void handleMouseEvents(Scene scene) {
     	scene.setOnMousePressed((MouseEvent me) -> {
             mousePosX = me.getSceneX();
@@ -284,7 +290,7 @@ public class ViewModel {
         scene.setOnScroll((ScrollEvent se) -> {
             double dy = se.getDeltaY();
         	double new_zoom = zoom.getZ() - dy;
-        	new_zoom = ensureRange(new_zoom, -1000, -100);
+        	new_zoom = ensureRange(new_zoom, -2000, -100);
         	zoom.setZ(new_zoom);
         });
     }
@@ -301,7 +307,13 @@ public class ViewModel {
     	return Math.min(Math.max(value, min), max);
     }
     
+    /**
+     * Convert radian value to degrees
+     * 
+     * @param radian
+     * @return degrees (0-360)
+     */
     private double RadianToDegree(float radian) {
-    	return 180 * radian / Math.PI;
+    	return (180 * radian / Math.PI)%360;
     }
 }
