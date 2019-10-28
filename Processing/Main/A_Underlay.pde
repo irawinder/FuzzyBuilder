@@ -37,7 +37,7 @@ public class Underlay {
   
   public void keyPressed(char key) {
     switch (key) {
-      case 'M':
+      case 'u':
         toggle();
         break;
     }

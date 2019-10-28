@@ -28,21 +28,24 @@ Underlay map;
 /**
  * Runs before everything else in PApplet
  */
-public void settings(){
+//public void settings(){
   
-  map = new Underlay("../../data/site.png", 0.5);
   
-  // Init Application canvas size to match site_map
-  size(map.getWidth(), map.getHeight(), P3D);
-  
-  // Set size of canvas to (X, Y) pixels
-  //size(800, 400, P3D);
-}
+//}
 
 /**
  * Runs once upon initialization of PApplet class, but after settings() finishes
  */
 public void setup(){
+  
+  map = new Underlay("site.png", 0.5);
+  //map = new Underlay("euston_site.png", 0.5);
+  
+  // Init Application canvas size to match site_map
+  //size(map.getWidth(), map.getHeight(), P3D);
+  
+  // Set size of canvas to (X, Y) pixels
+  size(900, 500, P3D);
   
   frame.setTitle("Space Builder GUI");
   

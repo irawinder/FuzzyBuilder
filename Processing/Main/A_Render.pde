@@ -186,6 +186,9 @@ void render() {
   //if(viewState == 6) info += " <--";
   //info += "\n" + "Press '7' to show Rooms";
   //if(viewState == 7) info += " <--";
+  info += "\n" + "Press 'u' to toggle map underlay";
+  if(map.show) info += " <--";
+  
   if (builder.showText) text(info, 10, 10);
   //text("Framerate: " + int(frameRate), 10, height - 20);
 
@@ -267,6 +270,7 @@ void renderCross(float x, float y, float size, int col, float stroke, float z_of
 public void renderUnderlay() {
   pushMatrix();
   translate(0, 0, -5);
+  //if (map.show) image(map.getImg(), 225, 0, 500, 400);
   if (map.show) image(map.getImg(), 0, 0);
   popMatrix();
 }

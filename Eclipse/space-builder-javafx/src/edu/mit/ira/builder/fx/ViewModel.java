@@ -4,11 +4,8 @@ import edu.mit.ira.builder.Builder;
 import edu.mit.ira.voxel.Tile;
 import edu.mit.ira.voxel.TileArray;
 
-import java.util.ArrayList;
-
 import javafx.scene.Camera;
 import javafx.scene.Group;
-import javafx.scene.Node;
 import javafx.scene.PerspectiveCamera;
 import javafx.scene.Scene;
 import javafx.scene.image.ImageView;
@@ -17,7 +14,6 @@ import javafx.scene.input.ScrollEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
 
