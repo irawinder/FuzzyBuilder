@@ -11,7 +11,7 @@ import processing.core.PImage;
 /**
  * A Processing GUI that opens a window and allow user interaction
  * 
- * @author ira
+ * @author ira winder
  * 
  */
 public class GUI_Processing extends PApplet {
