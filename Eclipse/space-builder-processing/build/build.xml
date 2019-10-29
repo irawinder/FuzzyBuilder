@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="create_run_jar" name="Create Runnable Jar for Project space-builder-processing with libraries in sub-folder">
+    <!--this file was created by Eclipse Runnable JAR Export Wizard-->
+    <!--ANT 1.7 is required                                        -->
+    <!--define folder properties-->
+    <property name="dir.buildfile" value="."/>
+    <property name="dir.workspace" value="/Users/irawinder/eclipse-workspace"/>
+    <property name="dir.jarfile" value="${dir.buildfile}/dist"/>
+    <target name="create_run_jar">
+    	
+    	<!--delete all files-->
+    	<delete dir="${dir.jarfile}"/>
+    	<mkdir dir="${dir.jarfile}"/>
+    	
+    	<!--Make FuzzyBuilder.jar-->
+        <jar destfile="${dir.jarfile}/FuzzyBuilder.jar">
+            <manifest>
+                <attribute name="Main-Class" value="edu.mit.ira.builder.processing.GUI_Processing"/>
+                <attribute name="Class-Path" value=". lib/core.jar lib/gluegen-rt-natives-linux-aarch64.jar lib/gluegen-rt-natives-linux-amd64.jar lib/gluegen-rt-natives-linux-armv6hf.jar lib/gluegen-rt-natives-linux-i586.jar lib/gluegen-rt-natives-macosx-universal.jar lib/gluegen-rt-natives-windows-amd64.jar lib/gluegen-rt-natives-windows-i586.jar lib/gluegen-rt.jar lib/jogl-all-natives-linux-aarch64.jar lib/jogl-all-natives-linux-amd64.jar lib/jogl-all-natives-linux-armv6hf.jar lib/jogl-all-natives-linux-i586.jar lib/jogl-all-natives-macosx-universal.jar lib/jogl-all-natives-windows-amd64.jar lib/jogl-all-natives-windows-i586.jar lib/jogl-all.jar"/>
+            </manifest>
+            <fileset dir="/Users/irawinder/Gits/FuzzyBuilder/Eclipse/space-builder-processing/bin"/>
+            <fileset dir="/Users/irawinder/Gits/FuzzyBuilder/Eclipse/space-builder/bin"/>
+        </jar>
+    	
+    	<!--copy files from data to dist top level-->
+    	<delete dir="${dir.jarfile}/data"/>
+    	<mkdir dir="${dir.jarfile}/data"/>
+    	<copy todir="${dir.jarfile}/data">
+    		<fileset dir="${dir.buildfile}/../data" includes="**"/>
+    	</copy>
+    	
+    	<!--copy libraries to /lib-->
+        <delete dir="${dir.jarfile}/lib"/>
+        <mkdir dir="${dir.jarfile}/lib"/>
+        <copy file="${dir.workspace}/libraries/processing-3.5.3/lib/core.jar" todir="${dir.jarfile}/lib"/>
+        <copy file="${dir.workspace}/libraries/processing-3.5.3/lib/gluegen-rt-natives-linux-aarch64.jar" todir="${dir.jarfile}/lib"/>
+        <copy file="${dir.workspace}/libraries/processing-3.5.3/lib/gluegen-rt-natives-linux-amd64.jar" todir="${dir.jarfile}/lib"/>
+        <copy file="${dir.workspace}/libraries/processing-3.5.3/lib/gluegen-rt-natives-linux-armv6hf.jar" todir="${dir.jarfile}/lib"/>
+        <copy file="${dir.workspace}/libraries/processing-3.5.3/lib/gluegen-rt-natives-linux-i586.jar" todir="${dir.jarfile}/lib"/>
+        <copy file="${dir.workspace}/libraries/processing-3.5.3/lib/gluegen-rt-natives-macosx-universal.jar" todir="${dir.jarfile}/lib"/>
+        <copy file="${dir.workspace}/libraries/processing-3.5.3/lib/gluegen-rt-natives-windows-amd64.jar" todir="${dir.jarfile}/lib"/>
+        <copy file="${dir.workspace}/libraries/processing-3.5.3/lib/gluegen-rt-natives-windows-i586.jar" todir="${dir.jarfile}/lib"/>
+        <copy file="${dir.workspace}/libraries/processing-3.5.3/lib/gluegen-rt.jar" todir="${dir.jarfile}/lib"/>
+        <copy file="${dir.workspace}/libraries/processing-3.5.3/lib/jogl-all-natives-linux-aarch64.jar" todir="${dir.jarfile}/lib"/>
+        <copy file="${dir.workspace}/libraries/processing-3.5.3/lib/jogl-all-natives-linux-amd64.jar" todir="${dir.jarfile}/lib"/>
+        <copy file="${dir.workspace}/libraries/processing-3.5.3/lib/jogl-all-natives-linux-armv6hf.jar" todir="${dir.jarfile}/lib"/>
+        <copy file="${dir.workspace}/libraries/processing-3.5.3/lib/jogl-all-natives-linux-i586.jar" todir="${dir.jarfile}/lib"/>
+        <copy file="${dir.workspace}/libraries/processing-3.5.3/lib/jogl-all-natives-macosx-universal.jar" todir="${dir.jarfile}/lib"/>
+        <copy file="${dir.workspace}/libraries/processing-3.5.3/lib/jogl-all-natives-windows-amd64.jar" todir="${dir.jarfile}/lib"/>
+        <copy file="${dir.workspace}/libraries/processing-3.5.3/lib/jogl-all-natives-windows-i586.jar" todir="${dir.jarfile}/lib"/>
+        <copy file="${dir.workspace}/libraries/processing-3.5.3/lib/jogl-all.jar" todir="${dir.jarfile}/lib"/>
+    </target>
+</project>

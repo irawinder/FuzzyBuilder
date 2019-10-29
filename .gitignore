@@ -1,11 +1,14 @@
 
 Eclipse/space-builder/bin/
-Eclipse/space-builder-javafx/bin/
-Eclipse/space-builder-processing/bin/
-
 Eclipse/space-builder/lib/
+
+Eclipse/space-builder-javafx/bin/
 Eclipse/space-builder-javafx/lib/
+
 Eclipse/space-builder-processing/lib/
+Eclipse/space-builder-processing/bin/
+Eclipse/space-builder-processing/build/dist/
+Eclipse/space-builder-processing/build/fuzzybuilder/
 
 *.classpath
 *.project
