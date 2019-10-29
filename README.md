@@ -1,7 +1,7 @@
 # Fuzzy Builder
 FuzzyBuilder is an application for generating "fuzzy" resolution development scenarios on a configurable parcel.
 
-![Fuzzy Builder by Ira Winder](screenshots/Screen%20Shot%202019-07-23%20at%201.36.52%20PM?raw=true "Fuzzy Builder by Ira Winder")
+![Fuzzy Builder by Ira Winder](screenshots/Screen%20Shot%202019-07-23%20at%201.36.52%20PM.png "Fuzzy Builder by Ira Winder")
 
 ## How to Use the Processing IDE for files in /Processing
 
