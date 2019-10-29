@@ -33,7 +33,7 @@ public class ViewModel {
 	private Color background;
 
 	// Map File Path
-	private static final String MAP_FILE_PATH = "../data/site.png";
+	private static final String MAP_FILE_PATH = "data/site.png";
 
 	// Center of Entire 3D Scene
 	private static final Translate ORIGIN = new Translate(-719, 0, 410);
