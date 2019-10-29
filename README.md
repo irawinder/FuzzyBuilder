@@ -16,10 +16,9 @@ FuzzyBuilder is an application for generating "fuzzy" resolution development sce
 ..*javafx-sdk-13
 ..*processing-3.5.3
 
-2. Set up GUI_FX.java in Eclipse. In the "Run Configurations" menu under the "Arguments" tab, set the VM arguments to:
+2. Set up GUI_FX.java in Eclipse. In the "Run Configurations" menu, under the "Arguments" tab, insert the following code into VM arguments. Replace `/path/to/javafx-sdk-13` with the actual path to your JavaFX download. Also be sure to *uncheck* the box that says "Use the -XstartOnFirstThread argument when launching with SWT.
 ```
 --module-path "/path/to/javafx-sdk-13/lib" --add-modules javafx.controls,javafx.fxml,javafx.graphics,javafx.media,javafx.swing,javafx.web
 ```
-where `/path/to/javafx-sdk-13` is the path to your JavaFX download. Also be sure to *uncheck* the box that says "Use the -XstartOnFirstThread argument when launching with SWT".
 
 3. No special arguments needed to run GUI_Processing, as long as you have pointed to processing's core.jar
