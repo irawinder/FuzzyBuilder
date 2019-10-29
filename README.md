@@ -1,5 +1,5 @@
 # Fuzzy Builder
-FuzzyBuilder is an application for generating "fuzzy" resolution development scenarios on a configurable parcel.
+FuzzyBuilder is an application for generating "fuzzy" resolution development scenarios on a configurable parcel, meant for a process somerwhere between site acquisition and highly resolved scenario evaluation. [Under Construction]
 
 ![Fuzzy Builder by Ira Winder](screenshots/Screen%20Shot%202019-07-23%20at%201.36.52%20PM.png "Fuzzy Builder by Ira Winder")
 
