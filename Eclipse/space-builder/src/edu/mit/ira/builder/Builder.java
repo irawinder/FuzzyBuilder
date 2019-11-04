@@ -11,7 +11,9 @@ import edu.mit.ira.voxel.TileArray;
 
 /**
  * Builder facilitates the making of various TileArrays via Polygons and/or
- * ControlPoints
+ * ControlPoints. Builder implements many classes from edu.mit.ira.voxel.
+ * Builder should be implementable within both Processing or JavaFX GUI 
+ * components.
  * 
  * @author ira
  *
@@ -72,43 +74,54 @@ public class Builder {
 	/**
 	 * Make the Space Building Environment
 	 */
-	public Builder(String model_mode) {
-		initModel(model_mode);
-		initRender();
-	}
-
-	/**
-	 * Make the Space Building Environment
-	 * Random by default
-	 */
 	public Builder() {
-		this("random");
+		initModel();
+		initViewState();
+	}
+	
+	public void setTileWidth(float tileW) {
+		this.tileW = tileW;
+	}
+	
+	public void setTileHeight(float tileH) {
+		this.tileH = tileH;
+	}
+	
+	public void setTileRotation(float tile_rotation) {
+		this.tile_rotation = tile_rotation;
+	}
+	
+	public void setTileTranslation(float x, float y) {
+		this.tile_translation = new Point(x,y);
+	}
+	
+	public void setTileUnits(String units) {
+		this.units = units;
 	}
 
 	/**
 	 * Initial Build State
 	 */
-	public void initRender() {
+	public void initViewState() {
 		cam3D = true;
 		showText = true;
 		viewModel = "DOT";
-		resetRender();
+		resetViewState();
 	}
 	
 	/**
 	 * Build State When new model is loaded or randomly generated during application operation
 	 */
-	public void resetRender() {
+	public void resetViewState() {
 		buildingZoneState();
 		addPoint = false;
 		removePoint = false;
 	}
-	
 
 	/**
 	 * Initialize the Model
 	 */
-	public void initModel(String mode) {
+	public void initModel() {
 
 		// Init Vector Site Polygon
 		site_boundary = new Polygon();
@@ -117,11 +130,11 @@ public class Builder {
 		dev_name = "New Development";
 		dev = new Development(dev_name);
 		site_name = "Property";
-		tileW = 15;
-		tileH = 5;
-		units = "pixels";
-		tile_translation = new Point(0, 0);
-		tile_rotation = 0;
+		setTileUnits("pixels");
+		setTileWidth(15);
+		setTileHeight(5);
+		setTileTranslation(0,0);
+		setTileRotation(0);
 
 		// Init Control Points
 		control = new Control();
@@ -129,111 +142,18 @@ public class Builder {
 		editVertices = false;
 		editPlots = false;
 		editVoids = false;
-
-		if(mode.equals("JR")) {
-			loadModel();
-		} else {
-			loadRandomModel();
-		}
 	}
 
-	/** 
-	 * Load specific ControlPoints (i.e. hard-coded, not random)
-	 */
-	public void loadModel() {
-
-		vert_counter = 1;
-		String vertex_prefix = "Vertex";
-		control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 1056, 509);
-		vert_counter++;
-		control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 950, 509);
-		vert_counter++;
-		control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 887, 504);
-		vert_counter++;
-		control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 794, 488);
-		vert_counter++;
-		control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 717, 466);
-		vert_counter++;
-		control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 589, 425);
-		vert_counter++;
-		control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 510, 385);
-		vert_counter++;
-		control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 518, 368);
-		vert_counter++;
-		control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 432, 336);
-		vert_counter++;
-		control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 405, 323);
-		vert_counter++;
-		control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 303, 260);
-		vert_counter++;
-		control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 307, 242);
-		vert_counter++;
-		control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 407, 280);
-		vert_counter++;
-		control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 471, 294);
-		vert_counter++;
-		control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 567, 321);
-		vert_counter++;
-		control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 673, 357);
-		vert_counter++;
-		control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 746, 382);
-		vert_counter++;
-		control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 888, 435);
-		vert_counter++;
-		control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 970, 463);
-		vert_counter++;
-		control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 1053, 480);
-		vert_counter++;
-
-		plot_counter = 1;
-		String plot_prefix = "Plot";
-		control.addPoint(plot_prefix + " " + plot_counter, plot_prefix, 350, 276);
-		plot_counter++;
-		control.addPoint(plot_prefix + " " + plot_counter, plot_prefix, 406, 297);
-		plot_counter++;
-		control.addPoint(plot_prefix + " " + plot_counter, plot_prefix, 458, 318);
-		plot_counter++;
-		control.addPoint(plot_prefix + " " + plot_counter, plot_prefix, 597, 385);
-		plot_counter++;
-		control.addPoint(plot_prefix + " " + plot_counter, plot_prefix, 633, 401);
-		plot_counter++;
-		control.addPoint(plot_prefix + " " + plot_counter, plot_prefix, 788, 442);
-		plot_counter++;
-		control.addPoint(plot_prefix + " " + plot_counter, plot_prefix, 843, 465);
-		plot_counter++;
-		control.addPoint(plot_prefix + " " + plot_counter, plot_prefix, 703, 347);
-		plot_counter++;
-		control.addPoint(plot_prefix + " " + plot_counter, plot_prefix, 945, 484);
-		plot_counter++;
-		control.addPoint(plot_prefix + " " + plot_counter, plot_prefix, 1010, 498);
-		plot_counter++;
-
-		// Init Polygon
-		for(ControlPoint p : control.points()) { 
-			if(p.getType().equals("Vertex")) {
-				site_boundary.addVertex(p);
-			}
-		}
-
-		// Override default Grid Properties
-		tileW = 11;
-		tile_rotation = (float) 0.34;
-		tile_translation = new Point(0, 0, 0);
-
-		// Init Model from Control Points
-		initSites();
-		initZones();
-		initFootprints();
-		initBases();
-
-	}
+	
 
 	/**
-	 * Generates a randomly configured model 
+	 * Generates a randomly configured model at x, y
+	 * @param x
+	 * @param y
 	 */
-	public void loadRandomModel() {
+	public void loadRandomModel(float x, float y) {
 		// Init Random Model and Control Points
-		site_boundary.randomShape(400, 200, 5, 100, 200);
+		site_boundary.randomShape(x, y, 5, 100, 200);
 		initVertexControl(site_boundary);
 		initSites();
 		initPlotControl();
@@ -390,18 +310,16 @@ public class Builder {
 		String type = "base";
 		dev.clearType(type);
 		ArrayList<TileArray> new_bases = new ArrayList<TileArray>();
-		int i = 0;
 
 		// Create new Bases from Footprints
 		for (TileArray space : dev.spaceList()) {
 
 			// Building
 			if (space.name.equals("Building") && space.type.equals("footprint")) {
-				TileArray base = space.getExtrusion(-1, i);
+				TileArray base = space.getExtrusion(0, space.toExtrude());
 				base.setName("Podium");
 				base.setType(type);
 				new_bases.add(base);
-				i++;
 			}
 
 			// OpenSpace
@@ -516,12 +434,9 @@ public class Builder {
 
 		switch (key) {
 		case 'r':
-			initModel("random");
-			resetRender();
-			break;
-		case 'L':
-			initModel("JR");
-			resetRender();
+			initModel();
+			loadRandomModel(400, 200);
+			resetViewState();
 			break;
 		case 'a':
 			addPoint = !addPoint;
@@ -707,7 +622,7 @@ public class Builder {
 	/**
 	 * detect change based upon a type string
 	 * 
-	 * @param type type of ControlPoint
+	 * @param type type of ControlPoint that is edited
 	 */
 	public void detectChange(String type) {
 		if (type.equals("Vertex")) {

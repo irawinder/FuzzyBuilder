@@ -9,7 +9,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.transform.Transform;
 
 /**
- * A raster Underlay to super-impose on View Model
+ * A raster Underlay Image
  */
 public class Underlay {
 
@@ -24,25 +24,46 @@ public class Underlay {
 	 * @param scaler scale the image up or down from its native resolution
 	 * @param opacity opacity value of underlay (0 - 1)
 	 */
-	public Underlay(String file_path, double scaler, double opacity) {
-		show = false;
-		
+	public Underlay() {
+		underlayView = new ImageView();
+		show = true;
+	}
+	
+	/**
+	 * Load Image from File
+	 * 
+	 * @param file_path relative file path from root directory
+	 */
+	public void setImage(String file_path) {
 		InputStream is;
 		try {
 			is = new FileInputStream(file_path);
 			underlay = new Image(is);
-			underlayView = new ImageView();
 			underlayView.setImage(underlay);
-			double w = scaler * underlay.getWidth();
-			double h = scaler * underlay.getHeight();
-			underlayView.setFitWidth(w);
-			underlayView.setFitHeight(h);
-			underlayView.setOpacity(opacity);
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+	}
+	
+	/**
+	 * Scale the ImageView up or down relative to native pixels. 
+	 * 
+	 * @param scaler < 1 makes image smaller; > 1 makes image bigger
+	 */
+	public void setScale(double scaler) {
+		double w = scaler * underlay.getWidth();
+		double h = scaler * underlay.getHeight();
+		underlayView.setFitWidth(w);
+		underlayView.setFitHeight(h);
+	}
+	
+	/**
+	 * Set image opacity
+	 * @param opacity 0 is completely transparent; 1 is completely opaque
+	 */
+	public void setOpacity(double opacity) {
+		underlayView.setOpacity(opacity);
 	}
 	
 	/**

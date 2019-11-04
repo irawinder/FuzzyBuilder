@@ -3,7 +3,6 @@ package edu.mit.ira.builder.fx;
 import edu.mit.ira.builder.Builder;
 import edu.mit.ira.voxel.Tile;
 import edu.mit.ira.voxel.TileArray;
-
 import javafx.scene.Camera;
 import javafx.scene.Group;
 import javafx.scene.PerspectiveCamera;
@@ -17,71 +16,140 @@ import javafx.scene.shape.Box;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
 
+/**
+ * The ViewModel is the collection of "friendly model objects" 
+ * to show in an JavaFX Scene
+ * 
+ * @author jiw
+ *
+ */
 public class ViewModel {
 
-	// Form Model Classes by Ira
-	private Underlay underlay;
-	private Builder builder;
-
-	// Master Group
+	// Form Model Classes (by Ira)
+	private Underlay map_model;
+	private Builder form_model;
+	
+	// Set of All Nodes to Pass to Parent JavaFX Scene
 	private Group nodeSet; 
-
-	// Master Camera
+	
 	private Camera camera;
-
-	// background color of infinity
 	private Color background;
-
-	// Map File Path
-	private static final String MAP_FILE_PATH = "data/site.png";
-
-	// Center of Entire 3D Scene
-	private static final Translate ORIGIN = new Translate(-719, 0, 410);
-
-	// Default Horizontal Rotation
-	private static final Rotate DEFAULT_ROTATE_H = new Rotate(0, Rotate.Y_AXIS);
-
-	// Default Vertical Rotation
-	private static final Rotate DEFAULT_ROTATE_V = new Rotate(0, Rotate.X_AXIS);
-
-	// Zoom level of Camera
-	private Translate zoom = new Translate(0, 0, -500);
-
-	// Amount of panning initiated by mouse secondary button
-	private Translate pan = new Translate(0, 0, 0);
-
-	// Vertical Rotation (JavaFX uses X_AXIS)
-	private Rotate rotateV = new Rotate(-20, Rotate.X_AXIS);
-
-	// Horizontal Rotation (JavaFX uses Y_AXIS)
-	private Rotate rotateH = new Rotate(-20, Rotate.Y_AXIS);
+	private Translate zoom;
+	private Translate pan;
+	private Rotate rotateV;
+	private Rotate rotateH;
 
 	/**
-	 * Test Scene Constructor
+	 * ViewModel Constructor
 	 */
-	public ViewModel(String model_mode) {
-
-		this.camera = setUpCamera(rotateV, zoom, pan);
-		this.background = Color.TRANSPARENT;
-		builder = new Builder(model_mode);
-		underlay  = new Underlay(MAP_FILE_PATH, 0.5, 0.75);
-		renderSite();
+	public ViewModel() {
+		setBackground(Color.TRANSPARENT);
+		setZoom(0);
+		setPan(0,0,0);
+		setRotateV(0);
+		setRotateH(0);
+		setUpCamera();
 	}
-
-	private static Camera setUpCamera(Rotate rotateV, Translate zoom, Translate pan) {
+	
+	/**
+	 * Zoom level of Camera
+	 * 
+	 * @param distance (more negative is farther away)
+	 */
+	public void setZoom(double distance) {
+		zoom = new Translate(0, 0, ensureRange(distance, -2000, -100));
+		setUpCamera();
+	}
+	
+	/**
+	 * Set Amount of panning initiated by mouse secondary button
+	 * @param x
+	 * @param y
+	 * @param z
+	 */
+	public void setPan(double x, double y, double z) {
+		this.pan = new Translate(-x, z, y);
+		setUpCamera();
+	}
+	
+	/**
+	 * Vertical Rotation (JavaFX uses X_AXIS)
+	 * @param angle in degrees
+	 */
+	public void setRotateV(double angle) {
+		rotateV = new Rotate(angle, Rotate.X_AXIS);
+		setUpCamera();
+	}
+	
+	/**
+	 * Horizontal Rotation (JavaFX uses Y_AXIS)
+	 * @param angle in degrees
+	 */
+	public void setRotateH(double angle) {
+		rotateH = new Rotate(angle, Rotate.Y_AXIS);
+		setUpCamera();
+		
+	}
+	
+	/**
+	 * Initialize a camera for viewing the model
+	 */
+	public void setUpCamera() {
 		Camera _camera = new PerspectiveCamera(true);
 		// Create and position camera
 		_camera = new PerspectiveCamera(true);
-		_camera.getTransforms().addAll(DEFAULT_ROTATE_H, DEFAULT_ROTATE_V, pan, rotateV, zoom);
+		_camera.getTransforms().addAll(rotateV, zoom);
 		_camera.setNearClip(10);
 		_camera.setFarClip(10000);
-		return _camera;
+		this.camera = _camera;
 	}
-
+	
+	/**
+	 * Background color of infinity
+	 * 
+	 * @param color
+	 */
+	public void setBackground(Color color) {
+		this.background = color;
+	}
+	
+	/**
+	 * Populates the View Model with a form from Builder class
+	 * 
+	 * @param form form from Builder class
+	 */
+	public void setFormModel(Builder form_model) {
+		this.form_model = form_model;
+	}
+	
+	/**
+	 * Populates the View Model with a map from Underlay class
+	 * 
+	 * @param map_model Map Underlay passed from Underlay class
+	 */
+	public void setMapModel(Underlay map_model) {
+		this.map_model  = map_model;
+		
+		// Make and position the Basemap Image
+		Rotate rotateFlat = new Rotate(-90, Rotate.X_AXIS);
+		Translate pos = new Translate(0, 0.4, 0);
+		map_model.getImageView().getTransforms().addAll(
+				rotateH, pan, pos, rotateFlat);
+	}
+	
+	/**
+	 * Get Nodes, usually to pass to a JavaFX Scene
+	 * @return
+	 */
 	public Group getGroup() {
 		return nodeSet;
 	}
 
+	/**
+	 * Get Camera to Add to a scene
+	 * 
+	 * @return Camera
+	 */
 	public Camera getCamera() {
 		return camera;
 	}
@@ -90,30 +158,22 @@ public class ViewModel {
 		return background;
 	}
 
-	public void buildSite(String model_mode) {
-		builder.initModel(model_mode);
-		builder.resetRender();
-	}
-
 	/**
-	 * Create a scene Model for some test geometry
+	 * Populate 2D and 3D graphics objects 
 	 * 
 	 * @return a collection of JavaFX groups (3D objects)
 	 */
-	public void renderSite() {
+	public void render() {
 
 		this.nodeSet = new Group();
 		
-		// Add Camera to Set
-		nodeSet.getChildren().addAll(camera);
-
 		// Draw Bases
-		for (TileArray space : builder.dev.spaceList("base")) {
-			if(builder.showSpace(space) && builder.showTiles) {
-				Color col = Color.hsb(space.getHueDegree(), 0.5, 0.8);
+		for (TileArray space : form_model.dev.spaceList("base")) {
+			if(form_model.showSpace(space) && form_model.showTiles) {
+				Color col = Color.hsb(space.getHueDegree(), 0.5, 0.8, 0.95);
 				for (Tile t : space.tileList()) {
 					// Only draws ground plane if in 2D view mode
-					if (t.location.z == 0 || builder.cam3D) {
+					if (t.location.z == 0 || form_model.cam3D) {
 						if (space.name.substring(0, 3).equals("Cou")) {
 							nodeSet.getChildren().add(renderVoxel(t, col, 0, true));
 						} else {
@@ -125,8 +185,8 @@ public class ViewModel {
 		}
 
 		// Draw Footprints
-		for (TileArray space : builder.dev.spaceList("footprint")) {
-			if(builder.showSpace(space) && builder.showTiles) {
+		for (TileArray space : form_model.dev.spaceList("footprint")) {
+			if(form_model.showSpace(space) && form_model.showTiles) {
 				Color col;
 				if (space.name.equals("Building")) {
 					col = Color.hsb(space.getHueDegree(), 0.5, 0.8);
@@ -136,37 +196,34 @@ public class ViewModel {
 					col = Color.hsb(space.getHueDegree(), 0.5, 0.8);
 				}
 				for (Tile t : space.tileList()) {
-					nodeSet.getChildren().add(renderVoxel(t, col, -1, true));
+					nodeSet.getChildren().add(renderVoxel(t, col, 0.1, true));
 					if (space.name.equals("Building")) {
-						nodeSet.getChildren().add(renderVoxel(t, col, 0, false));
+						nodeSet.getChildren().add(renderVoxel(t, col, 0.1, false));
 					}
 				}
 			}
 		}
-
-		// Draw Sites
-		for (TileArray space : builder.dev.spaceList("footprint")) {
-			if(builder.showSpace(space) && builder.showTiles) {
-				Color col = Color.gray(0, 0.2);
-				for (Tile t : space.tileList())
-					nodeSet.getChildren().add(renderVoxel(t, col, -1, true));
-			}
-		}
-
+		
 		// Draw Zones
-		for (TileArray space : builder.dev.spaceList("zone")) {
-			if(builder.showSpace(space) && builder.showTiles) {
+		for (TileArray space : form_model.dev.spaceList("zone")) {
+			if(form_model.showSpace(space) && form_model.showTiles) {
 				Color col = Color.hsb(space.getHueDegree(), 0.3, 0.9, 0.75);
 				for (Tile t : space.tileList())
-					nodeSet.getChildren().add(renderVoxel(t, col, -2, false));
+					nodeSet.getChildren().add(renderVoxel(t, col, 0.2, false));
 			}
 		}
 		
-		// Make and position the Basemap Image
-		ImageView map = underlay.getImageView();
-		Rotate rotateFlat = new Rotate(-90, Rotate.X_AXIS);
-		Translate pos = new Translate(0, 2, 0);
-		map.getTransforms().addAll(rotateH, ORIGIN, pos, rotateFlat);
+		// Draw Sites
+		for (TileArray space : form_model.dev.spaceList("footprint")) {
+			if(form_model.showSpace(space) && form_model.showTiles) {
+				Color col = Color.gray(0, 0.2);
+				for (Tile t : space.tileList())
+					nodeSet.getChildren().add(renderVoxel(t, col, 0.3, true));
+			}
+		}
+		
+		// Add map as Basemap to View Model
+		ImageView map = map_model.getImageView();
 		nodeSet.getChildren().addAll(map);
 
 	}
@@ -180,7 +237,7 @@ public class ViewModel {
 	 */
 	private Box renderVoxel(Tile t, Color col, double z_offset, boolean flat) {
 		float scaler_uv = (float) 0.9;
-		float scaler_w = (float) 0.6;
+		float scaler_w = (float) 0.8;
 
 		float boxW = scaler_uv * t.scale_uv;
 		float boxH = scaler_w * t.scale_w;
@@ -189,10 +246,10 @@ public class ViewModel {
 
 		Translate pos = new Translate(
 				+ t.location.x, 
-				- t.location.z - z_offset - 0.5*boxH, 
+				- t.location.z + z_offset - 0.5*boxH, 
 				- t.location.y);
-		Rotate rot = new Rotate(RadianToDegree(builder.tile_rotation), Rotate.Y_AXIS);
-		b.getTransforms().addAll(rotateH, ORIGIN, pos, rot);
+		Rotate rot = new Rotate(RadianToDegree(form_model.tile_rotation), Rotate.Y_AXIS);
+		b.getTransforms().addAll(rotateH, pan, pos, rot);
 
 		// Box Color
 		PhongMaterial material = new PhongMaterial(col);
@@ -209,47 +266,48 @@ public class ViewModel {
 	 * @param scene
 	 */
 	public void handleMouseEvents(Scene scene) {
+		
+		// Load the mouse location on the scene while pressed down
 		scene.setOnMousePressed((MouseEvent me) -> {
 			mousePosX = me.getSceneX();
 			mousePosY = me.getSceneY();
 		});
-
+		
 		scene.setOnMouseDragged((MouseEvent me) -> {
+			
+			// Mouse displacement while pressed and dragged
 			double dx = + (mousePosX - me.getSceneX());
 			double dy = - (mousePosY - me.getSceneY());
 
 
+			// i.e. right mouse button
 			if (me.isSecondaryButtonDown()) {
 
 				// Rotate View
-
-				double angleV = rotateV.getAngle() - (dy / 10 * 360) * (Math.PI / 180);
+				double angleV = rotateV.getAngle() - (dy / 10 * +360) * (Math.PI / 180);
 				double angleH = rotateH.getAngle() - (dx / 10 * -360) * (Math.PI / 180);
-
-				// Can scene above and below model, but
-				// Don't allow scene to flip upside down
 				angleV = ensureRange(angleV, -90, 90);
-
 				rotateV.setAngle(angleV);
 				rotateH.setAngle(angleH);
 
-
+			// i.e. left mouse button
 			} else if (me.isPrimaryButtonDown()) {
 
 				// Pan View
-
-				double panU = pan.getX() + dx / 5;
-				double panV = pan.getY() - dy / 5;
-
+				double angleH = DegreeToRadian((float) rotateH.getAngle());
+				double dx_r = dx*Math.cos(angleH) - dy*Math.sin(angleH);
+				double dy_r = dy*Math.cos(angleH) + dx*Math.sin(angleH);
+				double panU = pan.getX() - dx_r;
+				double panV = pan.getZ() - dy_r;
 				pan.setX(panU);
-				pan.setY(panV);
+				pan.setZ(panV);
 
 			}
 			mousePosX = me.getSceneX();
 			mousePosY = me.getSceneY();
 		});
 
-		// Enable Zoom in and Zoom Out
+		// Enable Zoom in and Zoom Out via scroll wheel
 		scene.setOnScroll((ScrollEvent se) -> {
 			double dy = se.getDeltaY();
 			double new_zoom = zoom.getZ() - dy;
@@ -278,5 +336,15 @@ public class ViewModel {
 	 */
 	private double RadianToDegree(float radian) {
 		return (180 * radian / Math.PI)%360;
+	}
+	
+	/**
+	 * Convert degree value to radians
+	 * 
+	 * @param degree
+	 * @return radians (0-2PI)
+	 */
+	private double DegreeToRadian(float radian) {
+		return (Math.PI * radian / 180)%(2*Math.PI);
 	}
 }
