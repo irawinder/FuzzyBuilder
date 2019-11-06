@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <install4j version="8.0.2" transformSequenceNumber="8">
   <directoryPresets config="../build" />
-  <application name="Fuzzy Builder" applicationId="0503-9643-9651-5429" mediaDir="../build/fuzzybuilder" shortName="FuzzyBuilder" publisher="Ira Winder" publisherWeb="https://ira.mit.edu" version="v1.0-alpha.1" allPathsRelative="true" macVolumeId="6275321d76e3b110" javaMinVersion="13" jdkMode="jdk" jdkName="JDK 13">
+  <application name="Fuzzy Builder" applicationId="0503-9643-9651-5429" mediaDir="../build/fuzzybuilder" shortName="FuzzyBuilder" publisher="Ira Winder" publisherWeb="https://ira.mit.edu" version="v1.0-alpha.2" allPathsRelative="true" macVolumeId="6275321d76e3b110" javaMinVersion="13" jdkMode="jdk" jdkName="JDK 13">
     <jreBundles jdkProviderId="AdoptOpenJDK" release="openjdk13/jdk-13.0.1+9" />
   </application>
   <files>
@@ -446,4 +446,7 @@ return console.askYesNo(message, true);
       <jreBundle jreBundleSource="generated" />
     </windows>
   </mediaSets>
+  <buildIds buildAll="false">
+    <mediaSet refId="116" />
+  </buildIds>
 </install4j>
