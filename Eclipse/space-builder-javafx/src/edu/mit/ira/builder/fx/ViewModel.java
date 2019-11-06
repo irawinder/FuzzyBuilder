@@ -5,7 +5,9 @@ import edu.mit.ira.voxel.Tile;
 import edu.mit.ira.voxel.TileArray;
 import javafx.scene.Camera;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.PerspectiveCamera;
+import javafx.scene.PointLight;
 import javafx.scene.Scene;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -164,21 +166,22 @@ public class ViewModel {
 	 * @return a collection of JavaFX groups (3D objects)
 	 */
 	public void render() {
-
+		
 		this.nodeSet = new Group();
+		
+		// Set up Ambient Lighting Effect
+		nodeSet.getChildren().add(overheadLight());
 		
 		// Draw Bases
 		for (TileArray space : form_model.dev.spaceList("base")) {
 			if(form_model.showSpace(space) && form_model.showTiles) {
 				Color col = Color.hsb(space.getHueDegree(), 0.5, 0.8, 0.95);
 				for (Tile t : space.tileList()) {
-					// Only draws ground plane if in 2D view mode
-					if (t.location.z == 0 || form_model.cam3D) {
-						if (space.name.substring(0, 3).equals("Cou")) {
-							nodeSet.getChildren().add(renderVoxel(t, col, 0, true));
-						} else {
-							nodeSet.getChildren().add(renderVoxel(t, col, 0, false));
-						}
+					// if in 2D view mode, Only draws ground plane 
+					if (form_model.cam3D || t.location.z == 0) {
+						boolean isFlat = space.name.substring(0, 3).equals("Cou");
+						Box b = renderVoxel(t, col, 0, isFlat);
+						nodeSet.getChildren().add(b);
 					}
 				}
 			}
@@ -196,9 +199,11 @@ public class ViewModel {
 					col = Color.hsb(space.getHueDegree(), 0.5, 0.8);
 				}
 				for (Tile t : space.tileList()) {
-					nodeSet.getChildren().add(renderVoxel(t, col, 0.1, true));
+					Box b = renderVoxel(t, col, 0.1, true);
+					nodeSet.getChildren().add(b);
 					if (space.name.equals("Building")) {
-						nodeSet.getChildren().add(renderVoxel(t, col, 0.1, false));
+						b = renderVoxel(t, col, 0.1, false);
+						nodeSet.getChildren().add(b);
 					}
 				}
 			}
@@ -208,8 +213,10 @@ public class ViewModel {
 		for (TileArray space : form_model.dev.spaceList("zone")) {
 			if(form_model.showSpace(space) && form_model.showTiles) {
 				Color col = Color.hsb(space.getHueDegree(), 0.3, 0.9, 0.75);
-				for (Tile t : space.tileList())
-					nodeSet.getChildren().add(renderVoxel(t, col, 0.2, false));
+				for (Tile t : space.tileList()) {
+					Box b = renderVoxel(t, col, 0.2, false);
+					nodeSet.getChildren().add(b);
+				}
 			}
 		}
 		
@@ -217,16 +224,28 @@ public class ViewModel {
 		for (TileArray space : form_model.dev.spaceList("footprint")) {
 			if(form_model.showSpace(space) && form_model.showTiles) {
 				Color col = Color.gray(0, 0.2);
-				for (Tile t : space.tileList())
-					nodeSet.getChildren().add(renderVoxel(t, col, 0.3, true));
+				for (Tile t : space.tileList()) {
+					Box b = renderVoxel(t, col, 0.3, true);
+					nodeSet.getChildren().add(b);
+				}
 			}
 		}
 		
 		// Add map as Basemap to View Model
 		ImageView map = map_model.getImageView();
 		nodeSet.getChildren().addAll(map);
-
 	}
+	
+	/**
+	 * Construct a 3D Overhead Light Source
+	 */
+	private Node overheadLight() {
+		PointLight light = new PointLight();
+		light.setColor(Color.WHITE);
+		light.getTransforms().add(new Translate(0, -400, 0));
+		return light;
+	}
+	
 	/**
 	 * Construct a 3D pixel (i.e. "Voxel") from tile attributes
 	 * @param t Tile to render
@@ -315,7 +334,7 @@ public class ViewModel {
 			zoom.setZ(new_zoom);
 		});
 	}
-
+	
 	/**
 	 * Returns a value capped to a specified minimum and maximum value
 	 * 
@@ -346,5 +365,15 @@ public class ViewModel {
 	 */
 	private double DegreeToRadian(float radian) {
 		return (Math.PI * radian / 180)%(2*Math.PI);
+	}
+	
+	/**
+	 * Print Camera Parameters to console
+	 */
+	public void printCamera() {
+		System.out.println("Camera Zoom: " + zoom.getZ());
+		System.out.println("Camera Pan: (" + -pan.getX() + ", " + pan.getZ() + ", " + pan.getY() + ")");
+		System.out.println("Camera RotateV: " + rotateV.getAngle());
+		System.out.println("Camera RotateH: " + rotateH.getAngle());
 	}
 }

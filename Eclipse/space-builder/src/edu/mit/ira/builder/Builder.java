@@ -131,8 +131,8 @@ public class Builder {
 		dev = new Development(dev_name);
 		site_name = "Property";
 		setTileUnits("pixels");
-		setTileWidth(15);
-		setTileHeight(5);
+		setTileWidth(30);
+		setTileHeight(10);
 		setTileTranslation(0,0);
 		setTileRotation(0);
 
@@ -153,7 +153,7 @@ public class Builder {
 	 */
 	public void loadRandomModel(float x, float y) {
 		// Init Random Model and Control Points
-		site_boundary.randomShape(x, y, 5, 100, 200);
+		site_boundary.randomShape(x, y, 5, 200, 300);
 		initVertexControl(site_boundary);
 		initSites();
 		initPlotControl();

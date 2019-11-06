@@ -29,23 +29,31 @@ public class GUI_FX extends Application {
 
     @Override
     public void start(Stage stage) {
-
+    	
+//    	// A Satellite Image to place on the ground
+//    	Underlay map_model = new Underlay();
+//    	map_model.setImage("data/site.png");
+//    	map_model.setScale(0.5);
+//    	map_model.setOpacity(0.75);
+    	
     	// A Satellite Image to place on the ground
     	Underlay map_model = new Underlay();
-    	map_model.setImage("data/site.png");
+    	map_model.setImage("data/default_site_white.png");
     	map_model.setScale(0.5);
     	map_model.setOpacity(0.75);
 
     	// A Cuboid Form built by Ira
     	Builder form_model = new Builder();
     	form_model.initModel();
-    	loadJRModel(form_model);
+    	//loadJRModel(form_model);
+    	form_model.loadRandomModel(375, 375);
 
     	// View Model
     	ViewModel view_model = new ViewModel();
-    	view_model.setBackground(Color.TRANSPARENT);
+    	view_model.setBackground(Color.hsb(0,0,0.2));
     	view_model.setZoom(-1000);
-    	view_model.setPan(719, 410, 0);
+    	//view_model.setPan(719, 410, 0);
+    	view_model.setPan(325, 425, 0);
     	view_model.setRotateV(-20);
     	view_model.setRotateH(-45);
     	view_model.setFormModel(form_model);
@@ -82,12 +90,17 @@ public class GUI_FX extends Application {
             // Make Random Site
             } else if (e.getCode() == KeyCode.R) {
             	form_model.initModel();
-            	form_model.loadRandomModel(719, 410);
+            	form_model.loadRandomModel(375, 375);
         		form_model.resetViewState();
         		view_model.setFormModel(form_model);
         		view_model.render();
             	scene3D.setRoot(view_model.getGroup());
             }
+            
+			// Print Camera Position
+			if (e.getCode() == KeyCode.C) {
+				view_model.printCamera();
+			}
 
         });
 
