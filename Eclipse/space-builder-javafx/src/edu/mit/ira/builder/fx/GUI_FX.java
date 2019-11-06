@@ -32,7 +32,7 @@ public class GUI_FX extends Application {
     	
 //    	// A Satellite Image to place on the ground
 //    	Underlay map_model = new Underlay();
-//    	map_model.setImage("data/site.png");
+//    	map_model.setImage("data/jr_site.png");
 //    	map_model.setScale(0.5);
 //    	map_model.setOpacity(0.75);
     	
