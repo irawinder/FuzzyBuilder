@@ -30,45 +30,25 @@ public class GUI_FX extends Application {
     @Override
     public void start(Stage stage) {
     	
-//    	// A Satellite Image to place on the ground
-//    	Underlay map_model = new Underlay();
-//    	map_model.setImage("data/jr_site.png");
-//    	map_model.setScale(0.5);
-//    	map_model.setOpacity(0.75);
+    	stage.setTitle("Space Builder FX");
     	
-    	// A Satellite Image to place on the ground
     	Underlay map_model = new Underlay();
-    	map_model.setImage("data/default_site_white.png");
-    	map_model.setScale(0.5);
-    	map_model.setOpacity(0.75);
-
-    	// A Cuboid Form built by Ira
     	Builder form_model = new Builder();
-    	form_model.initModel();
-    	//loadJRModel(form_model);
-    	form_model.loadRandomModel(375, 375);
-
-    	// View Model
     	ViewModel view_model = new ViewModel();
-    	view_model.setBackground(Color.hsb(0,0,0.2));
     	view_model.setZoom(-1000);
-    	//view_model.setPan(719, 410, 0);
     	view_model.setPan(325, 425, 0);
     	view_model.setRotateV(-20);
     	view_model.setRotateH(-45);
-    	view_model.setFormModel(form_model);
-    	view_model.setMapModel(map_model);
-		view_model.render();
-
-    	stage.setTitle("Space Builder FX");
-
+    	
+    	// Initialize with Random Scenario
+    	loadRandomScenario(map_model, form_model, view_model);
+    	
     	final SubScene scene3D = new SubScene(view_model.getGroup(),
         		WINDOW_WIDTH, WINDOW_HEIGHT, true, SceneAntialiasing.BALANCED);
 //        final SubScene sceneUI = new SubScene(settings.getGroup(), WINDOW_WIDTH,
 //                WINDOW_HEIGHT);
-
-        scene3D.setFill(view_model.getBackground());
-        scene3D.setCamera(view_model.getCamera());
+    	
+    	setViewModel(scene3D, view_model);
 
         final Group root = new Group(scene3D);
         //final Group root = new Group(scene3D, sceneUI);
@@ -80,21 +60,12 @@ public class GUI_FX extends Application {
 
         	// Make JR Site
             if (e.getCode() == KeyCode.L) {
-            	form_model.initModel();
-        		loadJRModel(form_model);
-        		form_model.resetViewState();
-        		view_model.setFormModel(form_model);
-        		view_model.render();
-            	scene3D.setRoot(view_model.getGroup());
-
+            	loadJRScenario(map_model, form_model, view_model);
+            	setViewModel(scene3D, view_model);
             // Make Random Site
             } else if (e.getCode() == KeyCode.R) {
-            	form_model.initModel();
-            	form_model.loadRandomModel(375, 375);
-        		form_model.resetViewState();
-        		view_model.setFormModel(form_model);
-        		view_model.render();
-            	scene3D.setRoot(view_model.getGroup());
+            	loadRandomScenario(map_model, form_model, view_model);
+            	setViewModel(scene3D, view_model);
             }
             
 			// Print Camera Position
@@ -108,7 +79,64 @@ public class GUI_FX extends Application {
         stage.show();
 
     }
+    
+    // Init View Model
+    public void setViewModel(SubScene scene3D, ViewModel view_model) {
+    	scene3D.setRoot(view_model.getGroup());
+    	scene3D.setFill(view_model.getBackground());
+        scene3D.setCamera(view_model.getCamera());
+    }
+    
+    /**
+     * Load Random Site and View Model Parameters
+     * 
+     * @param map_model
+     * @param form_model
+     * @param view_model
+     * @param scene3D
+     */
+    public void loadRandomScenario(Underlay map_model, Builder form_model, ViewModel view_model) {
+    	map_model.setImage("data/default_site_white.png");
+    	map_model.setScale(0.5);
+    	map_model.setOpacity(1.00);
 
+    	form_model.initModel();
+    	form_model.loadRandomModel(375, 375);
+    	
+    	//view_model.initModel();
+    	view_model.setBackground(Color.hsb(0,0,0.2));
+    	view_model.setFormModel(form_model);
+    	view_model.setMapModel(map_model);
+		view_model.render();
+    }
+    
+    /**
+     * Load JR Site and View Model Parameters
+     * 
+     * @param map_model
+     * @param form_model
+     * @param view_model
+     * @param scene3D
+     */
+    public void loadJRScenario(Underlay map_model, Builder form_model, ViewModel view_model) {
+    	map_model.setImage("data/jr_site.png");
+    	map_model.setScale(0.5);
+    	map_model.setOpacity(0.75);
+
+    	form_model.initModel();
+    	loadJRModel(form_model);
+    	
+    	//view_model.initModel();
+    	view_model.setBackground(Color.hsb(0,0,0.2));
+    	//view_model.setZoom(-1000);
+    	//view_model.setPan(719, 410, 0);
+    	//view_model.setRotateV(-20);
+    	//view_model.setRotateH(-45);
+    	view_model.setFormModel(form_model);
+    	view_model.setMapModel(map_model);
+		view_model.render();
+    }
+    
     /**
 	 * Load specific ControlPoints (i.e. hard-coded, not random)
 	 *
@@ -197,6 +225,7 @@ public class GUI_FX extends Application {
 
 		// Override default Grid Properties
 		form_model.setTileWidth(11);
+		form_model.setTileHeight(5);
 		form_model.setTileRotation((float) 0.34);
 		form_model.setTileTranslation(0, 0);
 

@@ -45,6 +45,10 @@ public class ViewModel {
 	 * ViewModel Constructor
 	 */
 	public ViewModel() {
+		initModel();
+	}
+	
+	public void initModel() {
 		setBackground(Color.TRANSPARENT);
 		setZoom(0);
 		setPan(0,0,0);
@@ -59,7 +63,7 @@ public class ViewModel {
 	 * @param distance (more negative is farther away)
 	 */
 	public void setZoom(double distance) {
-		zoom = new Translate(0, 0, ensureRange(distance, -2000, -100));
+		this.zoom = new Translate(0, 0, ensureRange(distance, -2000, -100));
 		setUpCamera();
 	}
 	
@@ -79,7 +83,7 @@ public class ViewModel {
 	 * @param angle in degrees
 	 */
 	public void setRotateV(double angle) {
-		rotateV = new Rotate(angle, Rotate.X_AXIS);
+		this.rotateV = new Rotate(angle, Rotate.X_AXIS);
 		setUpCamera();
 	}
 	
@@ -88,7 +92,7 @@ public class ViewModel {
 	 * @param angle in degrees
 	 */
 	public void setRotateH(double angle) {
-		rotateH = new Rotate(angle, Rotate.Y_AXIS);
+		this.rotateH = new Rotate(angle, Rotate.Y_AXIS);
 		setUpCamera();
 		
 	}
@@ -98,8 +102,6 @@ public class ViewModel {
 	 */
 	public void setUpCamera() {
 		Camera _camera = new PerspectiveCamera(true);
-		// Create and position camera
-		_camera = new PerspectiveCamera(true);
 		_camera.getTransforms().addAll(rotateV, zoom);
 		_camera.setNearClip(10);
 		_camera.setFarClip(10000);
@@ -169,8 +171,9 @@ public class ViewModel {
 		
 		this.nodeSet = new Group();
 		
-		// Set up Ambient Lighting Effect
+		// Set up Ambient Lighting Effects
 		nodeSet.getChildren().add(overheadLight());
+		nodeSet.getChildren().add(sideLight());
 		
 		// Draw Bases
 		for (TileArray space : form_model.dev.spaceList("base")) {
@@ -243,6 +246,16 @@ public class ViewModel {
 		PointLight light = new PointLight();
 		light.setColor(Color.WHITE);
 		light.getTransforms().add(new Translate(0, -400, 0));
+		return light;
+	}
+	
+	/**
+	 * Construct a 3D Side Light Source
+	 */
+	private Node sideLight() {
+		PointLight light = new PointLight();
+		light.setColor(Color.WHITE);
+		light.getTransforms().add(new Translate(-400, 0, -400));
 		return light;
 	}
 	

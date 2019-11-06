@@ -39,6 +39,7 @@ public class Underlay {
 		try {
 			is = new FileInputStream(file_path);
 			underlay = new Image(is);
+			underlayView = new ImageView();
 			underlayView.setImage(underlay);
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
