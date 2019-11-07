@@ -1,6 +1,7 @@
 package edu.mit.ira.builder.fx;
 
 import edu.mit.ira.builder.Builder;
+import edu.mit.ira.voxel.ControlPoint;
 import edu.mit.ira.voxel.Point;
 import edu.mit.ira.voxel.Tile;
 import edu.mit.ira.voxel.TileArray;
@@ -16,6 +17,8 @@ import javafx.scene.input.ScrollEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
@@ -34,7 +37,7 @@ public class ViewModel {
 	private Builder form_model;
 	
 	// Set of All Nodes to Pass to Parent JavaFX Scene
-	private Group nodeSet; 
+	private Group nodeSet;
 	
 	private Camera camera;
 	private Color background;
@@ -135,6 +138,7 @@ public class ViewModel {
 	 */
 	public void setMapModel(Underlay map_model) {
 		this.map_model  = map_model;
+		orientShape((Node) map_model.getImageView(), 0, 0, -0.4f);
 	}
 	
 	/**
@@ -173,27 +177,26 @@ public class ViewModel {
 		
 		// Add and orient map as Basemap to View Model
 		ImageView map = map_model.getImageView();
-		orientShape((Node) map, -0.4f);
-		nodeSet.getChildren().addAll(map);
-		
+		nodeSet.getChildren().add(map);
+
 		// Draw Site Vector Polygon
-		Color fill       = Color.hsb(0, 0, 0.95, 0.5);
-		Color stroke     = Color.hsb(0, 0, 1.00, 0.5);
-		float strokeWeight = 1.0f;
+		Color site_fill         = Color.hsb(0, 0, 0.95, 0.5);
+		Color site_stroke       = Color.hsb(0, 0, 1.00, 0.5);
+		float site_strokeWeight = 1.0f;
 		if (form_model.showPolygons) {
-			stroke       = Color.hsb(0, 0, 1.00, 1.0);
-			strokeWeight = 2.0f;
+			site_stroke         = Color.hsb(0, 0, 1.00, 1.0);
+			site_strokeWeight   = 2.0f;
 		}
 		Polygon site_polygon = new Polygon();
-		for(Point p : form_model.site_boundary.getCorners()) {
-			site_polygon.getPoints().addAll(new Double[] {(double) p.x, (double) p.y});
+		for (Point p : form_model.site_boundary.getCorners()) {
+			site_polygon.getPoints().addAll(new Double[] { (double) p.x, (double) p.y });
 		}
-		site_polygon.setFill(fill);
-		site_polygon.setStroke(stroke);
-		site_polygon.setStrokeWidth(strokeWeight);
-		orientShape((Node)site_polygon, -0.2f);
+		site_polygon.setFill(site_fill);
+		site_polygon.setStroke(site_stroke);
+		site_polygon.setStrokeWidth(site_strokeWeight);
+		orientShape((Node) site_polygon, 0, 0, -0.3f);
 		nodeSet.getChildren().add(site_polygon);
-				
+
 		// Draw Voxel Bases
 		for (TileArray space : form_model.dev.spaceList("base")) {
 			if(form_model.showSpace(space) && form_model.showTiles) {
@@ -252,18 +255,42 @@ public class ViewModel {
 				}
 			}
 		}
-			
+		
 		// Draw Tagged Control Points
-		
-		// Draw Tagged Control Point Labels
-		
-		// Draw Control Point at Mouse Hover
-		
-		// Draw Info at Mouse Hover
-		
-		// Draw Info/Instructions
-		
-		// Draw Attribute Summary
+		for (ControlPoint p : form_model.control.points()) {
+			Color control_fill         = Color.TRANSPARENT;
+			Color control_stroke       = Color.hsb(0, 0, 0, 0.50);
+			float control_strokeWidth = 1.0f;
+			
+			//Draw Circle
+			Circle c = new Circle();
+			c.setRadius(5);
+			c.setFill(control_fill);
+			c.setStroke(control_stroke);
+			c.setStrokeWidth(control_strokeWidth);
+			orientShape((Node)c, p.x, p.y, 0.2f);
+			if (p.active()) nodeSet.getChildren().add(c);
+			
+			// Draw CrossHairs
+			int size = 4;
+			if (!p.active()) {
+				control_stroke = Color.hsb(0, 0, 0, 0.1);
+				size = 2;
+			}
+			Line l1 = new Line();
+			l1.setStartX(p.x-size); l1.setStartY(p.y-size); l1.setEndX(p.x+size); l1.setEndY(p.y+size);
+			l1.setFill(control_fill);
+			l1.setStroke(control_stroke);
+			l1.setStrokeWidth(control_strokeWidth);
+			Line l2 = new Line();
+			l2.setStartX(p.x-size); l2.setStartY(p.y+size); l2.setEndX(p.x+size); l2.setEndY(p.y-size);
+			l2.setFill(control_fill);
+			l2.setStroke(control_stroke);
+			l2.setStrokeWidth(control_strokeWidth);
+			orientShape((Node)l1, 0, 0, 0.2f);
+			orientShape((Node)l2, 0, 0, 0.2f);
+			nodeSet.getChildren().addAll(l1, l2);
+		}
 	}
 	
 	/**
@@ -323,9 +350,9 @@ public class ViewModel {
 	 * @param input
 	 * @param z_offset
 	 */
-	private void orientShape(Node input, float z_offset) {
+	private void orientShape(Node input, float x_offset, float y_offset, float z_offset) {
 		Rotate rotateFlat = new Rotate(-90, Rotate.X_AXIS);
-		Translate pos = new Translate(0, -z_offset, 0);
+		Translate pos = new Translate(x_offset, -z_offset, -y_offset);
 		input.getTransforms().addAll(rotateH, pan, pos, rotateFlat);
 	}
 
