@@ -27,6 +27,9 @@ public class GUI_FX extends Application {
     static final int WINDOW_HEIGHT = 720;
     static final Color TEXT_COLOR = Color.gray(0.8);
 
+    // Migrate Builder() visual parameters to GUI_FX:
+    // TODO
+    
     @Override
     public void start(Stage stage) {
     	
@@ -72,7 +75,6 @@ public class GUI_FX extends Application {
 			if (e.getCode() == KeyCode.C) {
 				view_model.printCamera();
 			}
-
         });
 
         stage.setScene(master);
