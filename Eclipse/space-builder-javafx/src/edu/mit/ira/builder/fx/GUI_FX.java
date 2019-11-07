@@ -51,6 +51,16 @@ public class GUI_FX extends Application {
 //        final SubScene sceneUI = new SubScene(settings.getGroup(), WINDOW_WIDTH,
 //                WINDOW_HEIGHT);
     	
+		// Draw Control Point at Mouse Hover
+		
+		// Draw Tagged Control Point Labels
+		
+		// Draw Info at Mouse Hover
+		
+		// Draw Info/Instructions
+		
+		// Draw Attribute Summary
+    	
     	setViewModel(scene3D, view_model);
 
         final Group root = new Group(scene3D);
