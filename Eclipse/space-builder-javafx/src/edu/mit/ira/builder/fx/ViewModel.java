@@ -1,6 +1,7 @@
 package edu.mit.ira.builder.fx;
 
 import edu.mit.ira.builder.Builder;
+import edu.mit.ira.voxel.Point;
 import edu.mit.ira.voxel.Tile;
 import edu.mit.ira.voxel.TileArray;
 import javafx.scene.Camera;
@@ -15,6 +16,7 @@ import javafx.scene.input.ScrollEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
+import javafx.scene.shape.Polygon;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
 
@@ -68,7 +70,7 @@ public class ViewModel {
 	}
 	
 	/**
-	 * Set Amount of panning initiated by mouse secondary button
+	 * Set Amount of panning from origin
 	 * @param x
 	 * @param y
 	 * @param z
@@ -133,12 +135,6 @@ public class ViewModel {
 	 */
 	public void setMapModel(Underlay map_model) {
 		this.map_model  = map_model;
-		
-		// Make and position the Basemap Image
-		Rotate rotateFlat = new Rotate(-90, Rotate.X_AXIS);
-		Translate pos = new Translate(0, 0.4, 0);
-		map_model.getImageView().getTransforms().addAll(
-				rotateH, pan, pos, rotateFlat);
 	}
 	
 	/**
@@ -175,7 +171,30 @@ public class ViewModel {
 		nodeSet.getChildren().add(overheadLight());
 		nodeSet.getChildren().add(sideLight());
 		
-		// Draw Bases
+		// Add and orient map as Basemap to View Model
+		ImageView map = map_model.getImageView();
+		orientShape((Node) map, -0.4f);
+		nodeSet.getChildren().addAll(map);
+		
+		// Draw Site Vector Polygon
+		Color fill       = Color.hsb(0, 0, 0.95, 0.5);
+		Color stroke     = Color.hsb(0, 0, 1.00, 0.5);
+		float strokeWeight = 1.0f;
+		if (form_model.showPolygons) {
+			stroke       = Color.hsb(0, 0, 1.00, 1.0);
+			strokeWeight = 2.0f;
+		}
+		Polygon site_polygon = new Polygon();
+		for(Point p : form_model.site_boundary.getCorners()) {
+			site_polygon.getPoints().addAll(new Double[] {(double) p.x, (double) p.y});
+		}
+		site_polygon.setFill(fill);
+		site_polygon.setStroke(stroke);
+		site_polygon.setStrokeWidth(strokeWeight);
+		orientShape((Node)site_polygon, -0.2f);
+		nodeSet.getChildren().add(site_polygon);
+				
+		// Draw Voxel Bases
 		for (TileArray space : form_model.dev.spaceList("base")) {
 			if(form_model.showSpace(space) && form_model.showTiles) {
 				Color col = Color.hsb(space.getHueDegree(), 0.5, 0.8, 0.95);
@@ -190,7 +209,7 @@ public class ViewModel {
 			}
 		}
 
-		// Draw Footprints
+		// Draw Voxel Footprints
 		for (TileArray space : form_model.dev.spaceList("footprint")) {
 			if(form_model.showSpace(space) && form_model.showTiles) {
 				Color col;
@@ -212,7 +231,7 @@ public class ViewModel {
 			}
 		}
 		
-		// Draw Zones
+		// Draw Voxel Zones
 		for (TileArray space : form_model.dev.spaceList("zone")) {
 			if(form_model.showSpace(space) && form_model.showTiles) {
 				Color col = Color.hsb(space.getHueDegree(), 0.3, 0.9, 0.75);
@@ -223,8 +242,8 @@ public class ViewModel {
 			}
 		}
 		
-		// Draw Sites
-		for (TileArray space : form_model.dev.spaceList("footprint")) {
+		// Draw Voxel Sites
+		for (TileArray space : form_model.dev.spaceList("site")) {
 			if(form_model.showSpace(space) && form_model.showTiles) {
 				Color col = Color.gray(0, 0.2);
 				for (Tile t : space.tileList()) {
@@ -233,10 +252,18 @@ public class ViewModel {
 				}
 			}
 		}
+			
+		// Draw Tagged Control Points
 		
-		// Add map as Basemap to View Model
-		ImageView map = map_model.getImageView();
-		nodeSet.getChildren().addAll(map);
+		// Draw Tagged Control Point Labels
+		
+		// Draw Control Point at Mouse Hover
+		
+		// Draw Info at Mouse Hover
+		
+		// Draw Info/Instructions
+		
+		// Draw Attribute Summary
 	}
 	
 	/**
@@ -288,6 +315,18 @@ public class ViewModel {
 		b.setMaterial(material);
 
 		return b;
+	}
+	
+	/**
+	 * Make and position a 2D image or shape to the 3D environment
+	 * 
+	 * @param input
+	 * @param z_offset
+	 */
+	private void orientShape(Node input, float z_offset) {
+		Rotate rotateFlat = new Rotate(-90, Rotate.X_AXIS);
+		Translate pos = new Translate(0, -z_offset, 0);
+		input.getTransforms().addAll(rotateH, pan, pos, rotateFlat);
 	}
 
 	// Mouse locations on Canvas
