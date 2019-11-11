@@ -116,7 +116,7 @@ public class GUI_FX extends Application {
     	form_model.loadRandomModel(375, 375);
     	
     	//view_model.initModel();
-    	view_model.setBackground(Color.hsb(0,0,0.2));
+    	view_model.setBackground(Color.hsb(0,0,1.0));
     	view_model.setFormModel(form_model);
     	view_model.setMapModel(map_model);
 		view_model.render();
