@@ -47,10 +47,10 @@ public class Layout {
 		version.setHeight(VERSION_HEIGHT);
 		
 		canvas.setWidth(DEFAULT_APPLICATION_WIDTH - OUTCOME_WIDTH - NAVIGATE_WIDTH);
-		canvas.setHeight(0.5 * (DEFAULT_APPLICATION_HEIGHT - TOOL_HEIGHT - VERSION_HEIGHT - STATUS_HEIGHT));
+		canvas.setHeight(0.25 * (DEFAULT_APPLICATION_HEIGHT - TOOL_HEIGHT - VERSION_HEIGHT - STATUS_HEIGHT));
 		
 		massing.setWidth(DEFAULT_APPLICATION_WIDTH - OUTCOME_WIDTH - NAVIGATE_WIDTH);
-		massing.setHeight(0.5 * (DEFAULT_APPLICATION_HEIGHT - TOOL_HEIGHT - VERSION_HEIGHT - STATUS_HEIGHT));
+		massing.setHeight(0.75 * (DEFAULT_APPLICATION_HEIGHT - TOOL_HEIGHT - VERSION_HEIGHT - STATUS_HEIGHT));
 		
 		outcome.setWidth(OUTCOME_WIDTH);
 		outcome.setHeight(0.5 * (DEFAULT_APPLICATION_HEIGHT - TOOL_HEIGHT - STATUS_HEIGHT));
@@ -178,8 +178,8 @@ public class Layout {
 			@Override
 			public void changed(ObservableValue<? extends Number> arg0, Number arg1, Number arg2) {
 				double windowHeight = (double) arg2;
-				canvas.setHeight(0.5 * (windowHeight - TOOL_HEIGHT - VERSION_HEIGHT - STATUS_HEIGHT));
-				massing.setHeight(0.5 * (windowHeight - TOOL_HEIGHT - VERSION_HEIGHT - STATUS_HEIGHT));
+				canvas.setHeight(0.25 * (windowHeight - TOOL_HEIGHT - VERSION_HEIGHT - STATUS_HEIGHT));
+				massing.setHeight(0.75 * (windowHeight - TOOL_HEIGHT - VERSION_HEIGHT - STATUS_HEIGHT));
 				outcome.setHeight(0.5 * (windowHeight - TOOL_HEIGHT - STATUS_HEIGHT));
 				commit.setHeight(0.5 * (windowHeight - TOOL_HEIGHT - STATUS_HEIGHT));
 				navigate.setHeight(windowHeight - TOOL_HEIGHT - STATUS_HEIGHT);
