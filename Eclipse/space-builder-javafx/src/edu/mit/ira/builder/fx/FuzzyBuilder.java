@@ -27,21 +27,21 @@ public class FuzzyBuilder extends Application {
 	
 	// Scene Configuration within Window
 	
-	///////////////////////////////////////
-	//		toolbar						 //
-	///////////////////////////////////////
-	//		version			//			 //
-	//////////////////////////	outcome  //
-	//						//			 //
-	//		canvas			//			 //
-	//						///////////////
-	//////////////////////////			 //
-	//						//	commit	 //
-	//		massing  		//			 //
-	//						//			 //
-	///////////////////////////////////////
-	//		status						 //
-	///////////////////////////////////////
+	/////////////////////////////////////////////
+	//      		toolbar					   //
+	/////////////////////////////////////////////
+	//    //		version		  //		   //
+	// n  //////////////////////////  outcome  //
+	// a  //					  //		   //
+	// v  //		canvas		  //		   //
+	// i  //					  ///////////////
+	// g  //////////////////////////		   //
+	// a  //					  //  commit   //
+	// t  //		massing  	  //		   //
+	// e  //					  //		   //
+	/////////////////////////////////////////////
+	//      		status					   //
+	/////////////////////////////////////////////
 	
 	// All Default Dimensions are in Pixels:
 	
@@ -51,6 +51,7 @@ public class FuzzyBuilder extends Application {
 	final private double TOOL_HEIGHT    = 30;
 	final private double VERSION_HEIGHT = 50;
 	final private double STATUS_HEIGHT  = 30;
+	final private double NAVIGATE_WIDTH = 200;
 	final private double OUTCOME_WIDTH  = 400;
 	
 	public static void main(String[] args) {
@@ -64,17 +65,14 @@ public class FuzzyBuilder extends Application {
     	appWindow.setTitle(APPLICATION_NAME);
     	
 		// DEFAULT JavaFX Node-based content for each SubScene
-		StackPane toolbarContent = new StackPane(new Label("Toolbar"));
-		StackPane versionContent = new StackPane(new Label("Version Tree"));
-		StackPane canvasContent  = new StackPane(new Label("Visual Programming Canvas"));
-		StackPane massingContent = new StackPane(new Label("3D Massing"));
-		StackPane outcomeContent = new StackPane(new Label("Performance Graph"));
-		StackPane commitContent  = new StackPane(new Label("Commit Scenario"));
-		StackPane statusContent  = new StackPane(new Label("Status"));
-		
-		Massing scenario = new Massing(
-				DEFAULT_APPLICATION_WIDTH - OUTCOME_WIDTH, 
-				0.5 * (DEFAULT_APPLICATION_HEIGHT - TOOL_HEIGHT - VERSION_HEIGHT - STATUS_HEIGHT));
+		StackPane toolbarContent  = new StackPane(new Label("Toolbar"));
+		StackPane versionContent  = new StackPane(new Label("Version Tree"));
+		StackPane canvasContent   = new StackPane(new Label("Visual Programming Canvas"));
+		StackPane massingContent  = new StackPane(new Label("3D Massing"));
+		StackPane outcomeContent  = new StackPane(new Label("Performance Graph"));
+		StackPane commitContent   = new StackPane(new Label("Commit Scenario"));
+		StackPane navigateContent = new StackPane(new Label("Navigation"));
+		StackPane statusContent   = new StackPane(new Label("Status"));
 		
 		// Content Containers for the Application (Populate these however you wish)
 		SubScene toolbar = new SubScene(
@@ -87,11 +85,11 @@ public class FuzzyBuilder extends Application {
 				VERSION_HEIGHT);
 		SubScene canvas = new SubScene(
 				canvasContent, 
-				DEFAULT_APPLICATION_WIDTH - OUTCOME_WIDTH,
+				DEFAULT_APPLICATION_WIDTH - OUTCOME_WIDTH - NAVIGATE_WIDTH,
 				0.5 * (DEFAULT_APPLICATION_HEIGHT - TOOL_HEIGHT - VERSION_HEIGHT - STATUS_HEIGHT));
 		SubScene massing = new SubScene(
 				massingContent, 
-				DEFAULT_APPLICATION_WIDTH - OUTCOME_WIDTH, 
+				DEFAULT_APPLICATION_WIDTH - OUTCOME_WIDTH - NAVIGATE_WIDTH, 
 				0.5 * (DEFAULT_APPLICATION_HEIGHT - TOOL_HEIGHT - VERSION_HEIGHT - STATUS_HEIGHT), 
 				true, SceneAntialiasing.BALANCED);
 		SubScene outcome = new SubScene(
@@ -102,6 +100,10 @@ public class FuzzyBuilder extends Application {
 				commitContent, 
 				OUTCOME_WIDTH, 
 				0.5 * (DEFAULT_APPLICATION_HEIGHT - TOOL_HEIGHT - STATUS_HEIGHT));
+		SubScene navigate = new SubScene(
+				navigateContent, 
+				NAVIGATE_WIDTH, 
+				DEFAULT_APPLICATION_HEIGHT - TOOL_HEIGHT - STATUS_HEIGHT);
 		SubScene status = new SubScene(
 				statusContent, 
 				DEFAULT_APPLICATION_WIDTH, 
@@ -110,7 +112,7 @@ public class FuzzyBuilder extends Application {
 		// Organize the SubScenes into Nested Grid Panes
         GridPane windowPane = new GridPane();
         GridPane mainPane = new GridPane();
-        GridPane leftPane = new GridPane();
+        GridPane centerPane = new GridPane();
         GridPane rightPane = new GridPane();
         
         ///////////////////////////////////////
@@ -147,25 +149,26 @@ public class FuzzyBuilder extends Application {
     	///////////////////////////////////////
         
         // Main GridPane (mainPane)
-        mainPane.add(leftPane, 0, 0);
-        mainPane.add(rightPane, 1, 0);
+        mainPane.add(navigate, 0, 0);
+        mainPane.add(centerPane, 1, 0);
+        mainPane.add(rightPane, 2, 0);
         
         ///////////////////////////////////////
-    	//						//			 //
-    	//		leftPane		// rightPane //
-    	//						//			 //
-    	//						//			 //
-    	//						//			 //
-    	//						//			 //
-    	//						//	 		 //
-    	//				  		//			 //
-    	//						//			 //
+    	//    //				//			 //
+    	// n  //    centerPane	// rightPane //
+    	// a  //				//			 //
+    	// v  //				//			 //
+    	// i  //				//			 //
+    	// g  //				//			 //
+    	// a  //				//	 		 //
+    	// t  //		  		//			 //
+    	// e  //				//			 //
     	///////////////////////////////////////
         
-        // Left GridPane (leftPane)
-        leftPane.add(version, 0, 0);
-        leftPane.add(canvas, 0, 1);
-        leftPane.add(scenario, 0, 2);
+        // Center GridPane (leftPane)
+        centerPane.add(version, 0, 0);
+        centerPane.add(canvas, 0, 1);
+        centerPane.add(massing, 0, 2);
         
         //////////////////////////
     	//		version			//
@@ -205,9 +208,9 @@ public class FuzzyBuilder extends Application {
     		public void changed(ObservableValue<? extends Number> arg0, Number arg1, Number arg2) {
     			double windowWidth = (double) arg2;
     			toolbar.setWidth(windowWidth);
-    	    	version.setWidth(windowWidth - OUTCOME_WIDTH);
-    	    	canvas.setWidth(windowWidth - OUTCOME_WIDTH);
-    	    	massing.setWidth(windowWidth - OUTCOME_WIDTH);
+    	    	version.setWidth(windowWidth - OUTCOME_WIDTH - NAVIGATE_WIDTH);
+    	    	canvas.setWidth(windowWidth - OUTCOME_WIDTH - NAVIGATE_WIDTH);
+    	    	massing.setWidth(windowWidth - OUTCOME_WIDTH - NAVIGATE_WIDTH);
     	    	status.setWidth(windowWidth);
     		}
         });
@@ -222,9 +225,13 @@ public class FuzzyBuilder extends Application {
     	    	massing.setHeight(0.5*(windowHeight - TOOL_HEIGHT - VERSION_HEIGHT - STATUS_HEIGHT));
     	    	outcome.setHeight(0.5*(windowHeight - TOOL_HEIGHT - STATUS_HEIGHT));
     	    	commit.setHeight(0.5*(windowHeight - TOOL_HEIGHT - STATUS_HEIGHT));
+    	    	navigate.setHeight(windowHeight - TOOL_HEIGHT - STATUS_HEIGHT);
     		}
         });
         
+        Massing scenario = new Massing(massing.getWidth(), massing.getHeight());
+        
+        // Pass Key Commands on to lesser functions
         allSubScenes.setOnKeyPressed(e -> {
         	scenario.keyPressed(e);
         });
