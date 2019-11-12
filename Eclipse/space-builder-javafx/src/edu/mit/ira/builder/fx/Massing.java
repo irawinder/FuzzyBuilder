@@ -18,12 +18,16 @@ import javafx.scene.paint.Color;
  */
 public class Massing extends SubScene implements ContentContainer {
 	
-    static Group root = new Group();
+    private static Group root = new Group();
     SubScene scene3D, scene2D;
     View3D view3D;
     
     Underlay map_model;
 	Builder form_model;
+	
+	// These values are designed to be externally overridden before rendered to screen
+	final private static double DEFAULT_WIDTH = 100;
+	final private static double DEFAULT_HEIGHT = 100;
     
     // Migrate Builder() visual parameters to GUI_FX:
     // TODO
@@ -33,8 +37,8 @@ public class Massing extends SubScene implements ContentContainer {
      * 
      * @param subscene master container for content
      */
-    public Massing(double width, double height) {
-    	super(root, width, height);
+    public Massing() {
+    	super(root, DEFAULT_WIDTH, DEFAULT_HEIGHT);
     	makeContent();
     }
     
