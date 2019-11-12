@@ -1,4 +1,4 @@
-package edu.mit.ira.builder.fx;
+package edu.mit.ira.fuzzy.fx.stage;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;

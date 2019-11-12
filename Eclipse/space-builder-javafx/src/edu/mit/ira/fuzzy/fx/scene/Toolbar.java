@@ -1,4 +1,4 @@
-package edu.mit.ira.builder.fx;
+package edu.mit.ira.fuzzy.fx.scene;
 
 import javafx.scene.SubScene;
 import javafx.scene.control.Label;

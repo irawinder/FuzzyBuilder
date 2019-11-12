@@ -1,6 +1,8 @@
-package edu.mit.ira.builder.fx;
+package edu.mit.ira.fuzzy.fx.scene;
 
 import edu.mit.ira.builder.Builder;
+import edu.mit.ira.fuzzy.fx.node.Underlay;
+import edu.mit.ira.fuzzy.fx.node.View3D;
 import edu.mit.ira.voxel.Control;
 import edu.mit.ira.voxel.ControlPoint;
 import javafx.scene.Group;

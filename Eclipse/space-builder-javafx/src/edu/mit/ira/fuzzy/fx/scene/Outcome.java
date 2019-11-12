@@ -1,20 +1,20 @@
-package edu.mit.ira.builder.fx;
+package edu.mit.ira.fuzzy.fx.scene;
 
 import javafx.scene.SubScene;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.StackPane;
 
-public class Status extends SubScene implements ContentContainer { 
+public class Outcome extends SubScene implements ContentContainer { 
 	
-	public Status() {
+	public Outcome() {
 		super(EMPTY_GROUP, DEFAULT_WIDTH, DEFAULT_HEIGHT);
 		makeContent();
 	}
 
 	@Override
 	public void makeContent() {
-		StackPane toolbarContent  = new StackPane(new Label("Status Bar"));
+		StackPane toolbarContent  = new StackPane(new Label("Performance Graph"));
         setRoot(toolbarContent);
 		
 	}

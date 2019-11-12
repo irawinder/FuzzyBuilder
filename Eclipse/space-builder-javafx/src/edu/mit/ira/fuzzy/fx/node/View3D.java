@@ -1,4 +1,4 @@
-package edu.mit.ira.builder.fx;
+package edu.mit.ira.fuzzy.fx.node;
 
 import edu.mit.ira.builder.Builder;
 import edu.mit.ira.voxel.ControlPoint;

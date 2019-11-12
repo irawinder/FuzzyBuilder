@@ -1,20 +1,20 @@
-package edu.mit.ira.builder.fx;
+package edu.mit.ira.fuzzy.fx.scene;
 
 import javafx.scene.SubScene;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.StackPane;
 
-public class Version extends SubScene implements ContentContainer { 
+public class Canvas extends SubScene implements ContentContainer { 
 	
-	public Version() {
+	public Canvas() {
 		super(EMPTY_GROUP, DEFAULT_WIDTH, DEFAULT_HEIGHT);
 		makeContent();
 	}
 
 	@Override
 	public void makeContent() {
-		StackPane toolbarContent  = new StackPane(new Label("Version Tree"));
+		StackPane toolbarContent  = new StackPane(new Label("Visual Programming Canvas"));
         setRoot(toolbarContent);
 		
 	}

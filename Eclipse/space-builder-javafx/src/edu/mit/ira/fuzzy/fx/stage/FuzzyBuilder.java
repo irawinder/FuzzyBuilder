@@ -1,4 +1,12 @@
-package edu.mit.ira.builder.fx;
+package edu.mit.ira.fuzzy.fx.stage;
+import edu.mit.ira.fuzzy.fx.scene.Canvas;
+import edu.mit.ira.fuzzy.fx.scene.Commit;
+import edu.mit.ira.fuzzy.fx.scene.Massing;
+import edu.mit.ira.fuzzy.fx.scene.Navigate;
+import edu.mit.ira.fuzzy.fx.scene.Outcome;
+import edu.mit.ira.fuzzy.fx.scene.Status;
+import edu.mit.ira.fuzzy.fx.scene.Toolbar;
+import edu.mit.ira.fuzzy.fx.scene.Version;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.SubScene;
