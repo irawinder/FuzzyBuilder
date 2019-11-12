@@ -60,6 +60,12 @@ public class Massing extends SubScene implements ContentContainer {
     	Group controls = new Group(l);
         scene2D = new SubScene(controls, getWidth(), getHeight());
         scene2D.setFill(Color.TRANSPARENT);
+        
+        // Bind dimensions of child scenes
+        scene2D.widthProperty().bind(widthProperty());
+        scene2D.heightProperty().bind(heightProperty());
+        scene3D.widthProperty().bind(widthProperty());
+        scene3D.heightProperty().bind(heightProperty());
     	
 		// Draw Control Point at Mouse Hover
 		

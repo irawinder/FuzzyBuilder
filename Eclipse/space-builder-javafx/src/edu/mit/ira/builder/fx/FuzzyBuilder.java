@@ -87,11 +87,11 @@ public class FuzzyBuilder extends Application {
 				canvasContent, 
 				DEFAULT_APPLICATION_WIDTH - OUTCOME_WIDTH - NAVIGATE_WIDTH,
 				0.5 * (DEFAULT_APPLICATION_HEIGHT - TOOL_HEIGHT - VERSION_HEIGHT - STATUS_HEIGHT));
-		SubScene massing = new SubScene(
-				massingContent, 
-				DEFAULT_APPLICATION_WIDTH - OUTCOME_WIDTH - NAVIGATE_WIDTH, 
-				0.5 * (DEFAULT_APPLICATION_HEIGHT - TOOL_HEIGHT - VERSION_HEIGHT - STATUS_HEIGHT), 
-				true, SceneAntialiasing.BALANCED);
+//		SubScene massing = new SubScene(
+//				massingContent, 
+//				DEFAULT_APPLICATION_WIDTH - OUTCOME_WIDTH - NAVIGATE_WIDTH, 
+//				0.5 * (DEFAULT_APPLICATION_HEIGHT - TOOL_HEIGHT - VERSION_HEIGHT - STATUS_HEIGHT), 
+//				true, SceneAntialiasing.BALANCED);
 		SubScene outcome = new SubScene(
 				outcomeContent, 
 				OUTCOME_WIDTH, 
@@ -108,6 +108,10 @@ public class FuzzyBuilder extends Application {
 				statusContent, 
 				DEFAULT_APPLICATION_WIDTH, 
 				STATUS_HEIGHT);
+		
+		Massing scenario = new Massing(DEFAULT_APPLICATION_WIDTH - OUTCOME_WIDTH - NAVIGATE_WIDTH, 
+				0.5 * (DEFAULT_APPLICATION_HEIGHT - TOOL_HEIGHT - VERSION_HEIGHT - STATUS_HEIGHT));
+        SubScene massing = scenario;
 		
 		// Organize the SubScenes into Nested Grid Panes
         GridPane windowPane = new GridPane();
@@ -228,8 +232,6 @@ public class FuzzyBuilder extends Application {
     	    	navigate.setHeight(windowHeight - TOOL_HEIGHT - STATUS_HEIGHT);
     		}
         });
-        
-        Massing scenario = new Massing(massing.getWidth(), massing.getHeight());
         
         // Pass Key Commands on to lesser functions
         allSubScenes.setOnKeyPressed(e -> {
