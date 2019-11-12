@@ -7,6 +7,8 @@ import javafx.scene.Group;
 import javafx.scene.SceneAntialiasing;
 import javafx.scene.SubScene;
 import javafx.scene.control.Label;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 /**
  * Massing View Model
@@ -39,8 +41,8 @@ public class Massing extends SubScene implements ContentContainer {
     @Override
     public void makeContent() {
         
-    	Underlay map_model = new Underlay();
-    	Builder form_model = new Builder();
+    	map_model = new Underlay();
+    	form_model = new Builder();
     	
     	view3D = new View3D();
     	view3D.setZoom(-1000);
@@ -232,6 +234,24 @@ public class Massing extends SubScene implements ContentContainer {
 		form_model.initFootprints();
 		form_model.initBases();
 
+	}
+
+	public void keyPressed(KeyEvent e) {
+
+		// Make JR Site
+		if (e.getCode() == KeyCode.L) {
+			loadJRScenario(map_model, form_model, view3D);
+			setViewModel(scene3D, view3D);
+			// Make Random Site
+		} else if (e.getCode() == KeyCode.R) {
+			loadRandomScenario(map_model, form_model, view3D);
+			setViewModel(scene3D, view3D);
+		}
+
+		// Print Camera Position
+		if (e.getCode() == KeyCode.C) {
+			view3D.printCamera();
+		}
 	}
 
 }

@@ -2,6 +2,7 @@ package edu.mit.ira.builder.fx;
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.SceneAntialiasing;
 import javafx.scene.SubScene;
@@ -222,6 +223,10 @@ public class FuzzyBuilder extends Application {
     	    	outcome.setHeight(0.5*(windowHeight - TOOL_HEIGHT - STATUS_HEIGHT));
     	    	commit.setHeight(0.5*(windowHeight - TOOL_HEIGHT - STATUS_HEIGHT));
     		}
+        });
+        
+        allSubScenes.setOnKeyPressed(e -> {
+        	scenario.keyPressed(e);
         });
         
         appWindow.setScene(allSubScenes);
