@@ -10,7 +10,7 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.PerspectiveCamera;
 import javafx.scene.PointLight;
-import javafx.scene.Scene;
+import javafx.scene.SubScene;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
@@ -24,16 +24,17 @@ import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
 
 /**
- * The ViewModel is the collection of "friendly model objects" 
- * to show in an JavaFX Scene
+ * The View3D is the collection of "friendly model objects" 
+ * to show in a 3D JavaFX Scene
  * 
  * @author jiw
  *
  */
-public class ViewModel {
+public class View3D {
 
-	// Form Model Classes (by Ira)
 	private Underlay map_model;
+	
+	// Includes generated geometry, settings, and 3D control points
 	private Builder form_model;
 	
 	// Set of All Nodes to Pass to Parent JavaFX Scene
@@ -49,7 +50,7 @@ public class ViewModel {
 	/**
 	 * ViewModel Constructor
 	 */
-	public ViewModel() {
+	public View3D() {
 		initModel();
 	}
 	
@@ -361,17 +362,17 @@ public class ViewModel {
 	/**
 	 * Actions to take when mouse events are detected
 	 * 
-	 * @param scene
+	 * @param scene3d
 	 */
-	public void handleMouseEvents(Scene scene) {
+	public void handleMouseEvents(SubScene scene3d) {
 		
 		// Load the mouse location on the scene while pressed down
-		scene.setOnMousePressed((MouseEvent me) -> {
+		scene3d.setOnMousePressed((MouseEvent me) -> {
 			mousePosX = me.getSceneX();
 			mousePosY = me.getSceneY();
 		});
 		
-		scene.setOnMouseDragged((MouseEvent me) -> {
+		scene3d.setOnMouseDragged((MouseEvent me) -> {
 			
 			// Mouse displacement while pressed and dragged
 			double dx = + (mousePosX - me.getSceneX());
@@ -406,7 +407,7 @@ public class ViewModel {
 		});
 
 		// Enable Zoom in and Zoom Out via scroll wheel
-		scene.setOnScroll((ScrollEvent se) -> {
+		scene3d.setOnScroll((ScrollEvent se) -> {
 			double dy = se.getDeltaY();
 			double new_zoom = zoom.getZ() - dy;
 			new_zoom = ensureRange(new_zoom, -2000, -100);

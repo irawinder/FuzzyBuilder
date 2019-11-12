@@ -3,53 +3,61 @@ package edu.mit.ira.builder.fx;
 import edu.mit.ira.builder.Builder;
 import edu.mit.ira.voxel.Control;
 import edu.mit.ira.voxel.ControlPoint;
-import javafx.application.Application;
 import javafx.scene.Group;
-import javafx.scene.Scene;
 import javafx.scene.SceneAntialiasing;
 import javafx.scene.SubScene;
-import javafx.scene.input.KeyCode;
+import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
-import javafx.stage.Stage;
-
 /**
- * The Main Application Environment to Run Fuzzy Builder
+ * Massing View Model
  *
- * If Running from eclipse, you need to put the following VM Argument into the Run Configuration
- * --module-path "/Path/to/javafx-sdk-13/lib" --add-modules javafx.controls
- *
- * @author jiw
+ * @author Ira Winder
  *
  */
-public class GUI_FX extends Application {
-
-	static final int WINDOW_WIDTH = 1280;
-    static final int WINDOW_HEIGHT = 720;
-    static final Color TEXT_COLOR = Color.gray(0.8);
-
+public class Massing extends SubScene implements ContentContainer {
+	
+    static Group root = new Group();
+    SubScene scene3D, scene2D;
+    View3D view3D;
+    
+    Underlay map_model;
+	Builder form_model;
+    
     // Migrate Builder() visual parameters to GUI_FX:
     // TODO
     
+    /**
+     * Initialize a new content container for Massing
+     * 
+     * @param subscene master container for content
+     */
+    public Massing(double width, double height) {
+    	super(root, width, height);
+    	makeContent();
+    }
+    
     @Override
-    public void start(Stage stage) {
-    	
-    	stage.setTitle("Space Builder FX");
-    	
+    public void makeContent() {
+        
     	Underlay map_model = new Underlay();
     	Builder form_model = new Builder();
-    	ViewModel view_model = new ViewModel();
-    	view_model.setZoom(-1000);
-    	view_model.setPan(325, 425, 0);
-    	view_model.setRotateV(-20);
-    	view_model.setRotateH(-45);
+    	
+    	view3D = new View3D();
+    	view3D.setZoom(-1000);
+    	view3D.setPan(325, 425, 0);
+    	view3D.setRotateV(-20);
+    	view3D.setRotateH(-45);
     	
     	// Initialize with Random Scenario
-    	loadRandomScenario(map_model, form_model, view_model);
+    	loadRandomScenario(map_model, form_model, view3D);
     	
-    	final SubScene scene3D = new SubScene(view_model.getGroup(),
-        		WINDOW_WIDTH, WINDOW_HEIGHT, true, SceneAntialiasing.BALANCED);
-//        final SubScene sceneUI = new SubScene(settings.getGroup(), WINDOW_WIDTH,
-//                WINDOW_HEIGHT);
+    	scene3D = new SubScene(view3D.getGroup(), getWidth(), getHeight(), true, SceneAntialiasing.BALANCED);
+    	setViewModel(scene3D, view3D);
+    	
+    	Label l = new Label("UI Overlay");
+    	Group controls = new Group(l);
+        scene2D = new SubScene(controls, getWidth(), getHeight());
+        scene2D.setFill(Color.TRANSPARENT);
     	
 		// Draw Control Point at Mouse Hover
 		
@@ -61,42 +69,19 @@ public class GUI_FX extends Application {
 		
 		// Draw Attribute Summary
     	
-    	setViewModel(scene3D, view_model);
-
-        final Group root = new Group(scene3D);
-        //final Group root = new Group(scene3D, sceneUI);
-        final Scene master = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
+        root = new Group(scene3D, scene2D);
+        setRoot(root);
 
         // Mouse and Keyboard Events
-        view_model.handleMouseEvents(master);
-        master.setOnKeyPressed(e -> {
-
-        	// Make JR Site
-            if (e.getCode() == KeyCode.L) {
-            	loadJRScenario(map_model, form_model, view_model);
-            	setViewModel(scene3D, view_model);
-            // Make Random Site
-            } else if (e.getCode() == KeyCode.R) {
-            	loadRandomScenario(map_model, form_model, view_model);
-            	setViewModel(scene3D, view_model);
-            }
-            
-			// Print Camera Position
-			if (e.getCode() == KeyCode.C) {
-				view_model.printCamera();
-			}
-        });
-
-        stage.setScene(master);
-        stage.show();
-
+        view3D.handleMouseEvents(this);
+        
     }
     
     // Init View Model
-    public void setViewModel(SubScene scene3D, ViewModel view_model) {
-    	scene3D.setRoot(view_model.getGroup());
-    	scene3D.setFill(view_model.getBackground());
-        scene3D.setCamera(view_model.getCamera());
+    public void setViewModel(SubScene scene3D, View3D view3D) {
+    	scene3D.setRoot(view3D.getGroup());
+    	scene3D.setFill(view3D.getBackground());
+        scene3D.setCamera(view3D.getCamera());
     }
     
     /**
@@ -104,10 +89,10 @@ public class GUI_FX extends Application {
      * 
      * @param map_model
      * @param form_model
-     * @param view_model
+     * @param view3D
      * @param scene3D
      */
-    public void loadRandomScenario(Underlay map_model, Builder form_model, ViewModel view_model) {
+    public void loadRandomScenario(Underlay map_model, Builder form_model, View3D view3D) {
     	map_model.setImage("data/default_site_white.png");
     	map_model.setScale(0.5);
     	map_model.setOpacity(1.00);
@@ -115,11 +100,11 @@ public class GUI_FX extends Application {
     	form_model.initModel();
     	form_model.loadRandomModel(375, 375);
     	
-    	//view_model.initModel();
-    	view_model.setBackground(Color.hsb(0,0,1.0));
-    	view_model.setFormModel(form_model);
-    	view_model.setMapModel(map_model);
-		view_model.render();
+    	//view3D.initModel();
+    	view3D.setBackground(Color.hsb(0,0,1.0));
+    	view3D.setFormModel(form_model);
+    	view3D.setMapModel(map_model);
+		view3D.render();
     }
     
     /**
@@ -127,10 +112,10 @@ public class GUI_FX extends Application {
      * 
      * @param map_model
      * @param form_model
-     * @param view_model
+     * @param view3D
      * @param scene3D
      */
-    public void loadJRScenario(Underlay map_model, Builder form_model, ViewModel view_model) {
+    public void loadJRScenario(Underlay map_model, Builder form_model, View3D view3D) {
     	map_model.setImage("data/jr_site.png");
     	map_model.setScale(0.5);
     	map_model.setOpacity(0.75);
@@ -138,15 +123,15 @@ public class GUI_FX extends Application {
     	form_model.initModel();
     	loadJRModel(form_model);
     	
-    	//view_model.initModel();
-    	view_model.setBackground(Color.hsb(0,0,0.2));
-    	//view_model.setZoom(-1000);
-    	//view_model.setPan(719, 410, 0);
-    	//view_model.setRotateV(-20);
-    	//view_model.setRotateH(-45);
-    	view_model.setFormModel(form_model);
-    	view_model.setMapModel(map_model);
-		view_model.render();
+    	//view3D.initModel();
+    	view3D.setBackground(Color.hsb(0,0,0.2));
+    	//view3D.setZoom(-1000);
+    	//view3D.setPan(719, 410, 0);
+    	//view3D.setRotateV(-20);
+    	//view3D.setRotateH(-45);
+    	view3D.setFormModel(form_model);
+    	view3D.setMapModel(map_model);
+		view3D.render();
     }
     
     /**
@@ -248,9 +233,5 @@ public class GUI_FX extends Application {
 		form_model.initBases();
 
 	}
-
-    public static void main(String[] args) {
-        launch(args);
-    }
 
 }
