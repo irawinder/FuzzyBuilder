@@ -48,7 +48,7 @@ public class FuzzyBuilder extends Application {
     	appWindow.setTitle(APPLICATION_NAME);
 		
     	// Begin the application with a random scenario
-    	this.loadRandomScenario();
+    	loadRandomScenario();
 		
     	//Initialize Content Containers (SubScenes)
     	toolbar = new Toolbar();
@@ -60,6 +60,7 @@ public class FuzzyBuilder extends Application {
 		navigate = new Navigate();
 		status = new Status();
 		
+		// Initiate Content
 		setScenes();
 		
 		// Assemble all SubScenes into the main content scene
@@ -81,13 +82,13 @@ public class FuzzyBuilder extends Application {
         	// Handle Top-level key commands meant for application-wide event
     		if (e.getCode() == KeyCode.L) {
     			//Load Shinagawa Site
-    			this.loadShinagawaScenario();
-    			this.setScenes();
+    			loadShinagawaScenario();
     		} else if (e.getCode() == KeyCode.R) {
     			// Make Random Site
-    			this.loadRandomScenario();
-    			this.setScenes();
+    			loadRandomScenario();
     		}
+    		
+    		setScenes();
         });
         
         // Set the stage and start the show
