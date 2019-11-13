@@ -9,14 +9,25 @@ import javafx.scene.image.ImageView;
 import javafx.scene.transform.Transform;
 
 /**
- * A raster Underlay Image
+ * A Raster Underlay Image to Display in a 3D Environment
+ * 
+ * @author Ira Winder
+ *
  */
 public class Underlay {
 
 	private Image underlay;
 	private ImageView underlayView;
 	private boolean show;
-
+	
+	/**
+	 * Initialize an empty Underlay
+	 */
+	public Underlay() {
+		underlayView = new ImageView();
+		show = true;
+	}
+	
 	/**
 	 * Construct and Underlay Image for JavaFX
 	 * 
@@ -24,9 +35,12 @@ public class Underlay {
 	 * @param scaler scale the image up or down from its native resolution
 	 * @param opacity opacity value of underlay (0 - 1)
 	 */
-	public Underlay() {
+	public Underlay(String file_path, double scaler, double opacity) {
 		underlayView = new ImageView();
 		show = true;
+		setImage(file_path);
+		setScale(scaler);
+		setOpacity(opacity);
 	}
 	
 	/**

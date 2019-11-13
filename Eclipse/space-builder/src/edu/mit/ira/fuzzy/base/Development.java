@@ -2,6 +2,7 @@ package edu.mit.ira.fuzzy.base;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.UUID;
 
 /**
  * An entire development project; (i.e. a dictionary of TileArray spaces and
@@ -13,6 +14,7 @@ import java.util.HashMap;
 public class Development {
 
 	public String name;
+	public UUID uniqueID;
 
 	// space and point dictionaries share the same key from TileArray.hashKey()
 	// Dictionaries for collection of TileArrays that compose development
@@ -26,6 +28,7 @@ public class Development {
 	 */
 	public Development(String name) {
 		this.name = name;
+		uniqueID = UUID.randomUUID();
 		spaceMap = new HashMap<String, TileArray>();
 		spaceList = new ArrayList<TileArray>();
 	}
@@ -49,10 +52,19 @@ public class Development {
 	/**
 	 * Set Name of Development
 	 * 
-	 * @param name name
+	 * @return name of development
 	 */
 	public String getName() {
 		return name;
+	}
+	
+	/**
+	 * Set UUID of Development
+	 * 
+	 * @return unique identifying number for development
+	 */
+	public UUID getUniqueID() {
+		return uniqueID;
 	}
 
 	/**

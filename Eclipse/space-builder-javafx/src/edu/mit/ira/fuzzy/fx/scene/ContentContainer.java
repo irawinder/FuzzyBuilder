@@ -22,6 +22,11 @@ public interface ContentContainer {
 	public void makeContent();
 	
 	/**
+	 * Refresh the Master Container Content
+	 */
+	public void refreshContent();
+	
+	/**
 	 * Trigger a key event
 	 * @param e
 	 */

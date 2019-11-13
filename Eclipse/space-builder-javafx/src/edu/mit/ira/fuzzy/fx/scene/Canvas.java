@@ -20,6 +20,12 @@ public class Canvas extends SubScene implements ContentContainer {
 	}
 
 	@Override
+	public void refreshContent() {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	@Override
 	public void keyPressed(KeyEvent e) {
 		// TODO Auto-generated method stub
 		

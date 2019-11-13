@@ -1,8 +1,6 @@
 package edu.mit.ira.fuzzy.fx.scene;
 
 import edu.mit.ira.fuzzy.builder.DevelopmentEditor;
-import edu.mit.ira.fuzzy.builder.sample.RandomSite;
-import edu.mit.ira.fuzzy.builder.sample.ShinagawaSite;
 import edu.mit.ira.fuzzy.fx.node.Underlay;
 import edu.mit.ira.fuzzy.fx.node.View3D;
 import javafx.scene.Group;
@@ -20,42 +18,49 @@ import javafx.scene.paint.Color;
  */
 public class Massing extends SubScene implements ContentContainer {
 	
+    // "Back End" Elements to Render to Container
+    DevelopmentEditor form_model; 
+    Underlay map_model;
+    
     SubScene scene3D, scene2D;
     View3D view3D;
-    
-    private Underlay map_model;
-	private DevelopmentEditor form_model;
-    
-    // Migrate Builder() visual parameters to GUI_FX:
-    // TODO
     
     /**
      * Initialize a new content container for Massing
      * 
      * @param subscene master container for content
      */
-    public Massing() {
+    public Massing(DevelopmentEditor form_model, Underlay map_model) {
     	super(EMPTY_GROUP, DEFAULT_WIDTH, DEFAULT_HEIGHT);
+    	this.form_model = form_model;
+    	this.map_model = map_model;
     	makeContent();
+    }
+    
+    public void set(DevelopmentEditor form_model, Underlay map_model) {
+    	this.form_model = form_model;
+    	this.map_model = map_model;
     }
     
     @Override
     public void makeContent() {
         
-    	map_model = new Underlay();
-    	form_model = new DevelopmentEditor();
-    	
     	view3D = new View3D();
     	view3D.setZoom(-1000);
     	view3D.setPan(325, 425, 0);
     	view3D.setRotateV(-20);
     	view3D.setRotateH(-45);
+    	view3D.setUpCamera();
     	
-    	// Initialize with Random Scenario
-    	loadRandomScenario(map_model, form_model, view3D);
+    	view3D.setBackground(Color.hsb(0,0,1.0));
+    	view3D.setFormModel(form_model);
+    	view3D.setMapModel(map_model);
+		view3D.render();
     	
     	scene3D = new SubScene(view3D.getGroup(), getWidth(), getHeight(), true, SceneAntialiasing.BALANCED);
-    	setViewModel(scene3D, view3D);
+    	scene3D.setRoot(view3D.getGroup());
+    	scene3D.setFill(view3D.getBackground());
+        scene3D.setCamera(view3D.getCamera());
     	
     	Label l = new Label("Massing Overlay");
     	Group controls = new Group(l);
@@ -86,73 +91,18 @@ public class Massing extends SubScene implements ContentContainer {
         
     }
     
-    // Init View Model
-    public void setViewModel(SubScene scene3D, View3D view3D) {
+    public void refreshContent() {
+    	
+    	view3D.setFormModel(form_model);
+    	view3D.setMapModel(map_model);
+		view3D.render();
     	scene3D.setRoot(view3D.getGroup());
-    	scene3D.setFill(view3D.getBackground());
-        scene3D.setCamera(view3D.getCamera());
-    }
-    
-    /**
-     * Load Random Site and View Model Parameters
-     * 
-     * @param map_model
-     * @param form_model
-     * @param view3D
-     * @param scene3D
-     */
-    public void loadRandomScenario(Underlay map_model, DevelopmentEditor form_model, View3D view3D) {
-    	map_model.setImage("data/default_site_white.png");
-    	map_model.setScale(0.5);
-    	map_model.setOpacity(1.00);
-
-    	form_model = new RandomSite(375, 375);
     	
-    	//view3D.initModel();
-    	view3D.setBackground(Color.hsb(0,0,1.0));
-    	view3D.setFormModel(form_model);
-    	view3D.setMapModel(map_model);
-		view3D.render();
-    }
-    
-    /**
-     * Load JR Site and View Model Parameters
-     * 
-     * @param map_model
-     * @param form_model
-     * @param view3D
-     * @param scene3D
-     */
-    public void loadJRScenario(Underlay map_model, DevelopmentEditor form_model, View3D view3D) {
-    	map_model.setImage("data/jr_site.png");
-    	map_model.setScale(0.5);
-    	map_model.setOpacity(0.75);
-
-    	form_model = new ShinagawaSite();
-    	
-    	//view3D.initModel();
-    	view3D.setBackground(Color.hsb(0,0,0.2));
-    	//view3D.setZoom(-1000);
-    	//view3D.setPan(719, 410, 0);
-    	//view3D.setRotateV(-20);
-    	//view3D.setRotateH(-45);
-    	view3D.setFormModel(form_model);
-    	view3D.setMapModel(map_model);
-		view3D.render();
+    	Group root = new Group(scene3D, scene2D);
+        setRoot(root);
     }
 
 	public void keyPressed(KeyEvent e) {
-
-		// Make JR Site
-		if (e.getCode() == KeyCode.L) {
-			loadJRScenario(map_model, form_model, view3D);
-			setViewModel(scene3D, view3D);
-			// Make Random Site
-		} else if (e.getCode() == KeyCode.R) {
-			
-			loadRandomScenario(map_model, form_model, view3D);
-			setViewModel(scene3D, view3D);
-		}
 
 		// Print Camera Position
 		if (e.getCode() == KeyCode.C) {

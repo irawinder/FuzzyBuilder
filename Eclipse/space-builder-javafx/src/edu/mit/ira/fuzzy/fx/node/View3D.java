@@ -32,10 +32,9 @@ import javafx.scene.transform.Translate;
  */
 public class View3D {
 
-	private Underlay map_model;
-	
 	// Includes generated geometry, settings, and 3D control points
 	private DevelopmentEditor form_model;
+	private Underlay map_model;
 	
 	// Set of All Nodes to Pass to Parent JavaFX Scene
 	private Group nodeSet;
@@ -70,7 +69,6 @@ public class View3D {
 	 */
 	public void setZoom(double distance) {
 		this.zoom = new Translate(0, 0, ensureRange(distance, -2000, -100));
-		setUpCamera();
 	}
 	
 	/**
@@ -81,7 +79,6 @@ public class View3D {
 	 */
 	public void setPan(double x, double y, double z) {
 		this.pan = new Translate(-x, z, y);
-		setUpCamera();
 	}
 	
 	/**
@@ -90,7 +87,6 @@ public class View3D {
 	 */
 	public void setRotateV(double angle) {
 		this.rotateV = new Rotate(angle, Rotate.X_AXIS);
-		setUpCamera();
 	}
 	
 	/**
@@ -99,7 +95,6 @@ public class View3D {
 	 */
 	public void setRotateH(double angle) {
 		this.rotateH = new Rotate(angle, Rotate.Y_AXIS);
-		setUpCamera();
 		
 	}
 	
