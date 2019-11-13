@@ -6,9 +6,11 @@ import edu.mit.ira.fuzzy.base.Point;
 import edu.mit.ira.fuzzy.base.TileArray;
 
 /**
- * Handles editing of a development via control points
+ * DevelopmentEditor facilitates the making of various TileArrays via Polygons and/or
+ * ControlPoints. This is the "back end" to any elements that are eventually rendered
+ * to a graphical user interface
  * 
- * @author jiw
+ * @author Ira Winder
  *
  */
 public class DevelopmentEditor extends DevelopmentBuilder {

@@ -3,6 +3,12 @@ package edu.mit.ira.fuzzy.builder.sample;
 import edu.mit.ira.fuzzy.base.ControlPoint;
 import edu.mit.ira.fuzzy.builder.DevelopmentEditor;
 
+/**
+ * Load a hard-coded polygon derived from the Shinagawa Rail project
+ * 
+ * @author Ira Winder
+ *
+ */
 public class ShinagawaSite extends DevelopmentEditor{
 	
 	public ShinagawaSite() {
@@ -102,7 +108,7 @@ public class ShinagawaSite extends DevelopmentEditor{
 		setTileTranslation(0, 0);
 
 		// Init Model from Control Points
-		buildSites(control);
+		buildSite(control);
 		buildZones(control);
 		buildFootprints(control);
 		buildBases();

@@ -5,6 +5,12 @@ import edu.mit.ira.fuzzy.base.Polygon;
 import edu.mit.ira.fuzzy.base.TileArray;
 import edu.mit.ira.fuzzy.builder.DevelopmentEditor;
 
+/**
+ * Generate a site and buildings according to a randomly generate polygon
+ * 
+ * @author Ira Winder
+ *
+ */
 public class RandomSite extends DevelopmentEditor{
 	
 	public RandomSite(float x, float y) {
@@ -23,7 +29,7 @@ public class RandomSite extends DevelopmentEditor{
 		// Initialize Random Model and Control Points
 		site_boundary.randomShape(x, y, 5, 100, 200);
 		initVertexControl(site_boundary);
-		buildSites(control);
+		buildSite(control);
 		initPlotControl();
 		buildZones(control);
 		initVoidControl();

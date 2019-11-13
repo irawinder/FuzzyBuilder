@@ -10,12 +10,10 @@ import edu.mit.ira.fuzzy.base.Polygon;
 import edu.mit.ira.fuzzy.base.TileArray;
 
 /**
- * Builder facilitates the making of various TileArrays via Polygons and/or
- * ControlPoints. Builder implements many classes from edu.mit.ira.voxel.
- * Builder should be implementable within both Processing or JavaFX GUI 
- * components.
+ * DevelopmentBuilder facilitates the making of various TileArrays via 
+ * ControlSet that is passed to it.
  * 
- * @author ira
+ * @author Ira Winder
  *
  */
 public class DevelopmentBuilder extends Development {
@@ -84,7 +82,7 @@ public class DevelopmentBuilder extends Development {
 
 		switch (change) {
 		case 's':
-			buildSites(control);
+			buildSite(control);
 		case 'z':
 			buildZones(control);
 		case 'f':
@@ -97,7 +95,7 @@ public class DevelopmentBuilder extends Development {
 	/**
 	 * Initialize Site Model
 	 */
-	public void buildSites(ControlSet control) {
+	public void buildSite(ControlSet control) {
 
 		// Define new Space Type
 		String type = "site";
