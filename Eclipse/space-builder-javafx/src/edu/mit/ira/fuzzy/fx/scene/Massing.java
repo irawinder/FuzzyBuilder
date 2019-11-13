@@ -57,7 +57,7 @@ public class Massing extends SubScene implements ContentContainer {
     	scene3D = new SubScene(view3D.getGroup(), getWidth(), getHeight(), true, SceneAntialiasing.BALANCED);
     	setViewModel(scene3D, view3D);
     	
-    	Label l = new Label("UI Overlay");
+    	Label l = new Label("Massing Overlay");
     	Group controls = new Group(l);
         scene2D = new SubScene(controls, getWidth(), getHeight());
         scene2D.setFill(Color.TRANSPARENT);
