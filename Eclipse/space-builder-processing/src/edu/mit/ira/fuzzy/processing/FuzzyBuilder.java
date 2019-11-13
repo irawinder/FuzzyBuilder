@@ -3,6 +3,8 @@ package edu.mit.ira.fuzzy.processing;
 import edu.mit.ira.fuzzy.base.ControlPoint;
 import edu.mit.ira.fuzzy.base.Point;
 import edu.mit.ira.fuzzy.builder.DevelopmentEditor;
+import edu.mit.ira.fuzzy.builder.sample.RandomSite;
+import edu.mit.ira.fuzzy.builder.sample.ShinagawaSite;
 import processing.core.PApplet;
 
 /**
@@ -74,6 +76,16 @@ public class FuzzyBuilder extends PApplet {
 	 * Runs once when key is pressed
 	 */
 	public void keyPressed() {
+		
+		switch(key ) {
+		case 'r':
+			editor = new RandomSite(400, 200);
+			break;
+		case 'l':
+			editor = new ShinagawaSite();
+			break;
+		}
+		
 		editor.keyPressed(key, keyCode, CODED, LEFT, RIGHT, DOWN, UP);
 		map.keyPressed(key);
 		window.keyPressed(key);
@@ -131,7 +143,7 @@ public class FuzzyBuilder extends PApplet {
 				if (distance < 15) {
 					if (distance < min_distance) {
 						min_distance = distance;
-						mousePoint = new Point(x, y);
+						mousePoint = new Point(x + random(0.01f), y + random(0.01f));
 					}
 				}
 			}

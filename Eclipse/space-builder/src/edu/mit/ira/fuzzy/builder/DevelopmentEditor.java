@@ -3,7 +3,6 @@ package edu.mit.ira.fuzzy.builder;
 import edu.mit.ira.fuzzy.base.ControlPoint;
 import edu.mit.ira.fuzzy.base.ControlSet;
 import edu.mit.ira.fuzzy.base.Point;
-import edu.mit.ira.fuzzy.base.Polygon;
 import edu.mit.ira.fuzzy.base.TileArray;
 
 /**
@@ -39,9 +38,9 @@ public class DevelopmentEditor extends DevelopmentBuilder {
 
 	// Track attributes for any new control points
 	public String new_control_type;
-	private int vert_counter;
-	private int plot_counter;
-	private int void_counter;
+	protected int vert_counter;
+	protected int plot_counter;
+	protected int void_counter;
 
 	// Update model state?
 	public boolean site_change_detected;
@@ -68,60 +67,17 @@ public class DevelopmentEditor extends DevelopmentBuilder {
 
 		showText = true;
 		viewModel = "DOT";
-		reset();
+		resetEditor();
 	}
 	
 	/**
 	 * Build State When new model is loaded or randomly generated during application
 	 * operation
 	 */
-	public void reset() {
+	public void resetEditor() {
 		buildingZoneState();
 		addPoint = false;
 		removePoint = false;
-	}
-	
-	/**
-	 * Initialize Vertex Control Points
-	 */
-	public void initVertexControl(Polygon boundary) {
-		vert_counter = 1;
-		String point_prefix = "Vertex";
-		for (Point p : boundary.getCorners()) {
-			control.addPoint(point_prefix + " " + vert_counter, point_prefix, p.x, p.y);
-			vert_counter++;
-		}
-	}
-
-	/**
-	 * Initialize Plot Control Points
-	 */
-	public void initPlotControl() {
-		plot_counter = 1;
-		for (TileArray space : spaceList()) {
-			if (space.type.equals("site")) {
-				String point_prefix = "Plot";
-				for (int i = 0; i < 3; i++) {
-					control.addPoint(point_prefix + " " + plot_counter, point_prefix, space);
-					plot_counter++;
-				}
-			}
-		}
-	}
-
-	/**
-	 * Initialize Void Control Points
-	 */
-	public void initVoidControl() {
-		void_counter = 1;
-		for (TileArray space : spaceList()) {
-			// Add Control Point to Zone
-			if (space.type.equals("zone")) {
-				String point_prefix = "Void";
-				void_counter++;
-				control.addPoint(point_prefix + " " + void_counter, point_prefix, space);
-			}
-		}
 	}
 	
 	/**
@@ -167,24 +123,6 @@ public class DevelopmentEditor extends DevelopmentBuilder {
 		} else if (type.equals("Void")) {
 			foot_change_detected = true;
 		}
-	}
-	
-	/**
-	 * Generates a randomly configured model at x, y
-	 * 
-	 * @param x
-	 * @param y
-	 */
-	public void loadRandomModel(float x, float y) {
-		// Init Random Model and Control Points
-		site_boundary.randomShape(x, y, 5, 200, 300);
-		initVertexControl(site_boundary);
-		buildSites(control);
-		initPlotControl();
-		buildZones(control);
-		initVoidControl();
-		buildFootprints(control);
-		buildBases();
 	}
 	
 	/**
@@ -494,12 +432,6 @@ public class DevelopmentEditor extends DevelopmentBuilder {
 	public void keyPressed(char key, int keyCode, int coded, int left, int right, int down, int up) {
 
 		switch (key) {
-		case 'r':
-			initEditor();
-			control = new ControlSet();
-			loadRandomModel(400, 200);
-			reset();
-			break;
 		case 'a':
 			addPoint = !addPoint;
 			removePoint = false;
