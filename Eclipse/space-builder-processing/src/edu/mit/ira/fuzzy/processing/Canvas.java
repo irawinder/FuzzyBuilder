@@ -1,20 +1,20 @@
-package edu.mit.ira.builder.processing;
+package edu.mit.ira.fuzzy.processing;
 
 import edu.mit.ira.fuzzy.base.ControlPoint;
 import edu.mit.ira.fuzzy.base.Tile;
 import edu.mit.ira.fuzzy.base.TileArray;
 import edu.mit.ira.fuzzy.builder.DevelopmentEditor;
-import processing.core.PImage;
+import processing.core.PConstants;
 
 public class Canvas {
 	
-	private static GUI_Processing applet;
+	private FuzzyBuilder applet;
 	
 	// Is camera 3D? Otherwise it's 2D;
 	//
 	public boolean cam3D;
 	
-	public Canvas(GUI_Processing applet) {
+	public Canvas(FuzzyBuilder applet) {
 		this.applet = applet;
 		cam3D = true;
 	}
@@ -22,7 +22,7 @@ public class Canvas {
 	// Front-End Methods that rely heavily on Processing Library Functions
 	//
 	public void render(Underlay map, DevelopmentEditor editor) {
-		applet.hint(applet.ENABLE_DEPTH_TEST);
+		applet.hint(PConstants.ENABLE_DEPTH_TEST);
 		applet.background(255);
 		
 		if(cam3D) {
@@ -51,7 +51,7 @@ public class Canvas {
 					// Draw Zones
 					//
 					if (space.isType("zone")) {
-						applet.colorMode(applet.HSB);
+						applet.colorMode(PConstants.HSB);
 						int col = applet.color(space.hue, 100, 225);
 						for (Tile t : space.tileList())
 							renderTile(t, col, -1);
@@ -60,7 +60,7 @@ public class Canvas {
 					// Draw Footprints
 					//
 					if (space.isType("footprint")) {
-						applet.colorMode(applet.HSB);
+						applet.colorMode(PConstants.HSB);
 						int col;
 						if (space.name.equals("Building")) {
 							col = applet.color(space.hue, 150, 200);
@@ -80,7 +80,7 @@ public class Canvas {
 					// Draw Bases
 					//
 					if (space.isType("base")) {
-						applet.colorMode(applet.HSB);
+						applet.colorMode(PConstants.HSB);
 						int col = applet.color(space.hue, 150, 200);
 						for (Tile t : space.tileList()) {
 							// Only draws ground plane if in 2D view mode
@@ -109,10 +109,10 @@ public class Canvas {
 		applet.translate(0, 0, -2);
 		applet.beginShape();
 		// for(Point p : editor.site_boundary.getCorners()) vertex(p.x, p.y);
-		applet.endShape(applet.CLOSE);
+		applet.endShape(PConstants.CLOSE);
 		applet.popMatrix();
 
-		applet.hint(applet.DISABLE_DEPTH_TEST);
+		applet.hint(PConstants.DISABLE_DEPTH_TEST);
 
 		// Draw Tagged Control Points
 		//
@@ -153,10 +153,10 @@ public class Canvas {
 				applet.stroke(200, 150);
 				applet.strokeWeight(1);
 				int textWidth = 7 * p.getTag().length();
-				applet.rectMode(applet.CORNER);
+				applet.rectMode(PConstants.CORNER);
 				applet.rect(x + 10, y - 7, textWidth, 15, 5);
 				applet.fill(50);
-				applet.textAlign(applet.CENTER, applet.CENTER);
+				applet.textAlign(PConstants.CENTER, PConstants.CENTER);
 				applet.text(p.getTag(), x + 10 + (int) textWidth / 2, y - 1);
 				if (cam3D)
 					cam3D(); // sets back to 3D camera, if in 3D mode
@@ -168,10 +168,10 @@ public class Canvas {
 		if (editor.hovering != null && editor.hovering.active()) {
 			int col = applet.color(50);
 			if (editor.removePoint) {
-				applet.colorMode(applet.RGB);
+				applet.colorMode(PConstants.RGB);
 				col = applet.color(255, 0, 0);
 			} else if (editor.addPoint) {
-				applet.colorMode(applet.RGB);
+				applet.colorMode(PConstants.RGB);
 				col = applet.color(0, 255, 00);
 			}
 			renderCross(editor.hovering.x, editor.hovering.y, 4, col, 2, 1);
@@ -183,7 +183,7 @@ public class Canvas {
 		// Draw Info Text
 		//
 		applet.fill(100);
-		applet.textAlign(applet.LEFT, applet.TOP);
+		applet.textAlign(PConstants.LEFT, PConstants.TOP);
 		String info = "";
 		info += "Click and drag control points";
 		info += "\n";
@@ -243,7 +243,7 @@ public class Canvas {
 		//
 		if (editor.showTiles) {
 			applet.fill(100);
-			applet.textAlign(applet.LEFT, applet.TOP);
+			applet.textAlign(PConstants.LEFT, PConstants.TOP);
 			String summary = "";
 			summary += "View Model: " + editor.viewModel;
 			summary += "\n" + "Tile Dimensions:";
@@ -263,7 +263,7 @@ public class Canvas {
 		// Mouse Cursor Info
 		//
 		applet.fill(50);
-		applet.textAlign(applet.LEFT, applet.TOP);
+		applet.textAlign(PConstants.LEFT, PConstants.TOP);
 		if (editor.addPoint) {
 			applet.text("NEW (" + editor.new_control_type + ")", applet.mouseX + 10, applet.mouseY - 20);
 		} else if (editor.removePoint) {
@@ -289,7 +289,7 @@ public class Canvas {
 			applet.ellipse(0, 0, scaler * t.scale_uv, scaler * t.scale_uv);
 		} else if (applet.editor.viewModel.equals("VOXEL")) {
 			applet.rotate(applet.editor.tile_rotation);
-			applet.rectMode(applet.CENTER);
+			applet.rectMode(PConstants.CENTER);
 			applet.rect(0, 0, scaler * t.scale_uv, scaler * t.scale_uv);
 		} else {
 			applet.ellipse(0, 0, scaler * t.scale_uv, scaler * t.scale_uv);
@@ -327,7 +327,7 @@ public class Canvas {
 	public void cam3D() {
 		applet.camera(200, 400, 200, 400, 200, 0, 0, 0, -1);
 		applet.lights();
-		applet.colorMode(applet.HSB);
+		applet.colorMode(PConstants.HSB);
 		applet.pointLight(0, 0, 100, 50, 50, 50);
 	}
 

@@ -1,4 +1,4 @@
-package edu.mit.ira.builder.processing;
+package edu.mit.ira.fuzzy.processing;
 
 import processing.core.PApplet;
 import processing.core.PImage;

@@ -1,4 +1,4 @@
-package edu.mit.ira.builder.processing;
+package edu.mit.ira.fuzzy.processing;
 
 import edu.mit.ira.fuzzy.base.ControlPoint;
 import edu.mit.ira.fuzzy.base.Point;
@@ -6,12 +6,12 @@ import edu.mit.ira.fuzzy.builder.DevelopmentEditor;
 import processing.core.PApplet;
 
 /**
- * A Processing GUI that opens a window and allow user interaction
+ * A Processing GUI that opens a window and allows user interaction
  * 
  * @author ira winder
  * 
  */
-public class GUI_Processing extends PApplet {
+public class FuzzyBuilder extends PApplet {
 	
 	DevelopmentEditor editor;
 	Underlay map;
@@ -23,7 +23,7 @@ public class GUI_Processing extends PApplet {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		PApplet.main("edu.mit.ira.builder.processing.GUI_Processing");
+		PApplet.main("edu.mit.ira.fuzzy.processing.FuzzyBuilder");
 	}
 
 	/**
@@ -31,7 +31,7 @@ public class GUI_Processing extends PApplet {
 	 */
 	public void settings() {
 		
-		// Init Application canvas size to match site_map
+		// Initialize Application canvas size to match site_map
 		//size(map.getWidth(), map.getHeight(), P3D);
 
 		// Set size of canvas to (X, Y) pixels
@@ -43,7 +43,7 @@ public class GUI_Processing extends PApplet {
 	 */
 	public void setup() {
 
-		surface.setTitle("Space Builder");
+		surface.setTitle("FuzzyBuilder");
 		window = new Canvas(this);
 		
 		editor = new DevelopmentEditor();
