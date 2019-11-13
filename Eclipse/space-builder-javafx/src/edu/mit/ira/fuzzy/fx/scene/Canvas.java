@@ -9,20 +9,13 @@ public class Canvas extends SubScene implements ContentContainer {
 	
 	public Canvas() {
 		super(EMPTY_GROUP, DEFAULT_WIDTH, DEFAULT_HEIGHT);
-		makeContent();
+		setContent();
 	}
 
 	@Override
-	public void makeContent() {
+	public void setContent() {
 		StackPane toolbarContent  = new StackPane(new Label("Visual Programming Canvas"));
         setRoot(toolbarContent);
-		
-	}
-
-	@Override
-	public void refreshContent() {
-		// TODO Auto-generated method stub
-		
 	}
 	
 	@Override

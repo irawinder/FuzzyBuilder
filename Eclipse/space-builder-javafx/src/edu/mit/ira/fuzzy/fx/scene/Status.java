@@ -9,19 +9,13 @@ public class Status extends SubScene implements ContentContainer {
 	
 	public Status() {
 		super(EMPTY_GROUP, DEFAULT_WIDTH, DEFAULT_HEIGHT);
-		makeContent();
+		setContent();
 	}
 
 	@Override
-	public void makeContent() {
+	public void setContent() {
 		StackPane toolbarContent  = new StackPane(new Label("Status Bar"));
         setRoot(toolbarContent);
-		
-	}
-
-	@Override
-	public void refreshContent() {
-		// TODO Auto-generated method stub
 		
 	}
 	

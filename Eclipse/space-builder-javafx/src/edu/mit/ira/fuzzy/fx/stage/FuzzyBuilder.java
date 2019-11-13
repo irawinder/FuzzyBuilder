@@ -31,11 +31,11 @@ public class FuzzyBuilder extends Application {
 	final private String APPLICATION_NAME = "Fuzzy Builder";
 	
 	// "Back End" - Current Scenario Object Model
-	DevelopmentEditor scenario_form;
-	Underlay scenario_map;;
+	private static DevelopmentEditor scenario_form;
+	private static Underlay scenario_map;;
 	
 	// "Front End" - Content Containers for the Application
-	SubScene toolbar, navigate, version, canvas, massing, outcome, commit, status;
+	private static SubScene toolbar, navigate, version, canvas, massing, outcome, commit, status;
 	
 	public static void main(String[] args) {
         launch();
@@ -48,17 +48,19 @@ public class FuzzyBuilder extends Application {
     	appWindow.setTitle(APPLICATION_NAME);
 		
     	// Begin the application with a random scenario
-    	loadRandomScenario();
+    	this.loadRandomScenario();
 		
     	//Initialize Content Containers (SubScenes)
     	toolbar = new Toolbar();
 		version = new Version();
 		canvas = new Canvas();
-		massing = new Massing(scenario_form, scenario_map);
+		massing = new Massing();
 		outcome = new Outcome();
 		commit = new Commit();
 		navigate = new Navigate();
 		status = new Status();
+		
+		setScenes();
 		
 		// Assemble all SubScenes into the main content scene
 		Scene content = Layout.build(toolbar, navigate, version, canvas, massing, outcome, commit, status);
@@ -79,12 +81,12 @@ public class FuzzyBuilder extends Application {
         	// Handle Top-level key commands meant for application-wide event
     		if (e.getCode() == KeyCode.L) {
     			//Load Shinagawa Site
-    			loadShinagawaScenario();
-    			refreshScenes();
+    			this.loadShinagawaScenario();
+    			this.setScenes();
     		} else if (e.getCode() == KeyCode.R) {
     			// Make Random Site
-    			loadRandomScenario();
-    			refreshScenes();
+    			this.loadRandomScenario();
+    			this.setScenes();
     		}
         });
         
@@ -115,19 +117,17 @@ public class FuzzyBuilder extends Application {
     	scenario_map = new Underlay("data/jr_site.png", 0.5, 0.75);
     }
     
-    public void refreshScenes() {
+    public void setScenes() {
     	
-    	
-    	((Toolbar)   toolbar).refreshContent();
-		((Version)   version).refreshContent();
-		((Canvas)     canvas).refreshContent();
+//    	((Toolbar)   toolbar).setContent();
+//		((Version)   version).setContent();
+//		((Canvas)     canvas).setContent();
 		
 		((Massing)   massing).set(scenario_form, scenario_map);
-		((Massing)   massing).refreshContent();
 		
-		((Outcome)   outcome).refreshContent();
-		((Commit)     commit).refreshContent();
-		((Navigate) navigate).refreshContent();
-		((Status)     status).refreshContent();
+//		((Outcome)   outcome).setContent();
+//		((Commit)     commit).setContent();
+//		((Navigate) navigate).setContent();
+//		((Status)     status).setContent();
     }
 }
