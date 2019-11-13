@@ -1,5 +1,5 @@
 # Fuzzy Builder
-FuzzyBuilder is an application for generating "fuzzy" resolution development scenarios on a configurable parcel, meant for a process somerwhere between site acquisition and highly resolved scenario evaluation. [Under Construction]
+FuzzyBuilder is an application for generating "fuzzy" resolution development scenarios on a configurable parcel, meant for a process somewhere between site acquisition and highly resolved scenario evaluation. [Under Construction]
 
 ![Fuzzy Builder by Ira Winder](screenshots/Screen%20Shot%202019-07-23%20at%201.36.52%20PM.png "Fuzzy Builder by Ira Winder")
 
@@ -8,7 +8,7 @@ FuzzyBuilder is an application for generating "fuzzy" resolution development sce
 1. Make sure you have installed the latest version of [Java](https://www.java.com/verify/)
 2. Download [Processing 3](https://processing.org/download/)
 3. Clone or download the repository to your computer
-4. Open and run "Processing/Main/Main.pde" with Processing 3
+4. Open and run "Processing/FuzzyBuilder/FuzzyBuilder.pde" with Processing 3
  
 ## How to use the Eclipse IDE for files in /Eclipse
 
