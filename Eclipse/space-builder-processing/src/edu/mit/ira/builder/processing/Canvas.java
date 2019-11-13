@@ -24,7 +24,13 @@ public class Canvas {
 	public void render(Underlay map, DevelopmentEditor editor) {
 		applet.hint(applet.ENABLE_DEPTH_TEST);
 		applet.background(255);
-
+		
+		if(cam3D) {
+			cam3D();
+		} else {
+			cam2D();
+		}
+		
 		// Draw Underlay
 		renderUnderlay(map);
 

@@ -117,31 +117,24 @@ public class GUI_Processing extends PApplet {
 	Point newPointAtMouse() {
 		Point mousePoint = null;
 
-		if (window.cam3D) {
-			window.cam3D();
+		// generate a grid of points to search for nearest match
+		// centered at (0,0)
+		int breadth = 1000;
+		int interval = 5;
 
-			// generate a grid of points to search for nearest match
-			// centered at (0,0)
-			int breadth = 1000;
-			int interval = 5;
-
-			float min_distance = Float.POSITIVE_INFINITY;
-			for (int x = -breadth; x < breadth; x += interval) {
-				for (int y = -breadth; y < breadth; y += interval) {
-					float dist_x = mouseX - screenX(x, y);
-					float dist_y = mouseY - screenY(x, y);
-					float distance = (float) Math.sqrt(Math.pow(dist_x, 2) + Math.pow(dist_y, 2));
-					if (distance < 15) {
-						if (distance < min_distance) {
-							min_distance = distance;
-							mousePoint = new Point(x, y);
-						}
+		float min_distance = Float.POSITIVE_INFINITY;
+		for (int x = -breadth; x < breadth; x += interval) {
+			for (int y = -breadth; y < breadth; y += interval) {
+				float dist_x = mouseX - screenX(x, y);
+				float dist_y = mouseY - screenY(x, y);
+				float distance = (float) Math.sqrt(Math.pow(dist_x, 2) + Math.pow(dist_y, 2));
+				if (distance < 15) {
+					if (distance < min_distance) {
+						min_distance = distance;
+						mousePoint = new Point(x, y);
 					}
 				}
 			}
-		} else {
-			window.cam2D();
-			mousePoint = new Point(mouseX, mouseY);
 		}
 		return mousePoint;
 	}
@@ -156,15 +149,9 @@ public class GUI_Processing extends PApplet {
 		float min_distance = Float.POSITIVE_INFINITY;
 		for (ControlPoint p : editor.control.points()) {
 			float dist_x, dist_y;
-			if (window.cam3D) {
-				window.cam3D();
-				dist_x = mouseX - screenX(p.x, p.y);
-				dist_y = mouseY - screenY(p.x, p.y);
-			} else {
-				window.cam2D();
-				dist_x = mouseX - p.x;
-				dist_y = mouseY - p.y;
-			}
+			dist_x = mouseX - screenX(p.x, p.y);
+			dist_y = mouseY - screenY(p.x, p.y);
+
 			float distance = (float) Math.sqrt(Math.pow(dist_x, 2) + Math.pow(dist_y, 2));
 			if (distance < 15) {
 				if (distance < min_distance) {
