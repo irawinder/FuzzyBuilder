@@ -1,10 +1,10 @@
 package edu.mit.ira.builder.processing;
 
-import edu.mit.ira.builder.DevelopmentEditor;
-import edu.mit.ira.voxel.ControlPoint;
-import edu.mit.ira.voxel.Point;
-import edu.mit.ira.voxel.Tile;
-import edu.mit.ira.voxel.TileArray;
+import edu.mit.ira.fuzzy.base.ControlPoint;
+import edu.mit.ira.fuzzy.base.Point;
+import edu.mit.ira.fuzzy.base.Tile;
+import edu.mit.ira.fuzzy.base.TileArray;
+import edu.mit.ira.fuzzy.builder.DevelopmentEditor;
 import processing.core.PApplet;
 import processing.core.PImage;
 

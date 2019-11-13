@@ -1,4 +1,4 @@
-package edu.mit.ira.voxel;
+package edu.mit.ira.fuzzy.base;
 
 /**
  * ControlPoint class, a point with associated abstract attributes of tag, type,

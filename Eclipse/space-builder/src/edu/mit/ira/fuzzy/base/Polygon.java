@@ -1,4 +1,4 @@
-package edu.mit.ira.voxel;
+package edu.mit.ira.fuzzy.base;
 
 import java.util.ArrayList;
 import java.util.Random;

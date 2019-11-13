@@ -1,13 +1,13 @@
-package edu.mit.ira.builder;
+package edu.mit.ira.fuzzy.builder;
 
 import java.util.ArrayList;
 
-import edu.mit.ira.voxel.Control;
-import edu.mit.ira.voxel.ControlPoint;
-import edu.mit.ira.voxel.Development;
-import edu.mit.ira.voxel.Point;
-import edu.mit.ira.voxel.Polygon;
-import edu.mit.ira.voxel.TileArray;
+import edu.mit.ira.fuzzy.base.ControlPoint;
+import edu.mit.ira.fuzzy.base.ControlSet;
+import edu.mit.ira.fuzzy.base.Development;
+import edu.mit.ira.fuzzy.base.Point;
+import edu.mit.ira.fuzzy.base.Polygon;
+import edu.mit.ira.fuzzy.base.TileArray;
 
 /**
  * Builder facilitates the making of various TileArrays via Polygons and/or
@@ -80,7 +80,7 @@ public class DevelopmentBuilder extends Development {
 	/**
 	 * Update Model:
 	 */
-	public void updateModel(char change, Control control) {
+	public void updateModel(char change, ControlSet control) {
 
 		switch (change) {
 		case 's':
@@ -97,7 +97,7 @@ public class DevelopmentBuilder extends Development {
 	/**
 	 * Initialize Site Model
 	 */
-	public void buildSites(Control control) {
+	public void buildSites(ControlSet control) {
 
 		// Define new Space Type
 		String type = "site";
@@ -121,7 +121,7 @@ public class DevelopmentBuilder extends Development {
 	/**
 	 * Subdivide the site into Zones
 	 */
-	public void buildZones(Control control) {
+	public void buildZones(ControlSet control) {
 
 		// Define new Space Type
 		String type = "zone";
@@ -151,7 +151,7 @@ public class DevelopmentBuilder extends Development {
 	/**
 	 * Subdivide Zones into Footprints
 	 */
-	public void buildFootprints(Control control) {
+	public void buildFootprints(ControlSet control) {
 
 		// Define new Space Type
 		String type = "footprint";

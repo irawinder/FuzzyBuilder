@@ -1,4 +1,4 @@
-package edu.mit.ira.voxel;
+package edu.mit.ira.fuzzy.base;
 
 /**
  * A 3D Point object with x, y, and z value

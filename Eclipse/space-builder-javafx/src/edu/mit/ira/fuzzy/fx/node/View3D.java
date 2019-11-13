@@ -1,10 +1,10 @@
 package edu.mit.ira.fuzzy.fx.node;
 
-import edu.mit.ira.builder.DevelopmentBuilder;
-import edu.mit.ira.voxel.ControlPoint;
-import edu.mit.ira.voxel.Point;
-import edu.mit.ira.voxel.Tile;
-import edu.mit.ira.voxel.TileArray;
+import edu.mit.ira.fuzzy.base.ControlPoint;
+import edu.mit.ira.fuzzy.base.Point;
+import edu.mit.ira.fuzzy.base.Tile;
+import edu.mit.ira.fuzzy.base.TileArray;
+import edu.mit.ira.fuzzy.builder.DevelopmentBuilder;
 import javafx.scene.Camera;
 import javafx.scene.Group;
 import javafx.scene.Node;

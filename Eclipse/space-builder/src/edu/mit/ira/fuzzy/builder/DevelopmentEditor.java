@@ -1,10 +1,10 @@
-package edu.mit.ira.builder;
+package edu.mit.ira.fuzzy.builder;
 
-import edu.mit.ira.voxel.Control;
-import edu.mit.ira.voxel.ControlPoint;
-import edu.mit.ira.voxel.Point;
-import edu.mit.ira.voxel.Polygon;
-import edu.mit.ira.voxel.TileArray;
+import edu.mit.ira.fuzzy.base.ControlPoint;
+import edu.mit.ira.fuzzy.base.ControlSet;
+import edu.mit.ira.fuzzy.base.Point;
+import edu.mit.ira.fuzzy.base.Polygon;
+import edu.mit.ira.fuzzy.base.TileArray;
 
 /**
  * Handles editing of a development via control points
@@ -15,7 +15,7 @@ import edu.mit.ira.voxel.TileArray;
 public class DevelopmentEditor extends DevelopmentBuilder {
 	
 	// Intermediate ControlPoints used to generate Development()
-	public Control control;
+	public ControlSet control;
 
 	// Hide or Show Tiles or Polygons
 	public boolean showTiles, showPolygons, showText;
@@ -59,7 +59,7 @@ public class DevelopmentEditor extends DevelopmentBuilder {
 	public void initEditor() {
 
 		// Init Control Points
-		control = new Control();
+		control = new ControlSet();
 
 		new_control_type = "zone";
 		editVertices = false;
@@ -348,7 +348,7 @@ public class DevelopmentEditor extends DevelopmentBuilder {
 		switch (key) {
 		case 'r':
 			initEditor();
-			control = new Control();
+			control = new ControlSet();
 			loadRandomModel(400, 200);
 			reset();
 			break;
@@ -475,11 +475,6 @@ public class DevelopmentEditor extends DevelopmentBuilder {
 				site_change_detected = true;
 			}
 		}
-	}
-
-	private void println(String string) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	/**

@@ -1,10 +1,10 @@
 package edu.mit.ira.fuzzy.fx.scene;
 
-import edu.mit.ira.builder.DevelopmentBuilder;
+import edu.mit.ira.fuzzy.base.ControlPoint;
+import edu.mit.ira.fuzzy.base.ControlSet;
+import edu.mit.ira.fuzzy.builder.DevelopmentBuilder;
 import edu.mit.ira.fuzzy.fx.node.Underlay;
 import edu.mit.ira.fuzzy.fx.node.View3D;
-import edu.mit.ira.voxel.Control;
-import edu.mit.ira.voxel.ControlPoint;
 import javafx.scene.Group;
 import javafx.scene.SceneAntialiasing;
 import javafx.scene.SubScene;
@@ -153,7 +153,7 @@ public class Massing extends SubScene implements ContentContainer {
 		// Eventually, we need a method that imports these
 		// values from external data (e.g. csv)
 
-		form_model.control = new Control();
+		form_model.control = new ControlSet();
 
 		int vert_counter = 1;
 		String vertex_prefix = "Vertex";

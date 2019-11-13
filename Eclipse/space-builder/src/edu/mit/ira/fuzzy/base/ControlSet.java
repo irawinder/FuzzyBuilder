@@ -1,22 +1,22 @@
-package edu.mit.ira.voxel;
+package edu.mit.ira.fuzzy.base;
 
 import java.util.ArrayList;
 import java.util.Random;
 
 /**
- * Control Class is for managing Control Points
+ * Control Class is for managing a set of multiple Control Points
  * 
  * @author ira
  *
  */
-public class Control {
+public class ControlSet {
 
 	private ArrayList<ControlPoint> cPoints;
 
 	/**
 	 * Construct Emply List of Control Points
 	 */
-	public Control() {
+	public ControlSet() {
 		cPoints = new ArrayList<ControlPoint>();
 	}
 
