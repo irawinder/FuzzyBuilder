@@ -70,7 +70,7 @@ public class DevelopmentEditor extends DevelopmentBuilder {
 		viewModel = "DOT";
 		reset();
 	}
-
+	
 	/**
 	 * Build State When new model is loaded or randomly generated during application
 	 * operation
@@ -79,9 +79,133 @@ public class DevelopmentEditor extends DevelopmentBuilder {
 		buildingZoneState();
 		addPoint = false;
 		removePoint = false;
-
+	}
+	
+	/**
+	 * Initialize Vertex Control Points
+	 */
+	public void initVertexControl(Polygon boundary) {
+		vert_counter = 1;
+		String point_prefix = "Vertex";
+		for (Point p : boundary.getCorners()) {
+			control.addPoint(point_prefix + " " + vert_counter, point_prefix, p.x, p.y);
+			vert_counter++;
+		}
 	}
 
+	/**
+	 * Initialize Plot Control Points
+	 */
+	public void initPlotControl() {
+		plot_counter = 1;
+		for (TileArray space : spaceList()) {
+			if (space.type.equals("site")) {
+				String point_prefix = "Plot";
+				for (int i = 0; i < 3; i++) {
+					control.addPoint(point_prefix + " " + plot_counter, point_prefix, space);
+					plot_counter++;
+				}
+			}
+		}
+	}
+
+	/**
+	 * Initialize Void Control Points
+	 */
+	public void initVoidControl() {
+		void_counter = 1;
+		for (TileArray space : spaceList()) {
+			// Add Control Point to Zone
+			if (space.type.equals("zone")) {
+				String point_prefix = "Void";
+				void_counter++;
+				control.addPoint(point_prefix + " " + void_counter, point_prefix, space);
+			}
+		}
+	}
+	
+	/**
+	 * Add a new Control point at (x,y)
+	 * 
+	 * @param x
+	 * @param y
+	 */
+	public void addControlPoint(float x, float y) {
+		if (new_control_type.equals("Vertex")) {
+			control.addPoint(new_control_type + " " + vert_counter, new_control_type, x, y);
+			vert_counter++;
+		} else if (new_control_type.equals("Plot")) {
+			control.addPoint(new_control_type + " " + plot_counter, new_control_type, x, y);
+			plot_counter++;
+		} else if (new_control_type.equals("Void")) {
+			control.addPoint(new_control_type + " " + void_counter, new_control_type, x, y);
+			void_counter++;
+		}
+		detectChange(new_control_type);
+	}
+
+	/**
+	 * Remove a given ControlPoint
+	 * 
+	 * @param point
+	 */
+	public void removeControlPoint(ControlPoint point) {
+		control.removePoint(point);
+		detectChange(point.getType());
+	}
+	
+	/**
+	 * detect change based upon a type string
+	 * 
+	 * @param type type of ControlPoint that is edited
+	 */
+	public void detectChange(String type) {
+		if (type.equals("Vertex")) {
+			site_change_detected = true;
+		} else if (type.equals("Plot")) {
+			zone_change_detected = true;
+		} else if (type.equals("Void")) {
+			foot_change_detected = true;
+		}
+	}
+	
+	/**
+	 * Generates a randomly configured model at x, y
+	 * 
+	 * @param x
+	 * @param y
+	 */
+	public void loadRandomModel(float x, float y) {
+		// Init Random Model and Control Points
+		site_boundary.randomShape(x, y, 5, 200, 300);
+		initVertexControl(site_boundary);
+		buildSites(control);
+		initPlotControl();
+		buildZones(control);
+		initVoidControl();
+		buildFootprints(control);
+		buildBases();
+	}
+	
+	/**
+	 * Update Model:
+	 */
+	public void updateModel() {
+
+		char change = '0';
+		if (site_change_detected) {
+			site_change_detected = false;
+			change = 's';
+		} else if (zone_change_detected) {
+			zone_change_detected = false;
+			change = 'z';
+		} else if (foot_change_detected) {
+			foot_change_detected = false;
+			change = 'f';
+		}
+		updateModel(change, control);
+	}
+	
 	/**
 	 * Allow editing of vertices
 	 */
@@ -273,7 +397,7 @@ public class DevelopmentEditor extends DevelopmentBuilder {
 		editVoids = false;
 		control.off();
 	}
-
+	
 	/**
 	 * Determine if a space is to be rendered in a given state
 	 * 
@@ -297,9 +421,9 @@ public class DevelopmentEditor extends DevelopmentBuilder {
 			return false;
 		}
 	}
-
+	
 	/**
-	 * Designed to run every GUI frame to check mouse position
+	 * Designed to run on any mouse movement to check mouse position
 	 * 
 	 * @param mousePressed true if mouse button is pressed down
 	 * @param mouseX       x-coordinate of mouse on screen
@@ -331,7 +455,31 @@ public class DevelopmentEditor extends DevelopmentBuilder {
 			detectChange(selected.getType());
 		}
 	}
+	
+	/**
+	 * Triggered once when any mouse button is pressed
+	 * 
+	 * @param new_point New Point at mouse location
+	 */
+	public void mousePressed(Point new_point) {
+		if (addPoint) {
+			Point atMouse = new_point;
+			addControlPoint(atMouse.x, atMouse.y);
+		} else {
+			selected = hovering;
+			if (removePoint) {
+				removeControlPoint(selected);
+			}
+		}
+	}
 
+	/*
+	 * Runs once when mouse button is released
+	 */
+	public void deselect() {
+		selected = null;
+	}
+	
 	/**
 	 * Trigger when any key is pressed, parameters passed from GUI
 	 * 
@@ -476,154 +624,4 @@ public class DevelopmentEditor extends DevelopmentBuilder {
 			}
 		}
 	}
-
-	/**
-	 * Triggered once when any mouse button is pressed
-	 * 
-	 * @param new_point New Point at mouse location
-	 */
-	public void mousePressed(Point new_point) {
-		if (addPoint) {
-			Point atMouse = new_point;
-			addControlPoint(atMouse.x, atMouse.y);
-		} else {
-			selected = hovering;
-			if (removePoint) {
-				removeControlPoint(selected);
-			}
-		}
-	}
-
-	/*
-	 * Runs once when mouse button is released
-	 */
-	public void deselect() {
-		selected = null;
-	}
-
-	/**
-	 * Update Model:
-	 */
-	public void updateModel() {
-
-		char change = '0';
-		if (site_change_detected) {
-			site_change_detected = false;
-			change = 's';
-		} else if (zone_change_detected) {
-			zone_change_detected = false;
-			change = 'z';
-		} else if (foot_change_detected) {
-			foot_change_detected = false;
-			change = 'f';
-		}
-		updateModel(change, control);
-	}
-
-	/**
-	 * detect change based upon a type string
-	 * 
-	 * @param type type of ControlPoint that is edited
-	 */
-	public void detectChange(String type) {
-		if (type.equals("Vertex")) {
-			site_change_detected = true;
-		} else if (type.equals("Plot")) {
-			zone_change_detected = true;
-		} else if (type.equals("Void")) {
-			foot_change_detected = true;
-		}
-	}
-
-	/**
-	 * Add a new Control point at (x,y)
-	 * 
-	 * @param x
-	 * @param y
-	 */
-	public void addControlPoint(float x, float y) {
-		if (new_control_type.equals("Vertex")) {
-			control.addPoint(new_control_type + " " + vert_counter, new_control_type, x, y);
-			vert_counter++;
-		} else if (new_control_type.equals("Plot")) {
-			control.addPoint(new_control_type + " " + plot_counter, new_control_type, x, y);
-			plot_counter++;
-		} else if (new_control_type.equals("Void")) {
-			control.addPoint(new_control_type + " " + void_counter, new_control_type, x, y);
-			void_counter++;
-		}
-		detectChange(new_control_type);
-	}
-
-	/**
-	 * Remove a given ControlPoint
-	 * 
-	 * @param point
-	 */
-	public void removeControlPoint(ControlPoint point) {
-		control.removePoint(point);
-		detectChange(point.getType());
-	}
-
-	/**
-	 * Initialize Vertex Control Points
-	 */
-	public void initVertexControl(Polygon boundary) {
-		vert_counter = 1;
-		String point_prefix = "Vertex";
-		for (Point p : boundary.getCorners()) {
-			control.addPoint(point_prefix + " " + vert_counter, point_prefix, p.x, p.y);
-			vert_counter++;
-		}
-	}
-
-	/**
-	 * Initialize Plot Control Points
-	 */
-	public void initPlotControl() {
-		plot_counter = 1;
-		for (TileArray space : spaceList()) {
-			if (space.type.equals("site")) {
-				String point_prefix = "Plot";
-				for (int i = 0; i < 3; i++) {
-					control.addPoint(point_prefix + " " + plot_counter, point_prefix, space);
-					plot_counter++;
-				}
-			}
-		}
-	}
-
-	/**
-	 * Initialize Void Control Points
-	 */
-	public void initVoidControl() {
-		void_counter = 1;
-		for (TileArray space : spaceList()) {
-			// Add Control Point to Zone
-			if (space.type.equals("zone")) {
-				String point_prefix = "Void";
-				void_counter++;
-				control.addPoint(point_prefix + " " + void_counter, point_prefix, space);
-			}
-		}
-	}
-
-	/**
-	 * Generates a randomly configured model at x, y
-	 * 
-	 * @param x
-	 * @param y
-	 */
-	public void loadRandomModel(float x, float y) {
-		// Init Random Model and Control Points
-		site_boundary.randomShape(x, y, 5, 200, 300);
-		initVertexControl(site_boundary);
-		buildSites(control);
-		initPlotControl();
-		buildZones(control);
-		initVoidControl();
-		buildFootprints(control);
-		buildBases();
-	}
-
 }
