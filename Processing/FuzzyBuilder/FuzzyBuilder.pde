@@ -3,10 +3,12 @@ import java.util.Collections;
 import java.util.Random;
 import java.util.HashMap;
 
+// Fuzzy Builder v1.0-alpha.1
+
 // Demonstration of low-fidelity zone creation with Voronoi Algorithm
 // Ira Winder, jiw@mit.edu
 
-// NOTE! AS OF 2019.10.01 THIS CODE IS NO LONGER DEVELOPED, 
+// NOTE! AS OF 2019.10.01 THIS PROCESSING CODE IS DEPRECATED, 
 // AS IT IS BEING MIGRATED FROM PROCESSING TO A JAVAFX GUI PLATFORM
 
 // To Do:
