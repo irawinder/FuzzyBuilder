@@ -45,6 +45,15 @@ public class Development {
 	public void setName(String name) {
 		this.name = name;
 	}
+	
+	/**
+	 * Set Name of Development
+	 * 
+	 * @param name name
+	 */
+	public String getName() {
+		return name;
+	}
 
 	/**
 	 * Return Space Map

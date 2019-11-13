@@ -1,6 +1,6 @@
 package edu.mit.ira.fuzzy.fx.scene;
 
-import edu.mit.ira.builder.Builder;
+import edu.mit.ira.builder.DevelopmentBuilder;
 import edu.mit.ira.fuzzy.fx.node.Underlay;
 import edu.mit.ira.fuzzy.fx.node.View3D;
 import edu.mit.ira.voxel.Control;
@@ -24,7 +24,7 @@ public class Massing extends SubScene implements ContentContainer {
     View3D view3D;
     
     private Underlay map_model;
-	private Builder form_model;
+	private DevelopmentBuilder form_model;
     
     // Migrate Builder() visual parameters to GUI_FX:
     // TODO
@@ -43,7 +43,7 @@ public class Massing extends SubScene implements ContentContainer {
     public void makeContent() {
         
     	map_model = new Underlay();
-    	form_model = new Builder();
+    	form_model = new DevelopmentBuilder();
     	
     	view3D = new View3D();
     	view3D.setZoom(-1000);
@@ -101,7 +101,7 @@ public class Massing extends SubScene implements ContentContainer {
      * @param view3D
      * @param scene3D
      */
-    public void loadRandomScenario(Underlay map_model, Builder form_model, View3D view3D) {
+    public void loadRandomScenario(Underlay map_model, DevelopmentBuilder form_model, View3D view3D) {
     	map_model.setImage("data/default_site_white.png");
     	map_model.setScale(0.5);
     	map_model.setOpacity(1.00);
@@ -124,7 +124,7 @@ public class Massing extends SubScene implements ContentContainer {
      * @param view3D
      * @param scene3D
      */
-    public void loadJRScenario(Underlay map_model, Builder form_model, View3D view3D) {
+    public void loadJRScenario(Underlay map_model, DevelopmentBuilder form_model, View3D view3D) {
     	map_model.setImage("data/jr_site.png");
     	map_model.setScale(0.5);
     	map_model.setOpacity(0.75);
@@ -147,7 +147,7 @@ public class Massing extends SubScene implements ContentContainer {
 	 * Load specific ControlPoints (i.e. hard-coded, not random)
 	 *
 	 */
-	public void loadJRModel(Builder form_model) {
+	public void loadJRModel(DevelopmentBuilder form_model) {
 
 		// 2019.07.25 JR Site Vertices by Ira
 		// Eventually, we need a method that imports these

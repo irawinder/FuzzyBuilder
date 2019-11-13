@@ -1,6 +1,6 @@
 package edu.mit.ira.fuzzy.fx.node;
 
-import edu.mit.ira.builder.Builder;
+import edu.mit.ira.builder.DevelopmentBuilder;
 import edu.mit.ira.voxel.ControlPoint;
 import edu.mit.ira.voxel.Point;
 import edu.mit.ira.voxel.Tile;
@@ -35,7 +35,7 @@ public class View3D {
 	private Underlay map_model;
 	
 	// Includes generated geometry, settings, and 3D control points
-	private Builder form_model;
+	private DevelopmentBuilder form_model;
 	
 	// Set of All Nodes to Pass to Parent JavaFX Scene
 	private Group nodeSet;
@@ -128,7 +128,7 @@ public class View3D {
 	 * 
 	 * @param form form from Builder class
 	 */
-	public void setFormModel(Builder form_model) {
+	public void setFormModel(DevelopmentBuilder form_model) {
 		this.form_model = form_model;
 	}
 	

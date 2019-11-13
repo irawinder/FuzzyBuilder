@@ -18,17 +18,15 @@ import edu.mit.ira.voxel.TileArray;
  * @author ira
  *
  */
-public class Builder {
-
-	// Development of spaces
-	public Development dev;
-	public String dev_name;
-
-	// Intermediate Polygon used to generate Development()
+public class DevelopmentBuilder extends Development {
+	
+	final private static String DEFAULT_NAME = "New Development";
+	
+	// Intermediate Polygon used to generate Fuzzy Development()
 	public Polygon site_boundary;
 	public String site_name;
 
-	// Intermediate Raster Grid Options to generate Development
+	// Intermediate Raster Grid Options to generate Fuzzy Development
 	// (dimensions, scale, rotation, translation, units)
 	public float tileW, tileH, tile_rotation;
 	public String units;
@@ -37,9 +35,9 @@ public class Builder {
 	/**
 	 * Make the Space Building Environment
 	 */
-	public Builder() {
-		initModel();
-		
+	public DevelopmentBuilder() {
+		super(DEFAULT_NAME);
+		initBuilder();
 	}
 	
 	public void setTileWidth(float tileW) {
@@ -65,14 +63,12 @@ public class Builder {
 	/**
 	 * Initialize the Model
 	 */
-	public void initModel() {
+	public void initBuilder() {
 
 		// Init Vector Site Polygon
 		site_boundary = new Polygon();
 
 		// Init Raster-like Site Voxels
-		dev_name = "New Development";
-		dev = new Development(dev_name);
 		site_name = "Property";
 		setTileUnits("pixels");
 		setTileWidth(30);
@@ -88,12 +84,12 @@ public class Builder {
 
 		switch (change) {
 		case 's':
-			initSites(control);
+			buildSites(control);
 		case 'z':
-			initZones(control);
+			buildZones(control);
 		case 'f':
-			initFootprints(control);
-			initBases();
+			buildFootprints(control);
+			buildBases();
 			break;
 		}
 	}
@@ -101,13 +97,13 @@ public class Builder {
 	/**
 	 * Initialize Site Model
 	 */
-	public void initSites(Control control) {
+	public void buildSites(Control control) {
 
 		// Define new Space Type
 		String type = "site";
-		dev.clearType(type);
+		clearType(type);
 		TileArray site = new TileArray(site_name, type);
-		site.setParent(dev_name);
+		site.setParent(getName());
 
 		// Update Polygon according to control points
 		site_boundary.clear();
@@ -119,21 +115,21 @@ public class Builder {
 		site.makeTiles(site_boundary, tileW, tileH, units, tile_rotation, tile_translation);
 
 		// Add new spaces to Development
-		dev.addSpace(site);
+		addSpace(site);
 	}
 
 	/**
 	 * Subdivide the site into Zones
 	 */
-	public void initZones(Control control) {
+	public void buildZones(Control control) {
 
 		// Define new Space Type
 		String type = "zone";
-		dev.clearType(type);
+		clearType(type);
 		ArrayList<TileArray> new_zones = new ArrayList<TileArray>();
 
 		// Create new Zones from Voronoi Sites
-		for (TileArray space : dev.spaceList()) {
+		for (TileArray space : spaceList()) {
 			if (space.type.equals("site")) {
 				ArrayList<ControlPoint> plot_control = control.points("Plot");
 				ArrayList<TileArray> zones = space.getVoronoi(plot_control);
@@ -149,21 +145,21 @@ public class Builder {
 
 		// Add new Spaces to Development
 		for (TileArray zone : new_zones)
-			dev.addSpace(zone);
+			addSpace(zone);
 	}
 
 	/**
 	 * Subdivide Zones into Footprints
 	 */
-	public void initFootprints(Control control) {
+	public void buildFootprints(Control control) {
 
 		// Define new Space Type
 		String type = "footprint";
-		dev.clearType(type);
+		clearType(type);
 		ArrayList<TileArray> new_foot = new ArrayList<TileArray>();
 
 		// Create new Footprints from Zone Space
-		for (TileArray space : dev.spaceList()) {
+		for (TileArray space : spaceList()) {
 			if (space.type.equals("zone")) {
 
 				// Setback Footprint
@@ -204,21 +200,21 @@ public class Builder {
 
 		// Add new Spaces to Development
 		for (TileArray foot : new_foot)
-			dev.addSpace(foot);
+			addSpace(foot);
 	}
 
 	/**
 	 * A Base is a building component that rests on a Footprint
 	 */
-	public void initBases() {
+	public void buildBases() {
 
 		// Define new Space Type
 		String type = "base";
-		dev.clearType(type);
+		clearType(type);
 		ArrayList<TileArray> new_bases = new ArrayList<TileArray>();
 
 		// Create new Bases from Footprints
-		for (TileArray space : dev.spaceList()) {
+		for (TileArray space : spaceList()) {
 
 			// Building
 			if (space.name.equals("Building") && space.type.equals("footprint")) {
@@ -239,7 +235,7 @@ public class Builder {
 
 		// Add new Spaces to Development
 		for (TileArray base : new_bases)
-			dev.addSpace(base);
+			addSpace(base);
 	}
 
 }
