@@ -6,6 +6,9 @@ import java.util.HashMap;
 // Demonstration of low-fidelity zone creation with Voronoi Algorithm
 // Ira Winder, jiw@mit.edu
 
+// NOTE! AS OF 2019.10.01 THIS CODE IS NO LONGER DEVELOPED, 
+// AS IT IS BEING MIGRATED FROM PROCESSING TO A JAVAFX GUI PLATFORM
+
 // To Do:
 // - Implement Tower
 // - Implement Variable Setback
@@ -47,7 +50,7 @@ public void setup(){
   // Set size of canvas to (X, Y) pixels
   size(900, 500, P3D);
   
-  frame.setTitle("Space Builder GUI");
+  frame.setTitle("Fuzzy Builder v1.0-alpha.1");
   
   builder = new Builder("random");
 }
@@ -132,7 +135,7 @@ Point newPointAtMouse() {
         if (distance < 15) {
           if (distance < min_distance) {
             min_distance = distance;
-            mousePoint = new Point(x,y);
+            mousePoint = new Point(x+random(0.01),y+random(0.01)); // Random jitter prevents bug where lines are perfectly horizontal or vertical
           }
         }
       }
