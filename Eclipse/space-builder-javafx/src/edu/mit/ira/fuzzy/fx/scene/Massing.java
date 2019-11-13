@@ -23,8 +23,8 @@ public class Massing extends SubScene implements ContentContainer {
     SubScene scene3D, scene2D;
     View3D view3D;
     
-    Underlay map_model;
-	Builder form_model;
+    private Underlay map_model;
+	private Builder form_model;
     
     // Migrate Builder() visual parameters to GUI_FX:
     // TODO
