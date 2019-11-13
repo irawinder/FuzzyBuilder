@@ -17,11 +17,6 @@ public interface ContentContainer {
 	final static Group EMPTY_GROUP = new Group();
 	
 	/**
-	 * Refresh the Master Container Content
-	 */
-	public void setContent();
-	
-	/**
 	 * Trigger a key event
 	 * @param e
 	 */

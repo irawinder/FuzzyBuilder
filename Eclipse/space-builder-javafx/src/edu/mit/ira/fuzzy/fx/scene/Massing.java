@@ -111,10 +111,10 @@ public class Massing extends SubScene implements ContentContainer {
      * @param form_model
      * @param map_model
      */
-    public void set(DevelopmentEditor form_model, Underlay map_model) {
+    public void render(DevelopmentEditor form_model, Underlay map_model) {
     	setFormModel(form_model);
     	setMapModel(map_model);
-    	render();
+    	drawNodes();
     }
 
 	public void keyPressed(KeyEvent e) {
@@ -194,7 +194,7 @@ public class Massing extends SubScene implements ContentContainer {
 	 * 
 	 * @return a collection of JavaFX groups (3D objects)
 	 */
-	public void render() {
+	public void drawNodes() {
 		
 		nodes2D.getChildren().clear();
 		nodes3D.getChildren().clear();
@@ -486,12 +486,4 @@ public class Massing extends SubScene implements ContentContainer {
 		System.out.println("Camera RotateV: " + rotateV.getAngle());
 		System.out.println("Camera RotateH: " + rotateH.getAngle());
 	}
-
-	@Override
-	public void setContent() {
-		// TODO Auto-generated method stub
-		
-	}
-	
-
 }

@@ -8,7 +8,7 @@ import javafx.scene.layout.GridPane;
 
 public class Layout {
 	
-	// All Default Dimensions are in Pixels:
+	// All Default Dimensions are in Pixels or Ratios:
 	
 	final private static double DEFAULT_APPLICATION_WIDTH = 1280;
 	final private static double DEFAULT_APPLICATION_HEIGHT = 800;
@@ -18,6 +18,10 @@ public class Layout {
 	final private static double STATUS_HEIGHT  = 30;
 	final private static double NAVIGATE_WIDTH = 200;
 	final private static double OUTCOME_WIDTH  = 400;
+	
+	final private static double CANVAS_HEIGHT_RATIO   = 0.25;
+	final private static double OUTCOME_HEIGHT_RATIO  = 0.75;
+	
 	
 	public static Scene build(
 			SubScene toolbar, SubScene navigate, SubScene version, SubScene canvas, SubScene massing, SubScene outcome, SubScene commit, SubScene status) {
@@ -47,16 +51,16 @@ public class Layout {
 		version.setHeight(VERSION_HEIGHT);
 		
 		canvas.setWidth(DEFAULT_APPLICATION_WIDTH - OUTCOME_WIDTH - NAVIGATE_WIDTH);
-		canvas.setHeight(0.25 * (DEFAULT_APPLICATION_HEIGHT - TOOL_HEIGHT - VERSION_HEIGHT - STATUS_HEIGHT));
+		canvas.setHeight(CANVAS_HEIGHT_RATIO * (DEFAULT_APPLICATION_HEIGHT - TOOL_HEIGHT - VERSION_HEIGHT - STATUS_HEIGHT));
 		
 		massing.setWidth(DEFAULT_APPLICATION_WIDTH - OUTCOME_WIDTH - NAVIGATE_WIDTH);
-		massing.setHeight(0.75 * (DEFAULT_APPLICATION_HEIGHT - TOOL_HEIGHT - VERSION_HEIGHT - STATUS_HEIGHT));
+		massing.setHeight((1 - CANVAS_HEIGHT_RATIO) * (DEFAULT_APPLICATION_HEIGHT - TOOL_HEIGHT - VERSION_HEIGHT - STATUS_HEIGHT));
 		
 		outcome.setWidth(OUTCOME_WIDTH);
-		outcome.setHeight(0.5 * (DEFAULT_APPLICATION_HEIGHT - TOOL_HEIGHT - STATUS_HEIGHT));
+		outcome.setHeight(OUTCOME_HEIGHT_RATIO * (DEFAULT_APPLICATION_HEIGHT - TOOL_HEIGHT - STATUS_HEIGHT));
 		
 		commit.setWidth(OUTCOME_WIDTH);
-		commit.setHeight(0.5 * (DEFAULT_APPLICATION_HEIGHT - TOOL_HEIGHT - STATUS_HEIGHT));
+		commit.setHeight((1 - OUTCOME_HEIGHT_RATIO) * (DEFAULT_APPLICATION_HEIGHT - TOOL_HEIGHT - STATUS_HEIGHT));
 		
 		navigate.setWidth(NAVIGATE_WIDTH);
 		navigate.setHeight(DEFAULT_APPLICATION_HEIGHT - TOOL_HEIGHT - STATUS_HEIGHT);
@@ -178,10 +182,10 @@ public class Layout {
 			@Override
 			public void changed(ObservableValue<? extends Number> arg0, Number arg1, Number arg2) {
 				double windowHeight = (double) arg2;
-				canvas.setHeight(0.25 * (windowHeight - TOOL_HEIGHT - VERSION_HEIGHT - STATUS_HEIGHT));
-				massing.setHeight(0.75 * (windowHeight - TOOL_HEIGHT - VERSION_HEIGHT - STATUS_HEIGHT));
-				outcome.setHeight(0.5 * (windowHeight - TOOL_HEIGHT - STATUS_HEIGHT));
-				commit.setHeight(0.5 * (windowHeight - TOOL_HEIGHT - STATUS_HEIGHT));
+				canvas.setHeight(CANVAS_HEIGHT_RATIO * (windowHeight - TOOL_HEIGHT - VERSION_HEIGHT - STATUS_HEIGHT));
+				massing.setHeight((1 - CANVAS_HEIGHT_RATIO) * (windowHeight - TOOL_HEIGHT - VERSION_HEIGHT - STATUS_HEIGHT));
+				outcome.setHeight(OUTCOME_HEIGHT_RATIO * (windowHeight - TOOL_HEIGHT - STATUS_HEIGHT));
+				commit.setHeight((1 - OUTCOME_HEIGHT_RATIO) * (windowHeight - TOOL_HEIGHT - STATUS_HEIGHT));
 				navigate.setHeight(windowHeight - TOOL_HEIGHT - STATUS_HEIGHT);
 			}
 		});

@@ -46,10 +46,10 @@ public class FuzzyBuilder extends Application {
 		
     	// Set the Title Bar of the Application
     	appWindow.setTitle(APPLICATION_NAME);
-		
+    	
     	// Begin the application with a random scenario
     	loadRandomScenario();
-		
+    	
     	//Initialize Content Containers (SubScenes)
     	toolbar = new Toolbar();
 		version = new Version();
@@ -60,12 +60,12 @@ public class FuzzyBuilder extends Application {
 		navigate = new Navigate();
 		status = new Status();
 		
-		// Initiate Content
-		setScenes();
-		
 		// Assemble all SubScenes into the main content scene
 		Scene content = Layout.build(toolbar, navigate, version, canvas, massing, outcome, commit, status);
 		
+		// Populate Scenes
+     	renderScenes();
+     	
 		// Handle Key Events for the main content scene
         content.setOnKeyPressed(e -> {
 			
@@ -88,12 +88,15 @@ public class FuzzyBuilder extends Application {
     			loadRandomScenario();
     		}
     		
-    		setScenes();
+    		// Refresh Scenes with new State
+    		renderScenes();
         });
         
         // Set the stage and start the show
         appWindow.setScene(content);
         appWindow.show();
+        
+        
     }
     
     /**
@@ -118,17 +121,17 @@ public class FuzzyBuilder extends Application {
     	scenario_map = new Underlay("data/jr_site.png", 0.5, 0.75);
     }
     
-    public void setScenes() {
+    public void renderScenes() {
     	
-//    	((Toolbar)   toolbar).setContent();
-//		((Version)   version).setContent();
-//		((Canvas)     canvas).setContent();
+    	((Toolbar)   toolbar).render();
+		((Version)   version).render();
+		((Canvas)     canvas).render();
 		
-		((Massing)   massing).set(scenario_form, scenario_map);
+		((Massing)   massing).render(scenario_form, scenario_map);
 		
-//		((Outcome)   outcome).setContent();
-//		((Commit)     commit).setContent();
-//		((Navigate) navigate).setContent();
-//		((Status)     status).setContent();
+		((Outcome)   outcome).render();
+		((Commit)     commit).render();
+		((Navigate) navigate).render();
+		((Status)     status).render();
     }
 }
