@@ -4,7 +4,7 @@ import edu.mit.ira.fuzzy.base.ControlPoint;
 import edu.mit.ira.fuzzy.base.Point;
 import edu.mit.ira.fuzzy.base.Tile;
 import edu.mit.ira.fuzzy.base.TileArray;
-import edu.mit.ira.fuzzy.builder.DevelopmentBuilder;
+import edu.mit.ira.fuzzy.builder.DevelopmentEditor;
 import javafx.scene.Camera;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -27,7 +27,7 @@ import javafx.scene.transform.Translate;
  * The View3D is the collection of "friendly model objects" 
  * to show in a 3D JavaFX Scene
  * 
- * @author jiw
+ * @author Ira Winder
  *
  */
 public class View3D {
@@ -35,7 +35,7 @@ public class View3D {
 	private Underlay map_model;
 	
 	// Includes generated geometry, settings, and 3D control points
-	private DevelopmentBuilder form_model;
+	private DevelopmentEditor form_model;
 	
 	// Set of All Nodes to Pass to Parent JavaFX Scene
 	private Group nodeSet;
@@ -128,7 +128,7 @@ public class View3D {
 	 * 
 	 * @param form form from Builder class
 	 */
-	public void setFormModel(DevelopmentBuilder form_model) {
+	public void setFormModel(DevelopmentEditor form_model) {
 		this.form_model = form_model;
 	}
 	
@@ -199,12 +199,12 @@ public class View3D {
 		nodeSet.getChildren().add(site_polygon);
 
 		// Draw Voxel Bases
-		for (TileArray space : form_model.dev.spaceList("base")) {
+		for (TileArray space : form_model.spaceList("base")) {
 			if(form_model.showSpace(space) && form_model.showTiles) {
 				Color col = Color.hsb(space.getHueDegree(), 0.5, 0.8, 0.95);
 				for (Tile t : space.tileList()) {
 					// if in 2D view mode, Only draws ground plane 
-					if (form_model.cam3D || t.location.z == 0) {
+					if (t.location.z == 0) {
 						boolean isFlat = space.name.substring(0, 3).equals("Cou");
 						Box b = renderVoxel(t, col, 0, isFlat);
 						nodeSet.getChildren().add(b);
@@ -214,7 +214,7 @@ public class View3D {
 		}
 
 		// Draw Voxel Footprints
-		for (TileArray space : form_model.dev.spaceList("footprint")) {
+		for (TileArray space : form_model.spaceList("footprint")) {
 			if(form_model.showSpace(space) && form_model.showTiles) {
 				Color col;
 				if (space.name.equals("Building")) {
@@ -236,7 +236,7 @@ public class View3D {
 		}
 		
 		// Draw Voxel Zones
-		for (TileArray space : form_model.dev.spaceList("zone")) {
+		for (TileArray space : form_model.spaceList("zone")) {
 			if(form_model.showSpace(space) && form_model.showTiles) {
 				Color col = Color.hsb(space.getHueDegree(), 0.3, 0.9, 0.75);
 				for (Tile t : space.tileList()) {
@@ -247,7 +247,7 @@ public class View3D {
 		}
 		
 		// Draw Voxel Sites
-		for (TileArray space : form_model.dev.spaceList("site")) {
+		for (TileArray space : form_model.spaceList("site")) {
 			if(form_model.showSpace(space) && form_model.showTiles) {
 				Color col = Color.gray(0, 0.2);
 				for (Tile t : space.tileList()) {

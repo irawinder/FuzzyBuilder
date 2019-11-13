@@ -1,8 +1,8 @@
 package edu.mit.ira.fuzzy.fx.scene;
 
-import edu.mit.ira.fuzzy.base.ControlPoint;
-import edu.mit.ira.fuzzy.base.ControlSet;
-import edu.mit.ira.fuzzy.builder.DevelopmentBuilder;
+import edu.mit.ira.fuzzy.builder.DevelopmentEditor;
+import edu.mit.ira.fuzzy.builder.sample.RandomSite;
+import edu.mit.ira.fuzzy.builder.sample.ShinagawaSite;
 import edu.mit.ira.fuzzy.fx.node.Underlay;
 import edu.mit.ira.fuzzy.fx.node.View3D;
 import javafx.scene.Group;
@@ -24,7 +24,7 @@ public class Massing extends SubScene implements ContentContainer {
     View3D view3D;
     
     private Underlay map_model;
-	private DevelopmentBuilder form_model;
+	private DevelopmentEditor form_model;
     
     // Migrate Builder() visual parameters to GUI_FX:
     // TODO
@@ -43,7 +43,7 @@ public class Massing extends SubScene implements ContentContainer {
     public void makeContent() {
         
     	map_model = new Underlay();
-    	form_model = new DevelopmentBuilder();
+    	form_model = new DevelopmentEditor();
     	
     	view3D = new View3D();
     	view3D.setZoom(-1000);
@@ -101,13 +101,12 @@ public class Massing extends SubScene implements ContentContainer {
      * @param view3D
      * @param scene3D
      */
-    public void loadRandomScenario(Underlay map_model, DevelopmentBuilder form_model, View3D view3D) {
+    public void loadRandomScenario(Underlay map_model, DevelopmentEditor form_model, View3D view3D) {
     	map_model.setImage("data/default_site_white.png");
     	map_model.setScale(0.5);
     	map_model.setOpacity(1.00);
 
-    	form_model.initModel();
-    	form_model.loadRandomModel(375, 375);
+    	form_model = new RandomSite(375, 375);
     	
     	//view3D.initModel();
     	view3D.setBackground(Color.hsb(0,0,1.0));
@@ -124,13 +123,12 @@ public class Massing extends SubScene implements ContentContainer {
      * @param view3D
      * @param scene3D
      */
-    public void loadJRScenario(Underlay map_model, DevelopmentBuilder form_model, View3D view3D) {
+    public void loadJRScenario(Underlay map_model, DevelopmentEditor form_model, View3D view3D) {
     	map_model.setImage("data/jr_site.png");
     	map_model.setScale(0.5);
     	map_model.setOpacity(0.75);
 
-    	form_model.initModel();
-    	loadJRModel(form_model);
+    	form_model = new ShinagawaSite();
     	
     	//view3D.initModel();
     	view3D.setBackground(Color.hsb(0,0,0.2));
@@ -142,106 +140,6 @@ public class Massing extends SubScene implements ContentContainer {
     	view3D.setMapModel(map_model);
 		view3D.render();
     }
-    
-    /**
-	 * Load specific ControlPoints (i.e. hard-coded, not random)
-	 *
-	 */
-	public void loadJRModel(DevelopmentBuilder form_model) {
-
-		// 2019.07.25 JR Site Vertices by Ira
-		// Eventually, we need a method that imports these
-		// values from external data (e.g. csv)
-
-		form_model.control = new ControlSet();
-
-		int vert_counter = 1;
-		String vertex_prefix = "Vertex";
-
-		form_model.control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 1056, 509);
-		vert_counter++;
-		form_model.control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 950, 509);
-		vert_counter++;
-		form_model.control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 887, 504);
-		vert_counter++;
-		form_model.control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 794, 488);
-		vert_counter++;
-		form_model.control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 717, 466);
-		vert_counter++;
-		form_model.control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 589, 425);
-		vert_counter++;
-		form_model.control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 510, 385);
-		vert_counter++;
-		form_model.control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 518, 368);
-		vert_counter++;
-		form_model.control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 432, 336);
-		vert_counter++;
-		form_model.control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 405, 323);
-		vert_counter++;
-		form_model.control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 303, 260);
-		vert_counter++;
-		form_model.control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 307, 242);
-		vert_counter++;
-		form_model.control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 407, 280);
-		vert_counter++;
-		form_model.control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 471, 294);
-		vert_counter++;
-		form_model.control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 567, 321);
-		vert_counter++;
-		form_model.control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 673, 357);
-		vert_counter++;
-		form_model.control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 746, 382);
-		vert_counter++;
-		form_model.control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 888, 435);
-		vert_counter++;
-		form_model.control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 970, 463);
-		vert_counter++;
-		form_model.control.addPoint(vertex_prefix + " " + vert_counter, vertex_prefix, 1053, 480);
-		vert_counter++;
-
-		int plot_counter = 1;
-		String plot_prefix = "Plot";
-		form_model.control.addPoint(plot_prefix + " " + plot_counter, plot_prefix, 350, 276);
-		plot_counter++;
-		form_model.control.addPoint(plot_prefix + " " + plot_counter, plot_prefix, 406, 297);
-		plot_counter++;
-		form_model.control.addPoint(plot_prefix + " " + plot_counter, plot_prefix, 458, 318);
-		plot_counter++;
-		form_model.control.addPoint(plot_prefix + " " + plot_counter, plot_prefix, 597, 385);
-		plot_counter++;
-		form_model.control.addPoint(plot_prefix + " " + plot_counter, plot_prefix, 633, 401);
-		plot_counter++;
-		form_model.control.addPoint(plot_prefix + " " + plot_counter, plot_prefix, 788, 442);
-		plot_counter++;
-		form_model.control.addPoint(plot_prefix + " " + plot_counter, plot_prefix, 843, 465);
-		plot_counter++;
-		form_model.control.addPoint(plot_prefix + " " + plot_counter, plot_prefix, 703, 347);
-		plot_counter++;
-		form_model.control.addPoint(plot_prefix + " " + plot_counter, plot_prefix, 945, 484);
-		plot_counter++;
-		form_model.control.addPoint(plot_prefix + " " + plot_counter, plot_prefix, 1010, 498);
-		plot_counter++;
-
-		// Init Polygon
-		for(ControlPoint p : form_model.control.points()) {
-			if(p.getType().equals("Vertex")) {
-				form_model.site_boundary.addVertex(p);
-			}
-		}
-
-		// Override default Grid Properties
-		form_model.setTileWidth(11);
-		form_model.setTileHeight(5);
-		form_model.setTileRotation((float) 0.34);
-		form_model.setTileTranslation(0, 0);
-
-		// Init Model from Control Points
-		form_model.initSites();
-		form_model.initZones();
-		form_model.initFootprints();
-		form_model.initBases();
-
-	}
 
 	public void keyPressed(KeyEvent e) {
 
@@ -251,6 +149,7 @@ public class Massing extends SubScene implements ContentContainer {
 			setViewModel(scene3D, view3D);
 			// Make Random Site
 		} else if (e.getCode() == KeyCode.R) {
+			
 			loadRandomScenario(map_model, form_model, view3D);
 			setViewModel(scene3D, view3D);
 		}

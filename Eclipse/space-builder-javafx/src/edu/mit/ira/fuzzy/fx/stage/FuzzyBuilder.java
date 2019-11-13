@@ -47,10 +47,8 @@ public class FuzzyBuilder extends Application {
 		
 		Scene content = Layout.build(toolbar, navigate, version, canvas, massing, outcome, commit, status);
         
-        // Pass Key Commands on to lesser functions
+        // Pass Key Commands on to lesser containers
 		content.setOnKeyPressed(e -> {
-			
-			// trigger functions in the Massing Model
         	((Massing) massing).keyPressed(e);
         });
         
