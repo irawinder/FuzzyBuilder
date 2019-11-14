@@ -14,11 +14,15 @@ import javafx.scene.transform.Transform;
  * @author Ira Winder
  *
  */
-public class Underlay {
+public class Underlay implements Cloneable {
 
 	private Image underlay;
 	private ImageView underlayView;
 	private boolean show;
+	
+	double scaler, opacity;
+	double DEFAULT_SCALER_VALUE = 1.0;
+	double DEFAULT_OPACITY_VALUE = 0.75;
 	
 	/**
 	 * Initialize an empty Underlay
@@ -26,6 +30,22 @@ public class Underlay {
 	public Underlay() {
 		underlayView = new ImageView();
 		show = true;
+		
+		scaler = DEFAULT_SCALER_VALUE;
+		opacity = DEFAULT_OPACITY_VALUE = 0.75;
+	}
+	
+	/**
+	 * Construct and Underlay Image for JavaFX
+	 * 
+	 * @param file_path relative path location of file
+	 * @param scaler scale the image up or down from its native resolution
+	 * @param opacity opacity value of underlay (0 - 1)
+	 */
+	public Underlay(String file_path) {
+		underlayView = new ImageView();
+		show = true;
+		setImage(file_path);
 	}
 	
 	/**
@@ -38,9 +58,9 @@ public class Underlay {
 	public Underlay(String file_path, double scaler, double opacity) {
 		underlayView = new ImageView();
 		show = true;
+		this.scaler = scaler;
+		this.opacity = opacity;
 		setImage(file_path);
-		setScale(scaler);
-		setOpacity(opacity);
 	}
 	
 	/**
@@ -53,8 +73,7 @@ public class Underlay {
 		try {
 			is = new FileInputStream(file_path);
 			underlay = new Image(is);
-			underlayView = new ImageView();
-			underlayView.setImage(underlay);
+			setImageView();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -88,6 +107,27 @@ public class Underlay {
 	 */
 	public ImageView getImageView() {
 		return underlayView;
+	}
+	
+	/**
+	 * Set the Image as ImageView Node
+	 * 
+	 * @return ImageView node of underlay
+	 */
+	public void setImageView() {
+		underlayView = new ImageView();
+		underlayView.setImage(underlay);
+		setScale(scaler);
+		setOpacity(opacity);
+	}
+	
+	/**
+	 * Get the image as Image Node
+	 * 
+	 * @return Image node of underlay
+	 */
+	public Image getImage() {
+		return underlay;
 	}
 
 	/**
@@ -126,5 +166,9 @@ public class Underlay {
 	 */
 	public void applyTransform(Transform t) {
 		
+	}
+	
+	public Object clone() throws CloneNotSupportedException {
+		return super.clone();
 	}
 }

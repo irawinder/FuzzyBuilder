@@ -14,7 +14,6 @@ import javafx.scene.PointLight;
 import javafx.scene.SceneAntialiasing;
 import javafx.scene.SubScene;
 import javafx.scene.control.Label;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -186,7 +185,6 @@ public class Massing extends SubScene implements ContentContainer {
 	 */
 	public void setMapModel(Underlay map_model) {
 		this.map_model  = map_model;
-		orientShape((Node) map_model.getImageView(), 0, 0, -0.4f);
 	}
 
 	/**
@@ -207,8 +205,9 @@ public class Massing extends SubScene implements ContentContainer {
 		nodes3D.getChildren().add(sideLight());
 		
 		// Add and orient Underlay map
-		ImageView map = map_model.getImageView();
-		nodes3D.getChildren().add(map);
+		map_model.setImageView();
+		orientShape((Node) map_model.getImageView(), 0, 0, -0.4f);
+		nodes3D.getChildren().add(map_model.getImageView());
 
 		// Draw Site Vector Polygon
 		Color site_fill         = Color.hsb(0, 0, 0.95, 0.5);
@@ -381,7 +380,7 @@ public class Massing extends SubScene implements ContentContainer {
 	 * @param input
 	 * @param z_offset
 	 */
-	private void orientShape(Node input, float x_offset, float y_offset, float z_offset) {
+	public void orientShape(Node input, float x_offset, float y_offset, float z_offset) {
 		Rotate rotateFlat = new Rotate(-90, Rotate.X_AXIS);
 		Translate pos = new Translate(x_offset, -z_offset, -y_offset);
 		input.getTransforms().addAll(rotateH, pan, pos, rotateFlat);
