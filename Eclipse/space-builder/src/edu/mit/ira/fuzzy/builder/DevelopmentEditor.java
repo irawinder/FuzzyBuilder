@@ -59,7 +59,7 @@ public class DevelopmentEditor extends DevelopmentBuilder {
 	 */
 	public void initEditor() {
 
-		// Init Control Points
+		// Initialize Control Points
 		control = new ControlSet();
 
 		new_control_type = "zone";
