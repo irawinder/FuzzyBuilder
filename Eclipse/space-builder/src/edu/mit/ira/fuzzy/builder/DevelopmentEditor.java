@@ -424,15 +424,8 @@ public class DevelopmentEditor extends DevelopmentBuilder {
 	 * Trigger when any key is pressed, parameters passed from GUI
 	 * 
 	 * @param key     character that user pressed, passed from GUI
-	 * @param keyCode number code of user key input
-	 * @param coded   static value to check if key is coded
-	 * @param left    code value for LEFT arrow
-	 * @param right   code value for RIGHT arrow
-	 * @param down    code value for DOWN arrow
-	 * @param up      code value for UP arrow
 	 */
-	public void keyPressed(char key, int keyCode, int coded, int left, int right, int down, int up) {
-
+	public void keyPressed(char key) {
 		switch (key) {
 		case 'a':
 			addPoint = !addPoint;
@@ -538,7 +531,19 @@ public class DevelopmentEditor extends DevelopmentBuilder {
 			System.out.println("Grid Pan: " + tile_translation);
 			break;
 		}
+	}
 
+	/**
+	 * User Pressed the arrow key. Parameters passed from Processing GUI
+	 * 
+	 * @param keyCode number code of user key input
+	 * @param coded   static value to check if key is coded
+	 * @param left    code value for LEFT arrow
+	 * @param right   code value for RIGHT arrow
+	 * @param down    code value for DOWN arrow
+	 * @param up      code value for UP arrow
+	 */
+	public void arrowPressed(char key, int keyCode, int coded, int left, int right, int down, int up) {
 		if (key == coded) {
 			if (keyCode == left) {
 				tile_translation.x--;
@@ -556,6 +561,30 @@ public class DevelopmentEditor extends DevelopmentBuilder {
 				tile_translation.y--;
 				site_change_detected = true;
 			}
+		}
+	}
+	
+	/**
+	 * User Pressed the arrow key. Parameters passed from JavaFX GUI
+	 * 
+	 * @param arrow LEFT, RIGHT, DOWN, or UP
+	 */
+	public void arrowPressed(String arrow) {
+		if (arrow.equals("LEFT")) {
+			tile_translation.x--;
+			site_change_detected = true;
+		}
+		if (arrow.equals("RIGHT")) {
+			tile_translation.x++;
+			site_change_detected = true;
+		}
+		if (arrow.equals("DOWN")) {
+			tile_translation.y++;
+			site_change_detected = true;
+		}
+		if (arrow.equals("UP")) {
+			tile_translation.y--;
+			site_change_detected = true;
 		}
 	}
 }

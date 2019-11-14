@@ -44,6 +44,7 @@ public class Massing extends SubScene implements ContentContainer {
     // "Back End" Elements to Render to Container
     private DevelopmentEditor form_model; 
     private Underlay map_model;
+    boolean showUnderlay;
     
     // "Front End" Nodes to Pass to Parent JavaFX Scene
  	private Group nodes3D, nodes2D;
@@ -77,6 +78,7 @@ public class Massing extends SubScene implements ContentContainer {
 		camera.setNearClip(10);
 		camera.setFarClip(10000);
     	setBackground(Color.hsb(0,0,1.0));
+    	showUnderlay = true;
     	
     	// Initialize Parent Nodes
     	nodes3D = new Group();
@@ -121,6 +123,10 @@ public class Massing extends SubScene implements ContentContainer {
 		// Print Camera Position
 		if (e.getCode() == KeyCode.C) {
 			printCamera();
+		}
+		// Print Camera Position
+		if (e.getCode() == KeyCode.U) {
+			showUnderlay = !showUnderlay;
 		}
 	}
 	
@@ -205,9 +211,11 @@ public class Massing extends SubScene implements ContentContainer {
 		nodes3D.getChildren().add(sideLight());
 		
 		// Add and orient Underlay map
-		map_model.setImageView();
-		orientShape((Node) map_model.getImageView(), 0, 0, -0.4f);
-		nodes3D.getChildren().add(map_model.getImageView());
+		if (showUnderlay) {
+			map_model.setImageView();
+			orientShape((Node) map_model.getImageView(), 0, 0, -0.4f);
+			nodes3D.getChildren().add(map_model.getImageView());
+		}
 
 		// Draw Site Vector Polygon
 		Color site_fill         = Color.hsb(0, 0, 0.95, 0.5);

@@ -18,7 +18,6 @@ public class Underlay implements Cloneable {
 
 	private Image underlay;
 	private ImageView underlayView;
-	private boolean show;
 	
 	double scaler, opacity;
 	double DEFAULT_SCALER_VALUE = 1.0;
@@ -29,7 +28,6 @@ public class Underlay implements Cloneable {
 	 */
 	public Underlay() {
 		underlayView = new ImageView();
-		show = true;
 		
 		scaler = DEFAULT_SCALER_VALUE;
 		opacity = DEFAULT_OPACITY_VALUE = 0.75;
@@ -44,7 +42,6 @@ public class Underlay implements Cloneable {
 	 */
 	public Underlay(String file_path) {
 		underlayView = new ImageView();
-		show = true;
 		setImage(file_path);
 	}
 	
@@ -57,7 +54,6 @@ public class Underlay implements Cloneable {
 	 */
 	public Underlay(String file_path, double scaler, double opacity) {
 		underlayView = new ImageView();
-		show = true;
 		this.scaler = scaler;
 		this.opacity = opacity;
 		setImage(file_path);
@@ -128,35 +124,6 @@ public class Underlay implements Cloneable {
 	 */
 	public Image getImage() {
 		return underlay;
-	}
-
-	/**
-	 * switches show true to false, or false to true
-	 */
-	private void toggle() {
-		show = !show;
-	}
-	
-	/**
-	 * Show we show the map?
-	 * 
-	 * @return true or false
-	 */
-	public boolean show() {
-		return show;
-	}
-	
-	/**
-	 * Execute methods based upon key that is passed
-	 * 
-	 * @param key
-	 */
-	public void keyPressed(char key) {
-		switch (key) {
-		case 'u': // set show to false
-			toggle();
-			break;
-		}
 	}
 	
 	/**
