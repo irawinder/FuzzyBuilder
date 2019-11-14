@@ -126,9 +126,7 @@ public class FuzzyBuilder extends Application {
     	((Toolbar)   toolbar).render();
 		((Version)   version).render();
 		((Canvas)     canvas).render();
-		
 		((Massing)   massing).render(scenario_form, scenario_map);
-		
 		((Outcome)   outcome).render();
 		((Commit)     commit).render();
 		((Navigate) navigate).render();
