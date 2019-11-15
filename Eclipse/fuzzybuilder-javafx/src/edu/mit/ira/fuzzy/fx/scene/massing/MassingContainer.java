@@ -247,8 +247,8 @@ public class MassingContainer extends SubScene implements ContentContainer {
 				if (rotateV.getAngle() > 0) flip = -1;
 				dx_r = + dx * Math.cos(angleH) - flip*dy * Math.sin(angleH);
 				dy_r = + dx * Math.sin(angleH) + flip*dy * Math.cos(angleH);
-				double panU = pan.getX() - dx_r;
-				double panV = pan.getZ() - dy_r;
+				double panU = pan.getX() - viewScaler * dx_r;
+				double panV = pan.getZ() - viewScaler * dy_r;
 				pan.setX(panU);
 				pan.setZ(panV);
 			}
