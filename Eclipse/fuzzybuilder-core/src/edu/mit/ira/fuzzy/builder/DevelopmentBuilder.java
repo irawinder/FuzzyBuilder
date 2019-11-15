@@ -190,7 +190,8 @@ public class DevelopmentBuilder extends Development {
 				setback.setType(type);
 
 				// Void Footprint(s)
-				float yard_area = 2700;
+				int numTiles = 10; // Voids are numTiles tiles big
+				float yard_area = numTiles * tileW * tileW;
 				ArrayList<TileArray> voidSpace = new ArrayList<TileArray>();
 				ArrayList<ControlPoint> void_control = control.points("Void");
 				for (ControlPoint p : void_control) {
