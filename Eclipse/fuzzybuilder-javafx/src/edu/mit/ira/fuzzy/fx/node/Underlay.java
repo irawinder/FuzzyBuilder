@@ -77,7 +77,7 @@ public class Underlay implements Cloneable {
 	}
 	
 	/**
-	 * Scale the ImageView up or down relative to native pixels. 
+	 * Scale the ImageView up or down 
 	 * 
 	 * @param scaler < 1 makes image smaller; > 1 makes image bigger
 	 */
@@ -86,6 +86,15 @@ public class Underlay implements Cloneable {
 		double h = scaler * underlay.getHeight();
 		underlayView.setFitWidth(w);
 		underlayView.setFitHeight(h);
+	}
+	
+	/**
+	 * Get the base scaler for the view image 
+	 * 
+	 * @return scaler
+	 */
+	public double getScaler() {
+		return scaler;
 	}
 	
 	/**

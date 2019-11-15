@@ -18,61 +18,85 @@ import edu.mit.ira.fuzzy.base.TileArray;
  */
 public class DevelopmentBuilder extends Development {
 	
-	final private static String DEFAULT_NAME = "New Development";
-	
 	// Intermediate Polygon used to generate Fuzzy Development()
 	public Polygon site_boundary;
-	public String site_name;
 
 	// Intermediate Raster Grid Options to generate Fuzzy Development
 	// (dimensions, scale, rotation, translation, units)
 	public float tileW, tileH, tile_rotation;
 	public String units;
 	public Point tile_translation;
-
+	
+	// Default Values
+	final private static String DEFAULT_NAME = "New Parcel";
+	final private static String DEFAULT_UNITS = "meters";
+	final private static float DEFAULT_TILE_WIDTH = 30;
+	final private static float DEFAULT_TILE_HEIGHT = 10;
+	final private static float DEFAULT_TILE_TRANSLATE_X = 0;
+	final private static float DEFAULT_TILE_TRANSLATE_Y = 0;
+	final private static float DEFAULT_TILE_ROTATION = 0;
+	
 	/**
 	 * Make the Space Building Environment
 	 */
 	public DevelopmentBuilder() {
 		super(DEFAULT_NAME);
-		initBuilder();
+
+		// Initialize Vector Site Polygon
+		site_boundary = new Polygon();
+
+		// Initialize Raster-like Site Voxels
+		setTileUnits(DEFAULT_UNITS);
+		setTileWidth(DEFAULT_TILE_WIDTH);
+		setTileHeight(DEFAULT_TILE_HEIGHT);
+		setTileTranslation(DEFAULT_TILE_TRANSLATE_X, DEFAULT_TILE_TRANSLATE_Y);
+		setTileRotation(DEFAULT_TILE_ROTATION);
 	}
 	
+	/**
+	 * Set Tile Width
+	 * 
+	 * @param tileW
+	 */
 	public void setTileWidth(float tileW) {
 		this.tileW = tileW;
 	}
 	
+	/**
+	 * Set Voxel Height
+	 * 
+	 * @param tileH
+	 */
 	public void setTileHeight(float tileH) {
 		this.tileH = tileH;
 	}
 	
+	/**
+	 * Set Grid Orientation for entire Development
+	 * 
+	 * @param tile_rotation
+	 */
 	public void setTileRotation(float tile_rotation) {
 		this.tile_rotation = tile_rotation;
 	}
 	
+	/**
+	 * Set Origin (X,Y) of Site
+	 * 
+	 * @param x
+	 * @param y
+	 */
 	public void setTileTranslation(float x, float y) {
 		this.tile_translation = new Point(x,y);
 	}
 	
+	/**
+	 * Set Name for dimensional units (e.g. "meters")
+	 * 
+	 * @param units
+	 */
 	public void setTileUnits(String units) {
 		this.units = units;
-	}
-
-	/**
-	 * Initialize the Model
-	 */
-	public void initBuilder() {
-
-		// Init Vector Site Polygon
-		site_boundary = new Polygon();
-
-		// Init Raster-like Site Voxels
-		site_name = "Property";
-		setTileUnits("pixels");
-		setTileWidth(30);
-		setTileHeight(10);
-		setTileTranslation(0,0);
-		setTileRotation(0);
 	}
 	
 	/**
@@ -100,7 +124,7 @@ public class DevelopmentBuilder extends Development {
 		// Define new Space Type
 		String type = "site";
 		clearType(type);
-		TileArray site = new TileArray(site_name, type);
+		TileArray site = new TileArray(name, type);
 		site.setParent(getName());
 
 		// Update Polygon according to control points

@@ -79,7 +79,7 @@ public class FuzzyBuilder extends PApplet {
 		
 		switch(key ) {
 		case 'r':
-			editor = new RandomSite(400, 200);
+			editor = new RandomSite(400, 200, 100, 200);
 			break;
 		case 'l':
 			editor = new ShinagawaSite();

@@ -17,9 +17,9 @@ public class Layout {
 	final private static double VERSION_HEIGHT = 50;
 	final private static double STATUS_HEIGHT  = 30;
 	final private static double NAVIGATE_WIDTH = 200;
-	final private static double OUTCOME_WIDTH  = 400;
+	final private static double OUTCOME_WIDTH  = 300;
 	
-	final private static double CANVAS_HEIGHT_RATIO   = 0.25;
+	final private static double CANVAS_HEIGHT_RATIO   = 0.15;
 	final private static double OUTCOME_HEIGHT_RATIO  = 0.75;
 	
 	

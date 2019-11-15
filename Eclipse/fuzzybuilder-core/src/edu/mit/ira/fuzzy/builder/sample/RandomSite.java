@@ -13,9 +13,9 @@ import edu.mit.ira.fuzzy.builder.DevelopmentEditor;
  */
 public class RandomSite extends DevelopmentEditor{
 	
-	public RandomSite(float x, float y) {
+	public RandomSite(float x, float y, float width, float height) {
 		super();
-		load(x, y);
+		load(x, y, width, height);
 		resetEditor();
 	}
 	
@@ -25,9 +25,9 @@ public class RandomSite extends DevelopmentEditor{
 	 * @param x
 	 * @param y
 	 */
-	public void load(float x, float y) {
+	public void load(float x, float y, float width, float height) {
 		// Initialize Random Model and Control Points
-		site_boundary.randomShape(x, y, 5, 100, 200);
+		site_boundary.randomShape(x, y, 5, width, height);
 		initVertexControl(site_boundary);
 		buildSite(control);
 		initPlotControl();

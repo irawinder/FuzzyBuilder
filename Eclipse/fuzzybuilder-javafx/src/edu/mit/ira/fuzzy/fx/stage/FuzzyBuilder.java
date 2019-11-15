@@ -5,12 +5,12 @@ import edu.mit.ira.fuzzy.builder.sample.ShinagawaSite;
 import edu.mit.ira.fuzzy.fx.node.Underlay;
 import edu.mit.ira.fuzzy.fx.scene.Canvas;
 import edu.mit.ira.fuzzy.fx.scene.Commit;
-import edu.mit.ira.fuzzy.fx.scene.Massing;
 import edu.mit.ira.fuzzy.fx.scene.Navigate;
 import edu.mit.ira.fuzzy.fx.scene.Outcome;
 import edu.mit.ira.fuzzy.fx.scene.Status;
 import edu.mit.ira.fuzzy.fx.scene.Toolbar;
 import edu.mit.ira.fuzzy.fx.scene.Version;
+import edu.mit.ira.fuzzy.fx.scene.massing.Massing;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.SubScene;
@@ -112,8 +112,21 @@ public class FuzzyBuilder extends Application {
      * @param form_model
      */
     public void loadRandomScenario() {
-    	scenario_form = new RandomSite(375, 375);
-    	scenario_map = new Underlay("data/default_site_white.png", 0.5, 0.75);
+    	
+    	// Load Basemap
+    	double scale = 0.5;
+    	double opacity = 0.75;
+    	scenario_map = new Underlay("data/default_site_white.png", scale, opacity);
+    	
+    	// Load Random Geometry that fits to Basemap
+    	float width = (float) scenario_map.getImageView().getFitWidth();
+    	float height = (float) scenario_map.getImageView().getFitHeight();
+    	float diameter = Math.min(width, height);
+    	float x = 0.5f * diameter;
+    	float y = 0.5f * diameter;
+    	float min_radius = 0.3f * diameter;
+    	float max_radius = 0.4f * diameter;
+    	scenario_form = new RandomSite(x, y, min_radius, max_radius);
     }
     
     /**
@@ -123,8 +136,15 @@ public class FuzzyBuilder extends Application {
      * @param form_model
      */
     public void loadShinagawaScenario() {
+    	
+    	// Load Basemap
+    	double scale = 0.5;
+    	double opacity = 0.75;
+    	scenario_map = new Underlay("data/jr_site.png", scale, opacity);
+    	
+    	// Load Geometry
     	scenario_form = new ShinagawaSite();
-    	scenario_map = new Underlay("data/jr_site.png", 0.5, 0.75);
+    	
     }
     
     public void renderScenes() {
