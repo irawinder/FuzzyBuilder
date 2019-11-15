@@ -44,19 +44,41 @@ public class Massing extends SubScene implements ContentContainer {
     // "Back End" Elements to Render to Container
     private DevelopmentEditor form_model; 
     private Underlay map_model;
-    boolean showUnderlay;
     
     // "Front End" Nodes to Pass to Parent JavaFX Scene
  	private Group nodes3D, nodes2D;
  	
- 	// 3D View Parameters
+ 	// Dynamic 3D View Parameters
  	private Camera camera;
  	private Color background;
  	private Translate zoom;
  	private Translate pan;
  	private Rotate rotateV;
  	private Rotate rotateH;
-    
+ 	private double scaler;
+ 	boolean showUnderlay;
+ 	
+ 	// Default Values
+ 	private double DEFAULT_ZOOM = -1000;
+ 	private double DEFAULT_PAN_X = 325;
+ 	private double DEFAULT_PAN_Y = 425;
+ 	private double DEFAULT_ROTATE_V = -20;
+ 	private double DEFAULT_ROTATE_H = -45;
+ 	private double DEFAULT_NEAR_CLIP = 10;
+ 	private double DEFAULT_FAR_CLIP = 10000;
+ 	private double DEFAULT_SCALER = 1.0;
+ 	private double DEFAULT_LIGHT_DISPLACEMENT = 400;
+ 	private double DEFAULT_MAP_Z     = -0.4;
+ 	private double DEFAULT_POLY_Z    = -0.3;
+ 	private double DEFAULT_CONTROL_Z = -0.2;
+ 	private double DEFAULT_SITE_Z    = +0.0;
+ 	private double DEFAULT_ZONE_Z    = +0.1;
+ 	private double DEFAULT_FOOT_Z    = +0.2;
+ 	private double DEFAULT_BASE_Z    = +0.3;
+ 	
+ 	private double MIN_ZOOM = -100;
+ 	private double MAX_ZOOM = -2000;
+ 	
     /**
      * Initialize a new content container for Massing
      * 
@@ -69,14 +91,15 @@ public class Massing extends SubScene implements ContentContainer {
     	super(EMPTY_GROUP, DEFAULT_WIDTH, DEFAULT_HEIGHT);
     	
     	// Initialize Camera and Pan
-    	setZoom(-1000);
-    	setPan(325, 425, 0);
-    	setRotateV(-20);
-    	setRotateH(-45);
+    	scaler = DEFAULT_SCALER;
+    	setZoom(scaler*DEFAULT_ZOOM);
+    	setPan(scaler*DEFAULT_PAN_X, scaler*DEFAULT_PAN_Y, 0);
+    	setRotateV(scaler*DEFAULT_ROTATE_V);
+    	setRotateH(scaler*DEFAULT_ROTATE_H);
     	camera = new PerspectiveCamera(true);
 		camera.getTransforms().addAll(rotateV, zoom);
-		camera.setNearClip(10);
-		camera.setFarClip(10000);
+		camera.setNearClip(scaler*DEFAULT_NEAR_CLIP);
+		camera.setFarClip(scaler*DEFAULT_FAR_CLIP);
     	setBackground(Color.hsb(0,0,1.0));
     	showUnderlay = true;
     	
@@ -136,7 +159,7 @@ public class Massing extends SubScene implements ContentContainer {
 	 * @param distance (more negative is farther away)
 	 */
 	public void setZoom(double distance) {
-		this.zoom = new Translate(0, 0, ensureRange(distance, -2000, -100));
+		this.zoom = new Translate(0, 0, ensureRange(distance, MAX_ZOOM, MIN_ZOOM));
 	}
 	
 	/**
@@ -210,42 +233,6 @@ public class Massing extends SubScene implements ContentContainer {
 		nodes3D.getChildren().add(overheadLight());
 		nodes3D.getChildren().add(sideLight());
 		
-		// Draw Tagged Control Points
-		for (ControlPoint p : form_model.control.points()) {
-			Color control_fill         = Color.TRANSPARENT;
-			Color control_stroke       = Color.hsb(0, 0, 0, 0.50);
-			float control_strokeWidth = 1.0f;
-			
-			//Draw Circle
-			Circle c = new Circle();
-			c.setRadius(5);
-			c.setFill(control_fill);
-			c.setStroke(control_stroke);
-			c.setStrokeWidth(control_strokeWidth);
-			orientShape((Node)c, p.x, p.y, 0.2f);
-			if (p.active()) nodes3D.getChildren().add(c);
-			
-			// Draw CrossHairs
-			int size = 4;
-			if (!p.active()) {
-				control_stroke = Color.hsb(0, 0, 0, 0.1);
-				size = 2;
-			}
-			Line l1 = new Line();
-			l1.setStartX(p.x-size); l1.setStartY(p.y-size); l1.setEndX(p.x+size); l1.setEndY(p.y+size);
-			l1.setFill(control_fill);
-			l1.setStroke(control_stroke);
-			l1.setStrokeWidth(control_strokeWidth);
-			Line l2 = new Line();
-			l2.setStartX(p.x-size); l2.setStartY(p.y+size); l2.setEndX(p.x+size); l2.setEndY(p.y-size);
-			l2.setFill(control_fill);
-			l2.setStroke(control_stroke);
-			l2.setStrokeWidth(control_strokeWidth);
-			orientShape((Node)l1, 0, 0, 0.2f);
-			orientShape((Node)l2, 0, 0, 0.2f);
-			nodes3D.getChildren().addAll(l1, l2);
-		}
-		
 		// Draw Voxel Bases
 		for (TileArray space : form_model.spaceList("base")) {
 			if(form_model.showSpace(space) && form_model.showTiles) {
@@ -254,7 +241,7 @@ public class Massing extends SubScene implements ContentContainer {
 					// if in 2D view mode, Only draws ground plane 
 					if (t.location.z == 0) {
 						boolean isFlat = space.name.substring(0, 3).equals("Cou");
-						Box b = renderVoxel(t, col, 0, isFlat);
+						Box b = renderVoxel(t, col, DEFAULT_BASE_Z, isFlat);
 						nodes3D.getChildren().add(b);
 					}
 				}
@@ -273,21 +260,14 @@ public class Massing extends SubScene implements ContentContainer {
 					col = Color.hsb(space.getHueDegree(), 0.5, 0.8);
 				}
 				for (Tile t : space.tileList()) {
-					Box b = renderVoxel(t, col, 0.1, true);
+					Box b = renderVoxel(t, col, DEFAULT_FOOT_Z, true);
 					nodes3D.getChildren().add(b);
 					if (space.name.equals("Building")) {
-						b = renderVoxel(t, col, 0.1, false);
+						b = renderVoxel(t, col, DEFAULT_FOOT_Z, false);
 						nodes3D.getChildren().add(b);
 					}
 				}
 			}
-		}
-		
-		// Add and orient Underlay map
-		if (showUnderlay) {
-			map_model.setImageView();
-			orientShape((Node) map_model.getImageView(), 0, 0, -0.4f);
-			nodes3D.getChildren().add(map_model.getImageView());
 		}
 		
 		// Draw Voxel Zones
@@ -295,7 +275,7 @@ public class Massing extends SubScene implements ContentContainer {
 			if(form_model.showSpace(space) && form_model.showTiles) {
 				Color col = Color.hsb(space.getHueDegree(), 0.3, 0.9, 0.75);
 				for (Tile t : space.tileList()) {
-					Box b = renderVoxel(t, col, 0.2, false);
+					Box b = renderVoxel(t, col, DEFAULT_ZONE_Z, true);
 					nodes3D.getChildren().add(b);
 				}
 			}
@@ -306,18 +286,62 @@ public class Massing extends SubScene implements ContentContainer {
 			if(form_model.showSpace(space) && form_model.showTiles) {
 				Color col = Color.gray(0, 0.2);
 				for (Tile t : space.tileList()) {
-					Box b = renderVoxel(t, col, 0.3, true);
+					Box b = renderVoxel(t, col, DEFAULT_SITE_Z, true);
 					nodes3D.getChildren().add(b);
 				}
 			}
 		}
 		
+		// Draw Tagged Control Points
+		for (ControlPoint p : form_model.control.points()) {
+			Color control_fill         = Color.TRANSPARENT;
+			Color control_stroke       = Color.hsb(0, 0, 0, 0.50);
+			float control_strokeWidth = 1.0f;
+			
+			//Draw Circle
+			Circle c = new Circle();
+			c.setRadius(5);
+			c.setFill(control_fill);
+			c.setStroke(control_stroke);
+			c.setStrokeWidth(control_strokeWidth);
+			orientShape((Node)c, scaler*p.x, scaler*p.y, DEFAULT_CONTROL_Z);
+			if (p.active()) nodes3D.getChildren().add(c);
+			
+			// Draw CrossHairs
+			int size = 4;
+			if (!p.active()) {
+				control_stroke = Color.hsb(0, 0, 0, 0.1);
+				size = 2;
+			}
+			Line l1 = new Line();
+			l1.setStartX(scaler*p.x-size); l1.setStartY(scaler*p.y-size); l1.setEndX(scaler*p.x+size); l1.setEndY(scaler*p.y+size);
+			l1.setFill(control_fill);
+			l1.setStroke(control_stroke);
+			l1.setStrokeWidth(control_strokeWidth);
+			Line l2 = new Line();
+			l2.setStartX(scaler*p.x-size); l2.setStartY(scaler*p.y+size); l2.setEndX(scaler*p.x+size); l2.setEndY(scaler*p.y-size);
+			l2.setFill(control_fill);
+			l2.setStroke(control_stroke);
+			l2.setStrokeWidth(control_strokeWidth);
+			orientShape((Node)l1, 0, 0, DEFAULT_CONTROL_Z);
+			orientShape((Node)l2, 0, 0, DEFAULT_CONTROL_Z);
+			nodes3D.getChildren().addAll(l1, l2);
+		}
+		
+		// Add and orient Underlay map (draw last to be able to see through bottom!)
+		if (showUnderlay) {
+			map_model.setImageView();
+			orientShape((Node) map_model.getImageView(), 0, 0, DEFAULT_MAP_Z);
+			map_model.setScale(scaler);
+			nodes3D.getChildren().add(map_model.getImageView());
+		}
+		
 		// Draw Site Vector Polygon
-		Color site_fill         = Color.hsb(0, 0, 0.95, 0.5);
-		Color site_stroke       = Color.hsb(0, 0, 1.00, 0.5);
+		Color site_fill         = Color.TRANSPARENT;
+		Color site_stroke       = Color.hsb(0, 0, 0.1, 0.5);
 		float site_strokeWeight = 1.0f;
 		if (form_model.showPolygons) {
-			site_stroke         = Color.hsb(0, 0, 1.00, 1.0);
+			site_stroke         = Color.hsb(0, 0, 0.1, 1.0);
 			site_strokeWeight   = 2.0f;
 		}
 		Polygon site_polygon = new Polygon();
@@ -327,7 +351,7 @@ public class Massing extends SubScene implements ContentContainer {
 		site_polygon.setFill(site_fill);
 		site_polygon.setStroke(site_stroke);
 		site_polygon.setStrokeWidth(site_strokeWeight);
-		orientShape((Node) site_polygon, 0, 0, -0.3f);
+		orientShape((Node) site_polygon, 0, 0, DEFAULT_POLY_Z);
 		nodes3D.getChildren().add(site_polygon);
 	}
 	
@@ -337,7 +361,7 @@ public class Massing extends SubScene implements ContentContainer {
 	private Node overheadLight() {
 		PointLight light = new PointLight();
 		light.setColor(Color.WHITE);
-		light.getTransforms().add(new Translate(0, -400, 0));
+		light.getTransforms().add(new Translate(0, -scaler*DEFAULT_LIGHT_DISPLACEMENT, 0));
 		return light;
 	}
 	
@@ -347,7 +371,7 @@ public class Massing extends SubScene implements ContentContainer {
 	private Node sideLight() {
 		PointLight light = new PointLight();
 		light.setColor(Color.WHITE);
-		light.getTransforms().add(new Translate(-400, 0, -400));
+		light.getTransforms().add(new Translate(-scaler*DEFAULT_LIGHT_DISPLACEMENT, 0, -scaler*DEFAULT_LIGHT_DISPLACEMENT));
 		return light;
 	}
 	
@@ -370,7 +394,7 @@ public class Massing extends SubScene implements ContentContainer {
 
 		Translate pos = new Translate(
 				+ t.location.x, 
-				- t.location.z + z_offset - 0.5*boxH, 
+				- t.location.z - z_offset - 0.5*boxH, 
 				- t.location.y);
 		Rotate rot = new Rotate(RadianToDegree(form_model.tile_rotation), Rotate.Y_AXIS);
 		b.getTransforms().addAll(rotateH, pan, pos, rot);
@@ -386,11 +410,11 @@ public class Massing extends SubScene implements ContentContainer {
 	 * Make and position a 2D image or shape to the 3D environment
 	 * 
 	 * @param input
-	 * @param z_offset
+	 * @param f
 	 */
-	public void orientShape(Node input, float x_offset, float y_offset, float z_offset) {
+	public void orientShape(Node input, double d, double e, double f) {
 		Rotate rotateFlat = new Rotate(-90, Rotate.X_AXIS);
-		Translate pos = new Translate(x_offset, -z_offset, -y_offset);
+		Translate pos = new Translate(d, -f, -e);
 		input.getTransforms().addAll(rotateH, pan, pos, rotateFlat);
 	}
 
