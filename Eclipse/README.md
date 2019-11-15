@@ -7,18 +7,18 @@ Current development of FuzzyBuilder is conducted using a more traditional workfl
 
 ## How to use the Eclipse IDE for files in /Eclipse
 
-1. Download and Install latest [Eclipse IDE for Java Developers](
+1. Download and install latest [Eclipse IDE for Java Developers](
 https://www.eclipse.org/downloads/packages/release/2019-09/r/eclipse-ide-java-developers)
 
-2. Download Java SDK 13
+2. Download and install [Java SDK 13](https://www.oracle.com/technetwork/java/javase/downloads/jdk13-downloads-5672538.html)
 
-3. Import each java project folder as its own java project:
+3. Import each java project folder into Ecplise as its own java project:
 
-**fuzzybuilder-core/**: There are the core "back end" components of fuzzy builder. The classes are purposely NOT DEPENDENT on any front-end GUI libraries such as processing or javafx.
+	**fuzzybuilder-core/**: There are the core "back end" components of fuzzy builder. The classes are purposely NOT DEPENDENT on any front-end GUI libraries such as processing or javafx.
 
-**fuzzybuilder-javafx/** (need to download and add library javafx-sdk-13): This is the primary "front end" environment currently being developed. Its primary purpose is to initialize back end object models and allow a user to manipulate them. It should reference the "fuzzybuilder-core" project folder.
+	**fuzzybuilder-javafx/** (need to download and add library javafx-sdk-13): This is the primary "front end" environment currently being developed. Its primary purpose is to initialize back end object models and allow a user to manipulate them. It should reference the "fuzzybuilder-core" project folder.
 
-**fuzzybuilder-processing/**: (need to download and add library processing-3.5.3) This is a bar bones GUI implemented using processing library components. Its primary purpose is to help demonstrate generalizability of the core backend components. Other than making sure it compiles, it's not intended for further feature development. It should reference the "fuzzybuilder-core" project folder.
+	**fuzzybuilder-processing/**: (need to download and add library processing-3.5.3) This is a bar bones GUI implemented using processing library components. Its primary purpose is to help demonstrate generalizability of the core backend components. Other than making sure it compiles, it's not intended for further feature development. It should reference the "fuzzybuilder-core" project folder.
 
 4. JavaFX Application Run Configuration: To compile and run the primary application being developed, you will need to set up a Run Configuration in Eclipse. The FuzzyBuilder.java file located in fuzzybuilder-javafx launches the JavaFX application.  In the "Run Configurations" menu set this as the main class:  'edu.mit.ira.fuzzy.fx.stage.FuzzyBuilder'. Under the "Arguments" tab, insert the following code into VM arguments: (Replace `/path/to/javafx-sdk-13` with the actual path to your JavaFX download. Also be sure to *uncheck* the box that says "Use the -XstartOnFirstThread argument when launching with SWT.)
 ```
