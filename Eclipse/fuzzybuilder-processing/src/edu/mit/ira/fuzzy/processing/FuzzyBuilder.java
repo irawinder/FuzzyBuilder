@@ -48,7 +48,7 @@ public class FuzzyBuilder extends PApplet {
 		surface.setTitle("FuzzyBuilder");
 		window = new Canvas(this);
 		
-		editor = new DevelopmentEditor();
+		editor = new RandomSite(21, 7, 400, 200, 100, 200);
 		map = new Underlay(this, "data/site.png", (float) 0.5);
 		
 	}
