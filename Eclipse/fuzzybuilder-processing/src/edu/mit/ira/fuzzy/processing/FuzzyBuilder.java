@@ -86,7 +86,8 @@ public class FuzzyBuilder extends PApplet {
 			break;
 		}
 		
-		editor.keyPressed(key, keyCode, CODED, LEFT, RIGHT, DOWN, UP);
+		editor.keyPressed(key);
+		editor.arrowPressed(key, keyCode, CODED, LEFT, RIGHT, DOWN, UP);
 		map.keyPressed(key);
 		window.keyPressed(key);
 		loop();
