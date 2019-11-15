@@ -122,11 +122,13 @@ public class FuzzyBuilder extends Application {
     	float width = (float) scenario_map.getImageView().getFitWidth();
     	float height = (float) scenario_map.getImageView().getFitHeight();
     	float diameter = Math.min(width, height);
+    	float tileWidth = 30;
+    	float tileHeight = 10;
     	float x = 0.5f * diameter;
     	float y = 0.5f * diameter;
     	float min_radius = 0.3f * diameter;
     	float max_radius = 0.4f * diameter;
-    	scenario_form = new RandomSite(x, y, min_radius, max_radius);
+    	scenario_form = new RandomSite(tileWidth, tileHeight, x, y, min_radius, max_radius);
     }
     
     /**
