@@ -210,31 +210,42 @@ public class Massing extends SubScene implements ContentContainer {
 		nodes3D.getChildren().add(overheadLight());
 		nodes3D.getChildren().add(sideLight());
 		
-		// Add and orient Underlay map
-		if (showUnderlay) {
-			map_model.setImageView();
-			orientShape((Node) map_model.getImageView(), 0, 0, -0.4f);
-			nodes3D.getChildren().add(map_model.getImageView());
+		// Draw Tagged Control Points
+		for (ControlPoint p : form_model.control.points()) {
+			Color control_fill         = Color.TRANSPARENT;
+			Color control_stroke       = Color.hsb(0, 0, 0, 0.50);
+			float control_strokeWidth = 1.0f;
+			
+			//Draw Circle
+			Circle c = new Circle();
+			c.setRadius(5);
+			c.setFill(control_fill);
+			c.setStroke(control_stroke);
+			c.setStrokeWidth(control_strokeWidth);
+			orientShape((Node)c, p.x, p.y, 0.2f);
+			if (p.active()) nodes3D.getChildren().add(c);
+			
+			// Draw CrossHairs
+			int size = 4;
+			if (!p.active()) {
+				control_stroke = Color.hsb(0, 0, 0, 0.1);
+				size = 2;
+			}
+			Line l1 = new Line();
+			l1.setStartX(p.x-size); l1.setStartY(p.y-size); l1.setEndX(p.x+size); l1.setEndY(p.y+size);
+			l1.setFill(control_fill);
+			l1.setStroke(control_stroke);
+			l1.setStrokeWidth(control_strokeWidth);
+			Line l2 = new Line();
+			l2.setStartX(p.x-size); l2.setStartY(p.y+size); l2.setEndX(p.x+size); l2.setEndY(p.y-size);
+			l2.setFill(control_fill);
+			l2.setStroke(control_stroke);
+			l2.setStrokeWidth(control_strokeWidth);
+			orientShape((Node)l1, 0, 0, 0.2f);
+			orientShape((Node)l2, 0, 0, 0.2f);
+			nodes3D.getChildren().addAll(l1, l2);
 		}
-
-		// Draw Site Vector Polygon
-		Color site_fill         = Color.hsb(0, 0, 0.95, 0.5);
-		Color site_stroke       = Color.hsb(0, 0, 1.00, 0.5);
-		float site_strokeWeight = 1.0f;
-		if (form_model.showPolygons) {
-			site_stroke         = Color.hsb(0, 0, 1.00, 1.0);
-			site_strokeWeight   = 2.0f;
-		}
-		Polygon site_polygon = new Polygon();
-		for (Point p : form_model.site_boundary.getCorners()) {
-			site_polygon.getPoints().addAll(new Double[] { (double) p.x, (double) p.y });
-		}
-		site_polygon.setFill(site_fill);
-		site_polygon.setStroke(site_stroke);
-		site_polygon.setStrokeWidth(site_strokeWeight);
-		orientShape((Node) site_polygon, 0, 0, -0.3f);
-		nodes3D.getChildren().add(site_polygon);
-
+		
 		// Draw Voxel Bases
 		for (TileArray space : form_model.spaceList("base")) {
 			if(form_model.showSpace(space) && form_model.showTiles) {
@@ -272,6 +283,13 @@ public class Massing extends SubScene implements ContentContainer {
 			}
 		}
 		
+		// Add and orient Underlay map
+		if (showUnderlay) {
+			map_model.setImageView();
+			orientShape((Node) map_model.getImageView(), 0, 0, -0.4f);
+			nodes3D.getChildren().add(map_model.getImageView());
+		}
+		
 		// Draw Voxel Zones
 		for (TileArray space : form_model.spaceList("zone")) {
 			if(form_model.showSpace(space) && form_model.showTiles) {
@@ -294,41 +312,23 @@ public class Massing extends SubScene implements ContentContainer {
 			}
 		}
 		
-		// Draw Tagged Control Points
-		for (ControlPoint p : form_model.control.points()) {
-			Color control_fill         = Color.TRANSPARENT;
-			Color control_stroke       = Color.hsb(0, 0, 0, 0.50);
-			float control_strokeWidth = 1.0f;
-			
-			//Draw Circle
-			Circle c = new Circle();
-			c.setRadius(5);
-			c.setFill(control_fill);
-			c.setStroke(control_stroke);
-			c.setStrokeWidth(control_strokeWidth);
-			orientShape((Node)c, p.x, p.y, 0.2f);
-			if (p.active()) nodes3D.getChildren().add(c);
-			
-			// Draw CrossHairs
-			int size = 4;
-			if (!p.active()) {
-				control_stroke = Color.hsb(0, 0, 0, 0.1);
-				size = 2;
-			}
-			Line l1 = new Line();
-			l1.setStartX(p.x-size); l1.setStartY(p.y-size); l1.setEndX(p.x+size); l1.setEndY(p.y+size);
-			l1.setFill(control_fill);
-			l1.setStroke(control_stroke);
-			l1.setStrokeWidth(control_strokeWidth);
-			Line l2 = new Line();
-			l2.setStartX(p.x-size); l2.setStartY(p.y+size); l2.setEndX(p.x+size); l2.setEndY(p.y-size);
-			l2.setFill(control_fill);
-			l2.setStroke(control_stroke);
-			l2.setStrokeWidth(control_strokeWidth);
-			orientShape((Node)l1, 0, 0, 0.2f);
-			orientShape((Node)l2, 0, 0, 0.2f);
-			nodes3D.getChildren().addAll(l1, l2);
+		// Draw Site Vector Polygon
+		Color site_fill         = Color.hsb(0, 0, 0.95, 0.5);
+		Color site_stroke       = Color.hsb(0, 0, 1.00, 0.5);
+		float site_strokeWeight = 1.0f;
+		if (form_model.showPolygons) {
+			site_stroke         = Color.hsb(0, 0, 1.00, 1.0);
+			site_strokeWeight   = 2.0f;
 		}
+		Polygon site_polygon = new Polygon();
+		for (Point p : form_model.site_boundary.getCorners()) {
+			site_polygon.getPoints().addAll(new Double[] { (double) p.x, (double) p.y });
+		}
+		site_polygon.setFill(site_fill);
+		site_polygon.setStroke(site_stroke);
+		site_polygon.setStrokeWidth(site_strokeWeight);
+		orientShape((Node) site_polygon, 0, 0, -0.3f);
+		nodes3D.getChildren().add(site_polygon);
 	}
 	
 	/**
@@ -415,7 +415,6 @@ public class Massing extends SubScene implements ContentContainer {
 			double dx = + (mousePosX - me.getSceneX());
 			double dy = - (mousePosY - me.getSceneY());
 
-
 			// i.e. right mouse button
 			if (me.isSecondaryButtonDown()) {
 
@@ -431,14 +430,18 @@ public class Massing extends SubScene implements ContentContainer {
 
 				// Pan View
 				double angleH = DegreeToRadian((float) rotateH.getAngle());
-				double dx_r = dx*Math.cos(angleH) - dy*Math.sin(angleH);
-				double dy_r = dy*Math.cos(angleH) + dx*Math.sin(angleH);
+				double dx_r, dy_r;
+				int flip = 1;
+				if (rotateV.getAngle() > 0) flip = -1;
+				dx_r = + dx * Math.cos(angleH) - flip*dy * Math.sin(angleH);
+				dy_r = + dx * Math.sin(angleH) + flip*dy * Math.cos(angleH);
 				double panU = pan.getX() - dx_r;
 				double panV = pan.getZ() - dy_r;
 				pan.setX(panU);
 				pan.setZ(panV);
-
 			}
+			
+			// Set new mouse position
 			mousePosX = me.getSceneX();
 			mousePosY = me.getSceneY();
 		});
