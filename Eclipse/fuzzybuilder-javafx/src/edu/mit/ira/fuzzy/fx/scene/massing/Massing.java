@@ -77,7 +77,8 @@ public class Massing extends MassingContainer {
 		nodes2D.getChildren().clear();
 		nodes3D.getChildren().clear();
 		
-		Label l = new Label("Massing Overlay");
+		// Placeholder for 2D overlay
+		Label l = new Label("Massing Editor");
     	nodes2D.getChildren().add(l);
 		
 		// Set up Ambient Lighting Effects
@@ -158,6 +159,7 @@ public class Massing extends MassingContainer {
 		
 		// Draw All Control Point Circles
 		if(form_model.viewState != 5 && form_model.isEditing()) {
+			controlMap.clear();
 			for (ControlPoint p : form_model.control.points()) {
 				Circle oc = new Circle();
 				oc.setRadius(DEFAULT_SCALER * DEFAULT_CONTROL_SIZE);
@@ -166,6 +168,7 @@ public class Massing extends MassingContainer {
 				oc.setStrokeWidth(DEFAULT_SCALER * SUBDUED_STROKE);
 				orientShape((Node) oc, viewScaler * p.x, viewScaler * p.y, DEFAULT_CONTROL_Z);
 				nodes3D.getChildren().add(oc);
+				controlMap.put(oc, p);
 			}
 		}
 		

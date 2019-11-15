@@ -1,10 +1,14 @@
 package edu.mit.ira.fuzzy.fx.scene.massing;
 
+import java.util.HashMap;
+
+import edu.mit.ira.fuzzy.base.ControlPoint;
 import edu.mit.ira.fuzzy.builder.DevelopmentEditor;
 import edu.mit.ira.fuzzy.fx.node.Underlay;
 import edu.mit.ira.fuzzy.fx.scene.ContentContainer;
 import javafx.scene.Camera;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.PerspectiveCamera;
 import javafx.scene.SceneAntialiasing;
 import javafx.scene.SubScene;
@@ -50,7 +54,10 @@ public class MassingContainer extends SubScene implements ContentContainer {
  	protected double viewScaler;
  	
  	// Mouse locations on Canvas
- 	protected double mousePosX, mousePosY = 0;
+ 	protected double mousePosX, mousePosY;
+ 	
+ 	// HashMap of Control Point Visual Nodes
+ 	protected HashMap<Node, ControlPoint> controlMap;
  	
  	// Default Camera Values
 	final protected static double DEFAULT_SCALER = 4.0;
@@ -89,6 +96,11 @@ public class MassingContainer extends SubScene implements ContentContainer {
 		camera.setFarClip(viewScaler*DEFAULT_FAR_CLIP);
     	setBackground(Color.TRANSPARENT);
     	showUnderlay = true;
+    	
+    	// Initialize Mouse Interaction Objects
+    	mousePosX = 0;
+    	mousePosY = 0;
+    	controlMap = new HashMap<Node, ControlPoint>();
     	
     	// Initialize Parent Nodes
     	nodes3D = new Group();
@@ -132,19 +144,6 @@ public class MassingContainer extends SubScene implements ContentContainer {
 		camera.setFarClip(viewScaler*DEFAULT_FAR_CLIP);
 		scene3D.setCamera(camera);
     }
-
-	public void keyPressed(KeyEvent e) {
-
-		// Print Camera Position
-		if (e.getText().equals("C")) {
-			defaultCamera();
-			//printCamera();
-		}
-		// Print Camera Position
-		if (e.getCode() == KeyCode.U) {
-			showUnderlay = !showUnderlay;
-		}
-	}
 	
 	/**
 	 * Zoom level of Camera
@@ -207,13 +206,45 @@ public class MassingContainer extends SubScene implements ContentContainer {
 	public void setMapModel(Underlay map_model) {
 		this.map_model  = map_model;
 	}
+	
+	public void keyPressed(KeyEvent e) {
 
+		// Print Camera Position
+		if (e.getText().equals("C")) {
+			defaultCamera();
+			//printCamera();
+		}
+		// Print Camera Position
+		if (e.getCode() == KeyCode.U) {
+			showUnderlay = !showUnderlay;
+		}
+	}
+	
+	/**
+	 * Print Camera Parameters to console
+	 */
+	public void printCamera() {
+		System.out.println("Camera Zoom: " + zoom.getZ());
+		System.out.println("Camera Pan: (" + -pan.getX() + ", " + pan.getZ() + ", " + pan.getY() + ")");
+		System.out.println("Camera RotateV: " + rotateV.getAngle());
+		System.out.println("Camera RotateH: " + rotateH.getAngle());
+	}
+	
 	/**
 	 * Actions to take when mouse events are detected
 	 * 
 	 * @param scene3d
 	 */
 	public void handleMouseEvents(SubScene scene) {
+
+		scene.setOnMouseMoved((MouseEvent me) -> {
+			mousePosX = me.getSceneX();
+			mousePosY = me.getSceneY();
+		});
+		
+		scene.setOnMouseReleased((MouseEvent me) -> {
+			
+		});
 		
 		// Load the mouse location on the scene while pressed down
 		scene.setOnMousePressed((MouseEvent me) -> {
@@ -267,6 +298,64 @@ public class MassingContainer extends SubScene implements ContentContainer {
 		});
 	}
 	
+//	/**
+//	 * 
+//	 * @return new ControlPoint at mouse (Requires processing.core)
+//	 */
+//	Point newPointAtMouse() {
+//		Point mousePoint = null;
+//
+//		// generate a grid of points to search for nearest match
+//		// centered at (0,0)
+//		int breadth = 1000;
+//		int interval = 5;
+//
+//		float min_distance = Float.POSITIVE_INFINITY;
+//		for (int x = -breadth; x < breadth; x += interval) {
+//			for (int y = -breadth; y < breadth; y += interval) {
+//				float dist_x = mousePosX - screenX(x, y);
+//				float dist_y = mousePosY - screenY(x, y);
+//				float distance = (float) Math.sqrt(Math.pow(dist_x, 2) + Math.pow(dist_y, 2));
+//				if (distance < 15) {
+//					if (distance < min_distance) {
+//						min_distance = distance;
+//						mousePoint = new Point(x + 0.01f * (float) Math.random(), y + 0.01f * (float) Math.random());
+//					}
+//				}
+//			}
+//		}
+//		return mousePoint;
+//	}
+
+//	/**
+//	 * Return Tagged Point Nearest to Mouse (Requires processing.core)
+//	 * 
+//	 * @return ControlPoint closest to mouse
+//	 */
+//	ControlPoint pointAtMouse() {
+//		ControlPoint closest = null;
+//		float min_distance = Float.POSITIVE_INFINITY;
+//		for (ControlPoint p : form_model.control.points()) {
+//			double dist_x, dist_y;
+//			Node atPoint = (Node) controlMap.get(p.getUniqueID());
+//			if (atPoint != null) {
+//				Point2D screenPos = atPoint.sceneToLocal(new Point2D(0, 0));
+//				dist_x = mousePosX - screenPos.getX();
+//				dist_y = mousePosY - screenPos.getY();
+//
+//				float distance = (float) Math.sqrt(Math.pow(dist_x, 2) + Math.pow(dist_y, 2));
+//				if (distance < 15) {
+//					if (distance < min_distance) {
+//						min_distance = distance;
+//						closest = p;
+//					}
+//				}
+//				System.out.println(mousePosX + "," + mousePosY + ", " + screenPos.getX() + ", " + screenPos.getY() + ", " + closest);
+//			}
+//		}
+//		return closest;
+//	}
+	
 	/**
 	 * Returns a value capped to a specified minimum and maximum value
 	 * 
@@ -297,15 +386,5 @@ public class MassingContainer extends SubScene implements ContentContainer {
 	 */
 	protected double DegreeToRadian(float radian) {
 		return (Math.PI * radian / 180)%(2*Math.PI);
-	}
-	
-	/**
-	 * Print Camera Parameters to console
-	 */
-	public void printCamera() {
-		System.out.println("Camera Zoom: " + zoom.getZ());
-		System.out.println("Camera Pan: (" + -pan.getX() + ", " + pan.getZ() + ", " + pan.getY() + ")");
-		System.out.println("Camera RotateV: " + rotateV.getAngle());
-		System.out.println("Camera RotateH: " + rotateH.getAngle());
 	}
 }
