@@ -1,5 +1,7 @@
 package edu.mit.ira.fuzzy.base;
 
+import java.util.UUID;
+
 /**
  * ControlPoint class, a point with associated abstract attributes of tag, type,
  * and weight
@@ -8,7 +10,10 @@ package edu.mit.ira.fuzzy.base;
  *
  */
 public class ControlPoint extends Point {
-
+	
+	// Unique ID
+	final private UUID uniqueID;
+	
 	// String tag of point
 	private String tag;
 
@@ -29,9 +34,19 @@ public class ControlPoint extends Point {
 	 */
 	public ControlPoint(float x, float y) {
 		super(x, y);
+		uniqueID = UUID.randomUUID();
 		tag = "";
 		weight = (float) 1;
 		active = true;
+	}
+	
+	/**
+	 * Get the UniqueID of the Control Point
+	 * 
+	 * @return UUID
+	 */
+	public UUID getUniqueID() {
+		return uniqueID;
 	}
 
 	/**

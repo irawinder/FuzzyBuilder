@@ -1,7 +1,9 @@
 package edu.mit.ira.fuzzy.base;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Random;
+import java.util.UUID;
 
 /**
  * Control Class is for managing a set of multiple Control Points
@@ -11,13 +13,15 @@ import java.util.Random;
  */
 public class ControlSet {
 
-	private ArrayList<ControlPoint> cPoints;
+	private ArrayList<ControlPoint> pointList;
+	private HashMap<UUID, ControlPoint> pointMap;
 
 	/**
 	 * Construct Emply List of Control Points
 	 */
 	public ControlSet() {
-		cPoints = new ArrayList<ControlPoint>();
+		pointList = new ArrayList<ControlPoint>();
+		pointMap = new HashMap<UUID, ControlPoint>();
 	}
 
 	/**
@@ -26,7 +30,16 @@ public class ControlSet {
 	 * @return all Control Points
 	 */
 	public ArrayList<ControlPoint> points() {
-		return cPoints;
+		return pointList;
+	}
+	
+	/**
+	 * Return HashMap of ControlPoints
+	 * 
+	 * @return all Control Points as HashMap
+	 */
+	public HashMap<UUID, ControlPoint> pointMap() {
+		return pointMap;
 	}
 
 	/**
@@ -37,7 +50,7 @@ public class ControlSet {
 	 */
 	public ArrayList<ControlPoint> points(String type) {
 		ArrayList<ControlPoint> subset = new ArrayList<ControlPoint>();
-		for (ControlPoint p : cPoints) {
+		for (ControlPoint p : pointList) {
 			if (p.getType().equals(type)) {
 				subset.add(p);
 			}
@@ -49,7 +62,7 @@ public class ControlSet {
 	 * Turns all control points on()
 	 */
 	public void on() {
-		for (ControlPoint p : cPoints)
+		for (ControlPoint p : pointList)
 			p.on();
 	}
 
@@ -57,7 +70,7 @@ public class ControlSet {
 	 * Turns all control points off()
 	 */
 	public void off() {
-		for (ControlPoint p : cPoints)
+		for (ControlPoint p : pointList)
 			p.off();
 	}
 
@@ -67,7 +80,7 @@ public class ControlSet {
 	 * @param type Type of ControlPoints to turn on
 	 */
 	public void on(String type) {
-		for (ControlPoint p : cPoints) {
+		for (ControlPoint p : pointList) {
 			if (p.getType().equals(type))
 				p.on();
 		}
@@ -79,7 +92,7 @@ public class ControlSet {
 	 * @param type Type of ControlPoints to turn off
 	 */
 	public void off(String type) {
-		for (ControlPoint p : cPoints) {
+		for (ControlPoint p : pointList) {
 			if (p.getType().equals(type))
 				p.off();
 		}
@@ -124,7 +137,8 @@ public class ControlSet {
 	private void addPoint(ControlPoint p, String tag, String type) {
 		p.setTag(tag);
 		p.setType(type);
-		cPoints.add(p);
+		pointList.add(p);
+		pointMap.put(p.getUniqueID(), p);
 	}
 
 	/**
@@ -153,20 +167,20 @@ public class ControlSet {
 	 * @param p ControlPoint to remove
 	 */
 	public void removePoint(ControlPoint p) {
-		cPoints.remove(p);
+		pointList.remove(p);
 	}
 
 	/**
 	 * Clear all Control Points
 	 */
 	public void clearPoints() {
-		cPoints.clear();
+		pointList.clear();
 	}
 
 	@Override
 	public String toString() {
 		String out = "";
-		for (ControlPoint p : cPoints)
+		for (ControlPoint p : pointList)
 			out += p + "\n";
 		return out;
 	}
