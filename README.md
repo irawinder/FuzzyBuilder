@@ -9,4 +9,4 @@ FuzzyBuilder is an application for generating "fuzzy" resolution development sce
 An alpha prototype of FuzzyBuilder was quickly developed in July 2019 using the Processing IDE at processing.org. Processing is a light-weight sketch coding environment based upon Java 8. This content is located in the "Processing/" folder, and includes a readme file that explains how to run the code on your own machine. This code is no longer updated, as development has moved into a more robust workflow based on native Java and JavaFX libraries. 
 
 ## Development: (v1.0-alpha.2+)
-Current development is conducted using a more traditional workflow structured around Java projects located in the "Eclipse/" folder. Thusly, we recommend contributing using the Eclipse IDE. The "Eclipse/" folder contains a readme that explains how to set up your environment for each project.
+Current development is conducted using a more traditional workflow structured around Java projects located in the "Eclipse/" folder. Thusly, we recommend reviewing and contributing using the Eclipse IDE. The "Eclipse/" folder contains a readme that explains how to set up your environment for each project.
