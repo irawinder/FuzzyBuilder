@@ -1,24 +1,12 @@
 # Fuzzy Builder
-FuzzyBuilder is an application for generating "fuzzy" resolution development scenarios on a configurable parcel, meant for a process somewhere between site acquisition and highly resolved scenario evaluation. [Under Construction]
+Ira Winder (jiw@mit.edu)
 
-![Fuzzy Builder by Ira Winder](screenshots/Screen%20Shot%202019-07-23%20at%201.36.52%20PM.png "Fuzzy Builder by Ira Winder")
+FuzzyBuilder is an application for generating "fuzzy" resolution development scenarios on a configurable parcel, meant for a process somewhere between site acquisition and highly resolved scenario evaluation.
 
-## How to Use the Processing IDE for files in /Processing
+![Fuzzy Builder by Ira Winder](screenshots/massing.png "Fuzzy Builder by Ira Winder")
 
-1. Make sure you have installed the latest version of [Java](https://www.java.com/verify/)
-2. Download [Processing 3](https://processing.org/download/)
-3. Clone or download the repository to your computer
-4. Open and run "Processing/FuzzyBuilder/FuzzyBuilder.pde" with Processing 3
- 
-## How to use the Eclipse IDE for files in /Eclipse
+## Prototype: (v1.0-alpha.1)
+An alpha prototype of FuzzyBuilder was quickly developed in July 2019 using the Processing IDE at processing.org. Processing is a light-weight sketch coding environment based upon Java 8. This content is located in the "Processing/" folder, and includes a readme file that explains how to run the code on your own machine. This code is no longer updated, as development has moved into a more robust workflow based on native Java and JavaFX libraries. 
 
-1. This software runs on version 13 of Java with the following external libraries:
-..*javafx-sdk-13
-..*processing-3.5.3
-
-2. Set up GUI_FX.java in Eclipse. In the "Run Configurations" menu, under the "Arguments" tab, insert the following code into VM arguments. Replace `/path/to/javafx-sdk-13` with the actual path to your JavaFX download. Also be sure to *uncheck* the box that says "Use the -XstartOnFirstThread argument when launching with SWT.
-```
---module-path "/path/to/javafx-sdk-13/lib" --add-modules javafx.controls,javafx.fxml,javafx.graphics,javafx.media,javafx.swing,javafx.web
-```
-
-3. No special arguments needed to run GUI_Processing, as long as you have pointed to processing's core.jar
+## Development: (v1.0-alpha.2+)
+Current development is conducted using a more traditional workflow structured around Java projects located in the "Eclipse/" folder. Thusly, we recommend contributing using the Eclipse IDE. The "Eclipse/" folder contains a readme that explains how to set up your environment for each project.
