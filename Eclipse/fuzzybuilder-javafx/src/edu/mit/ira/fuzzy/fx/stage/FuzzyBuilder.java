@@ -68,8 +68,25 @@ public class FuzzyBuilder extends Application {
      	
 		// Handle Key Events for the main content scene
         content.setOnKeyPressed(e -> {
-			
-			// Pass Key Commands on to lesser containers
+        	
+        	// Handle Top-level key commands meant for application-wide event
+    		if (e.getCode() == KeyCode.L) {
+    			loadShinagawaScenario();
+    		} else if (e.getCode() == KeyCode.R) {
+    			loadRandomScenario();
+    		}
+    		
+        	// Pass Key Commands on to "back-end" form model
+        	if(e.getText().length() == 1) {
+        		char key = e.getText().toString().charAt(0);
+        		scenario_form.keyPressed(key);
+        	} else if(e.getCode().isArrowKey()) {
+        		String key = e.getCode().toString();
+        		scenario_form.arrowPressed(key);
+        	}
+        	scenario_form.updateModel();
+        	
+			// Pass Key Commands on to "front-end" lesser containers
 			((Toolbar)   toolbar).keyPressed(e);
 			((Version)   version).keyPressed(e);
 			((Canvas)     canvas).keyPressed(e);
@@ -79,15 +96,6 @@ public class FuzzyBuilder extends Application {
 			((Navigate) navigate).keyPressed(e);
 			((Status)     status).keyPressed(e);
 			
-        	// Handle Top-level key commands meant for application-wide event
-    		if (e.getCode() == KeyCode.L) {
-    			//Load Shinagawa Site
-    			loadShinagawaScenario();
-    		} else if (e.getCode() == KeyCode.R) {
-    			// Make Random Site
-    			loadRandomScenario();
-    		}
-    		
     		// Refresh Scenes with new State
     		renderScenes();
         });
@@ -95,8 +103,6 @@ public class FuzzyBuilder extends Application {
         // Set the stage and start the show
         appWindow.setScene(content);
         appWindow.show();
-        
-        
     }
     
     /**
@@ -126,9 +132,7 @@ public class FuzzyBuilder extends Application {
     	((Toolbar)   toolbar).render();
 		((Version)   version).render();
 		((Canvas)     canvas).render();
-		
 		((Massing)   massing).render(scenario_form, scenario_map);
-		
 		((Outcome)   outcome).render();
 		((Commit)     commit).render();
 		((Navigate) navigate).render();
