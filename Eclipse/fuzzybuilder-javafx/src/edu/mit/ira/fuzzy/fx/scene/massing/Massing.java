@@ -13,8 +13,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
 import javafx.scene.shape.Circle;
-import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
+import javafx.scene.shape.Sphere;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
 
@@ -33,7 +33,7 @@ public class Massing extends MassingContainer {
  	// Default color and stroke values
  	final protected static double DEFAULT_SATURATION = 0.50;
  	final protected static double DEFAULT_BRIGHTNESS = 0.75;
- 	final protected static double DEFAULT_ALPHA = 1.00;
+ 	final protected static double DEFAULT_ALPHA = 0.90;
  	final protected static double SUBDUED_SATURATION = 0.30;
  	final protected static double SUBDUED_BRIGHTNESS = 0.75;
  	final protected static double SUBDUED_ALPHA = 0.75;
@@ -43,6 +43,8 @@ public class Massing extends MassingContainer {
  	final protected static Color ACTIVE_COLOR = Color.PURPLE;
  	final protected static Color REMOVE_COLOR = Color.RED;
  	final protected static Color ADD_COLOR = Color.GREEN;
+ 	final protected static Color DEFAULT_CONTROL_FILL = Color.hsb(0, 0, 1, SUBDUED_ALPHA);
+ 	final protected static Color DEFAULT_CONTROL_STROKE = Color.gray(SUBDUED_SATURATION, SUBTLE_ALPHA);
  	
  	// Default Object Sizes
  	final protected static double DEFAULT_CONTROL_SIZE = 5.0;
@@ -82,34 +84,31 @@ public class Massing extends MassingContainer {
 		nodes3D.getChildren().add(overheadLight());
 		nodes3D.getChildren().add(sideLight());
 		
-		// Draw Voxel Bases
-		for (TileArray space : form_model.spaceList("base")) {
-			if(form_model.showSpace(space) && form_model.showTiles) {
-				Color col = Color.hsb(space.getHueDegree(), DEFAULT_SATURATION, DEFAULT_BRIGHTNESS);
-				for (Tile t : space.tileList()) {
-					// if in 2D view mode, Only draws ground plane 
-					if (t.location.z == 0) {
-						boolean isFlat = space.name.substring(0, 3).equals("Cou");
-						Box b = renderVoxel(t, col, DEFAULT_BASE_Z, isFlat);
-						nodes3D.getChildren().add(b);
-					}
+		// Extra opacity to apply when editing control points
+		double editingScaler = 1.0;
+		if (form_model.isEditing()) editingScaler = 0.5;
+		
+		// Draw Active Control Points' Inner Sphere
+		if (form_model.isEditing()) {
+			for (ControlPoint p : form_model.control.points()) {
+				if (p.active()) {
+					Sphere ic = new Sphere();
+					ic.setRadius(0.65 * DEFAULT_SCALER * DEFAULT_CONTROL_SIZE);
+					PhongMaterial material = new PhongMaterial(ACTIVE_COLOR);
+					ic.setMaterial(material);
+					orientShape((Node) ic, viewScaler * p.x, viewScaler * p.y, DEFAULT_CONTROL_Z + 0.1);
+					nodes3D.getChildren().add(ic);
 				}
 			}
 		}
 
-		// Draw Voxel Footprints
-		for (TileArray space : form_model.spaceList("footprint")) {
+		// Draw Voxel Sites
+		for (TileArray space : form_model.spaceList("site")) {
 			if(form_model.showSpace(space) && form_model.showTiles) {
-				Color col = Color.hsb(space.getHueDegree(), DEFAULT_SATURATION, DEFAULT_BRIGHTNESS);
-				if (space.name.equals("Setback"))
-					col = Color.hsb(space.getHueDegree(), SUBDUED_SATURATION, SUBDUED_BRIGHTNESS, SUBDUED_ALPHA);
+				Color col = Color.gray(DEFAULT_SATURATION, SUBDUED_ALPHA);
 				for (Tile t : space.tileList()) {
-					Box b = renderVoxel(t, col, DEFAULT_FOOT_Z, true);
+					Box b = renderVoxel(t, col, DEFAULT_SITE_Z, true);
 					nodes3D.getChildren().add(b);
-					if (space.name.equals("Building")) {
-						b = renderVoxel(t, col, DEFAULT_FOOT_Z, false);
-						nodes3D.getChildren().add(b);
-					}
 				}
 			}
 		}
@@ -125,40 +124,48 @@ public class Massing extends MassingContainer {
 			}
 		}
 		
-		// Draw Voxel Sites
-		for (TileArray space : form_model.spaceList("site")) {
+		// Draw Voxel Footprints
+		for (TileArray space : form_model.spaceList("footprint")) {
 			if(form_model.showSpace(space) && form_model.showTiles) {
-				Color col = Color.gray(DEFAULT_SATURATION, SUBDUED_ALPHA);
+				Color col = Color.hsb(space.getHueDegree(), DEFAULT_SATURATION, DEFAULT_BRIGHTNESS, DEFAULT_ALPHA);
+				if (space.name.equals("Setback"))
+					col = Color.hsb(space.getHueDegree(), SUBDUED_SATURATION, SUBDUED_BRIGHTNESS, SUBDUED_ALPHA);
 				for (Tile t : space.tileList()) {
-					Box b = renderVoxel(t, col, DEFAULT_SITE_Z, true);
+					Box b = renderVoxel(t, col, DEFAULT_FOOT_Z, true);
 					nodes3D.getChildren().add(b);
+					if (space.name.equals("Building")) {
+						b = renderVoxel(t, col, DEFAULT_FOOT_Z, true);
+						nodes3D.getChildren().add(b);
+					}
 				}
 			}
 		}
 		
-		// Draw Tagged Control Points
-		for (ControlPoint p : form_model.control.points()) {
-			Color control_fill           = Color.hsb(0, 0, 1, SUBDUED_ALPHA);
-			Color control_stroke = Color.gray(SUBDUED_SATURATION, SUBTLE_ALPHA);
-			double control_strokeWidth   = DEFAULT_SCALER * SUBDUED_STROKE;
-			
-			//Draw Outer Circle
-			Circle oc = new Circle();
-			oc.setRadius(DEFAULT_SCALER * DEFAULT_CONTROL_SIZE);
-			oc.setFill(control_fill);
-			oc.setStroke(control_stroke);
-			oc.setStrokeWidth(control_strokeWidth);
-			orientShape((Node) oc, viewScaler*p.x, viewScaler*p.y, DEFAULT_CONTROL_Z);
-			nodes3D.getChildren().add(oc);
-			
-			// Draw Inner Circle
-			if (p.active()) {
-				Circle ic = new Circle();
-				ic.setRadius(0.65*DEFAULT_SCALER * DEFAULT_CONTROL_SIZE);
-				ic.setFill(ACTIVE_COLOR);
-				ic.setStroke(Color.TRANSPARENT);
-				orientShape((Node) ic, viewScaler * p.x, viewScaler * p.y, DEFAULT_CONTROL_Z + 0.1);
-				nodes3D.getChildren().add(ic);
+		// Draw Voxel Bases
+		for (TileArray space : form_model.spaceList("base")) {
+			if(form_model.showSpace(space) && form_model.showTiles) {
+				Color col = Color.hsb(space.getHueDegree(), DEFAULT_SATURATION, DEFAULT_BRIGHTNESS, editingScaler * DEFAULT_ALPHA);
+				for (Tile t : space.tileList()) {
+					// if in 2D view mode, Only draws ground plane 
+					if (t.location.z == 0) {
+						boolean isFlat = space.name.substring(0, 3).equals("Cou"); // short for "Courtyard"
+						Box b = renderVoxel(t, col, DEFAULT_BASE_Z, isFlat);
+						nodes3D.getChildren().add(b);
+					}
+				}
+			}
+		}
+		
+		// Draw All Control Point Circles
+		if(form_model.viewState != 5 && form_model.isEditing()) {
+			for (ControlPoint p : form_model.control.points()) {
+				Circle oc = new Circle();
+				oc.setRadius(DEFAULT_SCALER * DEFAULT_CONTROL_SIZE);
+				oc.setFill(DEFAULT_CONTROL_FILL);
+				oc.setStroke(DEFAULT_CONTROL_STROKE);
+				oc.setStrokeWidth(DEFAULT_SCALER * SUBDUED_STROKE);
+				orientShape((Node) oc, viewScaler * p.x, viewScaler * p.y, DEFAULT_CONTROL_Z);
+				nodes3D.getChildren().add(oc);
 			}
 		}
 		
