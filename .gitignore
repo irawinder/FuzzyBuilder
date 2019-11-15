@@ -2,15 +2,15 @@
 *.project
 *.settings
 
-Eclipse/space-builder/bin/
-Eclipse/space-builder/lib/
+Eclipse/fuzzybuilder-core/bin/
+Eclipse/fuzzybuilder-core/lib/
 
-Eclipse/space-builder-javafx/bin/
-Eclipse/space-builder-javafx/lib/
-Eclipse/space-builder-javafx/build/dist/
-Eclipse/space-builder-javafx/build/fuzzybuilder/
+Eclipse/fuzzybuilder-javafx/bin/
+Eclipse/fuzzybuilder-javafx/lib/
+Eclipse/fuzzybuilder-javafx/build/dist/
+Eclipse/fuzzybuilder-javafx/build/fuzzybuilder/
 
-Eclipse/space-builder-processing/bin/
-Eclipse/space-builder-processing/lib/
-Eclipse/space-builder-processing/build/dist/
-Eclipse/space-builder-processing/build/fuzzybuilder/
+Eclipse/fuzzybuilder-processing/bin/
+Eclipse/fuzzybuilder-processing/lib/
+Eclipse/fuzzybuilder-processing/build/dist/
+Eclipse/fuzzybuilder-processing/build/fuzzybuilder/
