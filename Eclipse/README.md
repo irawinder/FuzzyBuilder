@@ -21,8 +21,8 @@ https://www.eclipse.org/downloads/packages/release/2019-09/r/eclipse-ide-java-de
 	**fuzzybuilder-processing/** This is a barebones GUI implemented using processing library components. Its primary purpose is to help demonstrate generalizability of the core backend components. Other than making sure it compiles, it's not intended for further feature development. It should reference the "fuzzybuilder-core" project folder and you need to download and add the library for [processing-3.5.3](https://processing.org/tutorials/eclipse/).
 
 4. **Run Configuration for JavaFX Application**: To compile and run the primary application being developed, you will need to set up a Run Configuration in Eclipse. The FuzzyBuilder.java file located in fuzzybuilder-javafx launches the JavaFX application.  In the "Run Configurations" menu set this as the main class:  'edu.mit.ira.fuzzy.fx.stage.FuzzyBuilder'. Under the "Arguments" tab, insert the following code into VM arguments: (Replace `/path/to/javafx-sdk-13` with the actual path to your JavaFX download. Also be sure to *uncheck* the box that says "Use the -XstartOnFirstThread argument when launching with SWT.)
-	```
-	--module-path "/path/to/javafx-sdk-13/lib" --add-modules javafx.controls,javafx.fxml,javafx.graphics,javafx.media,javafx.swing,javafx.web
-	```
+```
+--module-path "/path/to/javafx-sdk-13/lib" --add-modules javafx.controls,javafx.fxml,javafx.graphics,javafx.media,javafx.swing,javafx.web
+```
 
 5. **Run Configuration for Processing Application**: The FuzzyBuilder.java file located in fuzzybuilder-processing launches a transitionary processing application that is no longer developed. No special arguments needed to run FuzzyBuilder.java, as long as you have pointed to processing's core.jar library in the project properties
