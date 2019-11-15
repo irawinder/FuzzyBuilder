@@ -14,11 +14,11 @@ https://www.eclipse.org/downloads/packages/release/2019-09/r/eclipse-ide-java-de
 
 3. Import each java project folder into Eclipse as its own java project:
 
-	**fuzzybuilder-core/** These are the core "back end" components of Fuzzy Builder. The classes are purposely NOT DEPENDENT on any front-end GUI libraries such as processing or javafx.
+	**fuzzybuilder-core/** These are the core "back end" components of Fuzzy Builder. These classes are purposely NOT DEPENDENT on any front-end GUI libraries such as processing or javafx.
 
 	**fuzzybuilder-javafx/** This is the primary "front end" environment currently being developed. Its primary purpose is to initialize back end object models and allow a user to manipulate them. It should reference the "fuzzybuilder-core" project folder and you need to download and add the library for [javafx-sdk-13](https://gluonhq.com/products/javafx/).
 
-	**fuzzybuilder-processing/** This is a bar bones GUI implemented using processing library components. Its primary purpose is to help demonstrate generalizability of the core backend components. Other than making sure it compiles, it's not intended for further feature development. It should reference the "fuzzybuilder-core" project folder and you need to download and add the library for [processing-3.5.3](https://processing.org/tutorials/eclipse/).
+	**fuzzybuilder-processing/** This is a barebones GUI implemented using processing library components. Its primary purpose is to help demonstrate generalizability of the core backend components. Other than making sure it compiles, it's not intended for further feature development. It should reference the "fuzzybuilder-core" project folder and you need to download and add the library for [processing-3.5.3](https://processing.org/tutorials/eclipse/).
 
 4. **Run Configuration for JavaFX Application**: To compile and run the primary application being developed, you will need to set up a Run Configuration in Eclipse. The FuzzyBuilder.java file located in fuzzybuilder-javafx launches the JavaFX application.  In the "Run Configurations" menu set this as the main class:  'edu.mit.ira.fuzzy.fx.stage.FuzzyBuilder'. Under the "Arguments" tab, insert the following code into VM arguments: (Replace `/path/to/javafx-sdk-13` with the actual path to your JavaFX download. Also be sure to *uncheck* the box that says "Use the -XstartOnFirstThread argument when launching with SWT.)
 ```
