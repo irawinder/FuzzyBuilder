@@ -127,10 +127,12 @@ public class Massing extends MassingContainer {
 					ic.setOnMousePressed((MouseEvent me) -> {
 						form_model.mousePressed(newPointAtMouse);
 						form_model.listen(pressed, p, newPointAtMouse);
+						render(form_model, map_model);
 					});
 					ic.setOnMouseReleased((MouseEvent me) -> {
 						form_model.deselect();
 						form_model.listen(!pressed, p, newPointAtMouse);
+						render(form_model, map_model);
 					});
 				}
 			}

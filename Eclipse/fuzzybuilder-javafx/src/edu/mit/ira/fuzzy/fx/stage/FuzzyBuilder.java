@@ -100,9 +100,9 @@ public class FuzzyBuilder extends Application {
     		renderScenes();
         });
         
-        content.setOnMouseMoved(e -> renderScenes());
-        content.setOnMousePressed(e -> renderScenes());
-        content.setOnMouseReleased(e -> renderScenes());
+//        content.setOnMouseMoved(e -> renderScenes());
+//        content.setOnMousePressed(e -> renderScenes());
+//        content.setOnMouseReleased(e -> renderScenes());
         
         // Set the stage and start the show
         appWindow.setScene(content);
