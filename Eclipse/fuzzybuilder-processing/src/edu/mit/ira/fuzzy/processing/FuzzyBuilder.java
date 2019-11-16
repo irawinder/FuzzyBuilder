@@ -59,7 +59,7 @@ public class FuzzyBuilder extends PApplet {
 	public void draw() {
 
 		// listen for user inputs and mouse location
-		editor.listen(mousePressed, mouseX, mouseY, pointAtMouse(), newPointAtMouse());
+		editor.listen(mousePressed, pointAtMouse(), newPointAtMouse());
 
 		// Update Model "Backend" with New State (if any)
 		editor.updateModel();

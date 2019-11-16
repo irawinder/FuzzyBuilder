@@ -397,7 +397,7 @@ public class DevelopmentEditor extends DevelopmentBuilder {
 	 * @param existing     ControlPoint closest to mouse
 	 * @param new_point    new Point() at mouse, passed to function from GUI()
 	 */
-	public void listen(boolean mousePressed, int mouseX, int mouseY, ControlPoint point, Point new_point) {
+	public void listen(boolean mousePressed, ControlPoint point, Point new_point) {
 
 		if (addPoint) {
 			Point atMouse = new_point;
@@ -429,8 +429,10 @@ public class DevelopmentEditor extends DevelopmentBuilder {
 	 */
 	public void mousePressed(Point new_point) {
 		if (addPoint) {
-			Point atMouse = new_point;
-			addControlPoint(atMouse.x, atMouse.y);
+			if (new_point != null) {
+				Point atMouse = new_point;
+				addControlPoint(atMouse.x, atMouse.y);
+			}
 		} else {
 			selected = hovering;
 			if (removePoint) {

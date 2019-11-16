@@ -125,7 +125,8 @@ public class MassingContainer extends SubScene implements ContentContainer {
         handleMouseEvents(this);
         
         // Set the Parent Node of container content
-        setRoot(new Group(scene3D, scene2D));
+        //setRoot(new Group(scene3D, scene2D));
+        setRoot(new Group(scene3D));
     }
     
     /**
@@ -238,25 +239,15 @@ public class MassingContainer extends SubScene implements ContentContainer {
 	public void handleMouseEvents(SubScene scene) {
 
 		scene.setOnMouseMoved((MouseEvent me) -> {
-			mousePosX = me.getSceneX();
-			mousePosY = me.getSceneY();
-		});
-		
-		scene.setOnMouseReleased((MouseEvent me) -> {
-			
-		});
-		
-		// Load the mouse location on the scene while pressed down
-		scene.setOnMousePressed((MouseEvent me) -> {
-			mousePosX = me.getSceneX();
-			mousePosY = me.getSceneY();
+			mousePosX = me.getScreenX();
+			mousePosY = me.getScreenY();
 		});
 		
 		scene.setOnMouseDragged((MouseEvent me) -> {
-			
+
 			// Mouse displacement while pressed and dragged
-			double dx = + (mousePosX - me.getSceneX());
-			double dy = - (mousePosY - me.getSceneY());
+			double dx = +(mousePosX - me.getScreenX());
+			double dy = -(mousePosY - me.getScreenY());
 
 			// i.e. right mouse button
 			if (me.isSecondaryButtonDown()) {
@@ -268,25 +259,26 @@ public class MassingContainer extends SubScene implements ContentContainer {
 				rotateV.setAngle(angleV);
 				rotateH.setAngle(angleH);
 
-			// i.e. left mouse button
+				// i.e. left mouse button
 			} else if (me.isPrimaryButtonDown()) {
 
 				// Pan View
 				double angleH = DegreeToRadian((float) rotateH.getAngle());
 				double dx_r, dy_r;
 				int flip = 1;
-				if (rotateV.getAngle() > 0) flip = -1;
-				dx_r = + dx * Math.cos(angleH) - flip*dy * Math.sin(angleH);
-				dy_r = + dx * Math.sin(angleH) + flip*dy * Math.cos(angleH);
+				if (rotateV.getAngle() > 0)
+					flip = -1;
+				dx_r = +dx * Math.cos(angleH) - flip * dy * Math.sin(angleH);
+				dy_r = +dx * Math.sin(angleH) + flip * dy * Math.cos(angleH);
 				double panU = pan.getX() - viewScaler * dx_r;
 				double panV = pan.getZ() - viewScaler * dy_r;
 				pan.setX(panU);
 				pan.setZ(panV);
 			}
-			
+
 			// Set new mouse position
-			mousePosX = me.getSceneX();
-			mousePosY = me.getSceneY();
+			mousePosX = me.getScreenX();
+			mousePosY = me.getScreenY();
 		});
 
 		// Enable Zoom in and Zoom Out via scroll wheel
@@ -325,35 +317,6 @@ public class MassingContainer extends SubScene implements ContentContainer {
 //			}
 //		}
 //		return mousePoint;
-//	}
-
-//	/**
-//	 * Return Tagged Point Nearest to Mouse (Requires processing.core)
-//	 * 
-//	 * @return ControlPoint closest to mouse
-//	 */
-//	ControlPoint pointAtMouse() {
-//		ControlPoint closest = null;
-//		float min_distance = Float.POSITIVE_INFINITY;
-//		for (ControlPoint p : form_model.control.points()) {
-//			double dist_x, dist_y;
-//			Node atPoint = (Node) controlMap.get(p.getUniqueID());
-//			if (atPoint != null) {
-//				Point2D screenPos = atPoint.sceneToLocal(new Point2D(0, 0));
-//				dist_x = mousePosX - screenPos.getX();
-//				dist_y = mousePosY - screenPos.getY();
-//
-//				float distance = (float) Math.sqrt(Math.pow(dist_x, 2) + Math.pow(dist_y, 2));
-//				if (distance < 15) {
-//					if (distance < min_distance) {
-//						min_distance = distance;
-//						closest = p;
-//					}
-//				}
-//				System.out.println(mousePosX + "," + mousePosY + ", " + screenPos.getX() + ", " + screenPos.getY() + ", " + closest);
-//			}
-//		}
-//		return closest;
 //	}
 	
 	/**

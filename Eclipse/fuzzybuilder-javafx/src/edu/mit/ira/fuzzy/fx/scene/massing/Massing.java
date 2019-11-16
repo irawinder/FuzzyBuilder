@@ -9,10 +9,12 @@ import edu.mit.ira.fuzzy.fx.node.Underlay;
 import javafx.scene.Node;
 import javafx.scene.PointLight;
 import javafx.scene.control.Label;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.DrawMode;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Sphere;
 import javafx.scene.transform.Rotate;
@@ -40,11 +42,14 @@ public class Massing extends MassingContainer {
  	final protected static double SUBTLE_ALPHA = 0.5;
  	final protected static double DEFAULT_STROKE = 1.0;
  	final protected static double SUBDUED_STROKE = 2.0;
+ 	final protected static Color DEFAULT_CONTROL_FILL = Color.hsb(0, 0, 1, SUBDUED_ALPHA);
+ 	final protected static Color DEFAULT_CONTROL_STROKE = Color.gray(SUBDUED_SATURATION, SUBTLE_ALPHA);
  	final protected static Color ACTIVE_COLOR = Color.PURPLE;
  	final protected static Color REMOVE_COLOR = Color.RED;
  	final protected static Color ADD_COLOR = Color.GREEN;
- 	final protected static Color DEFAULT_CONTROL_FILL = Color.hsb(0, 0, 1, SUBDUED_ALPHA);
- 	final protected static Color DEFAULT_CONTROL_STROKE = Color.gray(SUBDUED_SATURATION, SUBTLE_ALPHA);
+ 	final private static PhongMaterial ACTIVE_MATERIAL = new PhongMaterial(ACTIVE_COLOR);
+ 	final private static PhongMaterial REMOVE_MATERIAL = new PhongMaterial(REMOVE_COLOR);
+ 	final private static PhongMaterial ADD_MATERIAL = new PhongMaterial(ADD_COLOR);
  	
  	// Default Object Sizes
  	final protected static double DEFAULT_CONTROL_SIZE = 5.0;
@@ -76,6 +81,7 @@ public class Massing extends MassingContainer {
 		
 		nodes2D.getChildren().clear();
 		nodes3D.getChildren().clear();
+		controlMap.clear();
 		
 		// Placeholder for 2D overlay
 		Label l = new Label("Massing Editor");
@@ -94,11 +100,38 @@ public class Massing extends MassingContainer {
 			for (ControlPoint p : form_model.control.points()) {
 				if (p.active()) {
 					Sphere ic = new Sphere();
+					ic.setMaterial(ACTIVE_MATERIAL);
 					ic.setRadius(0.65 * DEFAULT_SCALER * DEFAULT_CONTROL_SIZE);
-					PhongMaterial material = new PhongMaterial(ACTIVE_COLOR);
-					ic.setMaterial(material);
+					ic.setId("active_control_point");
 					orientShape((Node) ic, viewScaler * p.x, viewScaler * p.y, DEFAULT_CONTROL_Z + 0.1);
 					nodes3D.getChildren().add(ic);
+					controlMap.put(ic, p);
+					
+					// Mouse Events
+					ControlPoint newPointAtMouse = null;
+					boolean pressed = true;
+					ic.setOnMouseEntered(me -> {
+						ic.setRadius(0.90 * DEFAULT_SCALER * DEFAULT_CONTROL_SIZE);
+						if(form_model.addPoint) {
+							ic.setMaterial(ADD_MATERIAL);
+						} else if(form_model.removePoint) {
+							ic.setMaterial(REMOVE_MATERIAL);
+						}
+						form_model.listen(!pressed, p, newPointAtMouse);
+					});
+					ic.setOnMouseExited(me -> {
+						ic.setRadius(0.65 * DEFAULT_SCALER * DEFAULT_CONTROL_SIZE);
+						ic.setMaterial(ACTIVE_MATERIAL);
+						form_model.listen(!pressed, p, newPointAtMouse);
+					});
+					ic.setOnMousePressed((MouseEvent me) -> {
+						form_model.mousePressed(newPointAtMouse);
+						form_model.listen(pressed, p, newPointAtMouse);
+					});
+					ic.setOnMouseReleased((MouseEvent me) -> {
+						form_model.deselect();
+						form_model.listen(!pressed, p, newPointAtMouse);
+					});
 				}
 			}
 		}
@@ -159,7 +192,6 @@ public class Massing extends MassingContainer {
 		
 		// Draw All Control Point Circles
 		if(form_model.viewState != 5 && form_model.isEditing()) {
-			controlMap.clear();
 			for (ControlPoint p : form_model.control.points()) {
 				Circle oc = new Circle();
 				oc.setRadius(DEFAULT_SCALER * DEFAULT_CONTROL_SIZE);
@@ -232,7 +264,8 @@ public class Massing extends MassingContainer {
 		double boxH = viewScaler * VOXEL_WIDTH_BUFFER * t.scale_w;
 		if(flat) boxH = 0;
 		Box b = new Box(boxW, boxH, boxW);
-
+		b.setId("voxel");
+		
 		Translate pos = new Translate(
 				+ viewScaler * t.location.x, 
 				- viewScaler * t.location.z - z_offset - 0.5*boxH, 
@@ -243,6 +276,9 @@ public class Massing extends MassingContainer {
 		// Box Color
 		PhongMaterial material = new PhongMaterial(col);
 		b.setMaterial(material);
+		
+		// Sets Transparent to Mouse Events when Editing
+		if (form_model.isEditing()) b.setMouseTransparent(true);
 
 		return b;
 	}
