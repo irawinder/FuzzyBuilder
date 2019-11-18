@@ -14,7 +14,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
 import javafx.scene.shape.Circle;
-import javafx.scene.shape.DrawMode;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Sphere;
 import javafx.scene.transform.Rotate;
@@ -42,6 +41,7 @@ public class Massing extends MassingContainer {
  	final protected static double SUBTLE_ALPHA = 0.5;
  	final protected static double DEFAULT_STROKE = 1.0;
  	final protected static double SUBDUED_STROKE = 2.0;
+ 	
  	final protected static Color DEFAULT_CONTROL_FILL = Color.hsb(0, 0, 1, SUBDUED_ALPHA);
  	final protected static Color DEFAULT_CONTROL_STROKE = Color.gray(SUBDUED_SATURATION, SUBTLE_ALPHA);
  	final protected static Color ACTIVE_COLOR = Color.PURPLE;
@@ -53,6 +53,7 @@ public class Massing extends MassingContainer {
  	
  	// Default Object Sizes
  	final protected static double DEFAULT_CONTROL_SIZE = 5.0;
+ 	final protected static double HOVER_SIZE_SCALER = 1.5;
  	final protected static double VOXEL_HEIGHT_BUFFER = 0.9;
  	final protected static double VOXEL_WIDTH_BUFFER = 0.8;
  	
@@ -99,39 +100,44 @@ public class Massing extends MassingContainer {
 		if (form_model.isEditing()) {
 			for (ControlPoint p : form_model.control.points()) {
 				if (p.active()) {
-					Sphere ic = new Sphere();
-					ic.setMaterial(ACTIVE_MATERIAL);
-					ic.setRadius(0.65 * DEFAULT_SCALER * DEFAULT_CONTROL_SIZE);
-					ic.setId("active_control_point");
-					orientShape((Node) ic, viewScaler * p.x, viewScaler * p.y, DEFAULT_CONTROL_Z + 0.1);
-					nodes3D.getChildren().add(ic);
-					controlMap.put(ic, p);
+					Sphere is = new Sphere();
+					is.setMaterial(ACTIVE_MATERIAL);
+					is.setRadius(DEFAULT_SCALER * DEFAULT_CONTROL_SIZE);
+					is.setId("active_control_point");
+					orientShape((Node) is, viewScaler * p.x, viewScaler * p.y, DEFAULT_CONTROL_Z + 0.1);
+					nodes3D.getChildren().add(is);
+					controlMap.put(is, p);
 					
-					// Mouse Events
+					// Mouse Events for Control Pointers
 					ControlPoint newPointAtMouse = null;
 					boolean pressed = true;
-					ic.setOnMouseEntered(me -> {
-						ic.setRadius(0.90 * DEFAULT_SCALER * DEFAULT_CONTROL_SIZE);
-						if(form_model.addPoint) {
-							ic.setMaterial(ADD_MATERIAL);
-						} else if(form_model.removePoint) {
-							ic.setMaterial(REMOVE_MATERIAL);
+					is.setOnMouseEntered(me -> {
+						if (form_model.addPoint) {
+							is.setMaterial(ADD_MATERIAL);
+						} else if (form_model.removePoint) {
+							is.setMaterial(REMOVE_MATERIAL);
 						}
+						is.setRadius(HOVER_SIZE_SCALER * DEFAULT_SCALER * DEFAULT_CONTROL_SIZE);
 						form_model.listen(!pressed, p, newPointAtMouse);
+						form_model.updateModel();
 					});
-					ic.setOnMouseExited(me -> {
-						ic.setRadius(0.65 * DEFAULT_SCALER * DEFAULT_CONTROL_SIZE);
-						ic.setMaterial(ACTIVE_MATERIAL);
+					is.setOnMouseExited(me -> {
+						is.setMaterial(ACTIVE_MATERIAL);
+						is.setRadius(DEFAULT_SCALER * DEFAULT_CONTROL_SIZE);
 						form_model.listen(!pressed, p, newPointAtMouse);
+						form_model.updateModel();
+						
 					});
-					ic.setOnMousePressed((MouseEvent me) -> {
+					is.setOnMousePressed((MouseEvent me) -> {
 						form_model.mousePressed(newPointAtMouse);
-						form_model.listen(pressed, p, newPointAtMouse);
+						form_model.listen(!pressed, p, newPointAtMouse);
+						form_model.updateModel();
 						render(form_model, map_model);
 					});
-					ic.setOnMouseReleased((MouseEvent me) -> {
+					is.setOnMouseReleased((MouseEvent me) -> {
 						form_model.deselect();
 						form_model.listen(!pressed, p, newPointAtMouse);
+						form_model.updateModel();
 						render(form_model, map_model);
 					});
 				}

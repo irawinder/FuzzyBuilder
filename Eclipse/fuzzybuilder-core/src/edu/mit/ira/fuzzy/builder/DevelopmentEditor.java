@@ -129,8 +129,10 @@ public class DevelopmentEditor extends DevelopmentBuilder {
 	 * @param point
 	 */
 	public void removeControlPoint(ControlPoint point) {
-		control.removePoint(point);
-		detectChange(point.getType());
+		if (point != null) {
+			control.removePoint(point);
+			detectChange(point.getType());
+		}
 	}
 
 	/**
