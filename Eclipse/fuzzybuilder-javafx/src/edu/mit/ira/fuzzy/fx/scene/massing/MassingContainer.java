@@ -115,9 +115,6 @@ public class MassingContainer extends SubScene implements ContentContainer {
         scene3D.widthProperty().bind(widthProperty());
         scene3D.heightProperty().bind(heightProperty());
         
-        // Mouse and Keyboard Events
-        handleMouseEvents(this);
-        
         // Set the Parent Node of container content
         //setRoot(new Group(scene3D, scene2D));
         setRoot(new Group(scene3D));
@@ -225,63 +222,63 @@ public class MassingContainer extends SubScene implements ContentContainer {
 		System.out.println("Camera RotateH: " + rotateH.getAngle());
 	}
 	
+	public void updateMouseLocation(MouseEvent me) {
+		mousePosX = me.getScreenX();
+		mousePosY = me.getScreenY();
+	}
+	
 	/**
-	 * Actions to take when mouse events are detected
+	 * Enable zooming of camera via scroll wheel
 	 * 
-	 * @param scene3d
+	 * @param se scroll event
 	 */
-	public void handleMouseEvents(SubScene scene) {
+	public void zoomCamera(ScrollEvent se) {
+		double dy = viewScaler * se.getDeltaY();
+		double new_zoom = zoom.getZ() - dy;
+		new_zoom = ensureRange(new_zoom, maxZoom, minZoom);
+		zoom.setZ(new_zoom);
+	}
+	
+	/**
+	 * Enable Panning and Rotating of Camera
+	 * 
+	 * @param me mouse event
+	 */
+	public void dragCamera(MouseEvent me) {
+		// Mouse displacement while pressed and dragged
+		double dx = + (mousePosX - me.getScreenX());
+		double dy = - (mousePosY - me.getScreenY());
 
-		scene.setOnMouseMoved((MouseEvent me) -> {
-			mousePosX = me.getScreenX();
-			mousePosY = me.getScreenY();
-		});
-		
-		scene.setOnMouseDragged((MouseEvent me) -> {
+		// i.e. right mouse button
+		if (me.isSecondaryButtonDown()) {
 
-			// Mouse displacement while pressed and dragged
-			double dx = +(mousePosX - me.getScreenX());
-			double dy = -(mousePosY - me.getScreenY());
+			// Rotate View
+			double angleV = rotateV.getAngle() - (dy / 10 * +360) * (Math.PI / 180);
+			double angleH = rotateH.getAngle() - (dx / 10 * -360) * (Math.PI / 180);
+			angleV = ensureRange(angleV, -90, 90);
+			rotateV.setAngle(angleV);
+			rotateH.setAngle(angleH);
 
-			// i.e. right mouse button
-			if (me.isSecondaryButtonDown()) {
+			// i.e. left mouse button
+		} else if (me.isPrimaryButtonDown()) {
 
-				// Rotate View
-				double angleV = rotateV.getAngle() - (dy / 10 * +360) * (Math.PI / 180);
-				double angleH = rotateH.getAngle() - (dx / 10 * -360) * (Math.PI / 180);
-				angleV = ensureRange(angleV, -90, 90);
-				rotateV.setAngle(angleV);
-				rotateH.setAngle(angleH);
+			// Pan View
+			double angleH = DegreeToRadian((float) rotateH.getAngle());
+			double dx_r, dy_r;
+			int flip = 1;
+			if (rotateV.getAngle() > 0)
+				flip = -1;
+			dx_r = +dx * Math.cos(angleH) - flip * dy * Math.sin(angleH);
+			dy_r = +dx * Math.sin(angleH) + flip * dy * Math.cos(angleH);
+			double panU = pan.getX() - viewScaler * dx_r;
+			double panV = pan.getZ() - viewScaler * dy_r;
+			pan.setX(panU);
+			pan.setZ(panV);
+		}
 
-				// i.e. left mouse button
-			} else if (me.isPrimaryButtonDown()) {
-
-				// Pan View
-				double angleH = DegreeToRadian((float) rotateH.getAngle());
-				double dx_r, dy_r;
-				int flip = 1;
-				if (rotateV.getAngle() > 0)
-					flip = -1;
-				dx_r = +dx * Math.cos(angleH) - flip * dy * Math.sin(angleH);
-				dy_r = +dx * Math.sin(angleH) + flip * dy * Math.cos(angleH);
-				double panU = pan.getX() - viewScaler * dx_r;
-				double panV = pan.getZ() - viewScaler * dy_r;
-				pan.setX(panU);
-				pan.setZ(panV);
-			}
-
-			// Set new mouse position
-			mousePosX = me.getScreenX();
-			mousePosY = me.getScreenY();
-		});
-
-		// Enable Zoom in and Zoom Out via scroll wheel
-		scene.setOnScroll((ScrollEvent se) -> {
-			double dy = se.getDeltaY();
-			double new_zoom = zoom.getZ() - dy;
-			new_zoom = ensureRange(new_zoom, maxZoom, minZoom);
-			zoom.setZ(new_zoom);
-		});
+		// Set new mouse position
+		mousePosX = me.getScreenX();
+		mousePosY = me.getScreenY();
 	}
 	
 	/**

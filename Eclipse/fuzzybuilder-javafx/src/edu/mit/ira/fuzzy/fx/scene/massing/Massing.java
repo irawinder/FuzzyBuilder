@@ -1,5 +1,7 @@
 package edu.mit.ira.fuzzy.fx.scene.massing;
 
+import java.util.HashMap;
+
 import edu.mit.ira.fuzzy.base.ControlPoint;
 import edu.mit.ira.fuzzy.base.Point;
 import edu.mit.ira.fuzzy.base.Tile;
@@ -11,6 +13,7 @@ import javafx.scene.Node;
 import javafx.scene.PointLight;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
@@ -22,6 +25,8 @@ import javafx.scene.transform.Translate;
 
 public class Massing extends MassingContainer {
  	
+	Group nodesControl, nodesForm;
+	
  	// Default Elevation Values
  	final protected static double DEFAULT_LIGHT_DISPLACEMENT = 400;
  	final protected static double DEFAULT_MAP_Z     = - 0.4;
@@ -64,11 +69,22 @@ public class Massing extends MassingContainer {
  	
  	// Global Objects
   	private Sphere hover;
+  	private boolean dragged;
+  	
+  	// GridMap of geospatial point locations to front-end box element
+  	HashMap<Node, Point> gridMap;
+  	
+  	// GridMap of control spheres tied to their point location
+  	HashMap<ControlPoint, Node> controlMap;
  	
 	public Massing() {
 		super();
-		
+		nodesControl = new Group();
+		nodesForm = new Group();
 		hover = new Sphere();
+		dragged = false;
+		gridMap = new HashMap<Node, Point>();
+		controlMap = new HashMap<ControlPoint, Node>();
 	}
 	
     /**
@@ -80,61 +96,81 @@ public class Massing extends MassingContainer {
     public void render(DevelopmentEditor form_model, Underlay map_model) {
     	setFormModel(form_model);
     	setMapModel(map_model);
-    	drawNodes();
+    	drawControl();
+    	drawForm();
+    	nodes3D.getChildren().clear();
+    	nodes3D.getChildren().addAll(nodesForm, nodesControl);
     	
-		// Override MassingContainer() ...
 		setOnMouseMoved((MouseEvent me) -> {
-			mousePosX = me.getScreenX();
-			mousePosY = me.getScreenY();
-			
-			// Hide hovering sphere when not over valid spot
-			Node intersected = me.getPickResult().getIntersectedNode();
-			String id = intersected.getId();
-			if (id != null) {
-				if (id.equals("scene3D")) {
-					hover.setVisible(false);
-				}
-			}
+			updateMouseLocation(me);
+			updateHover(me);
 		});
 		
-		// Add A New Control Point
-		boolean mousePressed = true;
-		ControlPoint existingPointAtMouse = null; // not applicable here
-		setOnMousePressed((MouseEvent me) -> {
-			if (form_model.hovering != null && form_model.addPoint) {
-				Point newPointAtMouse = form_model.hovering;
-				form_model.mouseTrigger(newPointAtMouse);
-				form_model.listen(mousePressed, existingPointAtMouse, newPointAtMouse);
-				form_model.updateModel();
-				render(form_model, map_model);
+		setOnMouseDragged((MouseEvent me) -> {
+			if (form_model.selected == null) {
+				dragCamera(me);
 			}
+			dragged = true;
+		});
+		
+		setOnScroll((ScrollEvent se) -> {
+			zoomCamera(se);
+		});
+		
+		setOnMousePressed((MouseEvent me) -> {
+			dragged = false;
+		});
+		
+		setOnMouseReleased((MouseEvent me) -> {
+//			if (hover.isVisible() && !dragged) {
+			if (hover.isVisible()) {
+				addPointAtMouse(me);
+			}
+			form_model.deselect();
+			dragged = false;
 		});
 	}
+    
+    /**
+     * Update hovering visualization when mouse is moved
+     * 
+     * @param me mouse event
+     */
+    public void updateHover(MouseEvent me) {
+    	// Hide hovering sphere when not over valid spot
+		Node intersected = me.getPickResult().getIntersectedNode();
+		String id = intersected.getId();
+		if (id != null) {
+			if (id.equals("scene3D")) {
+				hover.setVisible(false);
+			}
+		}
+    }
+    
+    /**
+     * Add Control Point where mouse is
+     * 
+     * @param me mouse event
+     */
+    public void addPointAtMouse(MouseEvent me) {
+    	boolean mousePressed = true;
+		ControlPoint existingPointAtMouse = null; // not applicable here
+    	if (form_model.hovering != null && form_model.addPoint) {
+			Point newPointAtMouse = form_model.hovering;
+			form_model.mouseTrigger(newPointAtMouse);
+			form_model.listen(mousePressed, existingPointAtMouse, newPointAtMouse);
+			form_model.updateModel();
+			render(form_model, map_model);
+		}
+    }
 	
-	/**
-	 * Populate 2D and 3D graphics objects 
-	 * 
-	 * @return a collection of JavaFX groups (3D objects)
-	 */
-	public void drawNodes() {
-		
-		nodes2D.getChildren().clear();
-		nodes3D.getChildren().clear();
-		
-		// Placeholder for 2D overlay
-		Label l = new Label("Massing Editor");
-    	nodes2D.getChildren().add(l);
-		
-		// Set up Ambient Lighting Effects
-		nodes3D.getChildren().add(overheadLight());
-		nodes3D.getChildren().add(sideLight());
-		
-		// Extra opacity to apply when editing control points
-		double editingScaler = 1.0;
-		if (form_model.isEditing()) editingScaler = 0.5;
-		
+    public void drawControl() {
+    	
+    	nodesControl.getChildren().clear();
+    	
 		// Draw Active Control Points' Inner Sphere
 		if (form_model.isEditing()) {
+			controlMap.clear();
 			for (ControlPoint p : form_model.control.points()) {
 				if (p.active()) {
 					Sphere is = new Sphere();
@@ -142,7 +178,8 @@ public class Massing extends MassingContainer {
 					is.setRadius(DEFAULT_SCALER * DEFAULT_CONTROL_SIZE);
 					is.setId("active_control_point");
 					orientShape((Node) is, viewScaler * p.x, viewScaler * p.y, DEFAULT_CONTROL_Z + 0.1);
-					nodes3D.getChildren().add(is);
+					nodesControl.getChildren().add(is);
+					controlMap.put(p, is);
 					
 					// Mouse Events for Control Pointers
 					Point newPointAtMouse = null; // not applicable here
@@ -166,14 +203,106 @@ public class Massing extends MassingContainer {
 						is.setRadius(DEFAULT_SCALER * DEFAULT_CONTROL_SIZE);
 						form_model.listen(!mousePressed, existingPointAtMouse, newPointAtMouse);
 						form_model.updateModel();
+						form_model.selected = existingPointAtMouse;
+						hover.setVisible(false);
 					});
 					is.setOnMouseReleased((MouseEvent me) -> {
-						form_model.mouseTrigger(newPointAtMouse);
-						form_model.deselect();
-						form_model.listen(mousePressed, existingPointAtMouse, newPointAtMouse);
-						form_model.updateModel();
-						render(form_model, map_model);
+//						if (!dragged) {
+							form_model.mouseTrigger(newPointAtMouse);
+							form_model.deselect();
+							form_model.listen(mousePressed, existingPointAtMouse, newPointAtMouse);
+							form_model.updateModel();
+							render(form_model, map_model);
+//						}
 					});
+//					source.setOnDragDetected(new EventHandler <MouseEvent>() {
+//			            public void handle(MouseEvent event) {
+//			                /* drag was detected, start drag-and-drop gesture*/
+//			                System.out.println("onDragDetected");
+//			                
+//			                /* allow any transfer mode */
+//			                Dragboard db = source.startDragAndDrop(TransferMode.ANY);
+//			                
+//			                /* put a string on dragboard */
+//			                ClipboardContent content = new ClipboardContent();
+//			                content.putString(source.getText());
+//			                db.setContent(content);
+//			                
+//			                event.consume();
+//			            }
+//			        });
+//
+//			        target.setOnDragOver(new EventHandler <DragEvent>() {
+//			            public void handle(DragEvent event) {
+//			                /* data is dragged over the target */
+//			                System.out.println("onDragOver");
+//			                
+//			                /* accept it only if it is  not dragged from the same node 
+//			                 * and if it has a string data */
+//			                if (event.getGestureSource() != target &&
+//			                        event.getDragboard().hasString()) {
+//			                    /* allow for both copying and moving, whatever user chooses */
+//			                    event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
+//			                }
+//			                
+//			                event.consume();
+//			            }
+//			        });
+//
+//			        target.setOnDragEntered(new EventHandler <DragEvent>() {
+//			            public void handle(DragEvent event) {
+//			                /* the drag-and-drop gesture entered the target */
+//			                System.out.println("onDragEntered");
+//			                /* show to the user that it is an actual gesture target */
+//			                if (event.getGestureSource() != target &&
+//			                        event.getDragboard().hasString()) {
+//			                    target.setFill(Color.GREEN);
+//			                }
+//			                
+//			                event.consume();
+//			            }
+//			        });
+//
+//			        target.setOnDragExited(new EventHandler <DragEvent>() {
+//			            public void handle(DragEvent event) {
+//			                /* mouse moved away, remove the graphical cues */
+//			                target.setFill(Color.BLACK);
+//			                
+//			                event.consume();
+//			            }
+//			        });
+//			        
+//			        target.setOnDragDropped(new EventHandler <DragEvent>() {
+//			            public void handle(DragEvent event) {
+//			                /* data dropped */
+//			                System.out.println("onDragDropped");
+//			                /* if there is a string data on dragboard, read it and use it */
+//			                Dragboard db = event.getDragboard();
+//			                boolean success = false;
+//			                if (db.hasString()) {
+//			                    target.setText(db.getString());
+//			                    success = true;
+//			                }
+//			                /* let the source know whether the string was successfully 
+//			                 * transferred and used */
+//			                event.setDropCompleted(success);
+//			                
+//			                event.consume();
+//			            }
+//			        });
+//
+//			        source.setOnDragDone(new EventHandler <DragEvent>() {
+//			            public void handle(DragEvent event) {
+//			                /* the drag-and-drop gesture ended */
+//			                System.out.println("onDragDone");
+//			                /* if the data was successfully moved, clear it */
+//			                if (event.getTransferMode() == TransferMode.MOVE) {
+//			                    source.setText("");
+//			                }
+//			                
+//			                event.consume();
+//			            }
+//			        });
 				}
 			}
 		}
@@ -183,7 +312,33 @@ public class Massing extends MassingContainer {
 		hover.setRadius(DEFAULT_SCALER * DEFAULT_CONTROL_SIZE);
 		hover.setId("hover_control_point");
 		hover.setVisible(false);
-		nodes3D.getChildren().add(hover);
+		nodesControl.getChildren().add(hover);
+
+		// Add Theoretical Control Point Grid Space
+		if (form_model.isEditing()) nodesControl.getChildren().addAll(nodeGrid());
+    }
+    
+	/**
+	 * Populate 2D and 3D graphics objects 
+	 * 
+	 * @return a collection of JavaFX groups (3D objects)
+	 */
+	public void drawForm() {
+		
+		nodes2D.getChildren().clear();
+		nodesForm.getChildren().clear();
+		
+		// Placeholder for 2D overlay
+		Label l = new Label("Massing Editor");
+    	nodes2D.getChildren().add(l);
+		
+		// Set up Ambient Lighting Effects
+		nodesForm.getChildren().add(overheadLight());
+		nodesForm.getChildren().add(sideLight());
+		
+		// Extra opacity to apply when editing control points
+		double editingScaler = 1.0;
+		if (form_model.isEditing()) editingScaler = 0.5;
 		
 		// Draw Site Vector Polygon
 		Color site_fill         = Color.TRANSPARENT;
@@ -201,7 +356,7 @@ public class Massing extends MassingContainer {
 		site_polygon.setStroke(site_stroke);
 		site_polygon.setStrokeWidth(site_strokeWeight);
 		orientShape((Node) site_polygon, 0, 0, DEFAULT_POLY_Z);
-		nodes3D.getChildren().add(site_polygon);
+		nodesForm.getChildren().add(site_polygon);
 		
 		// Draw Voxel Sites
 		for (TileArray space : form_model.spaceList("site")) {
@@ -209,7 +364,7 @@ public class Massing extends MassingContainer {
 				Color col = Color.gray(DEFAULT_SATURATION, editingScaler * SUBDUED_ALPHA);
 				for (Tile t : space.tileList()) {
 					Box b = renderVoxel(t, col, DEFAULT_SITE_Z, true);
-					nodes3D.getChildren().add(b);
+					nodesForm.getChildren().add(b);
 				}
 			}
 		}
@@ -220,7 +375,7 @@ public class Massing extends MassingContainer {
 				Color col = Color.hsb(space.getHueDegree(), SUBDUED_SATURATION, SUBDUED_BRIGHTNESS, DEFAULT_ALPHA);
 				for (Tile t : space.tileList()) {
 					Box b = renderVoxel(t, col, DEFAULT_ZONE_Z, true);
-					nodes3D.getChildren().add(b);
+					nodesForm.getChildren().add(b);
 				}
 			}
 		}
@@ -235,10 +390,10 @@ public class Massing extends MassingContainer {
 					col = Color.hsb(space.getHueDegree(), DEFAULT_SATURATION, SUBDUED_BRIGHTNESS, SUBDUED_ALPHA);
 				for (Tile t : space.tileList()) {
 					Box b = renderVoxel(t, col, DEFAULT_FOOT_Z, true);
-					nodes3D.getChildren().add(b);
+					nodesForm.getChildren().add(b);
 					if (space.name.equals("Building")) {
 						b = renderVoxel(t, col, DEFAULT_FOOT_Z, true);
-						nodes3D.getChildren().add(b);
+						nodesForm.getChildren().add(b);
 					}
 				}
 			}
@@ -253,7 +408,7 @@ public class Massing extends MassingContainer {
 					if (t.location.z == 0) {
 						boolean isFlat = space.name.substring(0, 3).equals("Cou"); // short for "Courtyard"
 						Box b = renderVoxel(t, col, DEFAULT_BASE_Z, isFlat);
-						nodes3D.getChildren().add(b);
+						nodesForm.getChildren().add(b);
 					}
 				}
 			}
@@ -269,7 +424,7 @@ public class Massing extends MassingContainer {
 					oc.setStroke(DEFAULT_CONTROL_STROKE);
 					oc.setStrokeWidth(DEFAULT_SCALER * SUBDUED_STROKE);
 					orientShape((Node) oc, viewScaler * p.x, viewScaler * p.y, DEFAULT_CONTROL_Z);
-					nodes3D.getChildren().add(oc);
+					nodesForm.getChildren().add(oc);
 				}
 			}
 		}
@@ -280,11 +435,8 @@ public class Massing extends MassingContainer {
 			orientShape((Node) map_model.getImageView(), 0, 0, DEFAULT_MAP_Z);
 			map_model.setScale(viewScaler*map_model.getScaler());
 			map_model.getImageView().setMouseTransparent(true);
-			nodes3D.getChildren().add(map_model.getImageView());
+			nodesForm.getChildren().add(map_model.getImageView());
 		}
-		
-		// Add Theoretical Control Point Grid Space
-		if (form_model.isEditing() && form_model.addPoint) nodes3D.getChildren().addAll(nodeGrid());
 		
 	}
 	
@@ -295,6 +447,7 @@ public class Massing extends MassingContainer {
 	 */
 	public Group nodeGrid() {
 		Group grid = new Group();
+		gridMap.clear();
 		double interval = viewScaler * GRID_UNIT_WIDTH * form_model.getTileWidth();
 		double minX = viewScaler * form_model.minControlX() - GRID_UNIT_BLEED * interval;
 		double maxX = viewScaler * form_model.maxControlX() + GRID_UNIT_BLEED * interval;
@@ -321,15 +474,24 @@ public class Massing extends MassingContainer {
 					Point newPointAtMouse = new Point(locX, locY);
 					form_model.listen(!mousePressed, existingPointAtMouse, newPointAtMouse);
 					form_model.updateModel();
-					
+					gridMap.put(b, newPointAtMouse);
 					// Set Ghost for new Control Point
 					if(form_model.hovering != null) {
 						hover.setVisible(true);
 						hover.setMaterial(ADD_MATERIAL);
 						orientShape((Node) hover, viewScaler * newPointAtMouse.x, viewScaler * newPointAtMouse.y, DEFAULT_CONTROL_Z);
-					}
+					} 
+//					else if (form_model.selected != null) {
+//						Point new_location = gridMap.get(b);
+//						if (new_location != null) {
+//							form_model.selected.x = newPointAtMouse.x;
+//							form_model.selected.y = newPointAtMouse.y;
+//						}
+//						form_model.detectChange(form_model.selected.getType());
+//						form_model.updateModel();
+//						orientShape((Node) controlMap.get(form_model.selected), viewScaler * newPointAtMouse.x, viewScaler * newPointAtMouse.y, DEFAULT_CONTROL_Z);
+//					}
 				});
-				
 				grid.getChildren().add(b);
 			}
 		}
