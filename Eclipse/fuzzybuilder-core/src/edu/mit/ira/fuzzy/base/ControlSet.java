@@ -15,13 +15,40 @@ public class ControlSet {
 
 	private ArrayList<ControlPoint> pointList;
 	private HashMap<UUID, ControlPoint> pointMap;
-
+	
+	private float minX, maxX;
+	private float minY, maxY;
+	private float defaultX, defaultY;
+	
 	/**
-	 * Construct Emply List of Control Points
+	 * Construct Empty List of Control Points
 	 */
 	public ControlSet() {
 		pointList = new ArrayList<ControlPoint>();
 		pointMap = new HashMap<UUID, ControlPoint>();
+		
+		defaultX = 0;
+		defaultY = 0;
+		
+		minX = defaultX;
+		maxX = defaultX;
+		minY = defaultY;
+		maxY = defaultY;
+	}
+	
+	/**
+	 * set default control point location
+	 * 
+	 * @param x
+	 * @param y
+	 */
+	public void setDefault(float x, float y) {
+		defaultX = x;
+		defaultY = y;
+		minX = defaultX;
+		maxX = defaultX;
+		minY = defaultY;
+		maxY = defaultY;
 	}
 
 	/**
@@ -40,6 +67,42 @@ public class ControlSet {
 	 */
 	public HashMap<UUID, ControlPoint> pointMap() {
 		return pointMap;
+	}
+	
+	/**
+	 * Get minimum X value
+	 * 
+	 * @return minX
+	 */
+	public float minX() {
+		return minX;
+	}
+	
+	/**
+	 * Get maximum X value
+	 * 
+	 * @return maxX
+	 */
+	public float maxX() {
+		return maxX;
+	}
+	
+	/**
+	 * Get minimum Y value
+	 * 
+	 * @return minY
+	 */
+	public float minY() {
+		return minY;
+	}
+	
+	/**
+	 * Get maximum Y value
+	 * 
+	 * @return maxY
+	 */
+	public float maxY() {
+		return maxY;
 	}
 
 	/**
@@ -128,9 +191,9 @@ public class ControlSet {
 	}
 
 	/**
-	 * Adds a pre-made control point
+	 * Adds a premade control point
 	 * 
-	 * @param p    pre-made ControlPoint to add to collection
+	 * @param p    premade ControlPoint to add to collection
 	 * @param tag  Tag value of control point
 	 * @param type Type value of control point
 	 */
@@ -139,6 +202,7 @@ public class ControlSet {
 		p.setType(type);
 		pointList.add(p);
 		pointMap.put(p.getUniqueID(), p);
+		calcMinMax();
 	}
 
 	/**
@@ -168,6 +232,7 @@ public class ControlSet {
 	 */
 	public void removePoint(ControlPoint p) {
 		pointList.remove(p);
+		calcMinMax();
 	}
 
 	/**
@@ -175,6 +240,34 @@ public class ControlSet {
 	 */
 	public void clearPoints() {
 		pointList.clear();
+		minX = defaultX;
+		maxX = defaultX;
+		minY = defaultY;
+		maxY = defaultY;
+	}
+	
+	/**
+	 * update minimum and maximum extents of model
+	 */
+	public void calcMinMax() {
+		if (pointList.size() > 0) {
+			minX = Float.POSITIVE_INFINITY;
+			maxX = Float.NEGATIVE_INFINITY;
+			minY = Float.POSITIVE_INFINITY;
+			maxY = Float.NEGATIVE_INFINITY;
+			for (ControlPoint p : pointList) {
+				minX = Math.min(minX, p.x);
+				maxX = Math.max(maxX, p.x);
+				minY = Math.min(minY, p.y);
+				maxY = Math.max(maxY, p.y);
+				//System.out.println((float) minX + ", " + (float) maxX + ", " + (float) minY + ", " + (float) maxY);
+			}
+		} else {
+			minX = defaultX;
+			maxX = defaultX;
+			minY = defaultY;
+			maxY = defaultY;
+		}
 	}
 
 	@Override

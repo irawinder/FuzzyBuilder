@@ -54,7 +54,54 @@ public class DevelopmentEditor extends DevelopmentBuilder {
 
 	public DevelopmentEditor() {
 		super();
-		initEditor();
+		
+		// Initialize Control Points
+		control = new ControlSet();
+
+		new_control_type = "zone";
+		editVertices = false;
+		editPlots = false;
+		editVoids = false;
+
+		showText = true;
+		viewModel = "DOT";
+		resetEditor();
+	}
+	
+	/**
+	 * Get minimum tile X value
+	 * 
+	 * @return minTileX
+	 */
+	public float minControlX() {
+		return control.minX();
+	}
+	
+	/**
+	 * Get maximum tile X value
+	 * 
+	 * @return maxTileX
+	 */
+	public float maxControlX() {
+		return control.maxX();
+	}
+	
+	/**
+	 * Get minimum tile Y value
+	 * 
+	 * @return minTileY
+	 */
+	public float minControlY() {
+		return control.minY();
+	}
+	
+	/**
+	 * Get maximum tile Y value
+	 * 
+	 * @return maxTileY
+	 */
+	public float maxControlY() {
+		return control.maxY();
 	}
 
 	/**
@@ -73,24 +120,6 @@ public class DevelopmentEditor extends DevelopmentBuilder {
 	 */
 	public boolean isEditing() {
 		return isEditing;
-	}
-
-	/**
-	 * Initial Build State
-	 */
-	public void initEditor() {
-
-		// Initialize Control Points
-		control = new ControlSet();
-
-		new_control_type = "zone";
-		editVertices = false;
-		editPlots = false;
-		editVoids = false;
-
-		showText = true;
-		viewModel = "DOT";
-		resetEditor();
 	}
 
 	/**

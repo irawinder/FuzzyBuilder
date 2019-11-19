@@ -26,8 +26,8 @@ public class DevelopmentBuilder extends Development {
 	public float tileW, tileH, tile_rotation;
 	public String units;
 	public Point tile_translation;
-	public float minTileX, maxTileX;
-	public float minTileY, maxTileY;
+	private float minTileX, maxTileX;
+	private float minTileY, maxTileY;
 	
 	// Default Values
 	final private static String DEFAULT_NAME = "New Parcel";
@@ -113,6 +113,42 @@ public class DevelopmentBuilder extends Development {
 	 */
 	public void setTileUnits(String units) {
 		this.units = units;
+	}
+	
+	/**
+	 * Get minimum tile X value
+	 * 
+	 * @return minTileX
+	 */
+	public float minTileX() {
+		return minTileX;
+	}
+	
+	/**
+	 * Get maximum tile X value
+	 * 
+	 * @return maxTileX
+	 */
+	public float maxTileX() {
+		return maxTileX;
+	}
+	
+	/**
+	 * Get minimum tile Y value
+	 * 
+	 * @return minTileY
+	 */
+	public float minTileY() {
+		return minTileY;
+	}
+	
+	/**
+	 * Get maximum tile Y value
+	 * 
+	 * @return maxTileY
+	 */
+	public float maxTileY() {
+		return maxTileY;
 	}
 	
 	/**
@@ -291,10 +327,10 @@ public class DevelopmentBuilder extends Development {
 			maxTileY = Float.NEGATIVE_INFINITY;
 			for (TileArray space : spaceList()) {
 				if (space.hasTiles()) {
-					minTileX = Math.min(minTileX, space.minTileX);
-					maxTileX = Math.max(maxTileX, space.maxTileX);
-					minTileY = Math.min(minTileY, space.minTileY);
-					maxTileY = Math.max(maxTileY, space.maxTileY);
+					minTileX = Math.min(minTileX, space.minX());
+					maxTileX = Math.max(maxTileX, space.maxX());
+					minTileY = Math.min(minTileY, space.minY());
+					maxTileY = Math.max(maxTileY, space.maxY());
 				}
 			}
 		}

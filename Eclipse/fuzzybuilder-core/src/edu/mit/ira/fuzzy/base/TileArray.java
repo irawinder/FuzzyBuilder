@@ -28,8 +28,8 @@ public class TileArray {
 	private HashMap<String, Tile> tileMap;
 	private ArrayList<Tile> tileList;
 	
-	public float minTileX, maxTileX;
-	public float minTileY, maxTileY;
+	public float minX, maxX;
+	public float minY, maxY;
 
 	/**
 	 * Construct Empty TileArray
@@ -53,10 +53,10 @@ public class TileArray {
 		hue = 0;
 		toExtrude = 1;
 		
-		minTileX = 0;
-		maxTileX = 0;
-		minTileY = 0;
-		maxTileY = 0;
+		minX = 0;
+		maxX = 0;
+		minY = 0;
+		maxY = 0;
 	}
 
 	/**
@@ -166,6 +166,42 @@ public class TileArray {
 	 */
 	public ArrayList<Tile> tileList() {
 		return tileList;
+	}
+	
+	/**
+	 * Get minimum X value
+	 * 
+	 * @return minX
+	 */
+	public float minX() {
+		return minX;
+	}
+	
+	/**
+	 * Get maximum X value
+	 * 
+	 * @return maxX
+	 */
+	public float maxX() {
+		return maxX;
+	}
+	
+	/**
+	 * Get minimum Y value
+	 * 
+	 * @return minY
+	 */
+	public float minY() {
+		return minY;
+	}
+	
+	/**
+	 * Get maximum Y value
+	 * 
+	 * @return maxY
+	 */
+	public float maxY() {
+		return maxY;
 	}
 
 	/**
@@ -594,16 +630,15 @@ public class TileArray {
 	 */
 	public void calcMinMax() {
 		if (tileList().size() > 0) {
-			minTileX = Float.POSITIVE_INFINITY;
-			maxTileX = Float.NEGATIVE_INFINITY;
-			minTileY = Float.POSITIVE_INFINITY;
-			maxTileY = Float.NEGATIVE_INFINITY;
+			minX = Float.POSITIVE_INFINITY;
+			maxX = Float.NEGATIVE_INFINITY;
+			minY = Float.POSITIVE_INFINITY;
+			maxY = Float.NEGATIVE_INFINITY;
 			for (Tile tile : tileList()) {
-				//System.out.println(tile.location.x + ", " + tile.location.y);
-				minTileX = Math.min(minTileX, tile.location.x);
-				maxTileX = Math.max(maxTileX, tile.location.x);
-				minTileY = Math.min(minTileY, tile.location.y);
-				maxTileY = Math.max(maxTileY, tile.location.y);
+				minX = Math.min(minX, tile.location.x);
+				maxX = Math.max(maxX, tile.location.x);
+				minY = Math.min(minY, tile.location.y);
+				maxY = Math.max(maxY, tile.location.y);
 			}
 		}
 	}

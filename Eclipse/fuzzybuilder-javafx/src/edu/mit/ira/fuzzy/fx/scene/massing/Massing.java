@@ -58,7 +58,7 @@ public class Massing extends MassingContainer {
  	final protected static double VOXEL_HEIGHT_BUFFER 	= 0.9; // fraction of voxel to draw, leaving vertical gap between adjacent voxels
  	final protected static double VOXEL_WIDTH_BUFFER 	= 0.8; // fraction of voxel to draw, leaving horizontal gap between adjacent voxels
  	final protected static double GRID_UNIT_WIDTH 		= 0.5; // fraction of a TileArray() tile width
- 	final protected static int	  GRID_SIZE 			= 800; // size of selection grid in Development units, e.g. (0, GRID_SIZE)
+ 	final protected static int	  GRID_UNIT_BLEED		=   5; // number of selection grid units to bleed outside of Development extents
  	
 	public Massing() {
 		super();
@@ -221,13 +221,13 @@ public class Massing extends MassingContainer {
 		}
 		
 		// Add Theoretical Control Point Grid Space
-//		boolean showGrid;
-//		if (form_model.addPoint) {
-//			showGrid = false;
-//		} else {
-//			showGrid = true;
-//		}
-//		nodes3D.getChildren().addAll(nodeGrid(showGrid));
+		boolean showGrid;
+		if (form_model.addPoint) {
+			showGrid = false;
+		} else {
+			showGrid = true;
+		}
+		nodes3D.getChildren().addAll(nodeGrid(showGrid));
 		
 		
 		// Draw Site Vector Polygon
@@ -259,10 +259,13 @@ public class Massing extends MassingContainer {
 
 		// generate a grid of points to search for nearest match
 		// centered at (0,0)
-		double breadth = viewScaler * GRID_SIZE;
 		double interval = viewScaler * GRID_UNIT_WIDTH * form_model.getTileWidth();
-		for (double x = 0; x < breadth; x += interval) {
-			for (double y = 0; y < breadth; y += interval) {
+		double minX = viewScaler * form_model.minControlX() - GRID_UNIT_BLEED * interval;
+		double maxX = viewScaler * form_model.maxControlX() + GRID_UNIT_BLEED * interval;
+		double minY = viewScaler * form_model.minControlY() - GRID_UNIT_BLEED * interval;
+		double maxY = viewScaler * form_model.maxControlY() + GRID_UNIT_BLEED * interval;
+		for (double x = minX; x < maxX; x += interval) {
+			for (double y = minY; y < maxY; y += interval) {
 				Rectangle gridSquare = new Rectangle(interval, interval);
 				orientShape((Node) gridSquare, x, y, DEFAULT_POLY_Z);
 				gridSquare.setFill(Color.TRANSPARENT);

@@ -15,6 +15,7 @@ public class RandomSite extends DevelopmentEditor{
 	
 	public RandomSite(float tileW, float tileH, float x, float y, float width, float height) {
 		super();
+		control.setDefault(x, y);
 		load(tileW, tileH, x, y, width, height);
 		resetEditor();
 	}
