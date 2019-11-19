@@ -19,6 +19,7 @@ import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
+import javafx.scene.shape.Shape3D;
 import javafx.scene.shape.Sphere;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
@@ -52,9 +53,11 @@ public class Massing extends MassingContainer {
  	final protected static double SUBDUED_STROKE = 2.0;
  	final protected static Color DEFAULT_CONTROL_FILL = Color.TRANSPARENT;
  	final protected static Color DEFAULT_CONTROL_STROKE = Color.gray(SUBDUED_SATURATION, SUBTLE_ALPHA);
+ 	final protected static Color GRAY_COLOR = Color.GRAY;
  	final protected static Color ACTIVE_COLOR = Color.PURPLE;
  	final protected static Color REMOVE_COLOR = Color.RED;
  	final protected static Color ADD_COLOR = Color.GREEN;
+ 	final private static PhongMaterial GRAY_MATERIAL = new PhongMaterial(GRAY_COLOR);
  	final private static PhongMaterial ACTIVE_MATERIAL = new PhongMaterial(ACTIVE_COLOR);
  	final private static PhongMaterial REMOVE_MATERIAL = new PhongMaterial(REMOVE_COLOR);
  	final private static PhongMaterial ADD_MATERIAL = new PhongMaterial(ADD_COLOR);
@@ -69,7 +72,7 @@ public class Massing extends MassingContainer {
  	
  	// Global Objects
   	private Sphere hover;
-  	private boolean dragged;
+  	private boolean isMoving;
   	
   	// GridMap of geospatial point locations to front-end box element
   	HashMap<Node, Point> gridMap;
@@ -82,7 +85,7 @@ public class Massing extends MassingContainer {
 		nodesControl = new Group();
 		nodesForm = new Group();
 		hover = new Sphere();
-		dragged = false;
+		isMoving = false;
 		gridMap = new HashMap<Node, Point>();
 		controlMap = new HashMap<ControlPoint, Node>();
 	}
@@ -99,7 +102,7 @@ public class Massing extends MassingContainer {
     	drawControl();
     	drawForm();
     	nodes3D.getChildren().clear();
-    	nodes3D.getChildren().addAll(nodesForm, nodesControl);
+    	nodes3D.getChildren().addAll(nodesControl, nodesForm);
     	
 		setOnMouseMoved((MouseEvent me) -> {
 			updateMouseLocation(me);
@@ -110,7 +113,6 @@ public class Massing extends MassingContainer {
 			if (form_model.selected == null) {
 				dragCamera(me);
 			}
-			dragged = true;
 		});
 		
 		setOnScroll((ScrollEvent se) -> {
@@ -118,16 +120,17 @@ public class Massing extends MassingContainer {
 		});
 		
 		setOnMousePressed((MouseEvent me) -> {
-			dragged = false;
+			
 		});
 		
 		setOnMouseReleased((MouseEvent me) -> {
-//			if (hover.isVisible() && !dragged) {
 			if (hover.isVisible()) {
 				addPointAtMouse(me);
 			}
-			form_model.deselect();
-			dragged = false;
+			if (isMoving) {
+				form_model.deselect();
+				isMoving = false;
+			}
 		});
 	}
     
@@ -186,7 +189,11 @@ public class Massing extends MassingContainer {
 					ControlPoint existingPointAtMouse = p;
 					boolean mousePressed = true;
 					is.setOnMouseEntered(me -> {
-						if (form_model.removePoint) is.setMaterial(REMOVE_MATERIAL);
+						if (form_model.removePoint) {
+							is.setMaterial(REMOVE_MATERIAL);
+						} else {
+							is.setMaterial(ACTIVE_MATERIAL);
+						}
 						is.setRadius(HOVER_SIZE_SCALER * DEFAULT_SCALER * DEFAULT_CONTROL_SIZE);
 						form_model.listen(!mousePressed, existingPointAtMouse, newPointAtMouse);
 						form_model.updateModel();
@@ -199,7 +206,6 @@ public class Massing extends MassingContainer {
 						form_model.updateModel();
 					});
 					is.setOnMousePressed((MouseEvent me) -> {
-						if (form_model.removePoint) is.setMaterial(REMOVE_MATERIAL);
 						is.setRadius(DEFAULT_SCALER * DEFAULT_CONTROL_SIZE);
 						form_model.listen(!mousePressed, existingPointAtMouse, newPointAtMouse);
 						form_model.updateModel();
@@ -207,13 +213,11 @@ public class Massing extends MassingContainer {
 						hover.setVisible(false);
 					});
 					is.setOnMouseReleased((MouseEvent me) -> {
-//						if (!dragged) {
 							form_model.mouseTrigger(newPointAtMouse);
-							form_model.deselect();
+							//form_model.deselect();
 							form_model.listen(mousePressed, existingPointAtMouse, newPointAtMouse);
 							form_model.updateModel();
 							render(form_model, map_model);
-//						}
 					});
 //					source.setOnDragDetected(new EventHandler <MouseEvent>() {
 //			            public void handle(MouseEvent event) {
@@ -475,22 +479,28 @@ public class Massing extends MassingContainer {
 					form_model.listen(!mousePressed, existingPointAtMouse, newPointAtMouse);
 					form_model.updateModel();
 					gridMap.put(b, newPointAtMouse);
+					
 					// Set Ghost for new Control Point
 					if(form_model.hovering != null) {
 						hover.setVisible(true);
 						hover.setMaterial(ADD_MATERIAL);
 						orientShape((Node) hover, viewScaler * newPointAtMouse.x, viewScaler * newPointAtMouse.y, DEFAULT_CONTROL_Z);
 					} 
-//					else if (form_model.selected != null) {
-//						Point new_location = gridMap.get(b);
-//						if (new_location != null) {
-//							form_model.selected.x = newPointAtMouse.x;
-//							form_model.selected.y = newPointAtMouse.y;
-//						}
-//						form_model.detectChange(form_model.selected.getType());
-//						form_model.updateModel();
-//						orientShape((Node) controlMap.get(form_model.selected), viewScaler * newPointAtMouse.x, viewScaler * newPointAtMouse.y, DEFAULT_CONTROL_Z);
-//					}
+					
+					// Move point around after clicking it
+					else if (form_model.selected != null) {
+						isMoving = true;
+						Point new_location = gridMap.get(b);
+						if (new_location != null) {
+							form_model.selected.x = newPointAtMouse.x;
+							form_model.selected.y = newPointAtMouse.y;
+						}
+						form_model.detectChange(form_model.selected.getType());
+						form_model.updateModel();
+						Node sphere = controlMap.get(form_model.selected);
+						orientShape(sphere, viewScaler * newPointAtMouse.x, viewScaler * newPointAtMouse.y, DEFAULT_CONTROL_Z);
+						drawForm();
+					}
 				});
 				grid.getChildren().add(b);
 			}
