@@ -100,10 +100,6 @@ public class FuzzyBuilder extends Application {
     		renderScenes();
         });
         
-//        content.setOnMouseMoved(e -> renderScenes());
-//        content.setOnMousePressed(e -> renderScenes());
-//        content.setOnMouseReleased(e -> renderScenes());
-        
         // Set the stage and start the show
         appWindow.setScene(content);
         appWindow.show();
@@ -133,6 +129,8 @@ public class FuzzyBuilder extends Application {
     	float min_radius = 0.3f * diameter;
     	float max_radius = 0.4f * diameter;
     	scenario_form = new RandomSite(tileWidth, tileHeight, x, y, min_radius, max_radius);
+    	
+    	System.out.println(scenario_form.toString());
     }
     
     /**
@@ -150,6 +148,8 @@ public class FuzzyBuilder extends Application {
     	
     	// Load Geometry
     	scenario_form = new ShinagawaSite();
+    	
+    	System.out.println(scenario_form.toString());
     	
     }
     

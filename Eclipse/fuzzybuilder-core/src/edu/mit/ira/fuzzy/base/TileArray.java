@@ -27,6 +27,9 @@ public class TileArray {
 	// Collection of Tiles
 	private HashMap<String, Tile> tileMap;
 	private ArrayList<Tile> tileList;
+	
+	public float minTileX, maxTileX;
+	public float minTileY, maxTileY;
 
 	/**
 	 * Construct Empty TileArray
@@ -49,6 +52,11 @@ public class TileArray {
 		this.parent_name = "";
 		hue = 0;
 		toExtrude = 1;
+		
+		minTileX = 0;
+		maxTileX = 0;
+		minTileY = 0;
+		maxTileY = 0;
 	}
 
 	/**
@@ -168,6 +176,19 @@ public class TileArray {
 	 */
 	public boolean hasTile(Tile t) {
 		return tileMap.get(t.id) != null;
+	}
+	
+	/**
+	 * Does the TileArray have any tiles at all?
+	 * 
+	 * @return true if TileArray has any tiles
+	 */
+	public boolean hasTiles() {
+		if (tileList.size() > 0) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	/**
@@ -324,6 +345,7 @@ public class TileArray {
 				}
 			}
 		}
+		calcMinMax();
 	}
 
 	/**
@@ -364,6 +386,7 @@ public class TileArray {
 				setback.addTile(t);
 			}
 		}
+		setback.calcMinMax();
 		return setback;
 	}
 
@@ -411,7 +434,7 @@ public class TileArray {
 				}
 			}
 		}
-
+		closest.calcMinMax();
 		return closest;
 	}
 
@@ -433,6 +456,7 @@ public class TileArray {
 				diff.removeTile(t);
 			}
 		}
+		diff.calcMinMax();
 		return diff;
 	}
 
@@ -454,6 +478,7 @@ public class TileArray {
 				add.addTile(t);
 			}
 		}
+		add.calcMinMax();
 		return add;
 	}
 
@@ -468,6 +493,7 @@ public class TileArray {
 				removeTile(t);
 			}
 		}
+		child.calcMinMax();
 	}
 
 	/**
@@ -481,6 +507,7 @@ public class TileArray {
 				addTile(t);
 			}
 		}
+		calcMinMax();
 	}
 
 	/**
@@ -507,14 +534,13 @@ public class TileArray {
 
 		// Fore Each Tile in Site, Check Which Control Point (i.e. Voronoi Site Point)
 		// it is closest to. This resembles a Voronoi algorithm
-		//
 		if (points.size() > 0) {
 			for (Tile t : tileList()) {
 				float min_distance = Float.POSITIVE_INFINITY;
 				String closest_cell_name = "";
 				for (ControlPoint p : points) {
-					float distance = (float) Math
-							.sqrt(Math.pow(p.x - t.location.x, 2) + Math.pow(p.y - t.location.y, 2));
+					float distance = (float) 
+							Math.sqrt(Math.pow(p.x - t.location.x, 2) + Math.pow(p.y - t.location.y, 2));
 					if (distance < min_distance) {
 						min_distance = distance;
 						closest_cell_name = p.getTag();
@@ -524,6 +550,9 @@ public class TileArray {
 				closest_cell.addTile(t);
 			}
 		}
+		
+		// Recalculate minimum and maximum values
+		for(TileArray cell : voronoiList) cell.calcMinMax();
 
 		return voronoiList;
 	}
@@ -540,7 +569,6 @@ public class TileArray {
 		extrusion.inheritAttributes(this);
 
 		// Build Extrusion
-		//
 		for (Tile t : tileList()) {
 			if (lowestFloor != highestFloor) {
 				for (int i = lowestFloor; i < highestFloor; i++) {
@@ -557,7 +585,27 @@ public class TileArray {
 				}
 			}
 		}
+		extrusion.calcMinMax();
 		return extrusion;
+	}
+	
+	/**
+	 * update minimum and maximum extents of model
+	 */
+	public void calcMinMax() {
+		if (tileList().size() > 0) {
+			minTileX = Float.POSITIVE_INFINITY;
+			maxTileX = Float.NEGATIVE_INFINITY;
+			minTileY = Float.POSITIVE_INFINITY;
+			maxTileY = Float.NEGATIVE_INFINITY;
+			for (Tile tile : tileList()) {
+				//System.out.println(tile.location.x + ", " + tile.location.y);
+				minTileX = Math.min(minTileX, tile.location.x);
+				maxTileX = Math.max(maxTileX, tile.location.x);
+				minTileY = Math.min(minTileY, tile.location.y);
+				maxTileY = Math.max(maxTileY, tile.location.y);
+			}
+		}
 	}
 
 	@Override

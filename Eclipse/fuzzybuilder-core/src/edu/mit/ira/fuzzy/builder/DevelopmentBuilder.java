@@ -26,6 +26,8 @@ public class DevelopmentBuilder extends Development {
 	public float tileW, tileH, tile_rotation;
 	public String units;
 	public Point tile_translation;
+	public float minTileX, maxTileX;
+	public float minTileY, maxTileY;
 	
 	// Default Values
 	final private static String DEFAULT_NAME = "New Parcel";
@@ -51,6 +53,11 @@ public class DevelopmentBuilder extends Development {
 		setTileHeight(DEFAULT_TILE_HEIGHT);
 		setTileTranslation(DEFAULT_TILE_TRANSLATE_X, DEFAULT_TILE_TRANSLATE_Y);
 		setTileRotation(DEFAULT_TILE_ROTATION);
+		
+		minTileX = 0;
+		maxTileX = 0;
+		minTileY = 0;
+		maxTileY = 0;
 	}
 	
 	/**
@@ -60,6 +67,15 @@ public class DevelopmentBuilder extends Development {
 	 */
 	public void setTileWidth(float tileW) {
 		this.tileW = tileW;
+	}
+	
+	/**
+	 * Get Tile Width
+	 * 
+	 * @return tileW
+	 */
+	public float getTileWidth() {
+		return this.tileW;
 	}
 	
 	/**
@@ -257,8 +273,35 @@ public class DevelopmentBuilder extends Development {
 		}
 
 		// Add new Spaces to Development
-		for (TileArray base : new_bases)
+		for (TileArray base : new_bases) {
 			addSpace(base);
+		}
+		
+		this.calcMinMax();
 	}
-
+	
+	/**
+	 * update minimum and maximum extents of model
+	 */
+	public void calcMinMax() {
+		if (spaceList().size() > 0) {
+			minTileX = Float.POSITIVE_INFINITY;
+			maxTileX = Float.NEGATIVE_INFINITY;
+			minTileY = Float.POSITIVE_INFINITY;
+			maxTileY = Float.NEGATIVE_INFINITY;
+			for (TileArray space : spaceList()) {
+				if (space.hasTiles()) {
+					minTileX = Math.min(minTileX, space.minTileX);
+					maxTileX = Math.max(maxTileX, space.maxTileX);
+					minTileY = Math.min(minTileY, space.minTileY);
+					maxTileY = Math.max(maxTileY, space.maxTileY);
+				}
+			}
+		}
+	}
+	
+	@Override
+	public String toString() {
+		return this.name + " X-Extents: (" + this.minTileX + " - " + this.maxTileX + "), " + " Y-Extents: (" + this.minTileY + " - " + this.maxTileY + ")";
+	}
 }

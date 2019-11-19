@@ -6,6 +6,7 @@ import edu.mit.ira.fuzzy.base.Tile;
 import edu.mit.ira.fuzzy.base.TileArray;
 import edu.mit.ira.fuzzy.builder.DevelopmentEditor;
 import edu.mit.ira.fuzzy.fx.node.Underlay;
+import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.PointLight;
 import javafx.scene.control.Label;
@@ -15,6 +16,7 @@ import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Sphere;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
@@ -41,7 +43,6 @@ public class Massing extends MassingContainer {
  	final protected static double SUBTLE_ALPHA = 0.5;
  	final protected static double DEFAULT_STROKE = 1.0;
  	final protected static double SUBDUED_STROKE = 2.0;
- 	
  	final protected static Color DEFAULT_CONTROL_FILL = Color.hsb(0, 0, 1, SUBDUED_ALPHA);
  	final protected static Color DEFAULT_CONTROL_STROKE = Color.gray(SUBDUED_SATURATION, SUBTLE_ALPHA);
  	final protected static Color ACTIVE_COLOR = Color.PURPLE;
@@ -52,10 +53,12 @@ public class Massing extends MassingContainer {
  	final private static PhongMaterial ADD_MATERIAL = new PhongMaterial(ADD_COLOR);
  	
  	// Default Object Sizes
- 	final protected static double DEFAULT_CONTROL_SIZE = 5.0;
- 	final protected static double HOVER_SIZE_SCALER = 1.5;
- 	final protected static double VOXEL_HEIGHT_BUFFER = 0.9;
- 	final protected static double VOXEL_WIDTH_BUFFER = 0.8;
+ 	final protected static double DEFAULT_CONTROL_SIZE 	= 5.0; // e.g. radius of the control point sphere, in pixels
+ 	final protected static double HOVER_SIZE_SCALER 	= 1.5; // increase size of something when hovering
+ 	final protected static double VOXEL_HEIGHT_BUFFER 	= 0.9; // fraction of voxel to draw, leaving vertical gap between adjacent voxels
+ 	final protected static double VOXEL_WIDTH_BUFFER 	= 0.8; // fraction of voxel to draw, leaving horizontal gap between adjacent voxels
+ 	final protected static double GRID_UNIT_WIDTH 		= 0.5; // fraction of a TileArray() tile width
+ 	final protected static int	  GRID_SIZE 			= 800; // size of selection grid in Development units, e.g. (0, GRID_SIZE)
  	
 	public Massing() {
 		super();
@@ -82,7 +85,6 @@ public class Massing extends MassingContainer {
 		
 		nodes2D.getChildren().clear();
 		nodes3D.getChildren().clear();
-		controlMap.clear();
 		
 		// Placeholder for 2D overlay
 		Label l = new Label("Massing Editor");
@@ -106,7 +108,6 @@ public class Massing extends MassingContainer {
 					is.setId("active_control_point");
 					orientShape((Node) is, viewScaler * p.x, viewScaler * p.y, DEFAULT_CONTROL_Z + 0.1);
 					nodes3D.getChildren().add(is);
-					controlMap.put(is, p);
 					
 					// Mouse Events for Control Pointers
 					ControlPoint newPointAtMouse = null;
@@ -208,7 +209,6 @@ public class Massing extends MassingContainer {
 				oc.setStrokeWidth(DEFAULT_SCALER * SUBDUED_STROKE);
 				orientShape((Node) oc, viewScaler * p.x, viewScaler * p.y, DEFAULT_CONTROL_Z);
 				nodes3D.getChildren().add(oc);
-				controlMap.put(oc, p);
 			}
 		}
 		
@@ -219,6 +219,16 @@ public class Massing extends MassingContainer {
 			map_model.setScale(viewScaler*map_model.getScaler());
 			nodes3D.getChildren().add(map_model.getImageView());
 		}
+		
+		// Add Theoretical Control Point Grid Space
+//		boolean showGrid;
+//		if (form_model.addPoint) {
+//			showGrid = false;
+//		} else {
+//			showGrid = true;
+//		}
+//		nodes3D.getChildren().addAll(nodeGrid(showGrid));
+		
 		
 		// Draw Site Vector Polygon
 		Color site_fill         = Color.TRANSPARENT;
@@ -237,6 +247,34 @@ public class Massing extends MassingContainer {
 		site_polygon.setStrokeWidth(site_strokeWeight);
 		orientShape((Node) site_polygon, 0, 0, DEFAULT_POLY_Z);
 		nodes3D.getChildren().add(site_polygon);
+	}
+	
+	/**
+	 * Draw a structured grid of points that a user might select from
+	 * 
+	 * @return grid of points
+	 */
+	public Group nodeGrid(boolean transparent) {
+		Group grid = new Group();
+
+		// generate a grid of points to search for nearest match
+		// centered at (0,0)
+		double breadth = viewScaler * GRID_SIZE;
+		double interval = viewScaler * GRID_UNIT_WIDTH * form_model.getTileWidth();
+		for (double x = 0; x < breadth; x += interval) {
+			for (double y = 0; y < breadth; y += interval) {
+				Rectangle gridSquare = new Rectangle(interval, interval);
+				orientShape((Node) gridSquare, x, y, DEFAULT_POLY_Z);
+				gridSquare.setFill(Color.TRANSPARENT);
+				if (transparent) {
+					gridSquare.setStroke(Color.TRANSPARENT);
+				} else {
+					gridSquare.setStroke(Color.gray(SUBDUED_SATURATION));
+				}
+				grid.getChildren().add(gridSquare);
+			}
+		}
+		return grid;
 	}
 	
 	/**

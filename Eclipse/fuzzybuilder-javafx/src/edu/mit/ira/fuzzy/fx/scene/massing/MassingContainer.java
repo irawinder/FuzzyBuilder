@@ -1,14 +1,10 @@
 package edu.mit.ira.fuzzy.fx.scene.massing;
 
-import java.util.HashMap;
-
-import edu.mit.ira.fuzzy.base.ControlPoint;
 import edu.mit.ira.fuzzy.builder.DevelopmentEditor;
 import edu.mit.ira.fuzzy.fx.node.Underlay;
 import edu.mit.ira.fuzzy.fx.scene.ContentContainer;
 import javafx.scene.Camera;
 import javafx.scene.Group;
-import javafx.scene.Node;
 import javafx.scene.PerspectiveCamera;
 import javafx.scene.SceneAntialiasing;
 import javafx.scene.SubScene;
@@ -40,7 +36,7 @@ public class MassingContainer extends SubScene implements ContentContainer {
     
     // "Front End" Nodes to Pass to Parent JavaFX Scene
  	protected Group nodes3D, nodes2D;
- 	protected SubScene scene2D, scene3D;
+ 	protected SubScene scene3D, scene2D;
  	
  	// Dynamic 3D View Parameters
  	protected Camera camera;
@@ -55,9 +51,6 @@ public class MassingContainer extends SubScene implements ContentContainer {
  	
  	// Mouse locations on Canvas
  	protected double mousePosX, mousePosY;
- 	
- 	// HashMap of Control Point Visual Nodes
- 	protected HashMap<Node, ControlPoint> controlMap;
  	
  	// Default Camera Values
 	final protected static double DEFAULT_SCALER = 4.0;
@@ -100,7 +93,6 @@ public class MassingContainer extends SubScene implements ContentContainer {
     	// Initialize Mouse Interaction Objects
     	mousePosX = 0;
     	mousePosY = 0;
-    	controlMap = new HashMap<Node, ControlPoint>();
     	
     	// Initialize Parent Nodes
     	nodes3D = new Group();
