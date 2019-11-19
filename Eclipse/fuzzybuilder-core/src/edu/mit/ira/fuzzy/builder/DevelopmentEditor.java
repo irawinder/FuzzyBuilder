@@ -454,11 +454,11 @@ public class DevelopmentEditor extends DevelopmentBuilder {
 	}
 
 	/**
-	 * Triggered once when any mouse button is pressed
+	 * Triggered once to update model
 	 * 
 	 * @param new_point New Point at mouse location
 	 */
-	public void mousePressed(Point new_point) {
+	public void mouseTrigger(Point new_point) {
 		if (addPoint) {
 			if (new_point != null) {
 				Point atMouse = new_point;

@@ -250,7 +250,7 @@ public class DevelopmentBuilder extends Development {
 					if (space.pointInArray(p.x, p.y)) {
 						TileArray t = space.getClosestN(p, yard_area);
 						t.subtract(setback);
-						t.setName(p.getTag());
+						t.setName(p.getType());
 						t.setType(type);
 						// Subtract other voids from current to prevent overlap
 						for (TileArray prev : voidSpace)

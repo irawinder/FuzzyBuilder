@@ -97,7 +97,7 @@ public class FuzzyBuilder extends PApplet {
 	 * Runs once when mouse is pressed down
 	 */
 	public void mousePressed() {
-		editor.mousePressed(newPointAtMouse());
+		editor.mouseTrigger(newPointAtMouse());
 		loop();
 	}
 

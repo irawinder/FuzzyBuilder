@@ -100,11 +100,13 @@ public class MassingContainer extends SubScene implements ContentContainer {
         
     	// Initialize 3D SubScene
         scene3D = new SubScene(nodes3D, getWidth(), getHeight(), true, SceneAntialiasing.BALANCED);
+        scene3D.setId("scene3D");
     	scene3D.setFill(background);
         scene3D.setCamera(camera);
     	
         // Initialize Overlay
     	scene2D = new SubScene(nodes2D, getWidth(), getHeight());
+    	scene2D.setId("scene2D");
         scene2D.setFill(Color.TRANSPARENT);
         
         // Bind dimensions of child scenes
@@ -281,35 +283,6 @@ public class MassingContainer extends SubScene implements ContentContainer {
 			zoom.setZ(new_zoom);
 		});
 	}
-	
-//	/**
-//	 * 
-//	 * @return new ControlPoint at mouse (Requires processing.core)
-//	 */
-//	Point newPointAtMouse() {
-//		Point mousePoint = null;
-//
-//		// generate a grid of points to search for nearest match
-//		// centered at (0,0)
-//		int breadth = 1000;
-//		int interval = 5;
-//
-//		float min_distance = Float.POSITIVE_INFINITY;
-//		for (int x = -breadth; x < breadth; x += interval) {
-//			for (int y = -breadth; y < breadth; y += interval) {
-//				float dist_x = mousePosX - screenX(x, y);
-//				float dist_y = mousePosY - screenY(x, y);
-//				float distance = (float) Math.sqrt(Math.pow(dist_x, 2) + Math.pow(dist_y, 2));
-//				if (distance < 15) {
-//					if (distance < min_distance) {
-//						min_distance = distance;
-//						mousePoint = new Point(x + 0.01f * (float) Math.random(), y + 0.01f * (float) Math.random());
-//					}
-//				}
-//			}
-//		}
-//		return mousePoint;
-//	}
 	
 	/**
 	 * Returns a value capped to a specified minimum and maximum value
