@@ -144,18 +144,18 @@ public class MassingContent extends Container3D {
     	nodes3D.getChildren().addAll(nodesControl, nodesForm);
     	
 		setOnMouseMoved((MouseEvent me) -> {
-			cam.updateMouseLocation(me);
+			cam.move(me);
 			updateHover(me);
 		});
 		
 		setOnMouseDragged((MouseEvent me) -> {
 			if (form_model.selected == null) {
-				cam.dragCamera(me);
+				cam.drag(me);
 			}
 		});
 		
 		setOnScroll((ScrollEvent se) -> {
-			cam.zoomCamera(se);
+			cam.zoom(se);
 		});
 		
 		setOnMousePressed((MouseEvent me) -> {

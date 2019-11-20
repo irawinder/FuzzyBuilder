@@ -8,7 +8,7 @@ import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
 
 /**
- * Container for Massing View Model
+ * Camera for a 3D Scene or SubScene
  *
  * @author Ira Winder
  *
@@ -114,7 +114,7 @@ public class Camera3D {
 	 * 
 	 * @param distance (more negative is farther away)
 	 */
-	public void setZoom(double distance) {
+	private void setZoom(double distance) {
 		this.zoom = new Translate(0, 0, ensureRange(distance, maxZoom, minZoom));
 	}
 	
@@ -124,7 +124,7 @@ public class Camera3D {
 	 * @param y
 	 * @param z
 	 */
-	public void setPan(double x, double y, double z) {
+	private void setPan(double x, double y, double z) {
 		this.pan = new Translate(-x, z, y);
 	}
 	
@@ -132,7 +132,7 @@ public class Camera3D {
 	 * Vertical Rotation (JavaFX uses X_AXIS)
 	 * @param angle in degrees
 	 */
-	public void setRotateV(double angle) {
+	private void setRotateV(double angle) {
 		this.rotateV = new Rotate(angle, Rotate.X_AXIS);
 	}
 	
@@ -140,7 +140,7 @@ public class Camera3D {
 	 * Horizontal Rotation (JavaFX uses Y_AXIS)
 	 * @param angle in degrees
 	 */
-	public void setRotateH(double angle) {
+	private void setRotateH(double angle) {
 		this.rotateH = new Rotate(angle, Rotate.Y_AXIS);
 	}
 	
@@ -159,7 +159,7 @@ public class Camera3D {
 	 * 
 	 * @param me mouse event
 	 */
-	public void updateMouseLocation(MouseEvent me) {
+	public void move(MouseEvent me) {
 		this.mousePosX = me.getScreenX();
 		this.mousePosY = me.getScreenY();
 	}
@@ -169,7 +169,7 @@ public class Camera3D {
 	 * 
 	 * @param se scroll event
 	 */
-	public void zoomCamera(ScrollEvent se) {
+	public void zoom(ScrollEvent se) {
 		double dy = viewScaler * se.getDeltaY();
 		double new_zoom = zoom.getZ() - dy;
 		new_zoom = ensureRange(new_zoom, maxZoom, minZoom);
@@ -181,7 +181,7 @@ public class Camera3D {
 	 * 
 	 * @param me mouse event
 	 */
-	public void dragCamera(MouseEvent me) {
+	public void drag(MouseEvent me) {
 		// Mouse displacement while pressed and dragged
 		double dx = + (mousePosX - me.getScreenX());
 		double dy = - (mousePosY - me.getScreenY());
