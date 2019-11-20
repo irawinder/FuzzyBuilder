@@ -78,8 +78,8 @@ public class Massing extends Container3D {
   	// GridMap of control spheres tied to their point location
   	private HashMap<ControlPoint, Node> controlMap;
   	
-  	// Is A Control Point being Moved?
-   	private boolean isMoving;
+  	// Is A Control Point or Camera being Dragged?
+   	private boolean mouseMoved, camDragged, ignoreSelect;
  	
 	public Massing() {
 		super();
@@ -97,7 +97,10 @@ public class Massing extends Container3D {
     	nodes2D.getChildren().addAll(overlay);
     	nodes3D.getChildren().addAll(control, ghost, grid, light, form, map);
     	
-		isMoving = false;
+    	ignoreSelect = false;
+		mouseMoved = false;
+		camDragged = false;
+		
 		gridMap = new HashMap<Node, Point>();
 		controlMap = new HashMap<ControlPoint, Node>();
 		
@@ -159,9 +162,11 @@ public class Massing extends Container3D {
 		});
 		
 		this.setOnMouseDragged((MouseEvent me) -> {
-			if (form_model.selected == null) {
+			if (form_model.selected == null || ghost.isVisible() || mouseMoved) {
 				cam.drag(me);
+				camDragged = true;
 			}
+			mouseMoved = true;
 		});
 		
 		this.setOnScroll((ScrollEvent se) -> {
@@ -169,21 +174,88 @@ public class Massing extends Container3D {
 		});
 		
 		this.setOnMousePressed((MouseEvent me) -> {
+			// Adding or Removing a Point
+			if (form_model.addPoint || form_model.removePoint)
+				mouseMoved = false;
+			camDragged = false;
+		});
+
+		this.setOnMouseReleased((MouseEvent me) -> {
+			// Adding a Point
 			if (form_model.addPoint) {
-				if (ghost.isVisible()) addPointAtMouse(me);
-			} else if (form_model.removePoint) {
-			
-			// Done Moving a Point
-			} else {
-				// If the control point is point moved, deselect it
-				if (isMoving) {
+				// Use ghost as template to add new control point
+				if (ghost.isVisible() && !mouseMoved)
+					addPointAtMouse(me);
+			// Moving a Point
+			} else if (!form_model.removePoint) {
+				// If the control point is moved and camera has not been panned, deselect it
+				if (mouseMoved && !camDragged) {
 					form_model.deselect();
-					isMoving = false;
+					mouseMoved = false;
 				}
 			}
+			camDragged = false;
 		});
 	}
 	
+    /**
+     * Update hovering visualization when mouse is moved
+     * 
+     * @param me mouse event
+     */
+    public void updateHover(MouseEvent me) {
+    	// Hide hovering sphere when not over valid spot
+		Node intersected = me.getPickResult().getIntersectedNode();
+		String id = intersected.getId();
+		if (id != null) {
+			if (id.equals("scene3D")) {
+				ghost.setVisible(false);
+			}
+		}
+    }
+    
+    /**
+     * Add Control Point where mouse is
+     * 
+     * @param me mouse event
+     */
+    public void addPointAtMouse(MouseEvent me) {
+    	boolean mousePressed = true;
+		ControlPoint existingPointAtMouse = null; // not applicable here
+    	if (form_model.hovering != null && form_model.addPoint) {
+			Point newPointAtMouse = form_model.hovering;
+			form_model.mouseTrigger(newPointAtMouse);
+			form_model.listen(mousePressed, existingPointAtMouse, newPointAtMouse);
+			form_model.updateModel();
+			this.init(form_model, map_model);
+		}
+    }
+    
+	/**
+	 * Key commands that effect the container
+	 * 
+	 * @param e key event
+	 */
+	public void keyPressed(KeyEvent e) {
+
+		// Reset Camera Position
+		if (e.getText().equals("C")) {
+			cam.init();
+		}
+		// toggle map model visibility
+		if (e.getCode() == KeyCode.U) {
+			map_model.setVisible(!map_model.isVisible());
+		}
+		// Torn Editing on/off
+		if (e.getCode() == KeyCode.E) {
+			
+		}
+		initControl();
+		initGrid();
+		initGhost();
+		initForm();
+	}
+
     /**
      * Initialize view model for ControlPoints. These nodes are designed to persist for any given scenario.
      */
@@ -239,38 +311,32 @@ public class Massing extends Container3D {
 					});
 					s.setOnMousePressed((MouseEvent me) -> {
 						s.setRadius(cam.scaler() * DEFAULT_CONTROL_SIZE);
-						form_model.mouseTrigger(newPointAtMouse);
-						form_model.updateModel();
-						ghost.setVisible(false);
-						initGrid();
-						initControl();
-						initForm();
+						form_model.listen(mousePressed, existingPointAtMouse, newPointAtMouse);
+						// Ignore Selection on mouse release if already selected
+						if (form_model.selected != null) {
+							ignoreSelect = true;
+						} else {
+							ignoreSelect = false;
+						}
+						mouseMoved = false;
+					});
+					s.setOnMouseReleased((MouseEvent me) -> {
+						if (!mouseMoved && form_model.selected == null && !ignoreSelect) {
+							// Check to remove or select ControlPoint
+							ghost.setVisible(false);
+							form_model.mouseTrigger(newPointAtMouse);
+							form_model.updateModel();
+							initGrid();
+							initControl();
+							initForm();
+						} else if (form_model.selected != null && !camDragged) {
+							// check to deselect a Control Point
+							form_model.deselect();
+						}
 					});
 				}
 			}
 		}
-    }
-    
-    /**
-     * Initialize Ghost of a Control Point
-     */
-    public void initGhost() {
-    	ghost.getChildren().clear();
-    	
-    	// Draw Control Point Hover Sphere
-		Sphere s = new Sphere();
-		s.setMaterial(ADD_MATERIAL);
-		s.setRadius(cam.scaler() * DEFAULT_CONTROL_SIZE);
-		
-		// Draw Control Point Hover Ring
-		Cylinder r = new Cylinder();
-		r.setMaterial(ALPHA_MATERIAL);
-		r.setRadius(cam.scaler() * HOVER_SIZE_SCALER * HOVER_SIZE_SCALER * DEFAULT_CONTROL_SIZE);
-		r.setHeight(0);
-		
-		Group hoverPoint = new Group(r, s);
-		ghost.getChildren().add(hoverPoint);
-		ghost.setVisible(false);
     }
     
     /**
@@ -318,7 +384,7 @@ public class Massing extends Container3D {
 					
 						// Move point around after clicking it
 						if (form_model.selected != null) {
-							isMoving = true;
+							mouseMoved = true;
 							Point new_location = gridMap.get(b);
 							if (new_location != null) {
 								form_model.selected.x = newPointAtMouse.x;
@@ -344,6 +410,28 @@ public class Massing extends Container3D {
 			}
 		}
 	}
+	
+    /**
+     * Initialize Ghost of a Control Point
+     */
+    public void initGhost() {
+    	ghost.getChildren().clear();
+    	
+    	// Draw Control Point Hover Sphere
+		Sphere s = new Sphere();
+		s.setMaterial(ADD_MATERIAL);
+		s.setRadius(cam.scaler() * DEFAULT_CONTROL_SIZE);
+		
+		// Draw Control Point Hover Ring
+		Cylinder r = new Cylinder();
+		r.setMaterial(ALPHA_MATERIAL);
+		r.setRadius(cam.scaler() * HOVER_SIZE_SCALER * HOVER_SIZE_SCALER * DEFAULT_CONTROL_SIZE);
+		r.setHeight(0);
+		
+		Group hoverPoint = new Group(r, s);
+		ghost.getChildren().add(hoverPoint);
+		ghost.setVisible(false);
+    }
     
 	/**
 	 * Set up Ambient Lighting Effects
@@ -488,63 +576,5 @@ public class Massing extends Container3D {
 		if (form_model.isEditing()) b.setMouseTransparent(true);
 
 		return b;
-	}
-	
-    /**
-     * Update hovering visualization when mouse is moved
-     * 
-     * @param me mouse event
-     */
-    public void updateHover(MouseEvent me) {
-    	// Hide hovering sphere when not over valid spot
-		Node intersected = me.getPickResult().getIntersectedNode();
-		String id = intersected.getId();
-		if (id != null) {
-			if (id.equals("scene3D")) {
-				ghost.setVisible(false);
-			}
-		}
-    }
-    
-    /**
-     * Add Control Point where mouse is
-     * 
-     * @param me mouse event
-     */
-    public void addPointAtMouse(MouseEvent me) {
-    	boolean mousePressed = true;
-		ControlPoint existingPointAtMouse = null; // not applicable here
-    	if (form_model.hovering != null && form_model.addPoint) {
-			Point newPointAtMouse = form_model.hovering;
-			form_model.mouseTrigger(newPointAtMouse);
-			form_model.listen(mousePressed, existingPointAtMouse, newPointAtMouse);
-			form_model.updateModel();
-			this.init(form_model, map_model);
-		}
-    }
-    
-	/**
-	 * Key commands that effect the container
-	 * 
-	 * @param e key event
-	 */
-	public void keyPressed(KeyEvent e) {
-
-		// Reset Camera Position
-		if (e.getText().equals("C")) {
-			cam.init();
-		}
-		// toggle map model visibility
-		if (e.getCode() == KeyCode.U) {
-			map_model.setVisible(!map_model.isVisible());
-		}
-		// Torn Editing on/off
-		if (e.getCode() == KeyCode.E) {
-			
-		}
-		initControl();
-		initGrid();
-		initGhost();
-		initForm();
 	}
 }

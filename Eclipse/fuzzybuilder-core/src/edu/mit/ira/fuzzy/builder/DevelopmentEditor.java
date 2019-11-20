@@ -443,6 +443,7 @@ public class DevelopmentEditor extends DevelopmentBuilder {
 		} else if (removePoint) {
 			selected = hovering;
 			removeControlPoint(hovering);
+			deselect();
 			
 		// 3. Select a new point to move
 		} else {
