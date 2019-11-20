@@ -19,9 +19,9 @@ public class Underlay implements Cloneable {
 	private Image underlay;
 	private ImageView underlayView;
 	
-	double scaler, opacity;
-	double DEFAULT_SCALER_VALUE = 1.0;
-	double DEFAULT_OPACITY_VALUE = 0.75;
+	private double scaler, opacity;
+	private final static double DEFAULT_SCALER_VALUE = 1.0;
+	private final static double DEFAULT_OPACITY_VALUE = 0.75;
 	
 	/**
 	 * Initialize an empty Underlay
@@ -30,7 +30,7 @@ public class Underlay implements Cloneable {
 		underlayView = new ImageView();
 		
 		scaler = DEFAULT_SCALER_VALUE;
-		opacity = DEFAULT_OPACITY_VALUE = 0.75;
+		opacity = DEFAULT_OPACITY_VALUE;
 	}
 	
 	/**
@@ -144,6 +144,9 @@ public class Underlay implements Cloneable {
 		
 	}
 	
+	/**
+	 * copies the object to a new in-memory object
+	 */
 	public Object clone() throws CloneNotSupportedException {
 		return super.clone();
 	}

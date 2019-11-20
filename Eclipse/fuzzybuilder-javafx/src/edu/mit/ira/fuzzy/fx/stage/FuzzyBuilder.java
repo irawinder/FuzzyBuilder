@@ -10,7 +10,7 @@ import edu.mit.ira.fuzzy.fx.scene.Outcome;
 import edu.mit.ira.fuzzy.fx.scene.Status;
 import edu.mit.ira.fuzzy.fx.scene.Toolbar;
 import edu.mit.ira.fuzzy.fx.scene.Version;
-import edu.mit.ira.fuzzy.fx.scene.massing.Massing;
+import edu.mit.ira.fuzzy.fx.scene.massing.MassingContent;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.SubScene;
@@ -54,7 +54,7 @@ public class FuzzyBuilder extends Application {
     	toolbar = new Toolbar();
 		version = new Version();
 		canvas = new Canvas();
-		massing = new Massing();
+		massing = new MassingContent();
 		outcome = new Outcome();
 		commit = new Commit();
 		navigate = new Navigate();
@@ -90,7 +90,7 @@ public class FuzzyBuilder extends Application {
 			((Toolbar)   toolbar).keyPressed(e);
 			((Version)   version).keyPressed(e);
 			((Canvas)     canvas).keyPressed(e);
-			((Massing)   massing).keyPressed(e);
+			((MassingContent)   massing).keyPressed(e);
 			((Outcome)   outcome).keyPressed(e);
 			((Commit)     commit).keyPressed(e);
 			((Navigate) navigate).keyPressed(e);
@@ -154,7 +154,7 @@ public class FuzzyBuilder extends Application {
     	((Toolbar)   toolbar).render();
 		((Version)   version).render();
 		((Canvas)     canvas).render();
-		((Massing)   massing).render(scenario_form, scenario_map);
+		((MassingContent)   massing).render(scenario_form, scenario_map);
 		((Outcome)   outcome).render();
 		((Commit)     commit).render();
 		((Navigate) navigate).render();
