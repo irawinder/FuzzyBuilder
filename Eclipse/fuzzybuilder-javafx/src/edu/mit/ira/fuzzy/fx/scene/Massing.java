@@ -1,4 +1,4 @@
-package edu.mit.ira.fuzzy.fx.scene.massing;
+package edu.mit.ira.fuzzy.fx.scene;
 
 import java.util.HashMap;
 
@@ -7,8 +7,8 @@ import edu.mit.ira.fuzzy.base.Point;
 import edu.mit.ira.fuzzy.base.Tile;
 import edu.mit.ira.fuzzy.base.TileArray;
 import edu.mit.ira.fuzzy.builder.DevelopmentEditor;
-import edu.mit.ira.fuzzy.fx.node.Underlay;
-import edu.mit.ira.fuzzy.fx.scene.Container3D;
+import edu.mit.ira.fuzzy.fx.base.Container3D;
+import edu.mit.ira.fuzzy.fx.base.Underlay;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.Label;

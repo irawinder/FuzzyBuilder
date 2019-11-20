@@ -1,4 +1,4 @@
-package edu.mit.ira.fuzzy.fx.scene;
+package edu.mit.ira.fuzzy.fx.base;
 
 import javafx.scene.Group;
 import javafx.scene.Node;

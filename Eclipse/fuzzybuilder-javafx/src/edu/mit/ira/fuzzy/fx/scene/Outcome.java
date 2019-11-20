@@ -1,4 +1,5 @@
 package edu.mit.ira.fuzzy.fx.scene;
+import edu.mit.ira.fuzzy.fx.base.Container2D;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.StackPane;
