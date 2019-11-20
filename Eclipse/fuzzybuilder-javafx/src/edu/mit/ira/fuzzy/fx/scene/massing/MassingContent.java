@@ -11,7 +11,6 @@ import edu.mit.ira.fuzzy.fx.node.Underlay;
 import edu.mit.ira.fuzzy.fx.scene.Container3D;
 import javafx.scene.Group;
 import javafx.scene.Node;
-import javafx.scene.PointLight;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -24,7 +23,6 @@ import javafx.scene.shape.Cylinder;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Sphere;
 import javafx.scene.transform.Rotate;
-import javafx.scene.transform.Translate;
 
 // TODO
 // Draw Tagged Control Point Labels
@@ -39,38 +37,22 @@ public class MassingContent extends Container3D {
     protected Underlay map_model;
     
     // Scale up/down draw units of back end geometry
-    final public static double DEFAULT_VIEW_SCALER = 4.0;
+    final private static double DEFAULT_VIEW_SCALER = 4.0;
     
  	// Default Elevation Values
- 	final protected static double DEFAULT_LIGHT_DISPLACEMENT = 400;
- 	final protected static double DEFAULT_MAP_Z     	= - 0.4;
- 	final protected static double DEFAULT_POLY_Z   		= - 0.3;
- 	final protected static double DEFAULT_CONTROL_Z 	= + 1.0;
- 	final protected static double DEFAULT_SITE_Z    	= + 0.0;
- 	final protected static double DEFAULT_ZONE_Z    	= + 0.1;
- 	final protected static double DEFAULT_FOOT_Z    	= + 0.2;
- 	final protected static double DEFAULT_BASE_Z    	= + 0.3;
- 	final protected static double DEFAULT_GRID_Z    	= + 0.5;
+ 	final private static double DEFAULT_MAP_Z     	= - 0.4;
+ 	final private static double DEFAULT_POLY_Z   		= - 0.3;
+ 	final private static double DEFAULT_CONTROL_Z 	= + 1.0;
+ 	final private static double DEFAULT_SITE_Z    	= + 0.0;
+ 	final private static double DEFAULT_ZONE_Z    	= + 0.1;
+ 	final private static double DEFAULT_FOOT_Z    	= + 0.2;
+ 	final private static double DEFAULT_BASE_Z    	= + 0.3;
+ 	final private static double DEFAULT_GRID_Z    	= + 0.5;
  	
- 	// Default color and stroke values
- 	final protected static double DEFAULT_SATURATION 	= 0.50;
- 	final protected static double DEFAULT_BRIGHTNESS 	= 0.75;
- 	final protected static double DEFAULT_ALPHA 		= 0.90;
- 	final protected static double SUBDUED_SATURATION 	= 0.30;
- 	final protected static double SUBDUED_BRIGHTNESS 	= 0.75;
- 	final protected static double SUBDUED_ALPHA 		= 0.75;
- 	final protected static double SUBTLE_SATURATION 	= 0.10;
- 	final protected static double SUBTLE_BRIGHTNESS 	= 0.75;
- 	final protected static double SUBTLE_ALPHA 			= 0.5;
- 	final protected static double DEFAULT_STROKE 		= 1.0;
- 	final protected static double SUBDUED_STROKE 		= 2.0;
- 	
- 	final protected static Color DEFAULT_CONTROL_FILL 	= Color.TRANSPARENT;
- 	final protected static Color DEFAULT_CONTROL_STROKE = Color.gray(SUBDUED_SATURATION, SUBTLE_ALPHA);
- 	final protected static Color GRAY_COLOR 			= Color.GRAY;
- 	final protected static Color ACTIVE_COLOR 			= Color.PURPLE;
- 	final protected static Color REMOVE_COLOR 			= Color.RED;
- 	final protected static Color ADD_COLOR 				= Color.GREEN;
+ 	final private static Color GRAY_COLOR 				= Color.GRAY;
+ 	final private static Color ACTIVE_COLOR 			= Color.PURPLE;
+ 	final private static Color REMOVE_COLOR 			= Color.RED;
+ 	final private static Color ADD_COLOR 				= Color.GREEN;
  	
 	final private static PhongMaterial GRAY_MATERIAL 	= new PhongMaterial(GRAY_COLOR);
  	final private static PhongMaterial ACTIVE_MATERIAL 	= new PhongMaterial(ACTIVE_COLOR);
@@ -85,19 +67,19 @@ public class MassingContent extends Container3D {
  	final protected static double GRID_UNIT_WIDTH 		= 1.0; // fraction of a TileArray() tile width
  	final protected static int	  GRID_UNIT_BLEED 		=  25; // number of selection grid units to bleed outside of Development extents
  	
-	Group nodesControl, nodesForm;
+ 	private Group nodesControl, nodesForm;
 	
  	// Global Objects
   	private Sphere hover;
   	private boolean isMoving;
   	
   	// GridMap of geospatial point locations to front-end box element
-  	HashMap<Node, Point> gridMap;
+  	private HashMap<Node, Point> gridMap;
   	
   	// GridMap of control spheres tied to their point location
-  	HashMap<ControlPoint, Node> controlMap;
+  	private HashMap<ControlPoint, Node> controlMap;
   	
-  	protected boolean showUnderlay;
+  	private boolean showUnderlay;
  	
 	public MassingContent() {
 		super();
@@ -111,24 +93,6 @@ public class MassingContent extends Container3D {
 		cam.setViewScaler(DEFAULT_VIEW_SCALER);
 	}
 	
-	/**
-	 * Populates the View Model with a form from Builder class
-	 * 
-	 * @param form form from Builder class
-	 */
-	public void setFormModel(DevelopmentEditor form_model) {
-		this.form_model = form_model;
-	}
-	
-	/**
-	 * Populates the View Model with a map from Underlay class
-	 * 
-	 * @param map_model Map Underlay passed from Underlay class
-	 */
-	public void setMapModel(Underlay map_model) {
-		this.map_model  = map_model;
-	}
-	
     /**
      * Set the back end content of the model
      * 
@@ -138,7 +102,32 @@ public class MassingContent extends Container3D {
     public void render(DevelopmentEditor form_model, Underlay map_model) {
     	setFormModel(form_model);
     	setMapModel(map_model);
-    	drawControl();
+    	render();
+	}
+    
+	/**
+	 * Populates the View Model with a form from Builder class
+	 * 
+	 * @param form form from Builder class
+	 */
+	private void setFormModel(DevelopmentEditor form_model) {
+		this.form_model = form_model;
+	}
+	
+	/**
+	 * Populates the View Model with a map from Underlay class
+	 * 
+	 * @param map_model Map Underlay passed from Underlay class
+	 */
+	private void setMapModel(Underlay map_model) {
+		this.map_model  = map_model;
+	}
+    
+	/**
+	 * render the current state of the backend model
+	 */
+	private void render() {
+		drawControl();
     	drawForm();
     	nodes3D.getChildren().clear();
     	nodes3D.getChildren().addAll(nodesControl, nodesForm);
@@ -172,61 +161,11 @@ public class MassingContent extends Container3D {
 			}
 		});
 	}
-    
-	/**
-	 * Key commands that effect the container
-	 * 
-	 * @param e key event
-	 */
-	public void keyPressed(KeyEvent e) {
-
-		// Reset Camera Position
-		if (e.getText().equals("C")) {
-			cam.init();
-		}
-		// Print Camera Position
-		if (e.getCode() == KeyCode.U) {
-			showUnderlay = !showUnderlay;
-		}
-	}
-    
-    /**
-     * Update hovering visualization when mouse is moved
-     * 
-     * @param me mouse event
-     */
-    public void updateHover(MouseEvent me) {
-    	// Hide hovering sphere when not over valid spot
-		Node intersected = me.getPickResult().getIntersectedNode();
-		String id = intersected.getId();
-		if (id != null) {
-			if (id.equals("scene3D")) {
-				hover.setVisible(false);
-			}
-		}
-    }
-    
-    /**
-     * Add Control Point where mouse is
-     * 
-     * @param me mouse event
-     */
-    public void addPointAtMouse(MouseEvent me) {
-    	boolean mousePressed = true;
-		ControlPoint existingPointAtMouse = null; // not applicable here
-    	if (form_model.hovering != null && form_model.addPoint) {
-			Point newPointAtMouse = form_model.hovering;
-			form_model.mouseTrigger(newPointAtMouse);
-			form_model.listen(mousePressed, existingPointAtMouse, newPointAtMouse);
-			form_model.updateModel();
-			render(form_model, map_model);
-		}
-    }
 	
     /**
      * Draw Nodes related to Control Points. These nodes are designed to persist for any given scenario
      */
-    public void drawControl() {
+    private void drawControl() {
     	nodesControl.getChildren().clear();
     	
 		// Draw Active Control Points' Inner Sphere
@@ -327,10 +266,10 @@ public class MassingContent extends Container3D {
 		// Draw Site Vector Polygon
 		Color site_fill         = Color.TRANSPARENT;
 		Color site_stroke       = Color.gray(SUBDUED_SATURATION, 0.25*SUBTLE_ALPHA);
-		double site_strokeWeight = 0 * cam.scaler() * DEFAULT_STROKE;
+		double site_strokeWeight = 0 * cam.scaler() * SUBDUED_STROKE;
 		if (form_model.showPolygons) {
 			site_stroke         = Color.gray(SUBDUED_SATURATION, 0.5*SUBTLE_ALPHA);
-			site_strokeWeight   = 2 * cam.scaler() * SUBDUED_STROKE;
+			site_strokeWeight   = 2 * cam.scaler() * DEFAULT_STROKE;
 		}
 		Polygon site_polygon = new Polygon();
 		for (Point p : form_model.site_boundary.getCorners()) {
@@ -477,27 +416,8 @@ public class MassingContent extends Container3D {
 	}
 	
 	/**
-	 * Construct a 3D Overhead Light Source
-	 */
-	private Node overheadLight() {
-		PointLight light = new PointLight();
-		light.setColor(Color.WHITE);
-		light.getTransforms().add(new Translate(0, -cam.scaler()*DEFAULT_LIGHT_DISPLACEMENT, 0));
-		return light;
-	}
-	
-	/**
-	 * Construct a 3D Side Light Source
-	 */
-	private Node sideLight() {
-		PointLight light = new PointLight();
-		light.setColor(Color.WHITE);
-		light.getTransforms().add(new Translate(-cam.scaler()*DEFAULT_LIGHT_DISPLACEMENT, 0, -cam.scaler()*DEFAULT_LIGHT_DISPLACEMENT));
-		return light;
-	}
-	
-	/**
 	 * Construct a 3D pixel (i.e. "Voxel") from tile attributes
+	 * 
 	 * @param t Tile to render
 	 * @param col Color of voxel
 	 * @param z_offset manual z_offset for rendering some layers above others even when their z_attributes are the same
@@ -522,44 +442,57 @@ public class MassingContent extends Container3D {
 		return b;
 	}
 	
-	public Box basicBox(double boxX, double boxY, double boxZ, double boxW, double boxH, double z_offset, Color col) {
-		Box b = new Box(boxW, boxH, boxW);
-		Translate pos = new Translate(
-				+ boxX, 
-				- boxZ - 0.5*boxH - z_offset, 
-				- boxY);
-		b.getTransforms().addAll(cam.rotateH, cam.pan, pos);
-		PhongMaterial material = new PhongMaterial(col);
-		b.setMaterial(material);
-		return b;
+	/**
+	 * Key commands that effect the container
+	 * 
+	 * @param e key event
+	 */
+	public void keyPressed(KeyEvent e) {
+
+		// Reset Camera Position
+		if (e.getText().equals("C")) {
+			cam.init();
+		}
+		// Print Camera Position
+		if (e.getCode() == KeyCode.U) {
+			showUnderlay = !showUnderlay;
+		}
+		// update all nodes when switching to/from editing mode
+		if (e.getCode() == KeyCode.E) {
+			render(form_model, map_model);
+		}
 	}
 	
-	/**
-	 * Make and position a 2D image or shape to the 3D environment
-	 * 
-	 * @param input
-	 * @param x
-	 * @param y
-	 * @param z
-	 */
-	public void orientShape2D(Node input, double x, double y, double z) {
-		Rotate rotateFlat = new Rotate(-90, Rotate.X_AXIS);
-		Translate pos = new Translate(x, -z, -y);
-		input.getTransforms().clear();
-		input.getTransforms().addAll(cam.rotateH, cam.pan, pos, rotateFlat);
-	}
-	
-	/**
-	 * Make and position a 3D shape to the 3D environment
-	 * 
-	 * @param input
-	 * @param x
-	 * @param y
-	 * @param z
-	 */
-	public void orientShape3D(Node input, double x, double y, double z) {
-		Translate pos = new Translate(x, -z, -y);
-		input.getTransforms().clear();
-		input.getTransforms().addAll(cam.rotateH, cam.pan, pos);
-	}
+    /**
+     * Update hovering visualization when mouse is moved
+     * 
+     * @param me mouse event
+     */
+    public void updateHover(MouseEvent me) {
+    	// Hide hovering sphere when not over valid spot
+		Node intersected = me.getPickResult().getIntersectedNode();
+		String id = intersected.getId();
+		if (id != null) {
+			if (id.equals("scene3D")) {
+				hover.setVisible(false);
+			}
+		}
+    }
+    
+    /**
+     * Add Control Point where mouse is
+     * 
+     * @param me mouse event
+     */
+    public void addPointAtMouse(MouseEvent me) {
+    	boolean mousePressed = true;
+		ControlPoint existingPointAtMouse = null; // not applicable here
+    	if (form_model.hovering != null && form_model.addPoint) {
+			Point newPointAtMouse = form_model.hovering;
+			form_model.mouseTrigger(newPointAtMouse);
+			form_model.listen(mousePressed, existingPointAtMouse, newPointAtMouse);
+			form_model.updateModel();
+			render(form_model, map_model);
+		}
+    }
 }

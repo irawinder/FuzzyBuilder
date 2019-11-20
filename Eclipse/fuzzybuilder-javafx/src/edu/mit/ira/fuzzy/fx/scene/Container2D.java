@@ -5,17 +5,31 @@ import javafx.scene.SubScene;
 import javafx.scene.paint.Color;
 
 /**
- * SubScene element for 2D View Model
+ * SubScene container for 2D View Model
  * 
  * @author Ira Winder
  *
  */
 public class Container2D extends SubScene {
     
-	final static double DEFAULT_WIDTH = 100;
-	final static double DEFAULT_HEIGHT = 100;
-	final static Color DEFAULT_BACKGROUND = Color.TRANSPARENT;
-	final static Group EMPTY_GROUP = new Group();
+	// Default Scene Values
+	final protected static double DEFAULT_WIDTH = 100;
+	final protected static double DEFAULT_HEIGHT = 100;
+	final protected static Color DEFAULT_BACKGROUND = Color.TRANSPARENT;
+	final protected static Group EMPTY_GROUP = new Group();
+	
+ 	// Default color and stroke values
+ 	final protected static double DEFAULT_SATURATION 	= 0.50;
+ 	final protected static double DEFAULT_BRIGHTNESS 	= 0.75;
+ 	final protected static double DEFAULT_ALPHA 		= 0.90;
+ 	final protected static double SUBDUED_SATURATION 	= 0.30;
+ 	final protected static double SUBDUED_BRIGHTNESS 	= 0.75;
+ 	final protected static double SUBDUED_ALPHA 		= 0.75;
+ 	final protected static double SUBTLE_SATURATION 	= 0.10;
+ 	final protected static double SUBTLE_BRIGHTNESS 	= 0.75;
+ 	final protected static double SUBTLE_ALPHA 			= 0.5;
+ 	final protected static double DEFAULT_STROKE 		= 2.0;
+ 	final protected static double SUBDUED_STROKE 		= 1.0;
 	
     // "Front End" Nodes to Pass to Parent JavaFX Scene
  	protected Group nodes2D;
