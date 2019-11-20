@@ -45,11 +45,13 @@ public class Massing extends Container3D {
  	final private static double DEFAULT_BASE_Z    	= + 0.3;
  	final private static double DEFAULT_GRID_Z    	= + 0.5;
  	
+ 	final private static Color ALPHA_COLOR 				= Color.gray(0, 0.5);
  	final private static Color GRAY_COLOR 				= Color.GRAY;
  	final private static Color ACTIVE_COLOR 			= Color.PURPLE;
  	final private static Color REMOVE_COLOR 			= Color.RED;
- 	final private static Color ADD_COLOR 				= Color.GREEN;
+ 	final private static Color ADD_COLOR 				= Color.rgb(0, 150, 0, 0.5);
  	
+ 	final private static PhongMaterial ALPHA_MATERIAL 	= new PhongMaterial(ALPHA_COLOR);
 	final private static PhongMaterial GRAY_MATERIAL 	= new PhongMaterial(GRAY_COLOR);
  	final private static PhongMaterial ACTIVE_MATERIAL 	= new PhongMaterial(ACTIVE_COLOR);
  	final private static PhongMaterial REMOVE_MATERIAL 	= new PhongMaterial(REMOVE_COLOR);
@@ -68,10 +70,7 @@ public class Massing extends Container3D {
     protected Underlay map_model;
  	
     // "Front End" View Model Nodes
- 	private Group light, control, grid, form, map, overlay;
- 	
- 	// Global Hover Sphere
-  	private Sphere hover;
+ 	private Group light, control, ghost, grid, form, map, overlay;
   	
   	// Is A Control Point being Moved?
   	private boolean isMoving;
@@ -89,17 +88,18 @@ public class Massing extends Container3D {
 		
 		cam.setViewScaler(DEFAULT_VIEW_SCALER);
 		
-		light = new Group();
-		grid = new Group();
-		control = new Group();
-		form = new Group();
-		map = new Group();
-		overlay = new Group();
+		
+		light = new Group();	// Lighting Effect Nodes
+		control = new Group();	// Control Point Nodes
+		ghost = new Group();	// Ghost Control Point (to be placed at mouse)
+		grid = new Group();		// Baseline Grid Square Nodes for 3D XY selection
+		form = new Group();		// Form Model Voxel Nodes (i.e. "The Development")
+		map = new Group();		// Raster basemap image
+		overlay = new Group();	// 2D UI overlay
 		
     	nodes2D.getChildren().addAll(overlay);
-    	nodes3D.getChildren().addAll(control, grid, light, form, map);
+    	nodes3D.getChildren().addAll(control, ghost, grid, light, form, map);
     	
-		hover = new Sphere();
 		isMoving = false;
 		gridMap = new HashMap<Node, Point>();
 		controlMap = new HashMap<ControlPoint, Node>();
@@ -142,6 +142,7 @@ public class Massing extends Container3D {
 	private void init() {
 		initLights();
 		initControl();
+		initGhost();
 		initGrid();
     	initForm();
     	initMap();
@@ -172,7 +173,7 @@ public class Massing extends Container3D {
 		
 		this.setOnMousePressed((MouseEvent me) -> {
 			if (form_model.addPoint) {
-				if (hover.isVisible()) addPointAtMouse(me);
+				if (ghost.isVisible()) addPointAtMouse(me);
 			} else if (form_model.removePoint) {
 			
 			// Done Moving a Point
@@ -200,21 +201,21 @@ public class Massing extends Container3D {
 				if (p.active()) {
 					
 					// Draw Control Point Sphere
-					Sphere is = new Sphere();
-					is.setMaterial(ACTIVE_MATERIAL);
-					is.setRadius(cam.scaler() * DEFAULT_CONTROL_SIZE);
-					is.setId("active_control_point");
-					orientShape3D((Node) is, cam.scaler() * p.x, cam.scaler() * p.y, DEFAULT_CONTROL_Z + 0.1);
+					Sphere s = new Sphere();
+					s.setMaterial(ACTIVE_MATERIAL);
+					s.setRadius(cam.scaler() * DEFAULT_CONTROL_SIZE);
+					s.setId("active_control_point");
+					orientShape3D((Node) s, cam.scaler() * p.x, cam.scaler() * p.y, DEFAULT_CONTROL_Z);
 					
-					// Draw Control Point Circle
-					Cylinder oc = new Cylinder();
-					oc.setRadius(HOVER_SIZE_SCALER * HOVER_SIZE_SCALER * cam.scaler() * DEFAULT_CONTROL_SIZE);
-					oc.setHeight(0);
-					oc.setMaterial(GRAY_MATERIAL);
-					orientShape3D((Node) oc, cam.scaler() * p.x, cam.scaler() * p.y, DEFAULT_CONTROL_Z);
+					// Draw Control Point Outer Ring
+					Cylinder or = new Cylinder();
+					or.setRadius(cam.scaler() * HOVER_SIZE_SCALER * HOVER_SIZE_SCALER * DEFAULT_CONTROL_SIZE);
+					or.setHeight(0);
+					or.setMaterial(GRAY_MATERIAL);
+					orientShape3D((Node) or, cam.scaler() * p.x, cam.scaler() * p.y, DEFAULT_CONTROL_Z);
 					
 					// Aggregated Control Point View Model
-					Group cPoint = new Group(is, oc);
+					Group cPoint = new Group(s, or);
 					control.getChildren().add(cPoint);
 					controlMap.put(p, cPoint);
 					
@@ -222,28 +223,28 @@ public class Massing extends Container3D {
 					Point newPointAtMouse = null; // not applicable here
 					ControlPoint existingPointAtMouse = p;
 					boolean mousePressed = true;
-					is.setOnMouseEntered(me -> {
+					s.setOnMouseEntered(me -> {
 						if (form_model.removePoint) {
-							is.setMaterial(REMOVE_MATERIAL);
+							s.setMaterial(REMOVE_MATERIAL);
 						} else {
-							is.setMaterial(ACTIVE_MATERIAL);
+							s.setMaterial(ACTIVE_MATERIAL);
 						}
-						is.setRadius(HOVER_SIZE_SCALER * cam.scaler() * DEFAULT_CONTROL_SIZE);
+						s.setRadius(cam.scaler() * HOVER_SIZE_SCALER * DEFAULT_CONTROL_SIZE);
 						form_model.listen(!mousePressed, existingPointAtMouse, newPointAtMouse);
 						form_model.updateModel();
-						hover.setVisible(false);
+						ghost.setVisible(false);
 					});
-					is.setOnMouseExited(me -> {
-						is.setMaterial(ACTIVE_MATERIAL);
-						is.setRadius(cam.scaler() * DEFAULT_CONTROL_SIZE);
+					s.setOnMouseExited(me -> {
+						s.setMaterial(ACTIVE_MATERIAL);
+						s.setRadius(cam.scaler() * DEFAULT_CONTROL_SIZE);
 						form_model.listen(!mousePressed, existingPointAtMouse, newPointAtMouse);
 						form_model.updateModel();
 					});
-					is.setOnMousePressed((MouseEvent me) -> {
-						is.setRadius(cam.scaler() * DEFAULT_CONTROL_SIZE);
+					s.setOnMousePressed((MouseEvent me) -> {
+						s.setRadius(cam.scaler() * DEFAULT_CONTROL_SIZE);
 						form_model.mouseTrigger(newPointAtMouse);
 						form_model.updateModel();
-						hover.setVisible(false);
+						ghost.setVisible(false);
 						initGrid();
 						initControl();
 						initForm();
@@ -251,13 +252,28 @@ public class Massing extends Container3D {
 				}
 			}
 		}
+    }
+    
+    /**
+     * Initialize Ghost of a Control Point
+     */
+    public void initGhost() {
+    	ghost.getChildren().clear();
+    	
+    	// Draw Control Point Hover Sphere
+		Sphere s = new Sphere();
+		s.setMaterial(ADD_MATERIAL);
+		s.setRadius(cam.scaler() * DEFAULT_CONTROL_SIZE);
 		
-		// Initialize Ghosts Control Point
-		hover.setMaterial(ACTIVE_MATERIAL);
-		hover.setRadius(cam.scaler() * DEFAULT_CONTROL_SIZE);
-		hover.setId("hover_control_point");
-		hover.setVisible(false);
-		control.getChildren().add(hover);
+		// Draw Control Point Hover Ring
+		Cylinder r = new Cylinder();
+		r.setMaterial(ALPHA_MATERIAL);
+		r.setRadius(cam.scaler() * HOVER_SIZE_SCALER * HOVER_SIZE_SCALER * DEFAULT_CONTROL_SIZE);
+		r.setHeight(0);
+		
+		Group hoverPoint = new Group(r, s);
+		ghost.getChildren().add(hoverPoint);
+		ghost.setVisible(false);
     }
     
     /**
@@ -298,9 +314,8 @@ public class Massing extends Container3D {
 
 						// Set Ghost for new Control Point
 						if (form_model.addPoint) {
-							hover.setVisible(true);
-							hover.setMaterial(ADD_MATERIAL);
-							orientShape3D((Node) hover, cam.scaler() * newPointAtMouse.x,
+							ghost.setVisible(true);
+							orientShape3D((Node) ghost, cam.scaler() * newPointAtMouse.x,
 									cam.scaler() * newPointAtMouse.y, DEFAULT_CONTROL_Z);
 						}
 					
@@ -478,30 +493,6 @@ public class Massing extends Container3D {
 		return b;
 	}
 	
-	/**
-	 * Key commands that effect the container
-	 * 
-	 * @param e key event
-	 */
-	public void keyPressed(KeyEvent e) {
-
-		// Reset Camera Position
-		if (e.getText().equals("C")) {
-			cam.init();
-		}
-		// toggle map model visibility
-		if (e.getCode() == KeyCode.U) {
-			map_model.setVisible(!map_model.isVisible());
-		}
-		// Torn Editing on/off
-		if (e.getCode() == KeyCode.E) {
-			
-		}
-		initGrid();
-		initControl();
-		initForm();
-	}
-	
     /**
      * Update hovering visualization when mouse is moved
      * 
@@ -513,7 +504,7 @@ public class Massing extends Container3D {
 		String id = intersected.getId();
 		if (id != null) {
 			if (id.equals("scene3D")) {
-				hover.setVisible(false);
+				ghost.setVisible(false);
 			}
 		}
     }
@@ -534,4 +525,29 @@ public class Massing extends Container3D {
 			this.init(form_model, map_model);
 		}
     }
+    
+	/**
+	 * Key commands that effect the container
+	 * 
+	 * @param e key event
+	 */
+	public void keyPressed(KeyEvent e) {
+
+		// Reset Camera Position
+		if (e.getText().equals("C")) {
+			cam.init();
+		}
+		// toggle map model visibility
+		if (e.getCode() == KeyCode.U) {
+			map_model.setVisible(!map_model.isVisible());
+		}
+		// Torn Editing on/off
+		if (e.getCode() == KeyCode.E) {
+			
+		}
+		initControl();
+		initGrid();
+		initGhost();
+		initForm();
+	}
 }
