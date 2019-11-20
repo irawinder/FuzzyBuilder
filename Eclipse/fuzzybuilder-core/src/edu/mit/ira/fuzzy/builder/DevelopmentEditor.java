@@ -6,17 +6,20 @@ import edu.mit.ira.fuzzy.base.Point;
 import edu.mit.ira.fuzzy.base.TileArray;
 
 /**
- * DevelopmentEditor facilitates the making of various TileArrays via Polygons and/or
- * ControlPoints. This is the "back end" to any elements that are eventually rendered
- * to a graphical user interface
+ * DevelopmentEditor facilitates the making of various TileArrays via Polygons
+ * and/or ControlPoints. This is the "back end" to any elements that are
+ * eventually rendered to a graphical user interface
  * 
  * @author Ira Winder
  *
  */
 public class DevelopmentEditor extends DevelopmentBuilder {
-	
+
 	// Intermediate ControlPoints used to generate Development()
 	public ControlSet control;
+
+	// is the editor on?
+	private boolean isEditing;
 
 	// Hide or Show Tiles or Polygons
 	public boolean showTiles, showPolygons, showText;
@@ -48,17 +51,10 @@ public class DevelopmentEditor extends DevelopmentBuilder {
 	public boolean site_change_detected;
 	public boolean zone_change_detected;
 	public boolean foot_change_detected;
-	
+
 	public DevelopmentEditor() {
 		super();
-		initEditor();
-	}
-	
-	/**
-	 * Initial Build State
-	 */
-	public void initEditor() {
-
+		
 		// Initialize Control Points
 		control = new ControlSet();
 
@@ -73,6 +69,60 @@ public class DevelopmentEditor extends DevelopmentBuilder {
 	}
 	
 	/**
+	 * Get minimum tile X value
+	 * 
+	 * @return minTileX
+	 */
+	public float minControlX() {
+		return control.minX();
+	}
+	
+	/**
+	 * Get maximum tile X value
+	 * 
+	 * @return maxTileX
+	 */
+	public float maxControlX() {
+		return control.maxX();
+	}
+	
+	/**
+	 * Get minimum tile Y value
+	 * 
+	 * @return minTileY
+	 */
+	public float minControlY() {
+		return control.minY();
+	}
+	
+	/**
+	 * Get maximum tile Y value
+	 * 
+	 * @return maxTileY
+	 */
+	public float maxControlY() {
+		return control.maxY();
+	}
+
+	/**
+	 * Setter for editing state
+	 * 
+	 * @param isEditing
+	 */
+	public void setEditing(boolean isEditing) {
+		this.isEditing = isEditing;
+	}
+
+	/**
+	 * Getting for editing state
+	 * 
+	 * @return
+	 */
+	public boolean isEditing() {
+		return isEditing;
+	}
+
+	/**
 	 * Build State When new model is loaded or randomly generated during application
 	 * operation
 	 */
@@ -81,7 +131,7 @@ public class DevelopmentEditor extends DevelopmentBuilder {
 		addPoint = false;
 		removePoint = false;
 	}
-	
+
 	/**
 	 * Add a new Control point at (x,y)
 	 * 
@@ -108,10 +158,12 @@ public class DevelopmentEditor extends DevelopmentBuilder {
 	 * @param point
 	 */
 	public void removeControlPoint(ControlPoint point) {
-		control.removePoint(point);
-		detectChange(point.getType());
+		if (point != null) {
+			control.removePoint(point);
+			detectChange(point.getType());
+		}
 	}
-	
+
 	/**
 	 * detect change based upon a type string
 	 * 
@@ -126,7 +178,7 @@ public class DevelopmentEditor extends DevelopmentBuilder {
 			foot_change_detected = true;
 		}
 	}
-	
+
 	/**
 	 * Update Model:
 	 */
@@ -145,7 +197,7 @@ public class DevelopmentEditor extends DevelopmentBuilder {
 		}
 		updateModel(change, control);
 	}
-	
+
 	/**
 	 * Allow editing of vertices
 	 */
@@ -201,6 +253,7 @@ public class DevelopmentEditor extends DevelopmentBuilder {
 	 * Force Activation of editor, toggling to most relevant/recent type
 	 */
 	public void activateEditor() {
+		setEditing(true);
 		editVertices = false;
 		editPlots = false;
 		editVoids = false;
@@ -291,6 +344,10 @@ public class DevelopmentEditor extends DevelopmentBuilder {
 		showBases = true;
 		showTowers = true;
 		viewState = 5;
+		
+		editVoids = true;
+		new_control_type = "Void";
+		control.on(new_control_type);
 	}
 
 	/**
@@ -337,7 +394,7 @@ public class DevelopmentEditor extends DevelopmentBuilder {
 		editVoids = false;
 		control.off();
 	}
-	
+
 	/**
 	 * Determine if a space is to be rendered in a given state
 	 * 
@@ -361,7 +418,7 @@ public class DevelopmentEditor extends DevelopmentBuilder {
 			return false;
 		}
 	}
-	
+
 	/**
 	 * Designed to run on any mouse movement to check mouse position
 	 * 
@@ -371,7 +428,7 @@ public class DevelopmentEditor extends DevelopmentBuilder {
 	 * @param existing     ControlPoint closest to mouse
 	 * @param new_point    new Point() at mouse, passed to function from GUI()
 	 */
-	public void listen(boolean mousePressed, int mouseX, int mouseY, ControlPoint point, Point new_point) {
+	public void listen(boolean mousePressed, ControlPoint point, Point new_point) {
 
 		if (addPoint) {
 			Point atMouse = new_point;
@@ -395,16 +452,18 @@ public class DevelopmentEditor extends DevelopmentBuilder {
 			detectChange(selected.getType());
 		}
 	}
-	
+
 	/**
-	 * Triggered once when any mouse button is pressed
+	 * Triggered once to update model
 	 * 
 	 * @param new_point New Point at mouse location
 	 */
-	public void mousePressed(Point new_point) {
+	public void mouseTrigger(Point new_point) {
 		if (addPoint) {
-			Point atMouse = new_point;
-			addControlPoint(atMouse.x, atMouse.y);
+			if (new_point != null) {
+				Point atMouse = new_point;
+				addControlPoint(atMouse.x, atMouse.y);
+			}
 		} else {
 			selected = hovering;
 			if (removePoint) {
@@ -419,14 +478,21 @@ public class DevelopmentEditor extends DevelopmentBuilder {
 	public void deselect() {
 		selected = null;
 	}
-	
+
 	/**
 	 * Trigger when any key is pressed, parameters passed from GUI
 	 * 
-	 * @param key     character that user pressed, passed from GUI
+	 * @param key character that user pressed, passed from GUI
 	 */
 	public void keyPressed(char key) {
 		switch (key) {
+		case 'e':
+			if(isEditing()) {
+				setEditing(false);
+			} else {
+				activateEditor();
+			}
+			break;
 		case 'a':
 			addPoint = !addPoint;
 			removePoint = false;
@@ -563,7 +629,7 @@ public class DevelopmentEditor extends DevelopmentBuilder {
 			}
 		}
 	}
-	
+
 	/**
 	 * User Pressed the arrow key. Parameters passed from JavaFX GUI
 	 * 

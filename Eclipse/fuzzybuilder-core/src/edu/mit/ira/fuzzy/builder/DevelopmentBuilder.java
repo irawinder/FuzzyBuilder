@@ -18,61 +18,137 @@ import edu.mit.ira.fuzzy.base.TileArray;
  */
 public class DevelopmentBuilder extends Development {
 	
-	final private static String DEFAULT_NAME = "New Development";
-	
 	// Intermediate Polygon used to generate Fuzzy Development()
 	public Polygon site_boundary;
-	public String site_name;
 
 	// Intermediate Raster Grid Options to generate Fuzzy Development
 	// (dimensions, scale, rotation, translation, units)
 	public float tileW, tileH, tile_rotation;
 	public String units;
 	public Point tile_translation;
-
+	private float minTileX, maxTileX;
+	private float minTileY, maxTileY;
+	
+	// Default Values
+	final private static String DEFAULT_NAME = "New Parcel";
+	final private static String DEFAULT_UNITS = "meters";
+	final private static float DEFAULT_TILE_WIDTH = 30;
+	final private static float DEFAULT_TILE_HEIGHT = 10;
+	final private static float DEFAULT_TILE_TRANSLATE_X = 0;
+	final private static float DEFAULT_TILE_TRANSLATE_Y = 0;
+	final private static float DEFAULT_TILE_ROTATION = 0;
+	
 	/**
 	 * Make the Space Building Environment
 	 */
 	public DevelopmentBuilder() {
 		super(DEFAULT_NAME);
-		initBuilder();
+
+		// Initialize Vector Site Polygon
+		site_boundary = new Polygon();
+
+		// Initialize Raster-like Site Voxels
+		setTileUnits(DEFAULT_UNITS);
+		setTileWidth(DEFAULT_TILE_WIDTH);
+		setTileHeight(DEFAULT_TILE_HEIGHT);
+		setTileTranslation(DEFAULT_TILE_TRANSLATE_X, DEFAULT_TILE_TRANSLATE_Y);
+		setTileRotation(DEFAULT_TILE_ROTATION);
+		
+		minTileX = 0;
+		maxTileX = 0;
+		minTileY = 0;
+		maxTileY = 0;
 	}
 	
+	/**
+	 * Set Tile Width
+	 * 
+	 * @param tileW
+	 */
 	public void setTileWidth(float tileW) {
 		this.tileW = tileW;
 	}
 	
+	/**
+	 * Get Tile Width
+	 * 
+	 * @return tileW
+	 */
+	public float getTileWidth() {
+		return this.tileW;
+	}
+	
+	/**
+	 * Set Voxel Height
+	 * 
+	 * @param tileH
+	 */
 	public void setTileHeight(float tileH) {
 		this.tileH = tileH;
 	}
 	
+	/**
+	 * Set Grid Orientation for entire Development
+	 * 
+	 * @param tile_rotation
+	 */
 	public void setTileRotation(float tile_rotation) {
 		this.tile_rotation = tile_rotation;
 	}
 	
+	/**
+	 * Set Origin (X,Y) of Site
+	 * 
+	 * @param x
+	 * @param y
+	 */
 	public void setTileTranslation(float x, float y) {
 		this.tile_translation = new Point(x,y);
 	}
 	
+	/**
+	 * Set Name for dimensional units (e.g. "meters")
+	 * 
+	 * @param units
+	 */
 	public void setTileUnits(String units) {
 		this.units = units;
 	}
-
+	
 	/**
-	 * Initialize the Model
+	 * Get minimum tile X value
+	 * 
+	 * @return minTileX
 	 */
-	public void initBuilder() {
-
-		// Init Vector Site Polygon
-		site_boundary = new Polygon();
-
-		// Init Raster-like Site Voxels
-		site_name = "Property";
-		setTileUnits("pixels");
-		setTileWidth(30);
-		setTileHeight(10);
-		setTileTranslation(0,0);
-		setTileRotation(0);
+	public float minTileX() {
+		return minTileX;
+	}
+	
+	/**
+	 * Get maximum tile X value
+	 * 
+	 * @return maxTileX
+	 */
+	public float maxTileX() {
+		return maxTileX;
+	}
+	
+	/**
+	 * Get minimum tile Y value
+	 * 
+	 * @return minTileY
+	 */
+	public float minTileY() {
+		return minTileY;
+	}
+	
+	/**
+	 * Get maximum tile Y value
+	 * 
+	 * @return maxTileY
+	 */
+	public float maxTileY() {
+		return maxTileY;
 	}
 	
 	/**
@@ -100,7 +176,7 @@ public class DevelopmentBuilder extends Development {
 		// Define new Space Type
 		String type = "site";
 		clearType(type);
-		TileArray site = new TileArray(site_name, type);
+		TileArray site = new TileArray(name, type);
 		site.setParent(getName());
 
 		// Update Polygon according to control points
@@ -166,14 +242,15 @@ public class DevelopmentBuilder extends Development {
 				setback.setType(type);
 
 				// Void Footprint(s)
-				float yard_area = 2700;
+				int numTiles = 10; // Voids are numTiles tiles big
+				float yard_area = numTiles * tileW * tileW;
 				ArrayList<TileArray> voidSpace = new ArrayList<TileArray>();
 				ArrayList<ControlPoint> void_control = control.points("Void");
 				for (ControlPoint p : void_control) {
 					if (space.pointInArray(p.x, p.y)) {
 						TileArray t = space.getClosestN(p, yard_area);
 						t.subtract(setback);
-						t.setName(p.getTag());
+						t.setName(p.getType());
 						t.setType(type);
 						// Subtract other voids from current to prevent overlap
 						for (TileArray prev : voidSpace)
@@ -232,8 +309,35 @@ public class DevelopmentBuilder extends Development {
 		}
 
 		// Add new Spaces to Development
-		for (TileArray base : new_bases)
+		for (TileArray base : new_bases) {
 			addSpace(base);
+		}
+		
+		this.calcMinMax();
 	}
-
+	
+	/**
+	 * update minimum and maximum extents of model
+	 */
+	public void calcMinMax() {
+		if (spaceList().size() > 0) {
+			minTileX = Float.POSITIVE_INFINITY;
+			maxTileX = Float.NEGATIVE_INFINITY;
+			minTileY = Float.POSITIVE_INFINITY;
+			maxTileY = Float.NEGATIVE_INFINITY;
+			for (TileArray space : spaceList()) {
+				if (space.hasTiles()) {
+					minTileX = Math.min(minTileX, space.minX());
+					maxTileX = Math.max(maxTileX, space.maxX());
+					minTileY = Math.min(minTileY, space.minY());
+					maxTileY = Math.max(maxTileY, space.maxY());
+				}
+			}
+		}
+	}
+	
+	@Override
+	public String toString() {
+		return this.name + " X-Extents: (" + this.minTileX + " - " + this.maxTileX + "), " + " Y-Extents: (" + this.minTileY + " - " + this.maxTileY + ")";
+	}
 }

@@ -1,7 +1,9 @@
 package edu.mit.ira.fuzzy.base;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Random;
+import java.util.UUID;
 
 /**
  * Control Class is for managing a set of multiple Control Points
@@ -11,13 +13,42 @@ import java.util.Random;
  */
 public class ControlSet {
 
-	private ArrayList<ControlPoint> cPoints;
-
+	private ArrayList<ControlPoint> pointList;
+	private HashMap<UUID, ControlPoint> pointMap;
+	
+	private float minX, maxX;
+	private float minY, maxY;
+	private float defaultX, defaultY;
+	
 	/**
-	 * Construct Emply List of Control Points
+	 * Construct Empty List of Control Points
 	 */
 	public ControlSet() {
-		cPoints = new ArrayList<ControlPoint>();
+		pointList = new ArrayList<ControlPoint>();
+		pointMap = new HashMap<UUID, ControlPoint>();
+		
+		defaultX = 0;
+		defaultY = 0;
+		
+		minX = defaultX;
+		maxX = defaultX;
+		minY = defaultY;
+		maxY = defaultY;
+	}
+	
+	/**
+	 * set default control point location
+	 * 
+	 * @param x
+	 * @param y
+	 */
+	public void setDefault(float x, float y) {
+		defaultX = x;
+		defaultY = y;
+		minX = defaultX;
+		maxX = defaultX;
+		minY = defaultY;
+		maxY = defaultY;
 	}
 
 	/**
@@ -26,7 +57,52 @@ public class ControlSet {
 	 * @return all Control Points
 	 */
 	public ArrayList<ControlPoint> points() {
-		return cPoints;
+		return pointList;
+	}
+	
+	/**
+	 * Return HashMap of ControlPoints
+	 * 
+	 * @return all Control Points as HashMap
+	 */
+	public HashMap<UUID, ControlPoint> pointMap() {
+		return pointMap;
+	}
+	
+	/**
+	 * Get minimum X value
+	 * 
+	 * @return minX
+	 */
+	public float minX() {
+		return minX;
+	}
+	
+	/**
+	 * Get maximum X value
+	 * 
+	 * @return maxX
+	 */
+	public float maxX() {
+		return maxX;
+	}
+	
+	/**
+	 * Get minimum Y value
+	 * 
+	 * @return minY
+	 */
+	public float minY() {
+		return minY;
+	}
+	
+	/**
+	 * Get maximum Y value
+	 * 
+	 * @return maxY
+	 */
+	public float maxY() {
+		return maxY;
 	}
 
 	/**
@@ -37,7 +113,7 @@ public class ControlSet {
 	 */
 	public ArrayList<ControlPoint> points(String type) {
 		ArrayList<ControlPoint> subset = new ArrayList<ControlPoint>();
-		for (ControlPoint p : cPoints) {
+		for (ControlPoint p : pointList) {
 			if (p.getType().equals(type)) {
 				subset.add(p);
 			}
@@ -49,7 +125,7 @@ public class ControlSet {
 	 * Turns all control points on()
 	 */
 	public void on() {
-		for (ControlPoint p : cPoints)
+		for (ControlPoint p : pointList)
 			p.on();
 	}
 
@@ -57,7 +133,7 @@ public class ControlSet {
 	 * Turns all control points off()
 	 */
 	public void off() {
-		for (ControlPoint p : cPoints)
+		for (ControlPoint p : pointList)
 			p.off();
 	}
 
@@ -67,7 +143,7 @@ public class ControlSet {
 	 * @param type Type of ControlPoints to turn on
 	 */
 	public void on(String type) {
-		for (ControlPoint p : cPoints) {
+		for (ControlPoint p : pointList) {
 			if (p.getType().equals(type))
 				p.on();
 		}
@@ -79,7 +155,7 @@ public class ControlSet {
 	 * @param type Type of ControlPoints to turn off
 	 */
 	public void off(String type) {
-		for (ControlPoint p : cPoints) {
+		for (ControlPoint p : pointList) {
 			if (p.getType().equals(type))
 				p.off();
 		}
@@ -115,16 +191,18 @@ public class ControlSet {
 	}
 
 	/**
-	 * Adds a pre-made control point
+	 * Adds a premade control point
 	 * 
-	 * @param p    pre-made ControlPoint to add to collection
+	 * @param p    premade ControlPoint to add to collection
 	 * @param tag  Tag value of control point
 	 * @param type Type value of control point
 	 */
 	private void addPoint(ControlPoint p, String tag, String type) {
 		p.setTag(tag);
 		p.setType(type);
-		cPoints.add(p);
+		pointList.add(p);
+		pointMap.put(p.getUniqueID(), p);
+		calcMinMax();
 	}
 
 	/**
@@ -153,20 +231,49 @@ public class ControlSet {
 	 * @param p ControlPoint to remove
 	 */
 	public void removePoint(ControlPoint p) {
-		cPoints.remove(p);
+		pointList.remove(p);
+		calcMinMax();
 	}
 
 	/**
 	 * Clear all Control Points
 	 */
 	public void clearPoints() {
-		cPoints.clear();
+		pointList.clear();
+		minX = defaultX;
+		maxX = defaultX;
+		minY = defaultY;
+		maxY = defaultY;
+	}
+	
+	/**
+	 * update minimum and maximum extents of model
+	 */
+	public void calcMinMax() {
+		if (pointList.size() > 0) {
+			minX = Float.POSITIVE_INFINITY;
+			maxX = Float.NEGATIVE_INFINITY;
+			minY = Float.POSITIVE_INFINITY;
+			maxY = Float.NEGATIVE_INFINITY;
+			for (ControlPoint p : pointList) {
+				minX = Math.min(minX, p.x);
+				maxX = Math.max(maxX, p.x);
+				minY = Math.min(minY, p.y);
+				maxY = Math.max(maxY, p.y);
+				//System.out.println((float) minX + ", " + (float) maxX + ", " + (float) minY + ", " + (float) maxY);
+			}
+		} else {
+			minX = defaultX;
+			maxX = defaultX;
+			minY = defaultY;
+			maxY = defaultY;
+		}
 	}
 
 	@Override
 	public String toString() {
 		String out = "";
-		for (ControlPoint p : cPoints)
+		for (ControlPoint p : pointList)
 			out += p + "\n";
 		return out;
 	}
