@@ -11,7 +11,7 @@ public class Navigate extends Container2D {
 		setFill(Color.hsb(0, 0, 0.80));
 	}
 
-	public void render() {
+	public void init() {
 		nodes2D.getChildren().clear();
 		StackPane content  = new StackPane(new Label("Navigation Pane"));
 		nodes2D.getChildren().add(content);

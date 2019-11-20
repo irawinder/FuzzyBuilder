@@ -11,7 +11,7 @@ public class Version extends Container2D {
 		setFill(Color.hsb(0, 0, 0.90));
 	}
 
-	public void render() {
+	public void init() {
 		nodes2D.getChildren().clear();
 		StackPane content  = new StackPane(new Label("Version Tree"));
 		nodes2D.getChildren().add(content);

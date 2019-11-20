@@ -10,7 +10,7 @@ import edu.mit.ira.fuzzy.fx.scene.Outcome;
 import edu.mit.ira.fuzzy.fx.scene.Status;
 import edu.mit.ira.fuzzy.fx.scene.Toolbar;
 import edu.mit.ira.fuzzy.fx.scene.Version;
-import edu.mit.ira.fuzzy.fx.scene.massing.MassingContent;
+import edu.mit.ira.fuzzy.fx.scene.massing.Massing;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.SubScene;
@@ -51,7 +51,7 @@ public class FuzzyBuilder extends Application {
     	toolbar = new Toolbar();
 		version = new Version();
 		canvas = new Canvas();
-		massing = new MassingContent();
+		massing = new Massing();
 		outcome = new Outcome();
 		commit = new Commit();
 		navigate = new Navigate();
@@ -87,7 +87,7 @@ public class FuzzyBuilder extends Application {
 			((Toolbar)   toolbar).keyPressed(e);
 			((Version)   version).keyPressed(e);
 			((Canvas)     canvas).keyPressed(e);
-			((MassingContent)   massing).keyPressed(e);
+			((Massing)   massing).keyPressed(e);
 			((Outcome)   outcome).keyPressed(e);
 			((Commit)     commit).keyPressed(e);
 			((Navigate) navigate).keyPressed(e);
@@ -124,7 +124,7 @@ public class FuzzyBuilder extends Application {
     	float max_radius = 0.4f * diameter;
     	scenario_form = new RandomSite(tileWidth, tileHeight, x, y, min_radius, max_radius);
     	
-    	setScenes();
+    	initScenes();
     }
     
     /**
@@ -143,20 +143,20 @@ public class FuzzyBuilder extends Application {
     	// Load Geometry
     	scenario_form = new ShinagawaSite();
     	
-    	setScenes();
+    	initScenes();
     }
     
     /**
      * Initializes the Scenes with JavaFX nodes
      */
-    private void setScenes() {
-    	((Toolbar)   toolbar).render();
-		((Version)   version).render();
-		((Canvas)     canvas).render();
-		((MassingContent)   massing).render(scenario_form, scenario_map);
-		((Outcome)   outcome).render();
-		((Commit)     commit).render();
-		((Navigate) navigate).render();
-		((Status)     status).render();
+    private void initScenes() {
+    	((Toolbar)   toolbar).init();
+		((Version)   version).init();
+		((Canvas)     canvas).init();
+		((Massing)   massing).init(scenario_form, scenario_map);
+		((Outcome)   outcome).init();
+		((Commit)     commit).init();
+		((Navigate) navigate).init();
+		((Status)     status).init();
     }
 }

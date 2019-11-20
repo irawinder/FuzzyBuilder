@@ -11,7 +11,7 @@ public class Toolbar extends Container2D {
 		setFill(Color.hsb(0, 0, 0.70));
 	}
 
-	public void render() {
+	public void init() {
 		nodes2D.getChildren().clear();
 		StackPane content  = new StackPane(new Label("Toolbar"));
 		nodes2D.getChildren().add(content);

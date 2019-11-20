@@ -11,7 +11,7 @@ public class Commit extends Container2D {
 		setFill(Color.hsb(0, 0, 0.85));
 	}
 
-	public void render() {
+	public void init() {
 		nodes2D.getChildren().clear();
 		StackPane content  = new StackPane(new Label("Commit Scenario"));
 		nodes2D.getChildren().add(content);

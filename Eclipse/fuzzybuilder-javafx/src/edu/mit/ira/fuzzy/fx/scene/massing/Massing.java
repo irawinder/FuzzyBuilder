@@ -30,18 +30,14 @@ import javafx.scene.transform.Rotate;
 // Draw Info/Instructions
 // Draw Attribute Summary
 
-public class MassingContent extends Container3D {
-	
-    // "Back End" Elements to Render to Container
-    protected DevelopmentEditor form_model; 
-    protected Underlay map_model;
+public class Massing extends Container3D {
     
     // Scale up/down draw units of back end geometry
     final private static double DEFAULT_VIEW_SCALER = 4.0;
     
  	// Default Elevation Values
  	final private static double DEFAULT_MAP_Z     	= - 0.4;
- 	final private static double DEFAULT_POLY_Z   		= - 0.3;
+ 	final private static double DEFAULT_POLY_Z   	= - 0.3;
  	final private static double DEFAULT_CONTROL_Z 	= + 1.0;
  	final private static double DEFAULT_SITE_Z    	= + 0.0;
  	final private static double DEFAULT_ZONE_Z    	= + 0.1;
@@ -67,10 +63,17 @@ public class MassingContent extends Container3D {
  	final protected static double GRID_UNIT_WIDTH 		= 1.0; // fraction of a TileArray() tile width
  	final protected static int	  GRID_UNIT_BLEED 		=  25; // number of selection grid units to bleed outside of Development extents
  	
- 	private Group nodesControl, nodesForm;
-	
- 	// Global Objects
+    // "Back End" Elements to Render to Container
+    protected DevelopmentEditor form_model; 
+    protected Underlay map_model;
+ 	
+    // "Front End" View Model Nodes
+ 	private Group light, control, grid, form, map, overlay;
+ 	
+ 	// Global Hover Sphere
   	private Sphere hover;
+  	
+  	// Is A Control Point being Moved?
   	private boolean isMoving;
   	
   	// GridMap of geospatial point locations to front-end box element
@@ -79,18 +82,28 @@ public class MassingContent extends Container3D {
   	// GridMap of control spheres tied to their point location
   	private HashMap<ControlPoint, Node> controlMap;
   	
-  	private boolean showUnderlay;
+  	
  	
-	public MassingContent() {
+	public Massing() {
 		super();
-		showUnderlay = true;
-		nodesControl = new Group();
-		nodesForm = new Group();
+		
+		cam.setViewScaler(DEFAULT_VIEW_SCALER);
+		
+		light = new Group();
+		grid = new Group();
+		control = new Group();
+		form = new Group();
+		map = new Group();
+		overlay = new Group();
+		
+    	nodes2D.getChildren().addAll(overlay);
+    	nodes3D.getChildren().addAll(control, grid, light, form, map);
+    	
 		hover = new Sphere();
 		isMoving = false;
 		gridMap = new HashMap<Node, Point>();
 		controlMap = new HashMap<ControlPoint, Node>();
-		cam.setViewScaler(DEFAULT_VIEW_SCALER);
+		
 	}
 	
     /**
@@ -99,10 +112,10 @@ public class MassingContent extends Container3D {
      * @param form_model
      * @param map_model
      */
-    public void render(DevelopmentEditor form_model, Underlay map_model) {
+    public void init(DevelopmentEditor form_model, Underlay map_model) {
     	setFormModel(form_model);
     	setMapModel(map_model);
-    	render();
+    	this.init();
 	}
     
 	/**
@@ -126,51 +139,63 @@ public class MassingContent extends Container3D {
 	/**
 	 * render the current state of the backend model
 	 */
-	private void render() {
-		drawControl();
-    	drawForm();
-    	nodes3D.getChildren().clear();
-    	nodes3D.getChildren().addAll(nodesControl, nodesForm);
+	private void init() {
+		initLights();
+		initControl();
+		initGrid();
+    	initForm();
+    	initMap();
+    	initOverlay();
     	
-		setOnMouseMoved((MouseEvent me) -> {
+		handleMouseEvents();
+	}
+	
+	/**
+	 * Initialize all event handlers related to scene-wide mouse events
+	 */
+	private void handleMouseEvents() {
+		
+		this.setOnMouseMoved((MouseEvent me) -> {
 			cam.move(me);
 			updateHover(me);
 		});
 		
-		setOnMouseDragged((MouseEvent me) -> {
+		this.setOnMouseDragged((MouseEvent me) -> {
 			if (form_model.selected == null) {
 				cam.drag(me);
 			}
 		});
 		
-		setOnScroll((ScrollEvent se) -> {
+		this.setOnScroll((ScrollEvent se) -> {
 			cam.zoom(se);
 		});
 		
-		setOnMousePressed((MouseEvent me) -> {
+		this.setOnMousePressed((MouseEvent me) -> {
+			if (form_model.addPoint) {
+				if (hover.isVisible()) addPointAtMouse(me);
+			} else if (form_model.removePoint) {
 			
-		});
-		
-		setOnMouseReleased((MouseEvent me) -> {
-			if (hover.isVisible()) {
-				addPointAtMouse(me);
-			}
-			if (isMoving) {
-				form_model.deselect();
-				isMoving = false;
+			// Done Moving a Point
+			} else {
+				// If the control point is point moved, deselect it
+				if (isMoving) {
+					form_model.deselect();
+					isMoving = false;
+				}
 			}
 		});
 	}
 	
     /**
-     * Draw Nodes related to Control Points. These nodes are designed to persist for any given scenario
+     * Initialize view model for ControlPoints. These nodes are designed to persist for any given scenario.
      */
-    private void drawControl() {
-    	nodesControl.getChildren().clear();
+    private void initControl() {
+    	control.getChildren().clear();
+    	controlMap.clear();
     	
 		// Draw Active Control Points' Inner Sphere
 		if (form_model.isEditing()) {
-			controlMap.clear();
+			
 			for (ControlPoint p : form_model.control.points()) {
 				if (p.active()) {
 					
@@ -190,7 +215,7 @@ public class MassingContent extends Container3D {
 					
 					// Aggregated Control Point View Model
 					Group cPoint = new Group(is, oc);
-					nodesControl.getChildren().add(cPoint);
+					control.getChildren().add(cPoint);
 					controlMap.put(p, cPoint);
 					
 					// Mouse Events for Control Pointers
@@ -216,17 +241,12 @@ public class MassingContent extends Container3D {
 					});
 					is.setOnMousePressed((MouseEvent me) -> {
 						is.setRadius(cam.scaler() * DEFAULT_CONTROL_SIZE);
-						form_model.listen(!mousePressed, existingPointAtMouse, newPointAtMouse);
+						form_model.mouseTrigger(newPointAtMouse);
 						form_model.updateModel();
-						form_model.selected = existingPointAtMouse;
 						hover.setVisible(false);
-					});
-					is.setOnMouseReleased((MouseEvent me) -> {
-							form_model.mouseTrigger(newPointAtMouse);
-							//form_model.deselect();
-							form_model.listen(mousePressed, existingPointAtMouse, newPointAtMouse);
-							form_model.updateModel();
-							render(form_model, map_model);
+						initGrid();
+						initControl();
+						initForm();
 					});
 				}
 			}
@@ -237,27 +257,98 @@ public class MassingContent extends Container3D {
 		hover.setRadius(cam.scaler() * DEFAULT_CONTROL_SIZE);
 		hover.setId("hover_control_point");
 		hover.setVisible(false);
-		nodesControl.getChildren().add(hover);
-
-		// Add Theoretical Control Point Grid Space
-		if (form_model.isEditing()) nodesControl.getChildren().addAll(nodeGrid());
+		control.getChildren().add(hover);
     }
     
-	/**
-	 * Populate view model of form. Don't count on anything in here to persist longer than a few frames
+    /**
+	 * Initialize a structured grid of points that a user might select from
 	 */
-	public void drawForm() {
-		
-		nodes2D.getChildren().clear();
-		nodesForm.getChildren().clear();
-		
-		// Placeholder for 2D overlay
-		Label l = new Label("Massing Editor");
-    	nodes2D.getChildren().add(l);
-		
-		// Set up Ambient Lighting Effects
-		nodesForm.getChildren().add(overheadLight());
-		nodesForm.getChildren().add(sideLight());
+	public void initGrid() {
+		grid.getChildren().clear();
+		gridMap.clear();
+
+		if (form_model.isEditing()) {
+			double interval = cam.scaler() * GRID_UNIT_WIDTH * form_model.getTileWidth();
+			double minX = cam.scaler() * form_model.minControlX() - GRID_UNIT_BLEED * interval;
+			double maxX = cam.scaler() * form_model.maxControlX() + GRID_UNIT_BLEED * interval;
+			double minY = cam.scaler() * form_model.minControlY() - GRID_UNIT_BLEED * interval;
+			double maxY = cam.scaler() * form_model.maxControlY() + GRID_UNIT_BLEED * interval;
+			double boxW = interval;
+			double boxH = 0;
+			double boxZ = 0;
+			Color col = Color.gray(SUBDUED_SATURATION, SUBTLE_ALPHA);
+			for (double x = minX + interval / 2; x < maxX; x += interval) {
+				for (double y = minY + interval / 2; y < maxY; y += interval) {
+					double boxX = x;
+					double boxY = y;
+					Box b = basicBox(boxX, boxY, boxZ, boxW, boxH, DEFAULT_GRID_Z, col);
+					b.setMaterial(new PhongMaterial(Color.TRANSPARENT));
+					b.setId("grid");
+
+					// Mouse Events for Control Pointers
+					ControlPoint existingPointAtMouse = null; // not applicable here
+					boolean mousePressed = true;
+					float locX = (float) (boxX / cam.scaler() + 0.01f * Math.random());
+					float locY = (float) (boxY / cam.scaler() + 0.01f * Math.random());
+					b.setOnMouseEntered(me -> {
+						Point newPointAtMouse = new Point(locX, locY);
+						form_model.listen(!mousePressed, existingPointAtMouse, newPointAtMouse);
+						form_model.updateModel();
+						gridMap.put(b, newPointAtMouse);
+
+						// Set Ghost for new Control Point
+						if (form_model.addPoint) {
+							hover.setVisible(true);
+							hover.setMaterial(ADD_MATERIAL);
+							orientShape3D((Node) hover, cam.scaler() * newPointAtMouse.x,
+									cam.scaler() * newPointAtMouse.y, DEFAULT_CONTROL_Z);
+						}
+					
+						// Move point around after clicking it
+						if (form_model.selected != null) {
+							isMoving = true;
+							Point new_location = gridMap.get(b);
+							if (new_location != null) {
+								form_model.selected.x = newPointAtMouse.x;
+								form_model.selected.y = newPointAtMouse.y;
+							}
+							form_model.detectChange(form_model.selected.getType());
+							form_model.updateModel();
+							if (form_model.selected != null) {
+								Group cPoint = (Group) controlMap.get(form_model.selected);
+								if (cPoint != null) {
+									for (int i = 0; i < cPoint.getChildren().size(); i++) {
+										Node n = cPoint.getChildren().get(i);
+										orientShape3D(n, cam.scaler() * newPointAtMouse.x,
+												cam.scaler() * newPointAtMouse.y, DEFAULT_CONTROL_Z);
+									}
+								}
+							}
+							initForm();
+						}
+					});
+					grid.getChildren().add(b);
+				}
+			}
+		}
+	}
+    
+	/**
+	 * Set up Ambient Lighting Effects
+	 * 
+	 * @param lights
+	 */
+	public void initLights() {
+		light.getChildren().clear();
+		light.getChildren().add(overheadLight());
+		light.getChildren().add(sideLight());
+	}
+	
+	/**
+	 * Initialize view model of form. Don't count on anything in here to persist longer than a few frames
+	 */
+	public void initForm() {
+		form.getChildren().clear();
 		
 		// Extra opacity to apply when editing control points
 		double editingScaler = 1.0;
@@ -279,7 +370,7 @@ public class MassingContent extends Container3D {
 		site_polygon.setStroke(site_stroke);
 		site_polygon.setStrokeWidth(site_strokeWeight);
 		orientShape2D((Node) site_polygon, 0, 0, DEFAULT_POLY_Z);
-		nodesForm.getChildren().add(site_polygon);
+		form.getChildren().add(site_polygon);
 		
 		// Draw Voxel Sites
 		for (TileArray space : form_model.spaceList("site")) {
@@ -287,7 +378,7 @@ public class MassingContent extends Container3D {
 				Color col = Color.gray(DEFAULT_SATURATION, editingScaler * SUBDUED_ALPHA);
 				for (Tile t : space.tileList()) {
 					Box b = renderVoxel(t, col, DEFAULT_SITE_Z, true);
-					nodesForm.getChildren().add(b);
+					form.getChildren().add(b);
 				}
 			}
 		}
@@ -298,7 +389,7 @@ public class MassingContent extends Container3D {
 				Color col = Color.hsb(space.getHueDegree(), SUBDUED_SATURATION, SUBDUED_BRIGHTNESS, DEFAULT_ALPHA);
 				for (Tile t : space.tileList()) {
 					Box b = renderVoxel(t, col, DEFAULT_ZONE_Z, true);
-					nodesForm.getChildren().add(b);
+					form.getChildren().add(b);
 				}
 			}
 		}
@@ -313,10 +404,10 @@ public class MassingContent extends Container3D {
 					col = Color.hsb(space.getHueDegree(), DEFAULT_SATURATION, SUBDUED_BRIGHTNESS, SUBDUED_ALPHA);
 				for (Tile t : space.tileList()) {
 					Box b = renderVoxel(t, col, DEFAULT_FOOT_Z, true);
-					nodesForm.getChildren().add(b);
+					form.getChildren().add(b);
 					if (space.name.equals("Building")) {
 						b = renderVoxel(t, col, DEFAULT_FOOT_Z, true);
-						nodesForm.getChildren().add(b);
+						form.getChildren().add(b);
 					}
 				}
 			}
@@ -331,88 +422,33 @@ public class MassingContent extends Container3D {
 					if (t.location.z == 0) {
 						boolean isFlat = space.name.substring(0, 3).equals("Cou"); // short for "Courtyard"
 						Box b = renderVoxel(t, col, DEFAULT_BASE_Z, isFlat);
-						nodesForm.getChildren().add(b);
+						form.getChildren().add(b);
 					}
 				}
 			}
 		}
+	}
+	
+	public void initMap() {
+		map.getChildren().clear();
 		
 		// Add and orient Underlay map (draw last to be able to see through bottom!)
-		if (showUnderlay) {
-			map_model.setImageView();
-			orientShape2D((Node) map_model.getImageView(), 0, 0, DEFAULT_MAP_Z);
-			map_model.setScale(cam.scaler()*map_model.getScaler());
-			map_model.getImageView().setMouseTransparent(true);
-			nodesForm.getChildren().add(map_model.getImageView());
-		}
-		
+		map_model.setImageView();
+		orientShape2D((Node) map_model.getImageView(), 0, 0, DEFAULT_MAP_Z);
+		map_model.setScale(cam.scaler() * map_model.getScaler());
+		map_model.getImageView().setMouseTransparent(true);
+		map.getChildren().add(map_model.getImageView());
 	}
 	
 	/**
-	 * Draw a structured grid of points that a user might select from
-	 * 
-	 * @return grid of points
+	 * Initialize 2D Overlay
 	 */
-	public Group nodeGrid() {
-		Group grid = new Group();
-		gridMap.clear();
-		double interval = cam.scaler() * GRID_UNIT_WIDTH * form_model.getTileWidth();
-		double minX = cam.scaler() * form_model.minControlX() - GRID_UNIT_BLEED * interval;
-		double maxX = cam.scaler() * form_model.maxControlX() + GRID_UNIT_BLEED * interval;
-		double minY = cam.scaler() * form_model.minControlY() - GRID_UNIT_BLEED * interval;
-		double maxY = cam.scaler() * form_model.maxControlY() + GRID_UNIT_BLEED * interval;
-		double boxW = interval;
-		double boxH = 0;
-		double boxZ = 0;
-		Color col = Color.gray(SUBDUED_SATURATION, SUBTLE_ALPHA);
-		for (double x = minX + interval/2; x < maxX; x += interval) {
-			for (double y = minY + interval/2; y < maxY; y += interval) {
-				double boxX = x;
-				double boxY = y;
-				Box b = basicBox(boxX, boxY, boxZ, boxW, boxH, DEFAULT_GRID_Z, col);
-				b.setMaterial(new PhongMaterial(Color.TRANSPARENT));
-				b.setId("grid");
-				
-				// Mouse Events for Control Pointers
-				ControlPoint existingPointAtMouse = null; // not applicable here
-				boolean mousePressed = true;
-				float locX = (float) (boxX / cam.scaler() + 0.01f * Math.random());
-				float locY = (float) (boxY / cam.scaler() + 0.01f * Math.random());
-				b.setOnMouseEntered(me -> {
-					Point newPointAtMouse = new Point(locX, locY);
-					form_model.listen(!mousePressed, existingPointAtMouse, newPointAtMouse);
-					form_model.updateModel();
-					gridMap.put(b, newPointAtMouse);
-					
-					// Set Ghost for new Control Point
-					if(form_model.hovering != null) {
-						hover.setVisible(true);
-						hover.setMaterial(ADD_MATERIAL);
-						orientShape3D((Node) hover, cam.scaler() * newPointAtMouse.x, cam.scaler() * newPointAtMouse.y, DEFAULT_CONTROL_Z);
-					} 
-					
-					// Move point around after clicking it
-					else if (form_model.selected != null) {
-						isMoving = true;
-						Point new_location = gridMap.get(b);
-						if (new_location != null) {
-							form_model.selected.x = newPointAtMouse.x;
-							form_model.selected.y = newPointAtMouse.y;
-						}
-						form_model.detectChange(form_model.selected.getType());
-						form_model.updateModel();
-						Group cPoint = (Group) controlMap.get(form_model.selected);
-						for (int i=0; i<cPoint.getChildren().size(); i++) {
-							Node n = cPoint.getChildren().get(i);
-							orientShape3D(n, cam.scaler() * newPointAtMouse.x, cam.scaler() * newPointAtMouse.y, DEFAULT_CONTROL_Z);
-						}
-						drawForm();
-					}
-				});
-				grid.getChildren().add(b);
-			}
-		}
-		return grid;
+	public void initOverlay() {
+		overlay.getChildren().clear();
+		
+		// Placeholder for 2D overlay
+		Label l = new Label("Massing Editor");
+    	overlay.getChildren().add(l);
 	}
 	
 	/**
@@ -453,14 +489,17 @@ public class MassingContent extends Container3D {
 		if (e.getText().equals("C")) {
 			cam.init();
 		}
-		// Print Camera Position
+		// toggle map model visibility
 		if (e.getCode() == KeyCode.U) {
-			showUnderlay = !showUnderlay;
+			map_model.setVisible(!map_model.isVisible());
 		}
-		// update all nodes when switching to/from editing mode
+		// Torn Editing on/off
 		if (e.getCode() == KeyCode.E) {
-			render(form_model, map_model);
+			
 		}
+		initGrid();
+		initControl();
+		initForm();
 	}
 	
     /**
@@ -492,7 +531,7 @@ public class MassingContent extends Container3D {
 			form_model.mouseTrigger(newPointAtMouse);
 			form_model.listen(mousePressed, existingPointAtMouse, newPointAtMouse);
 			form_model.updateModel();
-			render(form_model, map_model);
+			this.init(form_model, map_model);
 		}
     }
 }

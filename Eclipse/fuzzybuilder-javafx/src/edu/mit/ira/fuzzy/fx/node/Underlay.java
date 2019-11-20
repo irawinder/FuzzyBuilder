@@ -16,32 +16,33 @@ import javafx.scene.transform.Transform;
  */
 public class Underlay implements Cloneable {
 
-	private Image underlay;
-	private ImageView underlayView;
-	
-	private double scaler, opacity;
 	private final static double DEFAULT_SCALER_VALUE = 1.0;
 	private final static double DEFAULT_OPACITY_VALUE = 0.75;
+	private final static boolean DEFAULT_VISIBILITY = true;
+	
+	private Image underlay;
+	private ImageView underlayView;
+	private double scaler, opacity;
+	private boolean isVisible;
+	
 	
 	/**
 	 * Initialize an empty Underlay
 	 */
 	public Underlay() {
-		underlayView = new ImageView();
-		
 		scaler = DEFAULT_SCALER_VALUE;
 		opacity = DEFAULT_OPACITY_VALUE;
+		isVisible = DEFAULT_VISIBILITY;
+		underlayView = new ImageView();
 	}
 	
 	/**
 	 * Construct and Underlay Image for JavaFX
 	 * 
 	 * @param file_path relative path location of file
-	 * @param scaler scale the image up or down from its native resolution
-	 * @param opacity opacity value of underlay (0 - 1)
 	 */
 	public Underlay(String file_path) {
-		underlayView = new ImageView();
+		this();
 		setImage(file_path);
 	}
 	
@@ -53,7 +54,7 @@ public class Underlay implements Cloneable {
 	 * @param opacity opacity value of underlay (0 - 1)
 	 */
 	public Underlay(String file_path, double scaler, double opacity) {
-		underlayView = new ImageView();
+		this();
 		this.scaler = scaler;
 		this.opacity = opacity;
 		setImage(file_path);
@@ -133,6 +134,25 @@ public class Underlay implements Cloneable {
 	 */
 	public Image getImage() {
 		return underlay;
+	}
+	
+	/**
+	 * Check if the underlay is visible
+	 * 
+	 * @return
+	 */
+	public boolean isVisible() {
+		return isVisible;
+	}
+	
+	/**
+	 * Set visibility of the underlay
+	 * 
+	 * @param isVisible
+	 */
+	public void setVisible(boolean isVisible) {
+		this.isVisible = isVisible;
+		underlayView.setVisible(isVisible);
 	}
 	
 	/**

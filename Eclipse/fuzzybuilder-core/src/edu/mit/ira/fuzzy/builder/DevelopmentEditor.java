@@ -133,38 +133,6 @@ public class DevelopmentEditor extends DevelopmentBuilder {
 	}
 
 	/**
-	 * Add a new Control point at (x,y)
-	 * 
-	 * @param x
-	 * @param y
-	 */
-	public void addControlPoint(float x, float y) {
-		if (new_control_type.equals("Vertex")) {
-			control.addPoint(new_control_type + " " + vert_counter, new_control_type, x, y);
-			vert_counter++;
-		} else if (new_control_type.equals("Plot")) {
-			control.addPoint(new_control_type + " " + plot_counter, new_control_type, x, y);
-			plot_counter++;
-		} else if (new_control_type.equals("Void")) {
-			control.addPoint(new_control_type + " " + void_counter, new_control_type, x, y);
-			void_counter++;
-		}
-		detectChange(new_control_type);
-	}
-
-	/**
-	 * Remove a given ControlPoint
-	 * 
-	 * @param point
-	 */
-	public void removeControlPoint(ControlPoint point) {
-		if (point != null) {
-			control.removePoint(point);
-			detectChange(point.getType());
-		}
-	}
-
-	/**
 	 * detect change based upon a type string
 	 * 
 	 * @param type type of ControlPoint that is edited
@@ -430,6 +398,7 @@ public class DevelopmentEditor extends DevelopmentBuilder {
 	 */
 	public void listen(boolean mousePressed, ControlPoint point, Point new_point) {
 
+		// Set hovering to a hypothetical point
 		if (addPoint) {
 			Point atMouse = new_point;
 			if (atMouse != null) {
@@ -439,10 +408,13 @@ public class DevelopmentEditor extends DevelopmentBuilder {
 			} else {
 				hovering = null;
 			}
+			
+		// set hovering to an existing point
 		} else {
 			hovering = point;
 		}
-
+		
+		// Update existing point location when moving or dragging mouse
 		if (mousePressed && selected != null && selected.active()) {
 			Point new_location = new_point;
 			if (new_location != null) {
@@ -459,16 +431,54 @@ public class DevelopmentEditor extends DevelopmentBuilder {
 	 * @param new_point New Point at mouse location
 	 */
 	public void mouseTrigger(Point new_point) {
+		
+		// 1. Add a new point
 		if (addPoint) {
 			if (new_point != null) {
 				Point atMouse = new_point;
 				addControlPoint(atMouse.x, atMouse.y);
 			}
+			
+		// 2. Remove an existing point
+		} else if (removePoint) {
+			selected = hovering;
+			removeControlPoint(hovering);
+			
+		// 3. Select a new point to move
 		} else {
 			selected = hovering;
-			if (removePoint) {
-				removeControlPoint(selected);
-			}
+		}
+	}
+	
+	/**
+	 * Add a new Control point at (x,y)
+	 * 
+	 * @param x
+	 * @param y
+	 */
+	public void addControlPoint(float x, float y) {
+		if (new_control_type.equals("Vertex")) {
+			control.addPoint(new_control_type + " " + vert_counter, new_control_type, x, y);
+			vert_counter++;
+		} else if (new_control_type.equals("Plot")) {
+			control.addPoint(new_control_type + " " + plot_counter, new_control_type, x, y);
+			plot_counter++;
+		} else if (new_control_type.equals("Void")) {
+			control.addPoint(new_control_type + " " + void_counter, new_control_type, x, y);
+			void_counter++;
+		}
+		detectChange(new_control_type);
+	}
+
+	/**
+	 * Remove a given ControlPoint
+	 * 
+	 * @param point
+	 */
+	public void removeControlPoint(ControlPoint point) {
+		if (point != null) {
+			control.removePoint(point);
+			detectChange(point.getType());
 		}
 	}
 
