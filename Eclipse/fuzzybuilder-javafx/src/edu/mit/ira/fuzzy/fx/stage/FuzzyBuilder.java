@@ -47,9 +47,6 @@ public class FuzzyBuilder extends Application {
     	// Set the Title Bar of the Application
     	appWindow.setTitle(APPLICATION_NAME);
     	
-    	// Begin the application with a random scenario
-    	loadRandomScenario();
-    	
     	//Initialize Content Containers (SubScenes)
     	toolbar = new Toolbar();
 		version = new Version();
@@ -63,8 +60,8 @@ public class FuzzyBuilder extends Application {
 		// Assemble all SubScenes into the main content scene
 		Scene content = Layout.build(toolbar, navigate, version, canvas, massing, outcome, commit, status);
 		
-		// Populate Scenes
-     	renderScenes();
+		// Begin the application with a random scenario
+    	loadRandomScenario();
      	
 		// Handle Key Events for the main content scene
         content.setOnKeyPressed(e -> {
@@ -95,9 +92,6 @@ public class FuzzyBuilder extends Application {
 			((Commit)     commit).keyPressed(e);
 			((Navigate) navigate).keyPressed(e);
 			((Status)     status).keyPressed(e);
-			
-    		// Refresh Scenes with new State
-    		renderScenes();
         });
         
         // Set the stage and start the show
@@ -111,7 +105,7 @@ public class FuzzyBuilder extends Application {
      * @param map_model
      * @param form_model
      */
-    public void loadRandomScenario() {
+    private void loadRandomScenario() {
     	
     	// Load Basemap
     	double scale = 0.5;
@@ -129,6 +123,8 @@ public class FuzzyBuilder extends Application {
     	float min_radius = 0.3f * diameter;
     	float max_radius = 0.4f * diameter;
     	scenario_form = new RandomSite(tileWidth, tileHeight, x, y, min_radius, max_radius);
+    	
+    	initScenes();
     }
     
     /**
@@ -137,7 +133,7 @@ public class FuzzyBuilder extends Application {
      * @param map_model
      * @param form_model
      */
-    public void loadShinagawaScenario() {
+    private void loadShinagawaScenario() {
     	
     	// Load Basemap
     	double scale = 0.5;
@@ -147,17 +143,20 @@ public class FuzzyBuilder extends Application {
     	// Load Geometry
     	scenario_form = new ShinagawaSite();
     	
+    	initScenes();
     }
     
-    public void renderScenes() {
-    	
-    	((Toolbar)   toolbar).render();
-		((Version)   version).render();
-		((Canvas)     canvas).render();
-		((Massing)   massing).render(scenario_form, scenario_map);
-		((Outcome)   outcome).render();
-		((Commit)     commit).render();
-		((Navigate) navigate).render();
-		((Status)     status).render();
+    /**
+     * Initializes the Scenes with JavaFX nodes
+     */
+    private void initScenes() {
+    	((Toolbar)   toolbar).init();
+		((Version)   version).init();
+		((Canvas)     canvas).init();
+		((Massing)   massing).init(scenario_form, scenario_map);
+		((Outcome)   outcome).init();
+		((Commit)     commit).init();
+		((Navigate) navigate).init();
+		((Status)     status).init();
     }
 }
