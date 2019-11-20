@@ -72,22 +72,19 @@ public class Massing extends Container3D {
     // "Front End" View Model Nodes
  	private Group light, control, ghost, grid, form, map, overlay;
   	
-  	// Is A Control Point being Moved?
-  	private boolean isMoving;
-  	
   	// GridMap of geospatial point locations to front-end box element
   	private HashMap<Node, Point> gridMap;
   	
   	// GridMap of control spheres tied to their point location
   	private HashMap<ControlPoint, Node> controlMap;
   	
-  	
+  	// Is A Control Point being Moved?
+   	private boolean isMoving;
  	
 	public Massing() {
 		super();
 		
 		cam.setViewScaler(DEFAULT_VIEW_SCALER);
-		
 		
 		light = new Group();	// Lighting Effect Nodes
 		control = new Group();	// Control Point Nodes
