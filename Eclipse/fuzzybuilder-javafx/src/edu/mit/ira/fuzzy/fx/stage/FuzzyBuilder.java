@@ -2,15 +2,15 @@ package edu.mit.ira.fuzzy.fx.stage;
 import edu.mit.ira.fuzzy.builder.DevelopmentEditor;
 import edu.mit.ira.fuzzy.builder.sample.RandomSite;
 import edu.mit.ira.fuzzy.builder.sample.ShinagawaSite;
-import edu.mit.ira.fuzzy.fx.node.Underlay;
+import edu.mit.ira.fuzzy.fx.base.Underlay;
 import edu.mit.ira.fuzzy.fx.scene.Canvas;
 import edu.mit.ira.fuzzy.fx.scene.Commit;
+import edu.mit.ira.fuzzy.fx.scene.Massing;
 import edu.mit.ira.fuzzy.fx.scene.Navigate;
 import edu.mit.ira.fuzzy.fx.scene.Outcome;
 import edu.mit.ira.fuzzy.fx.scene.Status;
 import edu.mit.ira.fuzzy.fx.scene.Toolbar;
 import edu.mit.ira.fuzzy.fx.scene.Version;
-import edu.mit.ira.fuzzy.fx.scene.massing.Massing;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.SubScene;
@@ -29,6 +29,7 @@ import javafx.stage.Stage;
 public class FuzzyBuilder extends Application {
 	
 	final private String APPLICATION_NAME = "Fuzzy Builder";
+	final private String APPLICATION_VERSION = "v1.0-alpha.2";
 	
 	// "Back End" - Current Scenario Object Model
 	private static DevelopmentEditor scenario_form;
@@ -48,14 +49,14 @@ public class FuzzyBuilder extends Application {
     	appWindow.setTitle(APPLICATION_NAME);
     	
     	//Initialize Content Containers (SubScenes)
-    	toolbar = new Toolbar();
-		version = new Version();
-		canvas = new Canvas();
-		massing = new Massing();
-		outcome = new Outcome();
-		commit = new Commit();
-		navigate = new Navigate();
-		status = new Status();
+    	toolbar = new Toolbar("toolbar", "Toolbar (TBD)");
+		version = new Version("version", "Version Tree (TBD)");
+		canvas = new Canvas("canvas", "Visual Programming Canvas (TBD)");
+		massing = new Massing("massing", "Form Model (TBD)");
+		outcome = new Outcome("outcome", "Performance Graphs (TBD)");
+		commit = new Commit("commit", "Commit Scenario (TBD)");
+		navigate = new Navigate("navigate", "Navigation Panel (TBD)");
+		status = new Status("status", "Status Bar (TBD)");
 		
 		// Assemble all SubScenes into the main content scene
 		Scene content = Layout.build(toolbar, navigate, version, canvas, massing, outcome, commit, status);
@@ -67,10 +68,10 @@ public class FuzzyBuilder extends Application {
         content.setOnKeyPressed(e -> {
         	
         	// Handle Top-level key commands meant for application-wide event
-    		if (e.getText().equals("L")) {
-    			loadShinagawaScenario();
-    		} else if (e.getCode() == KeyCode.R) {
+        	if (e.getCode() == KeyCode.R) {
     			loadRandomScenario();
+    		} else if (e.getCode() == KeyCode.S) {
+    			loadShinagawaScenario();
     		}
     		
         	// Pass Key Commands on to "back-end" form model
@@ -92,6 +93,13 @@ public class FuzzyBuilder extends Application {
 			((Commit)     commit).keyPressed(e);
 			((Navigate) navigate).keyPressed(e);
 			((Status)     status).keyPressed(e);
+        });
+        
+        content.setOnMouseMoved(me -> {
+        	if(scenario_form.isEditing()) {
+        		((Navigate) navigate).init(scenario_form, APPLICATION_NAME, APPLICATION_VERSION);
+        		((Outcome) outcome).init(scenario_form);
+        	}
         });
         
         // Set the stage and start the show
@@ -154,9 +162,9 @@ public class FuzzyBuilder extends Application {
 		((Version)   version).init();
 		((Canvas)     canvas).init();
 		((Massing)   massing).init(scenario_form, scenario_map);
-		((Outcome)   outcome).init();
+		((Outcome)   outcome).init(scenario_form);
 		((Commit)     commit).init();
-		((Navigate) navigate).init();
+		((Navigate) navigate).init(scenario_form, APPLICATION_NAME, APPLICATION_VERSION);
 		((Status)     status).init();
     }
 }

@@ -245,11 +245,14 @@ public class Canvas {
 			applet.fill(100);
 			applet.textAlign(PConstants.LEFT, PConstants.TOP);
 			String summary = "";
-			summary += "View Model: " + editor.viewModel;
+			summary += editor;
+			summary += "\n";
+			summary += "\n" + "View Model: " + editor.viewModel;
 			summary += "\n" + "Tile Dimensions:";
 			summary += "\n" + editor.tileW + " x " + editor.tileW + " x " + editor.tileH + " units";
 			summary += "\n";
-			summary += "\n" + editor + "/...";
+			summary += "\n" + editor.extents();
+			summary += "\n";
 			for (TileArray space : editor.spaceList()) {
 				if (editor.showSpace(space)) {
 					summary += "\n~/" + space;

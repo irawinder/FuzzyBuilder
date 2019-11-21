@@ -1,4 +1,4 @@
-package edu.mit.ira.fuzzy.fx.scene.massing;
+package edu.mit.ira.fuzzy.fx.scene;
 
 import java.util.HashMap;
 
@@ -7,8 +7,8 @@ import edu.mit.ira.fuzzy.base.Point;
 import edu.mit.ira.fuzzy.base.Tile;
 import edu.mit.ira.fuzzy.base.TileArray;
 import edu.mit.ira.fuzzy.builder.DevelopmentEditor;
-import edu.mit.ira.fuzzy.fx.node.Underlay;
-import edu.mit.ira.fuzzy.fx.scene.Container3D;
+import edu.mit.ira.fuzzy.fx.base.Container3D;
+import edu.mit.ira.fuzzy.fx.base.Underlay;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
@@ -27,9 +27,13 @@ import javafx.scene.transform.Rotate;
 // TODO
 // Draw Tagged Control Point Labels
 // Draw Info at Mouse Hover
-// Draw Info/Instructions
-// Draw Attribute Summary
 
+/**
+ * Build and Handle the Content for the 3D View Model (e.g. development "massing")
+ * 
+ * @author Ira Winder
+ *
+ */
 public class Massing extends Container3D {
     
     // Scale up/down draw units of back end geometry
@@ -62,7 +66,7 @@ public class Massing extends Container3D {
  	final protected static double HOVER_SIZE_SCALER 	= 1.2; // increase size of something when hovering
  	final protected static double VOXEL_HEIGHT_BUFFER 	= 0.9; // fraction of voxel to draw, leaving vertical gap between adjacent voxels
  	final protected static double VOXEL_WIDTH_BUFFER 	= 0.8; // fraction of voxel to draw, leaving horizontal gap between adjacent voxels
- 	final protected static double GRID_UNIT_WIDTH 		= 1.0; // fraction of a TileArray() tile width
+ 	final protected static double GRID_UNIT_WIDTH 		= 0.5; // fraction of a TileArray() tile width
  	final protected static int	  GRID_UNIT_BLEED 		=  25; // number of selection grid units to bleed outside of Development extents
  	
     // "Back End" Elements to Render to Container
@@ -81,8 +85,8 @@ public class Massing extends Container3D {
   	// Is A Control Point or Camera being Dragged?
    	private boolean mouseMoved, camDragged, ignoreSelect;
  	
-	public Massing() {
-		super();
+	public Massing(String id, String friendlyName) {
+		super(id, friendlyName);
 		
 		cam.setViewScaler(DEFAULT_VIEW_SCALER);
 		
@@ -104,10 +108,11 @@ public class Massing extends Container3D {
 		gridMap = new HashMap<Node, Point>();
 		controlMap = new HashMap<ControlPoint, Node>();
 		
+		this.setFill(Color.TRANSPARENT);
 	}
 	
     /**
-     * Set the back end content of the model
+     * Set the back end content of the model and initialize view model
      * 
      * @param form_model
      * @param map_model
@@ -118,10 +123,10 @@ public class Massing extends Container3D {
     	this.init();
 	}
     
-	/**
-	 * Populates the View Model with a form from Builder class
+    /**
+	 * Populates the View Model with a form from DevelopmentEditor class
 	 * 
-	 * @param form form from Builder class
+	 * @param form_model DevelopmentBuider()
 	 */
 	private void setFormModel(DevelopmentEditor form_model) {
 		this.form_model = form_model;
@@ -139,7 +144,8 @@ public class Massing extends Container3D {
 	/**
 	 * render the current state of the backend model
 	 */
-	private void init() {
+	@Override
+	public void init() {
 		initLights();
 		initControl();
 		initGhost();
@@ -236,11 +242,13 @@ public class Massing extends Container3D {
 	 * 
 	 * @param e key event
 	 */
+    @Override
 	public void keyPressed(KeyEvent e) {
 
 		// Reset Camera Position
-		if (e.getText().equals("C")) {
+    	if (e.getCode() == KeyCode.Z) {
 			cam.init();
+			initMap();
 		}
 		// toggle map model visibility
 		if (e.getCode() == KeyCode.U) {

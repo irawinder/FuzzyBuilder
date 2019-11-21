@@ -1,4 +1,4 @@
-package edu.mit.ira.fuzzy.fx.scene;
+package edu.mit.ira.fuzzy.fx.base;
 import javafx.scene.Camera;
 import javafx.scene.PerspectiveCamera;
 import javafx.scene.SubScene;

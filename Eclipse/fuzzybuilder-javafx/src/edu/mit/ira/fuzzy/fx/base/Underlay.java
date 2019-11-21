@@ -1,4 +1,4 @@
-package edu.mit.ira.fuzzy.fx.node;
+package edu.mit.ira.fuzzy.fx.base;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;

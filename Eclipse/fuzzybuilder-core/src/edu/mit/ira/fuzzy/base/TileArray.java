@@ -645,6 +645,6 @@ public class TileArray {
 
 	@Override
 	public String toString() {
-		return this.name + " (" + this.type + "):" + tileMap.size() + "t";
+		return this.name + " (" + this.type + "): " + tileMap.size() + "t";
 	}
 }
