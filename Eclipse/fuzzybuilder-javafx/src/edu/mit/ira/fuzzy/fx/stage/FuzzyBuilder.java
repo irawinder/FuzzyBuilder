@@ -60,6 +60,7 @@ public class FuzzyBuilder extends Application {
 		
 		// Assemble all SubScenes into the main content scene
 		Scene content = Layout.build(toolbar, navigate, version, canvas, massing, outcome, commit, status);
+		content.getStylesheets().add("style.css");
 		
 		// Begin the application with a random scenario
     	loadRandomScenario();
@@ -101,8 +102,6 @@ public class FuzzyBuilder extends Application {
         		((Outcome) outcome).init(scenario_form);
         	}
         });
-        
-        content.getStylesheets().add("style.css");
         
         // Set the stage and start the show
         appWindow.setScene(content);
