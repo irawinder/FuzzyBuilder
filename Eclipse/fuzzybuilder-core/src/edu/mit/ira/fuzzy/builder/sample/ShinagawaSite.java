@@ -13,6 +13,7 @@ public class ShinagawaSite extends DevelopmentEditor{
 	
 	public ShinagawaSite() {
 		super();
+		setName("Shinagawa Station");
 		load();
 		resetEditor();
 	}

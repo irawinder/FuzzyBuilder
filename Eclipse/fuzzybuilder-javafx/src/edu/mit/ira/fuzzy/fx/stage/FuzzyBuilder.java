@@ -29,6 +29,7 @@ import javafx.stage.Stage;
 public class FuzzyBuilder extends Application {
 	
 	final private String APPLICATION_NAME = "Fuzzy Builder";
+	final private String APPLICATION_VERSION = "v1.0-alpha.2";
 	
 	// "Back End" - Current Scenario Object Model
 	private static DevelopmentEditor scenario_form;
@@ -67,10 +68,10 @@ public class FuzzyBuilder extends Application {
         content.setOnKeyPressed(e -> {
         	
         	// Handle Top-level key commands meant for application-wide event
-    		if (e.getText().equals("L")) {
-    			loadShinagawaScenario();
-    		} else if (e.getCode() == KeyCode.R) {
+        	if (e.getCode() == KeyCode.R) {
     			loadRandomScenario();
+    		} else if (e.getCode() == KeyCode.S) {
+    			loadShinagawaScenario();
     		}
     		
         	// Pass Key Commands on to "back-end" form model
@@ -95,7 +96,7 @@ public class FuzzyBuilder extends Application {
         });
         
         content.setOnMouseMoved(me -> {
-        	if(scenario_form.isEditing()) ((Navigate) navigate).init(scenario_form);
+        	if(scenario_form.isEditing()) ((Navigate) navigate).init(scenario_form, APPLICATION_NAME, APPLICATION_VERSION);
         });
         
         // Set the stage and start the show
@@ -160,7 +161,7 @@ public class FuzzyBuilder extends Application {
 		((Massing)   massing).init(scenario_form, scenario_map);
 		((Outcome)   outcome).init();
 		((Commit)     commit).init();
-		((Navigate) navigate).init(scenario_form);
+		((Navigate) navigate).init(scenario_form, APPLICATION_NAME, APPLICATION_VERSION);
 		((Status)     status).init();
     }
 }

@@ -16,6 +16,7 @@ public class Navigate extends Container2D {
 	
 	// "Back End" Elements to Render to Container
     protected DevelopmentEditor form_model; 
+    String appName, appVersion;
     
     // Pane that contains multiple tabs
     TabPane nav;
@@ -54,8 +55,10 @@ public class Navigate extends Container2D {
      * @param form_model
      * @param map_model
      */
-	public void init(DevelopmentEditor form_model) {
+	public void init(DevelopmentEditor form_model, String appName, String appVersion) {
 		setFormModel(form_model);
+		this.appName = appName;
+		this.appVersion = appVersion;
 		this.init();
 	}
 	
@@ -117,7 +120,12 @@ public class Navigate extends Container2D {
 	 */
 	private String readMeText() {
 		String readMe = "";
-		readMe += "Press 'e' to toggle editing mode";
+		readMe += appName + " (" + appVersion + ")";
+		readMe += "\n";
+		readMe += "\n" + "Press 'r' to generate random site";
+		readMe += "\n" + "Press 's' to load an example site";
+		readMe += "\n";
+		readMe += "\n" + "Press 'e' to toggle editing mode";
 		readMe += "\n" + "Click control points to interact with them";
 		readMe += "\n";
 		readMe += "\n" + "Press 'a' to add control point";
@@ -139,7 +147,6 @@ public class Navigate extends Container2D {
 		readMe += "\n";
 		readMe += "\n" + "Press '-' or '+' to resize tiles";
 		readMe += "\n" + "Press '[', '{', ']', or '}' to rotate tiles";
-		readMe += "\n" + "Press 'r' to generate random site";
 //		readMe += "\n" + "Press 'm' to toggle 2D/3D view";
 //		readMe += "\n" + "Press 'v' to toggle View Model";
 		readMe += "\n" + "Press 't' to hide/show Tiles";
