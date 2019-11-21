@@ -49,14 +49,14 @@ public class FuzzyBuilder extends Application {
     	appWindow.setTitle(APPLICATION_NAME);
     	
     	//Initialize Content Containers (SubScenes)
-    	toolbar = new Toolbar("toolbar", "Toolbar");
-		version = new Version("version", "Version Tree");
-		canvas = new Canvas("canvas", "Visual Programming Canvas");
-		massing = new Massing("massing", "Form Model");
-		outcome = new Outcome("outcome", "Performance Graphs");
-		commit = new Commit("commit", "Commit Scenario");
-		navigate = new Navigate("navigate", "Navigation Panel");
-		status = new Status("status", "Status Bar");
+    	toolbar = new Toolbar("toolbar", "Toolbar (TBD)");
+		version = new Version("version", "Version Tree (TBD)");
+		canvas = new Canvas("canvas", "Visual Programming Canvas (TBD)");
+		massing = new Massing("massing", "Form Model (TBD)");
+		outcome = new Outcome("outcome", "Performance Graphs (TBD)");
+		commit = new Commit("commit", "Commit Scenario (TBD)");
+		navigate = new Navigate("navigate", "Navigation Panel (TBD)");
+		status = new Status("status", "Status Bar (TBD)");
 		
 		// Assemble all SubScenes into the main content scene
 		Scene content = Layout.build(toolbar, navigate, version, canvas, massing, outcome, commit, status);
@@ -96,7 +96,10 @@ public class FuzzyBuilder extends Application {
         });
         
         content.setOnMouseMoved(me -> {
-        	if(scenario_form.isEditing()) ((Navigate) navigate).init(scenario_form, APPLICATION_NAME, APPLICATION_VERSION);
+        	if(scenario_form.isEditing()) {
+        		((Navigate) navigate).init(scenario_form, APPLICATION_NAME, APPLICATION_VERSION);
+        		((Outcome) outcome).init(scenario_form);
+        	}
         });
         
         // Set the stage and start the show
@@ -159,7 +162,7 @@ public class FuzzyBuilder extends Application {
 		((Version)   version).init();
 		((Canvas)     canvas).init();
 		((Massing)   massing).init(scenario_form, scenario_map);
-		((Outcome)   outcome).init();
+		((Outcome)   outcome).init(scenario_form);
 		((Commit)     commit).init();
 		((Navigate) navigate).init(scenario_form, APPLICATION_NAME, APPLICATION_VERSION);
 		((Status)     status).init();

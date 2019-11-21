@@ -28,6 +28,12 @@ import javafx.scene.transform.Rotate;
 // Draw Tagged Control Point Labels
 // Draw Info at Mouse Hover
 
+/**
+ * Build and Handle the Content for the 3D View Model (e.g. development "massing")
+ * 
+ * @author Ira Winder
+ *
+ */
 public class Massing extends Container3D {
     
     // Scale up/down draw units of back end geometry

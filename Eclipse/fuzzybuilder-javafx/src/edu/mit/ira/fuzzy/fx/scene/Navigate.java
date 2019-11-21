@@ -7,11 +7,18 @@ import javafx.beans.value.ObservableValue;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.control.TabPane.TabClosingPolicy;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 
+/**
+ * Build and Handle the Content for the Navigation Panel
+ * 
+ * @author Ira Winder
+ *
+ */
 public class Navigate extends Container2D {
 	
 	// "Back End" Elements to Render to Container
@@ -38,6 +45,7 @@ public class Navigate extends Container2D {
 		
 		// Instantiate persistent view containers
 		nav = new TabPane();
+		nav.setTabClosingPolicy(TabClosingPolicy.UNAVAILABLE);
 		readMe = new Tab();
 		objectModel = new Tab();
 		
@@ -45,8 +53,7 @@ public class Navigate extends Container2D {
         nav.getTabs().add(objectModel);
         
         VBox content = new VBox(nav);
-		nodes2D.getChildren().clear();
-		nodes2D.getChildren().add(content);
+        setRoot(content);
 	}
 
 	/**
@@ -107,7 +114,7 @@ public class Navigate extends Container2D {
 		
 		Text t = new Text();
 		t.setText(objectModelText());
-		//t.setWrappingWidth(this.getWidth() - 4*TEXT_BUFFER);
+		t.setWrappingWidth(this.getWidth() - 4*TEXT_BUFFER);
 		
 		sp.setContent(t);
 		sp.setPadding(TEXT_INSETS);
