@@ -48,7 +48,7 @@ public class FuzzyBuilder extends PApplet {
 		surface.setTitle("FuzzyBuilder");
 		window = new Canvas(this);
 		
-		editor = new DevelopmentEditor();
+		editor = new RandomSite(21, 7, 400, 200, 100, 200);
 		map = new Underlay(this, "data/site.png", (float) 0.5);
 		
 	}
@@ -59,7 +59,7 @@ public class FuzzyBuilder extends PApplet {
 	public void draw() {
 
 		// listen for user inputs and mouse location
-		editor.listen(mousePressed, mouseX, mouseY, pointAtMouse(), newPointAtMouse());
+		editor.listen(mousePressed, pointAtMouse(), newPointAtMouse());
 
 		// Update Model "Backend" with New State (if any)
 		editor.updateModel();
@@ -79,9 +79,9 @@ public class FuzzyBuilder extends PApplet {
 		
 		switch(key ) {
 		case 'r':
-			editor = new RandomSite(400, 200);
+			editor = new RandomSite(21, 7, 400, 200, 100, 200);
 			break;
-		case 'l':
+		case 's':
 			editor = new ShinagawaSite();
 			break;
 		}
@@ -97,7 +97,7 @@ public class FuzzyBuilder extends PApplet {
 	 * Runs once when mouse is pressed down
 	 */
 	public void mousePressed() {
-		editor.mousePressed(newPointAtMouse());
+		editor.mouseTrigger(newPointAtMouse());
 		loop();
 	}
 

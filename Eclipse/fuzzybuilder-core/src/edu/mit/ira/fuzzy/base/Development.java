@@ -14,7 +14,7 @@ import java.util.UUID;
 public class Development {
 
 	public String name;
-	public UUID uniqueID;
+	final private UUID uniqueID;
 
 	// space and point dictionaries share the same key from TileArray.hashKey()
 	// Dictionaries for collection of TileArrays that compose development

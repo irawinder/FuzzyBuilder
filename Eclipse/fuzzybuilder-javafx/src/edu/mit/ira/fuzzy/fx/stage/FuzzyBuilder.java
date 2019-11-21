@@ -2,7 +2,7 @@ package edu.mit.ira.fuzzy.fx.stage;
 import edu.mit.ira.fuzzy.builder.DevelopmentEditor;
 import edu.mit.ira.fuzzy.builder.sample.RandomSite;
 import edu.mit.ira.fuzzy.builder.sample.ShinagawaSite;
-import edu.mit.ira.fuzzy.fx.node.Underlay;
+import edu.mit.ira.fuzzy.fx.base.Underlay;
 import edu.mit.ira.fuzzy.fx.scene.Canvas;
 import edu.mit.ira.fuzzy.fx.scene.Commit;
 import edu.mit.ira.fuzzy.fx.scene.Massing;
@@ -29,6 +29,7 @@ import javafx.stage.Stage;
 public class FuzzyBuilder extends Application {
 	
 	final private String APPLICATION_NAME = "Fuzzy Builder";
+	final private String APPLICATION_VERSION = "v1.0-alpha.2";
 	
 	// "Back End" - Current Scenario Object Model
 	private static DevelopmentEditor scenario_form;
@@ -47,33 +48,31 @@ public class FuzzyBuilder extends Application {
     	// Set the Title Bar of the Application
     	appWindow.setTitle(APPLICATION_NAME);
     	
-    	// Begin the application with a random scenario
-    	loadRandomScenario();
-    	
     	//Initialize Content Containers (SubScenes)
-    	toolbar = new Toolbar();
-		version = new Version();
-		canvas = new Canvas();
-		massing = new Massing();
-		outcome = new Outcome();
-		commit = new Commit();
-		navigate = new Navigate();
-		status = new Status();
+    	toolbar = new Toolbar("toolbar", "Toolbar (TBD)");
+		version = new Version("version", "Version Tree (TBD)");
+		canvas = new Canvas("canvas", "Visual Programming Canvas (TBD)");
+		massing = new Massing("massing", "Form Model (TBD)");
+		outcome = new Outcome("outcome", "Performance Graphs (TBD)");
+		commit = new Commit("commit", "Commit Scenario (TBD)");
+		navigate = new Navigate("navigate", "Navigation Panel (TBD)");
+		status = new Status("status", "Status Bar (TBD)");
 		
 		// Assemble all SubScenes into the main content scene
 		Scene content = Layout.build(toolbar, navigate, version, canvas, massing, outcome, commit, status);
+		content.getStylesheets().add("style.css");
 		
-		// Populate Scenes
-     	renderScenes();
+		// Begin the application with a random scenario
+    	loadRandomScenario();
      	
 		// Handle Key Events for the main content scene
         content.setOnKeyPressed(e -> {
         	
         	// Handle Top-level key commands meant for application-wide event
-    		if (e.getCode() == KeyCode.L) {
-    			loadShinagawaScenario();
-    		} else if (e.getCode() == KeyCode.R) {
+        	if (e.getCode() == KeyCode.R) {
     			loadRandomScenario();
+    		} else if (e.getCode() == KeyCode.S) {
+    			loadShinagawaScenario();
     		}
     		
         	// Pass Key Commands on to "back-end" form model
@@ -95,9 +94,13 @@ public class FuzzyBuilder extends Application {
 			((Commit)     commit).keyPressed(e);
 			((Navigate) navigate).keyPressed(e);
 			((Status)     status).keyPressed(e);
-			
-    		// Refresh Scenes with new State
-    		renderScenes();
+        });
+        
+        content.setOnMouseMoved(me -> {
+        	if(scenario_form.isEditing()) {
+        		((Navigate) navigate).init(scenario_form, APPLICATION_NAME, APPLICATION_VERSION);
+        		((Outcome) outcome).init(scenario_form);
+        	}
         });
         
         // Set the stage and start the show
@@ -111,9 +114,26 @@ public class FuzzyBuilder extends Application {
      * @param map_model
      * @param form_model
      */
-    public void loadRandomScenario() {
-    	scenario_form = new RandomSite(375, 375);
-    	scenario_map = new Underlay("data/default_site_white.png", 0.5, 0.75);
+    private void loadRandomScenario() {
+    	
+    	// Load Basemap
+    	double scale = 0.5;
+    	double opacity = 0.75;
+    	scenario_map = new Underlay("data/default_site_white.png", scale, opacity);
+    	
+    	// Load Random Geometry that fits to Basemap
+    	float width = (float) scenario_map.getImageView().getFitWidth();
+    	float height = (float) scenario_map.getImageView().getFitHeight();
+    	float diameter = Math.min(width, height);
+    	float tileWidth = 30;
+    	float tileHeight = 10;
+    	float x = 0.5f * diameter;
+    	float y = 0.5f * diameter;
+    	float min_radius = 0.3f * diameter;
+    	float max_radius = 0.4f * diameter;
+    	scenario_form = new RandomSite(tileWidth, tileHeight, x, y, min_radius, max_radius);
+    	
+    	initScenes();
     }
     
     /**
@@ -122,20 +142,30 @@ public class FuzzyBuilder extends Application {
      * @param map_model
      * @param form_model
      */
-    public void loadShinagawaScenario() {
+    private void loadShinagawaScenario() {
+    	
+    	// Load Basemap
+    	double scale = 0.5;
+    	double opacity = 0.75;
+    	scenario_map = new Underlay("data/jr_site.png", scale, opacity);
+    	
+    	// Load Geometry
     	scenario_form = new ShinagawaSite();
-    	scenario_map = new Underlay("data/jr_site.png", 0.5, 0.75);
+    	
+    	initScenes();
     }
     
-    public void renderScenes() {
-    	
-    	((Toolbar)   toolbar).render();
-		((Version)   version).render();
-		((Canvas)     canvas).render();
-		((Massing)   massing).render(scenario_form, scenario_map);
-		((Outcome)   outcome).render();
-		((Commit)     commit).render();
-		((Navigate) navigate).render();
-		((Status)     status).render();
+    /**
+     * Initializes the Scenes with JavaFX nodes
+     */
+    private void initScenes() {
+    	((Toolbar)   toolbar).init();
+		((Version)   version).init();
+		((Canvas)     canvas).init();
+		((Massing)   massing).init(scenario_form, scenario_map);
+		((Outcome)   outcome).init(scenario_form);
+		((Commit)     commit).init();
+		((Navigate) navigate).init(scenario_form, APPLICATION_NAME, APPLICATION_VERSION);
+		((Status)     status).init();
     }
 }

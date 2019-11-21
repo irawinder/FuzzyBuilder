@@ -1,4 +1,4 @@
-package edu.mit.ira.fuzzy.fx.node;
+package edu.mit.ira.fuzzy.fx.base;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -16,32 +16,33 @@ import javafx.scene.transform.Transform;
  */
 public class Underlay implements Cloneable {
 
+	private final static double DEFAULT_SCALER_VALUE = 1.0;
+	private final static double DEFAULT_OPACITY_VALUE = 0.75;
+	private final static boolean DEFAULT_VISIBILITY = true;
+	
 	private Image underlay;
 	private ImageView underlayView;
+	private double scaler, opacity;
+	private boolean isVisible;
 	
-	double scaler, opacity;
-	double DEFAULT_SCALER_VALUE = 1.0;
-	double DEFAULT_OPACITY_VALUE = 0.75;
 	
 	/**
 	 * Initialize an empty Underlay
 	 */
 	public Underlay() {
-		underlayView = new ImageView();
-		
 		scaler = DEFAULT_SCALER_VALUE;
-		opacity = DEFAULT_OPACITY_VALUE = 0.75;
+		opacity = DEFAULT_OPACITY_VALUE;
+		isVisible = DEFAULT_VISIBILITY;
+		underlayView = new ImageView();
 	}
 	
 	/**
 	 * Construct and Underlay Image for JavaFX
 	 * 
 	 * @param file_path relative path location of file
-	 * @param scaler scale the image up or down from its native resolution
-	 * @param opacity opacity value of underlay (0 - 1)
 	 */
 	public Underlay(String file_path) {
-		underlayView = new ImageView();
+		this();
 		setImage(file_path);
 	}
 	
@@ -53,7 +54,7 @@ public class Underlay implements Cloneable {
 	 * @param opacity opacity value of underlay (0 - 1)
 	 */
 	public Underlay(String file_path, double scaler, double opacity) {
-		underlayView = new ImageView();
+		this();
 		this.scaler = scaler;
 		this.opacity = opacity;
 		setImage(file_path);
@@ -77,7 +78,7 @@ public class Underlay implements Cloneable {
 	}
 	
 	/**
-	 * Scale the ImageView up or down relative to native pixels. 
+	 * Scale the ImageView up or down 
 	 * 
 	 * @param scaler < 1 makes image smaller; > 1 makes image bigger
 	 */
@@ -86,6 +87,15 @@ public class Underlay implements Cloneable {
 		double h = scaler * underlay.getHeight();
 		underlayView.setFitWidth(w);
 		underlayView.setFitHeight(h);
+	}
+	
+	/**
+	 * Get the base scaler for the view image 
+	 * 
+	 * @return scaler
+	 */
+	public double getScaler() {
+		return scaler;
 	}
 	
 	/**
@@ -127,6 +137,25 @@ public class Underlay implements Cloneable {
 	}
 	
 	/**
+	 * Check if the underlay is visible
+	 * 
+	 * @return
+	 */
+	public boolean isVisible() {
+		return isVisible;
+	}
+	
+	/**
+	 * Set visibility of the underlay
+	 * 
+	 * @param isVisible
+	 */
+	public void setVisible(boolean isVisible) {
+		this.isVisible = isVisible;
+		underlayView.setVisible(isVisible);
+	}
+	
+	/**
 	 * Transform the image in 3D space
 	 * 
 	 * @param t
@@ -135,6 +164,9 @@ public class Underlay implements Cloneable {
 		
 	}
 	
+	/**
+	 * copies the object to a new in-memory object
+	 */
 	public Object clone() throws CloneNotSupportedException {
 		return super.clone();
 	}

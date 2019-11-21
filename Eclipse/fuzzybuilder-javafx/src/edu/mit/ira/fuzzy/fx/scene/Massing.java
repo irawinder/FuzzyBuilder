@@ -1,18 +1,16 @@
 package edu.mit.ira.fuzzy.fx.scene;
 
+import java.util.HashMap;
+
 import edu.mit.ira.fuzzy.base.ControlPoint;
 import edu.mit.ira.fuzzy.base.Point;
 import edu.mit.ira.fuzzy.base.Tile;
 import edu.mit.ira.fuzzy.base.TileArray;
 import edu.mit.ira.fuzzy.builder.DevelopmentEditor;
-import edu.mit.ira.fuzzy.fx.node.Underlay;
-import javafx.scene.Camera;
+import edu.mit.ira.fuzzy.fx.base.Container3D;
+import edu.mit.ira.fuzzy.fx.base.Underlay;
 import javafx.scene.Group;
 import javafx.scene.Node;
-import javafx.scene.PerspectiveCamera;
-import javafx.scene.PointLight;
-import javafx.scene.SceneAntialiasing;
-import javafx.scene.SubScene;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -21,166 +19,116 @@ import javafx.scene.input.ScrollEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
-import javafx.scene.shape.Circle;
-import javafx.scene.shape.Line;
+import javafx.scene.shape.Cylinder;
 import javafx.scene.shape.Polygon;
+import javafx.scene.shape.Sphere;
 import javafx.scene.transform.Rotate;
-import javafx.scene.transform.Translate;
+
+// TODO
+// Draw Tagged Control Point Labels
+// Draw Info at Mouse Hover
+
 /**
- * Massing View Model
- *
+ * Build and Handle the Content for the 3D View Model (e.g. development "massing")
+ * 
  * @author Ira Winder
  *
  */
-public class Massing extends SubScene implements ContentContainer {
-	
-	// TODO
-	// Draw Control Point at Mouse Hover
-	// Draw Tagged Control Point Labels
-	// Draw Info at Mouse Hover
-	// Draw Info/Instructions
-	// Draw Attribute Summary
-	
-    // "Back End" Elements to Render to Container
-    private DevelopmentEditor form_model; 
-    private Underlay map_model;
-    boolean showUnderlay;
+public class Massing extends Container3D {
     
-    // "Front End" Nodes to Pass to Parent JavaFX Scene
- 	private Group nodes3D, nodes2D;
+    // Scale up/down draw units of back end geometry
+    final private static double DEFAULT_VIEW_SCALER = 4.0;
+    
+ 	// Default Elevation Values
+ 	final private static double DEFAULT_MAP_Z     	= - 0.4;
+ 	final private static double DEFAULT_POLY_Z   	= - 0.3;
+ 	final private static double DEFAULT_CONTROL_Z 	= + 1.0;
+ 	final private static double DEFAULT_SITE_Z    	= + 0.0;
+ 	final private static double DEFAULT_ZONE_Z    	= + 0.1;
+ 	final private static double DEFAULT_FOOT_Z    	= + 0.2;
+ 	final private static double DEFAULT_BASE_Z    	= + 0.3;
+ 	final private static double DEFAULT_GRID_Z    	= + 0.5;
  	
- 	// 3D View Parameters
- 	private Camera camera;
- 	private Color background;
- 	private Translate zoom;
- 	private Translate pan;
- 	private Rotate rotateV;
- 	private Rotate rotateH;
-    
+ 	final private static Color ALPHA_COLOR 				= Color.gray(0, 0.5);
+ 	final private static Color GRAY_COLOR 				= Color.GRAY;
+ 	final private static Color ACTIVE_COLOR 			= Color.PURPLE;
+ 	final private static Color REMOVE_COLOR 			= Color.RED;
+ 	final private static Color ADD_COLOR 				= Color.rgb(0, 150, 0, 0.5);
+ 	
+ 	final private static PhongMaterial ALPHA_MATERIAL 	= new PhongMaterial(ALPHA_COLOR);
+	final private static PhongMaterial GRAY_MATERIAL 	= new PhongMaterial(GRAY_COLOR);
+ 	final private static PhongMaterial ACTIVE_MATERIAL 	= new PhongMaterial(ACTIVE_COLOR);
+ 	final private static PhongMaterial REMOVE_MATERIAL 	= new PhongMaterial(REMOVE_COLOR);
+ 	final private static PhongMaterial ADD_MATERIAL 	= new PhongMaterial(ADD_COLOR);
+ 	
+ 	// Default Object Sizes
+ 	final protected static double DEFAULT_CONTROL_SIZE 	= 5.0; // e.g. radius of the control point sphere, in pixels
+ 	final protected static double HOVER_SIZE_SCALER 	= 1.2; // increase size of something when hovering
+ 	final protected static double VOXEL_HEIGHT_BUFFER 	= 0.9; // fraction of voxel to draw, leaving vertical gap between adjacent voxels
+ 	final protected static double VOXEL_WIDTH_BUFFER 	= 0.8; // fraction of voxel to draw, leaving horizontal gap between adjacent voxels
+ 	final protected static double GRID_UNIT_WIDTH 		= 0.5; // fraction of a TileArray() tile width
+ 	final protected static int	  GRID_UNIT_BLEED 		=  25; // number of selection grid units to bleed outside of Development extents
+ 	
+    // "Back End" Elements to Render to Container
+    protected DevelopmentEditor form_model; 
+    protected Underlay map_model;
+ 	
+    // "Front End" View Model Nodes
+ 	private Group light, control, ghost, grid, form, map, overlay;
+  	
+  	// GridMap of geospatial point locations to front-end box element
+  	private HashMap<Node, Point> gridMap;
+  	
+  	// GridMap of control spheres tied to their point location
+  	private HashMap<ControlPoint, Node> controlMap;
+  	
+  	// Is A Control Point or Camera being Dragged?
+   	private boolean mouseMoved, camDragged, ignoreSelect;
+ 	
+	public Massing(String id, String friendlyName) {
+		super(id, friendlyName);
+		
+		cam.setViewScaler(DEFAULT_VIEW_SCALER);
+		
+		light = new Group();	// Lighting Effect Nodes
+		control = new Group();	// Control Point Nodes
+		ghost = new Group();	// Ghost Control Point (to be placed at mouse)
+		grid = new Group();		// Baseline Grid Square Nodes for 3D XY selection
+		form = new Group();		// Form Model Voxel Nodes (i.e. "The Development")
+		map = new Group();		// Raster basemap image
+		overlay = new Group();	// 2D UI overlay
+		
+    	nodes2D.getChildren().addAll(overlay);
+    	nodes3D.getChildren().addAll(control, ghost, grid, light, form, map);
+    	
+    	ignoreSelect = false;
+		mouseMoved = false;
+		camDragged = false;
+		
+		gridMap = new HashMap<Node, Point>();
+		controlMap = new HashMap<ControlPoint, Node>();
+		
+		this.setFill(Color.TRANSPARENT);
+	}
+	
     /**
-     * Initialize a new content container for Massing
-     * 
-     * @param form_model scenario geometry
-     * @param map_model scenario basemap
-     */
-    public Massing() {
-    	
-    	// Initialize Container and Backend
-    	super(EMPTY_GROUP, DEFAULT_WIDTH, DEFAULT_HEIGHT);
-    	
-    	// Initialize Camera and Pan
-    	setZoom(-1000);
-    	setPan(325, 425, 0);
-    	setRotateV(-20);
-    	setRotateH(-45);
-    	camera = new PerspectiveCamera(true);
-		camera.getTransforms().addAll(rotateV, zoom);
-		camera.setNearClip(10);
-		camera.setFarClip(10000);
-    	setBackground(Color.hsb(0,0,1.0));
-    	showUnderlay = true;
-    	
-    	// Initialize Parent Nodes
-    	nodes3D = new Group();
-    	nodes2D = new Group();
-        
-    	// Initialize 3D SubScene
-        SubScene scene3D = new SubScene(nodes3D, getWidth(), getHeight(), true, SceneAntialiasing.BALANCED);
-    	scene3D.setFill(background);
-        scene3D.setCamera(camera);
-    	
-        // Initialize Overlay
-    	SubScene scene2D = new SubScene(nodes2D, getWidth(), getHeight());
-        scene2D.setFill(Color.TRANSPARENT);
-        
-        // Bind dimensions of child scenes
-        scene2D.widthProperty().bind(widthProperty());
-        scene2D.heightProperty().bind(heightProperty());
-        scene3D.widthProperty().bind(widthProperty());
-        scene3D.heightProperty().bind(heightProperty());
-        
-        // Mouse and Keyboard Events
-        handleMouseEvents(this);
-        
-        // Set the Parent Node of container content
-        setRoot(new Group(scene3D, scene2D));
-    }
-    
-    /**
-     * Set the back end content of the model
+     * Set the back end content of the model and initialize view model
      * 
      * @param form_model
      * @param map_model
      */
-    public void render(DevelopmentEditor form_model, Underlay map_model) {
+    public void init(DevelopmentEditor form_model, Underlay map_model) {
     	setFormModel(form_model);
     	setMapModel(map_model);
-    	drawNodes();
-    }
-
-	public void keyPressed(KeyEvent e) {
-
-		// Print Camera Position
-		if (e.getCode() == KeyCode.C) {
-			printCamera();
-		}
-		// Print Camera Position
-		if (e.getCode() == KeyCode.U) {
-			showUnderlay = !showUnderlay;
-		}
+    	this.init();
 	}
-	
-	/**
-	 * Zoom level of Camera
+    
+    /**
+	 * Populates the View Model with a form from DevelopmentEditor class
 	 * 
-	 * @param distance (more negative is farther away)
+	 * @param form_model DevelopmentBuider()
 	 */
-	public void setZoom(double distance) {
-		this.zoom = new Translate(0, 0, ensureRange(distance, -2000, -100));
-	}
-	
-	/**
-	 * Set Amount of panning from origin
-	 * @param x
-	 * @param y
-	 * @param z
-	 */
-	public void setPan(double x, double y, double z) {
-		this.pan = new Translate(-x, z, y);
-	}
-	
-	/**
-	 * Vertical Rotation (JavaFX uses X_AXIS)
-	 * @param angle in degrees
-	 */
-	public void setRotateV(double angle) {
-		this.rotateV = new Rotate(angle, Rotate.X_AXIS);
-	}
-	
-	/**
-	 * Horizontal Rotation (JavaFX uses Y_AXIS)
-	 * @param angle in degrees
-	 */
-	public void setRotateH(double angle) {
-		this.rotateH = new Rotate(angle, Rotate.Y_AXIS);
-		
-	}
-	
-	/**
-	 * Background color of infinity
-	 * 
-	 * @param color
-	 */
-	public void setBackground(Color color) {
-		this.background = color;
-	}
-	
-	/**
-	 * Populates the View Model with a form from Builder class
-	 * 
-	 * @param form form from Builder class
-	 */
-	public void setFormModel(DevelopmentEditor form_model) {
+	private void setFormModel(DevelopmentEditor form_model) {
 		this.form_model = form_model;
 	}
 	
@@ -189,85 +137,356 @@ public class Massing extends SubScene implements ContentContainer {
 	 * 
 	 * @param map_model Map Underlay passed from Underlay class
 	 */
-	public void setMapModel(Underlay map_model) {
+	private void setMapModel(Underlay map_model) {
 		this.map_model  = map_model;
 	}
-
+    
 	/**
-	 * Populate 2D and 3D graphics objects 
-	 * 
-	 * @return a collection of JavaFX groups (3D objects)
+	 * render the current state of the backend model
 	 */
-	public void drawNodes() {
+	@Override
+	public void init() {
+		initLights();
+		initControl();
+		initGhost();
+		initGrid();
+    	initForm();
+    	initMap();
+    	initOverlay();
+    	
+		handleMouseEvents();
+	}
+	
+	/**
+	 * Initialize all event handlers related to scene-wide mouse events
+	 */
+	private void handleMouseEvents() {
 		
-		nodes2D.getChildren().clear();
-		nodes3D.getChildren().clear();
+		this.setOnMouseMoved((MouseEvent me) -> {
+			cam.move(me);
+			updateHover(me);
+		});
 		
-		Label l = new Label("Massing Overlay");
-    	nodes2D.getChildren().add(l);
+		this.setOnMouseDragged((MouseEvent me) -> {
+			if (form_model.selected == null || ghost.isVisible() || mouseMoved) {
+				cam.drag(me);
+				camDragged = true;
+			}
+			mouseMoved = true;
+		});
 		
-		// Set up Ambient Lighting Effects
-		nodes3D.getChildren().add(overheadLight());
-		nodes3D.getChildren().add(sideLight());
+		this.setOnScroll((ScrollEvent se) -> {
+			cam.zoom(se);
+		});
 		
-		// Add and orient Underlay map
-		if (showUnderlay) {
-			map_model.setImageView();
-			orientShape((Node) map_model.getImageView(), 0, 0, -0.4f);
-			nodes3D.getChildren().add(map_model.getImageView());
-		}
+		this.setOnMousePressed((MouseEvent me) -> {
+			// Adding or Removing a Point
+			if (form_model.addPoint || form_model.removePoint)
+				mouseMoved = false;
+			camDragged = false;
+		});
 
+		this.setOnMouseReleased((MouseEvent me) -> {
+			// Adding a Point
+			if (form_model.addPoint) {
+				// Use ghost as template to add new control point
+				if (ghost.isVisible() && !mouseMoved)
+					addPointAtMouse(me);
+			// Moving a Point
+			} else if (!form_model.removePoint) {
+				// If the control point is moved and camera has not been panned, deselect it
+				if (mouseMoved && !camDragged) {
+					form_model.deselect();
+					mouseMoved = false;
+				}
+			}
+			camDragged = false;
+		});
+	}
+	
+    /**
+     * Update hovering visualization when mouse is moved
+     * 
+     * @param me mouse event
+     */
+    public void updateHover(MouseEvent me) {
+    	// Hide hovering sphere when not over valid spot
+		Node intersected = me.getPickResult().getIntersectedNode();
+		String id = intersected.getId();
+		if (id != null) {
+			if (id.equals("scene3D")) {
+				ghost.setVisible(false);
+			}
+		}
+    }
+    
+    /**
+     * Add Control Point where mouse is
+     * 
+     * @param me mouse event
+     */
+    public void addPointAtMouse(MouseEvent me) {
+    	boolean mousePressed = true;
+		ControlPoint existingPointAtMouse = null; // not applicable here
+    	if (form_model.hovering != null && form_model.addPoint) {
+			Point newPointAtMouse = form_model.hovering;
+			form_model.mouseTrigger(newPointAtMouse);
+			form_model.listen(mousePressed, existingPointAtMouse, newPointAtMouse);
+			form_model.updateModel();
+			this.init(form_model, map_model);
+		}
+    }
+    
+	/**
+	 * Key commands that effect the container
+	 * 
+	 * @param e key event
+	 */
+    @Override
+	public void keyPressed(KeyEvent e) {
+
+		// Reset Camera Position
+    	if (e.getCode() == KeyCode.Z) {
+			cam.init();
+			initMap();
+		}
+		// toggle map model visibility
+		if (e.getCode() == KeyCode.U) {
+			map_model.setVisible(!map_model.isVisible());
+		}
+		// Torn Editing on/off
+		if (e.getCode() == KeyCode.E) {
+			
+		}
+		initControl();
+		initGrid();
+		initGhost();
+		initForm();
+	}
+
+    /**
+     * Initialize view model for ControlPoints. These nodes are designed to persist for any given scenario.
+     */
+    private void initControl() {
+    	control.getChildren().clear();
+    	controlMap.clear();
+    	
+		// Draw Active Control Points' Inner Sphere
+		if (form_model.isEditing()) {
+			
+			for (ControlPoint p : form_model.control.points()) {
+				if (p.active()) {
+					
+					// Draw Control Point Sphere
+					Sphere s = new Sphere();
+					s.setMaterial(ACTIVE_MATERIAL);
+					s.setRadius(cam.scaler() * DEFAULT_CONTROL_SIZE);
+					s.setId("active_control_point");
+					orientShape3D((Node) s, cam.scaler() * p.x, cam.scaler() * p.y, DEFAULT_CONTROL_Z);
+					
+					// Draw Control Point Outer Ring
+					Cylinder or = new Cylinder();
+					or.setRadius(cam.scaler() * HOVER_SIZE_SCALER * HOVER_SIZE_SCALER * DEFAULT_CONTROL_SIZE);
+					or.setHeight(0);
+					or.setMaterial(GRAY_MATERIAL);
+					orientShape3D((Node) or, cam.scaler() * p.x, cam.scaler() * p.y, DEFAULT_CONTROL_Z);
+					
+					// Aggregated Control Point View Model
+					Group cPoint = new Group(s, or);
+					control.getChildren().add(cPoint);
+					controlMap.put(p, cPoint);
+					
+					// Mouse Events for Control Pointers
+					Point newPointAtMouse = null; // not applicable here
+					ControlPoint existingPointAtMouse = p;
+					boolean mousePressed = true;
+					s.setOnMouseEntered(me -> {
+						if (form_model.removePoint) {
+							s.setMaterial(REMOVE_MATERIAL);
+						} else {
+							s.setMaterial(ACTIVE_MATERIAL);
+						}
+						s.setRadius(cam.scaler() * HOVER_SIZE_SCALER * DEFAULT_CONTROL_SIZE);
+						form_model.listen(!mousePressed, existingPointAtMouse, newPointAtMouse);
+						form_model.updateModel();
+						ghost.setVisible(false);
+					});
+					s.setOnMouseExited(me -> {
+						s.setMaterial(ACTIVE_MATERIAL);
+						s.setRadius(cam.scaler() * DEFAULT_CONTROL_SIZE);
+						form_model.listen(!mousePressed, existingPointAtMouse, newPointAtMouse);
+						form_model.updateModel();
+					});
+					s.setOnMousePressed((MouseEvent me) -> {
+						s.setRadius(cam.scaler() * DEFAULT_CONTROL_SIZE);
+						form_model.listen(mousePressed, existingPointAtMouse, newPointAtMouse);
+						// Ignore Selection on mouse release if already selected
+						if (form_model.selected != null) {
+							ignoreSelect = true;
+						} else {
+							ignoreSelect = false;
+						}
+						mouseMoved = false;
+					});
+					s.setOnMouseReleased((MouseEvent me) -> {
+						if (!mouseMoved && form_model.selected == null && !ignoreSelect) {
+							// Check to remove or select ControlPoint
+							ghost.setVisible(false);
+							form_model.mouseTrigger(newPointAtMouse);
+							form_model.updateModel();
+							initGrid();
+							initControl();
+							initForm();
+						} else if (form_model.selected != null && !camDragged) {
+							// check to deselect a Control Point
+							form_model.deselect();
+						}
+					});
+				}
+			}
+		}
+    }
+    
+    /**
+	 * Initialize a structured grid of points that a user might select from
+	 */
+	public void initGrid() {
+		grid.getChildren().clear();
+		gridMap.clear();
+
+		if (form_model.isEditing()) {
+			double interval = cam.scaler() * GRID_UNIT_WIDTH * form_model.getTileWidth();
+			double minX = cam.scaler() * form_model.minControlX() - GRID_UNIT_BLEED * interval;
+			double maxX = cam.scaler() * form_model.maxControlX() + GRID_UNIT_BLEED * interval;
+			double minY = cam.scaler() * form_model.minControlY() - GRID_UNIT_BLEED * interval;
+			double maxY = cam.scaler() * form_model.maxControlY() + GRID_UNIT_BLEED * interval;
+			double boxW = interval;
+			double boxH = 0;
+			double boxZ = 0;
+			Color col = Color.gray(SUBDUED_SATURATION, SUBTLE_ALPHA);
+			for (double x = minX + interval / 2; x < maxX; x += interval) {
+				for (double y = minY + interval / 2; y < maxY; y += interval) {
+					double boxX = x;
+					double boxY = y;
+					Box b = basicBox(boxX, boxY, boxZ, boxW, boxH, DEFAULT_GRID_Z, col);
+					b.setMaterial(new PhongMaterial(Color.TRANSPARENT));
+					b.setId("grid");
+
+					// Mouse Events for Control Pointers
+					ControlPoint existingPointAtMouse = null; // not applicable here
+					boolean mousePressed = true;
+					float locX = (float) (boxX / cam.scaler() + 0.01f * Math.random());
+					float locY = (float) (boxY / cam.scaler() + 0.01f * Math.random());
+					b.setOnMouseEntered(me -> {
+						Point newPointAtMouse = new Point(locX, locY);
+						form_model.listen(!mousePressed, existingPointAtMouse, newPointAtMouse);
+						form_model.updateModel();
+						gridMap.put(b, newPointAtMouse);
+
+						// Set Ghost for new Control Point
+						if (form_model.addPoint) {
+							ghost.setVisible(true);
+							orientShape3D((Node) ghost, cam.scaler() * newPointAtMouse.x,
+									cam.scaler() * newPointAtMouse.y, DEFAULT_CONTROL_Z);
+						}
+					
+						// Move point around after clicking it
+						if (form_model.selected != null) {
+							mouseMoved = true;
+							Point new_location = gridMap.get(b);
+							if (new_location != null) {
+								form_model.selected.x = newPointAtMouse.x;
+								form_model.selected.y = newPointAtMouse.y;
+							}
+							form_model.detectChange(form_model.selected.getType());
+							form_model.updateModel();
+							if (form_model.selected != null) {
+								Group cPoint = (Group) controlMap.get(form_model.selected);
+								if (cPoint != null) {
+									for (int i = 0; i < cPoint.getChildren().size(); i++) {
+										Node n = cPoint.getChildren().get(i);
+										orientShape3D(n, cam.scaler() * newPointAtMouse.x,
+												cam.scaler() * newPointAtMouse.y, DEFAULT_CONTROL_Z);
+									}
+								}
+							}
+							initForm();
+						}
+					});
+					grid.getChildren().add(b);
+				}
+			}
+		}
+	}
+	
+    /**
+     * Initialize Ghost of a Control Point
+     */
+    public void initGhost() {
+    	ghost.getChildren().clear();
+    	
+    	// Draw Control Point Hover Sphere
+		Sphere s = new Sphere();
+		s.setMaterial(ADD_MATERIAL);
+		s.setRadius(cam.scaler() * DEFAULT_CONTROL_SIZE);
+		
+		// Draw Control Point Hover Ring
+		Cylinder r = new Cylinder();
+		r.setMaterial(ALPHA_MATERIAL);
+		r.setRadius(cam.scaler() * HOVER_SIZE_SCALER * HOVER_SIZE_SCALER * DEFAULT_CONTROL_SIZE);
+		r.setHeight(0);
+		
+		Group hoverPoint = new Group(r, s);
+		ghost.getChildren().add(hoverPoint);
+		ghost.setVisible(false);
+    }
+    
+	/**
+	 * Set up Ambient Lighting Effects
+	 * 
+	 * @param lights
+	 */
+	public void initLights() {
+		light.getChildren().clear();
+		light.getChildren().add(overheadLight());
+		light.getChildren().add(sideLight());
+	}
+	
+	/**
+	 * Initialize view model of form. Don't count on anything in here to persist longer than a few frames
+	 */
+	public void initForm() {
+		form.getChildren().clear();
+		
+		// Extra opacity to apply when editing control points
+		double editingScaler = 1.0;
+		if (form_model.isEditing()) editingScaler = 0.5;
+		
 		// Draw Site Vector Polygon
-		Color site_fill         = Color.hsb(0, 0, 0.95, 0.5);
-		Color site_stroke       = Color.hsb(0, 0, 1.00, 0.5);
-		float site_strokeWeight = 1.0f;
+		Color site_fill         = Color.TRANSPARENT;
+		Color site_stroke       = Color.gray(SUBDUED_SATURATION, 0.25*SUBTLE_ALPHA);
+		double site_strokeWeight = 0 * cam.scaler() * SUBDUED_STROKE;
 		if (form_model.showPolygons) {
-			site_stroke         = Color.hsb(0, 0, 1.00, 1.0);
-			site_strokeWeight   = 2.0f;
+			site_stroke         = Color.gray(SUBDUED_SATURATION, 0.5*SUBTLE_ALPHA);
+			site_strokeWeight   = 2 * cam.scaler() * DEFAULT_STROKE;
 		}
 		Polygon site_polygon = new Polygon();
 		for (Point p : form_model.site_boundary.getCorners()) {
-			site_polygon.getPoints().addAll(new Double[] { (double) p.x, (double) p.y });
+			site_polygon.getPoints().addAll(new Double[] { (double) cam.scaler()*p.x, (double) cam.scaler()*p.y });
 		}
 		site_polygon.setFill(site_fill);
 		site_polygon.setStroke(site_stroke);
 		site_polygon.setStrokeWidth(site_strokeWeight);
-		orientShape((Node) site_polygon, 0, 0, -0.3f);
-		nodes3D.getChildren().add(site_polygon);
-
-		// Draw Voxel Bases
-		for (TileArray space : form_model.spaceList("base")) {
+		orientShape2D((Node) site_polygon, 0, 0, DEFAULT_POLY_Z);
+		form.getChildren().add(site_polygon);
+		
+		// Draw Voxel Sites
+		for (TileArray space : form_model.spaceList("site")) {
 			if(form_model.showSpace(space) && form_model.showTiles) {
-				Color col = Color.hsb(space.getHueDegree(), 0.5, 0.8, 0.95);
+				Color col = Color.gray(DEFAULT_SATURATION, editingScaler * SUBDUED_ALPHA);
 				for (Tile t : space.tileList()) {
-					// if in 2D view mode, Only draws ground plane 
-					if (t.location.z == 0) {
-						boolean isFlat = space.name.substring(0, 3).equals("Cou");
-						Box b = renderVoxel(t, col, 0, isFlat);
-						nodes3D.getChildren().add(b);
-					}
-				}
-			}
-		}
-
-		// Draw Voxel Footprints
-		for (TileArray space : form_model.spaceList("footprint")) {
-			if(form_model.showSpace(space) && form_model.showTiles) {
-				Color col;
-				if (space.name.equals("Building")) {
-					col = Color.hsb(space.getHueDegree(), 0.5, 0.8);
-				} else if (space.name.equals("Setback")) {
-					col = Color.hsb(space.getHueDegree(), 0.3, 0.9, 0.75);
-				} else {
-					col = Color.hsb(space.getHueDegree(), 0.5, 0.8);
-				}
-				for (Tile t : space.tileList()) {
-					Box b = renderVoxel(t, col, 0.1, true);
-					nodes3D.getChildren().add(b);
-					if (space.name.equals("Building")) {
-						b = renderVoxel(t, col, 0.1, false);
-						nodes3D.getChildren().add(b);
-					}
+					Box b = renderVoxel(t, col, DEFAULT_SITE_Z, true);
+					form.getChildren().add(b);
 				}
 			}
 		}
@@ -275,84 +494,74 @@ public class Massing extends SubScene implements ContentContainer {
 		// Draw Voxel Zones
 		for (TileArray space : form_model.spaceList("zone")) {
 			if(form_model.showSpace(space) && form_model.showTiles) {
-				Color col = Color.hsb(space.getHueDegree(), 0.3, 0.9, 0.75);
+				Color col = Color.hsb(space.getHueDegree(), SUBDUED_SATURATION, SUBDUED_BRIGHTNESS, DEFAULT_ALPHA);
 				for (Tile t : space.tileList()) {
-					Box b = renderVoxel(t, col, 0.2, false);
-					nodes3D.getChildren().add(b);
+					Box b = renderVoxel(t, col, DEFAULT_ZONE_Z, true);
+					form.getChildren().add(b);
 				}
 			}
 		}
 		
-		// Draw Voxel Sites
-		for (TileArray space : form_model.spaceList("site")) {
+		// Draw Voxel Footprints
+		for (TileArray space : form_model.spaceList("footprint")) {
 			if(form_model.showSpace(space) && form_model.showTiles) {
-				Color col = Color.gray(0, 0.2);
+				Color col = Color.hsb(space.getHueDegree(), DEFAULT_SATURATION, DEFAULT_BRIGHTNESS, DEFAULT_ALPHA);
+				if (space.name.equals("Setback"))
+					col = Color.hsb(space.getHueDegree(), DEFAULT_SATURATION, SUBTLE_BRIGHTNESS, SUBTLE_ALPHA);
+				if (space.name.equals("Void"))
+					col = Color.hsb(space.getHueDegree(), DEFAULT_SATURATION, SUBDUED_BRIGHTNESS, SUBDUED_ALPHA);
 				for (Tile t : space.tileList()) {
-					Box b = renderVoxel(t, col, 0.3, true);
-					nodes3D.getChildren().add(b);
+					Box b = renderVoxel(t, col, DEFAULT_FOOT_Z, true);
+					form.getChildren().add(b);
+					if (space.name.equals("Building")) {
+						b = renderVoxel(t, col, DEFAULT_FOOT_Z, true);
+						form.getChildren().add(b);
+					}
 				}
 			}
 		}
 		
-		// Draw Tagged Control Points
-		for (ControlPoint p : form_model.control.points()) {
-			Color control_fill         = Color.TRANSPARENT;
-			Color control_stroke       = Color.hsb(0, 0, 0, 0.50);
-			float control_strokeWidth = 1.0f;
-			
-			//Draw Circle
-			Circle c = new Circle();
-			c.setRadius(5);
-			c.setFill(control_fill);
-			c.setStroke(control_stroke);
-			c.setStrokeWidth(control_strokeWidth);
-			orientShape((Node)c, p.x, p.y, 0.2f);
-			if (p.active()) nodes3D.getChildren().add(c);
-			
-			// Draw CrossHairs
-			int size = 4;
-			if (!p.active()) {
-				control_stroke = Color.hsb(0, 0, 0, 0.1);
-				size = 2;
+		// Draw Voxel Bases
+		for (TileArray space : form_model.spaceList("base")) {
+			if(form_model.showSpace(space) && form_model.showTiles) {
+				Color col = Color.hsb(space.getHueDegree(), DEFAULT_SATURATION, DEFAULT_BRIGHTNESS, editingScaler * DEFAULT_ALPHA);
+				for (Tile t : space.tileList()) {
+					// if in 2D view mode, Only draws ground plane 
+					if (t.location.z == 0) {
+						boolean isFlat = space.name.substring(0, 3).equals("Cou"); // short for "Courtyard"
+						Box b = renderVoxel(t, col, DEFAULT_BASE_Z, isFlat);
+						form.getChildren().add(b);
+					}
+				}
 			}
-			Line l1 = new Line();
-			l1.setStartX(p.x-size); l1.setStartY(p.y-size); l1.setEndX(p.x+size); l1.setEndY(p.y+size);
-			l1.setFill(control_fill);
-			l1.setStroke(control_stroke);
-			l1.setStrokeWidth(control_strokeWidth);
-			Line l2 = new Line();
-			l2.setStartX(p.x-size); l2.setStartY(p.y+size); l2.setEndX(p.x+size); l2.setEndY(p.y-size);
-			l2.setFill(control_fill);
-			l2.setStroke(control_stroke);
-			l2.setStrokeWidth(control_strokeWidth);
-			orientShape((Node)l1, 0, 0, 0.2f);
-			orientShape((Node)l2, 0, 0, 0.2f);
-			nodes3D.getChildren().addAll(l1, l2);
 		}
 	}
 	
-	/**
-	 * Construct a 3D Overhead Light Source
-	 */
-	private Node overheadLight() {
-		PointLight light = new PointLight();
-		light.setColor(Color.WHITE);
-		light.getTransforms().add(new Translate(0, -400, 0));
-		return light;
+	public void initMap() {
+		map.getChildren().clear();
+		
+		// Add and orient Underlay map (draw last to be able to see through bottom!)
+		map_model.setImageView();
+		orientShape2D((Node) map_model.getImageView(), 0, 0, DEFAULT_MAP_Z);
+		map_model.setScale(cam.scaler() * map_model.getScaler());
+		map_model.getImageView().setMouseTransparent(true);
+		map.getChildren().add(map_model.getImageView());
 	}
 	
 	/**
-	 * Construct a 3D Side Light Source
+	 * Initialize 2D Overlay
 	 */
-	private Node sideLight() {
-		PointLight light = new PointLight();
-		light.setColor(Color.WHITE);
-		light.getTransforms().add(new Translate(-400, 0, -400));
-		return light;
+	public void initOverlay() {
+		overlay.getChildren().clear();
+		
+		// Placeholder for 2D overlay
+		Label l = new Label("Massing Editor");
+    	overlay.getChildren().add(l);
 	}
 	
 	/**
 	 * Construct a 3D pixel (i.e. "Voxel") from tile attributes
+	 * 
 	 * @param t Tile to render
 	 * @param col Color of voxel
 	 * @param z_offset manual z_offset for rendering some layers above others even when their z_attributes are the same
@@ -360,137 +569,20 @@ public class Massing extends SubScene implements ContentContainer {
 	 * @return a JavaFX Box Node
 	 */
 	private Box renderVoxel(Tile t, Color col, double z_offset, boolean flat) {
-		float scaler_uv = (float) 0.9;
-		float scaler_w = (float) 0.8;
-
-		float boxW = scaler_uv * t.scale_uv;
-		float boxH = scaler_w * t.scale_w;
+		double boxW = cam.scaler() * VOXEL_HEIGHT_BUFFER * t.scale_uv;
+		double boxH = cam.scaler() * VOXEL_WIDTH_BUFFER * t.scale_w;
+		double boxX = cam.scaler() * t.location.x;
+		double boxY = cam.scaler() * t.location.y;
+		double boxZ = cam.scaler() * t.location.z;
 		if(flat) boxH = 0;
-		Box b = new Box(boxW, boxH, boxW);
-
-		Translate pos = new Translate(
-				+ t.location.x, 
-				- t.location.z + z_offset - 0.5*boxH, 
-				- t.location.y);
-		Rotate rot = new Rotate(RadianToDegree(form_model.tile_rotation), Rotate.Y_AXIS);
-		b.getTransforms().addAll(rotateH, pan, pos, rot);
-
-		// Box Color
-		PhongMaterial material = new PhongMaterial(col);
-		b.setMaterial(material);
+		Rotate rot = new Rotate(cam.RadianToDegree(form_model.tile_rotation), Rotate.Y_AXIS);
+		Box b = basicBox(boxX, boxY, boxZ, boxW, boxH, z_offset, col);
+		b.getTransforms().add(rot);
+		b.setId("voxel");
+		
+		// Sets Transparent to Mouse Events when Editing
+		if (form_model.isEditing()) b.setMouseTransparent(true);
 
 		return b;
-	}
-	
-	/**
-	 * Make and position a 2D image or shape to the 3D environment
-	 * 
-	 * @param input
-	 * @param z_offset
-	 */
-	public void orientShape(Node input, float x_offset, float y_offset, float z_offset) {
-		Rotate rotateFlat = new Rotate(-90, Rotate.X_AXIS);
-		Translate pos = new Translate(x_offset, -z_offset, -y_offset);
-		input.getTransforms().addAll(rotateH, pan, pos, rotateFlat);
-	}
-
-	// Mouse locations on Canvas
-	private double mousePosX, mousePosY = 0;
-	/**
-	 * Actions to take when mouse events are detected
-	 * 
-	 * @param scene3d
-	 */
-	public void handleMouseEvents(SubScene scene) {
-		
-		// Load the mouse location on the scene while pressed down
-		scene.setOnMousePressed((MouseEvent me) -> {
-			mousePosX = me.getSceneX();
-			mousePosY = me.getSceneY();
-		});
-		
-		scene.setOnMouseDragged((MouseEvent me) -> {
-			
-			// Mouse displacement while pressed and dragged
-			double dx = + (mousePosX - me.getSceneX());
-			double dy = - (mousePosY - me.getSceneY());
-
-
-			// i.e. right mouse button
-			if (me.isSecondaryButtonDown()) {
-
-				// Rotate View
-				double angleV = rotateV.getAngle() - (dy / 10 * +360) * (Math.PI / 180);
-				double angleH = rotateH.getAngle() - (dx / 10 * -360) * (Math.PI / 180);
-				angleV = ensureRange(angleV, -90, 90);
-				rotateV.setAngle(angleV);
-				rotateH.setAngle(angleH);
-
-			// i.e. left mouse button
-			} else if (me.isPrimaryButtonDown()) {
-
-				// Pan View
-				double angleH = DegreeToRadian((float) rotateH.getAngle());
-				double dx_r = dx*Math.cos(angleH) - dy*Math.sin(angleH);
-				double dy_r = dy*Math.cos(angleH) + dx*Math.sin(angleH);
-				double panU = pan.getX() - dx_r;
-				double panV = pan.getZ() - dy_r;
-				pan.setX(panU);
-				pan.setZ(panV);
-
-			}
-			mousePosX = me.getSceneX();
-			mousePosY = me.getSceneY();
-		});
-
-		// Enable Zoom in and Zoom Out via scroll wheel
-		scene.setOnScroll((ScrollEvent se) -> {
-			double dy = se.getDeltaY();
-			double new_zoom = zoom.getZ() - dy;
-			new_zoom = ensureRange(new_zoom, -2000, -100);
-			zoom.setZ(new_zoom);
-		});
-	}
-	
-	/**
-	 * Returns a value capped to a specified minimum and maximum value
-	 * 
-	 * @param value input value
-	 * @param min minimum allowable value
-	 * @param max maximum allowable value
-	 * @return constrained value
-	 */
-	private double ensureRange(double value, double min, double max) {
-		return Math.min(Math.max(value, min), max);
-	}
-
-	/**
-	 * Convert radian value to degrees
-	 * 
-	 * @param radian
-	 * @return degrees (0-360)
-	 */
-	private double RadianToDegree(float radian) {
-		return (180 * radian / Math.PI)%360;
-	}
-	
-	/**
-	 * Convert degree value to radians
-	 * 
-	 * @param degree
-	 * @return radians (0-2PI)
-	 */
-	private double DegreeToRadian(float radian) {
-		return (Math.PI * radian / 180)%(2*Math.PI);
-	}
-	
-	/**
-	 * Print Camera Parameters to console
-	 */
-	public void printCamera() {
-		System.out.println("Camera Zoom: " + zoom.getZ());
-		System.out.println("Camera Pan: (" + -pan.getX() + ", " + pan.getZ() + ", " + pan.getY() + ")");
-		System.out.println("Camera RotateV: " + rotateV.getAngle());
-		System.out.println("Camera RotateH: " + rotateH.getAngle());
 	}
 }
