@@ -8,6 +8,7 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TabPane.TabClosingPolicy;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.Background;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
@@ -44,12 +45,14 @@ public class Navigate extends Container2D {
 		
 		// Instantiate persistent view containers
 		nav = new TabPane();
+		nav.setBackground(Background.EMPTY);
 		nav.setTabClosingPolicy(TabClosingPolicy.UNAVAILABLE);
 		readMe = new Tab();
 		
 		nav.getTabs().add(readMe);
         
         VBox content = new VBox(nav);
+        content.setBackground(Background.EMPTY);
         setRoot(content);
 	}
 
