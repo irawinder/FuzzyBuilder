@@ -20,7 +20,7 @@ public class Camera3D {
 	
  	// Default Camera Values
 	final public static double DEFAULT_SCALER = 1.0;
-	final public static double DEFAULT_ZOOM = -1000;
+	final public static double DEFAULT_ZOOM = -700;
 	final public static double DEFAULT_PAN_X = 325;
 	final public static double DEFAULT_PAN_Y = 425;
 	final public static double DEFAULT_ROTATE_V = -20;
