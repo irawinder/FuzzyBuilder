@@ -1,5 +1,4 @@
 package edu.mit.ira.fuzzy.fx.scene;
-import edu.mit.ira.fuzzy.base.TileArray;
 import edu.mit.ira.fuzzy.builder.DevelopmentEditor;
 import edu.mit.ira.fuzzy.fx.base.Container2D;
 import javafx.beans.value.ChangeListener;
@@ -29,7 +28,7 @@ public class Navigate extends Container2D {
     TabPane nav;
     
     // Tabs to bring into navigation pane
-    Tab readMe, objectModel;
+    Tab readMe;
     
     /**
  	 * Instantiate a new Navigation Container with a given ID and friendly name
@@ -47,10 +46,8 @@ public class Navigate extends Container2D {
 		nav = new TabPane();
 		nav.setTabClosingPolicy(TabClosingPolicy.UNAVAILABLE);
 		readMe = new Tab();
-		objectModel = new Tab();
 		
 		nav.getTabs().add(readMe);
-        nav.getTabs().add(objectModel);
         
         VBox content = new VBox(nav);
         setRoot(content);
@@ -80,7 +77,6 @@ public class Navigate extends Container2D {
 		
 		// Initialize Tabs
 		initReadMe();
-        initObjectModel();
 		
         // Handle Mouse Events
 		handleMouseEvents();
@@ -97,23 +93,6 @@ public class Navigate extends Container2D {
         
 		Text t = new Text();
 		t.setText(readMeText());
-		t.setWrappingWidth(this.getWidth() - 4*TEXT_BUFFER);
-		
-		sp.setContent(t);
-		sp.setPadding(TEXT_INSETS);
-	}
-
-	/**
-	 * Initialize Object Model Summary into a Tab
-	 */
-	private void initObjectModel() {
-		
-		ScrollPane sp = new ScrollPane();
-		objectModel.setText("Object Model");
-		objectModel.setContent(sp);
-		
-		Text t = new Text();
-		t.setText(objectModelText());
 		t.setWrappingWidth(this.getWidth() - 4*TEXT_BUFFER);
 		
 		sp.setContent(t);
@@ -183,36 +162,6 @@ public class Navigate extends Container2D {
 		readMe += "\n" + "Press 'z' to reset camera to default";
 		
 		return readMe;
-	}
-	
-	/**
-	 * Make summary text for object model
-	 * 
-	 * @return summary text
-	 */
-	private String objectModelText() {
-		String summary = "";
-		summary += "Scenario Name:";
-		summary += "\n" + form_model;
-		summary += "\n";
-		summary += "\n" + "Tile Dimensions:";
-		summary += "\n" + form_model.tileW + " x " + form_model.tileW + " x " + form_model.tileH + " units";
-		summary += "\n";
-		summary += "\n" + form_model.extents();
-		summary += "\n";
-		summary += "\n" + "Space Object Directory:";
-		for (TileArray space : form_model.spaceList()) {
-			if (form_model.showSpace(space)) {
-				summary += "\n";
-				for(int i=0; i<space.parent_name.length(); i++) {
-					if(space.parent_name.substring(i,i+1).contentEquals("/")) {
-						summary += ".../ ";
-					}
-				}
-				summary += ".../ " + space;
-			}
-		}
-		return summary;
 	}
 	
 	/**
