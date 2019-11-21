@@ -27,8 +27,6 @@ import javafx.scene.transform.Rotate;
 // TODO
 // Draw Tagged Control Point Labels
 // Draw Info at Mouse Hover
-// Draw Info/Instructions
-// Draw Attribute Summary
 
 public class Massing extends Container3D {
     
@@ -81,8 +79,8 @@ public class Massing extends Container3D {
   	// Is A Control Point or Camera being Dragged?
    	private boolean mouseMoved, camDragged, ignoreSelect;
  	
-	public Massing() {
-		super();
+	public Massing(String id, String friendlyName) {
+		super(id, friendlyName);
 		
 		cam.setViewScaler(DEFAULT_VIEW_SCALER);
 		
@@ -107,7 +105,7 @@ public class Massing extends Container3D {
 	}
 	
     /**
-     * Set the back end content of the model
+     * Set the back end content of the model and initialize view model
      * 
      * @param form_model
      * @param map_model
@@ -118,10 +116,10 @@ public class Massing extends Container3D {
     	this.init();
 	}
     
-	/**
-	 * Populates the View Model with a form from Builder class
+    /**
+	 * Populates the View Model with a form from DevelopmentEditor class
 	 * 
-	 * @param form form from Builder class
+	 * @param form_model DevelopmentBuider()
 	 */
 	private void setFormModel(DevelopmentEditor form_model) {
 		this.form_model = form_model;
@@ -139,7 +137,8 @@ public class Massing extends Container3D {
 	/**
 	 * render the current state of the backend model
 	 */
-	private void init() {
+	@Override
+	public void init() {
 		initLights();
 		initControl();
 		initGhost();
@@ -236,6 +235,7 @@ public class Massing extends Container3D {
 	 * 
 	 * @param e key event
 	 */
+    @Override
 	public void keyPressed(KeyEvent e) {
 
 		// Reset Camera Position

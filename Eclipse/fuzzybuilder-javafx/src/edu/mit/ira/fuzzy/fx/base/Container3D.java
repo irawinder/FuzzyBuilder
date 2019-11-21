@@ -29,8 +29,14 @@ public class Container3D extends Container2D {
  	// Camera Object that handles view parameters and user navigation
  	protected Camera3D cam; 
 	
-	public Container3D() {
-		super();
+ 	/**
+ 	 * Instantiate a new 3D container with a given ID and friendly name
+ 	 * 
+ 	 * @param id
+ 	 * @param friendlyName
+ 	 */
+	public Container3D(String id, String friendlyName) {
+		super(id, friendlyName);
 		
 		// Initialize Parent Nodes
     	nodes3D = new Group();
@@ -57,6 +63,13 @@ public class Container3D extends Container2D {
         
         // Initialize 3D Camera for 3D scene
     	cam = new Camera3D(scene3D);
+	}
+	
+	/**
+	 * Empty Constructor with Default Values
+	 */
+	public Container3D() {
+		this(DEFAULT_ID, DEFAULT_FRIENDLY_NAME);
 	}
 	
 	/**

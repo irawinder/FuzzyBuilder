@@ -48,14 +48,14 @@ public class FuzzyBuilder extends Application {
     	appWindow.setTitle(APPLICATION_NAME);
     	
     	//Initialize Content Containers (SubScenes)
-    	toolbar = new Toolbar();
-		version = new Version();
-		canvas = new Canvas();
-		massing = new Massing();
-		outcome = new Outcome();
-		commit = new Commit();
-		navigate = new Navigate();
-		status = new Status();
+    	toolbar = new Toolbar("toolbar", "Toolbar");
+		version = new Version("version", "Version Tree");
+		canvas = new Canvas("canvas", "Visual Programming Canvas");
+		massing = new Massing("massing", "Form Model");
+		outcome = new Outcome("outcome", "Performance Graphs");
+		commit = new Commit("commit", "Commit Scenario");
+		navigate = new Navigate("navigate", "Navigation Panel");
+		status = new Status("status", "Status Bar");
 		
 		// Assemble all SubScenes into the main content scene
 		Scene content = Layout.build(toolbar, navigate, version, canvas, massing, outcome, commit, status);
@@ -156,7 +156,7 @@ public class FuzzyBuilder extends Application {
 		((Massing)   massing).init(scenario_form, scenario_map);
 		((Outcome)   outcome).init();
 		((Commit)     commit).init();
-		((Navigate) navigate).init();
+		((Navigate) navigate).init(scenario_form);
 		((Status)     status).init();
     }
 }

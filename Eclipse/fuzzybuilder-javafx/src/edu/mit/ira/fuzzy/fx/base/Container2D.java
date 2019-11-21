@@ -2,6 +2,9 @@ package edu.mit.ira.fuzzy.fx.base;
 
 import javafx.scene.Group;
 import javafx.scene.SubScene;
+import javafx.scene.control.Label;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 
 /**
@@ -30,13 +33,28 @@ public class Container2D extends SubScene {
  	final protected static double SUBTLE_ALPHA 			= 0.5;
  	final protected static double DEFAULT_STROKE 		= 2.0;
  	final protected static double SUBDUED_STROKE 		= 1.0;
+ 	
+ 	final protected static String DEFAULT_ID = "new_container";
+ 	final protected static String DEFAULT_FRIENDLY_NAME = "New Container";
 	
     // "Front End" Nodes to Pass to Parent JavaFX Scene
  	protected Group nodes2D;
  	protected SubScene scene2D;
+ 	
+ 	// Friendly name of pane to show user
+ 	protected String friendlyName;
 	
-	public Container2D() {
+ 	/**
+ 	 * Instantiate a new 2D container with a given ID and friendly name
+ 	 * 
+ 	 * @param id
+ 	 * @param friendlyName
+ 	 */
+	public Container2D(String id, String friendlyName) {
 		super(EMPTY_GROUP, DEFAULT_WIDTH, DEFAULT_HEIGHT);
+		
+		this.setId(id);
+		setFriendlyName(friendlyName);
 		
 		// Initialize Parent Nodes
     	nodes2D = new Group();
@@ -56,5 +74,50 @@ public class Container2D extends SubScene {
     	
         // Set the Parent Node of container content
         setRoot(new Group(scene2D));
+	}
+	
+	/**
+	 * Empty Constructor with Default Values
+	 */
+	public Container2D() {
+		this(DEFAULT_ID, DEFAULT_FRIENDLY_NAME);
+	}
+	
+	/**
+	 * Set Friendly Name of Container
+	 * 
+	 * @param friendlyName
+	 */
+	public void setFriendlyName(String friendlyName) {
+		this.friendlyName = friendlyName;
+	}
+	
+	/**
+	 * Get Friendly Name of Container
+	 * 
+	 * @return
+	 */
+	public String getFriendlyName() {
+		return friendlyName;
+	}
+	
+	/**
+	 * Render the default container "Front End"
+	 */
+	public void init() {
+		double randomBrightness = 0.50 + 0.25*Math.random(); // between 0.50 - 0.75
+		this.setFill(Color.hsb(0, 0, randomBrightness));
+		nodes2D.getChildren().clear();
+		StackPane content  = new StackPane(new Label(friendlyName));
+		nodes2D.getChildren().add(content);
+	}
+	
+	/**
+	 * Handle Key Events passed to container
+	 * 
+	 * @param e key event
+	 */
+	public void keyPressed(KeyEvent e) {
+		// TODO Auto-generated method stub
 	}
 }
