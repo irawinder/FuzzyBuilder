@@ -178,6 +178,9 @@ public class Navigate extends Container2D {
 		readMe += "\n" + "Press '5' to show Form Only";
 		if (form_model.viewState == 5)
 			readMe += " <--";
+		readMe += "\n";
+		readMe += "\n" + "Zoom, pan, and rotate view with mouse";
+		readMe += "\n" + "Press 'z' to reset camera to default";
 		
 		return readMe;
 	}

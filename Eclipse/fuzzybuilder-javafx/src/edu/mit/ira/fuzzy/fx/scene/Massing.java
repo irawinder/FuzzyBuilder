@@ -246,8 +246,9 @@ public class Massing extends Container3D {
 	public void keyPressed(KeyEvent e) {
 
 		// Reset Camera Position
-		if (e.getText().equals("C")) {
+    	if (e.getCode() == KeyCode.Z) {
 			cam.init();
+			initMap();
 		}
 		// toggle map model visibility
 		if (e.getCode() == KeyCode.U) {
