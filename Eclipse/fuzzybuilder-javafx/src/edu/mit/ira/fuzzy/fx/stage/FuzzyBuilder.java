@@ -102,6 +102,8 @@ public class FuzzyBuilder extends Application {
         	}
         });
         
+        content.getStylesheets().add("style.css");
+        
         // Set the stage and start the show
         appWindow.setScene(content);
         appWindow.show();
