@@ -1,5 +1,6 @@
 package edu.mit.ira.fuzzy.fx.base;
 
+import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.SubScene;
 import javafx.scene.control.Label;
@@ -20,6 +21,10 @@ public class Container2D extends SubScene {
 	final protected static double DEFAULT_HEIGHT = 100;
 	final protected static Color DEFAULT_BACKGROUND = Color.TRANSPARENT;
 	final protected static Group EMPTY_GROUP = new Group();
+	
+	// Default Dimension
+	final protected static double TEXT_BUFFER = 10;
+	final protected static Insets TEXT_INSETS = new Insets(TEXT_BUFFER, TEXT_BUFFER, TEXT_BUFFER, TEXT_BUFFER);
 	
  	// Default color and stroke values
  	final protected static double DEFAULT_SATURATION 	= 0.50;
@@ -74,6 +79,10 @@ public class Container2D extends SubScene {
     	
         // Set the Parent Node of container content
         setRoot(new Group(scene2D));
+        
+        // Set Background to a random gray color
+        double randomBrightness = 0.65 + 0.25*Math.random(); // between 0.65 - 0.90
+		this.setFill(Color.hsb(0, 0, randomBrightness));
 	}
 	
 	/**
@@ -105,8 +114,6 @@ public class Container2D extends SubScene {
 	 * Render the default container "Front End"
 	 */
 	public void init() {
-		double randomBrightness = 0.50 + 0.25*Math.random(); // between 0.50 - 0.75
-		this.setFill(Color.hsb(0, 0, randomBrightness));
 		nodes2D.getChildren().clear();
 		StackPane content  = new StackPane(new Label(friendlyName));
 		nodes2D.getChildren().add(content);
@@ -118,6 +125,6 @@ public class Container2D extends SubScene {
 	 * @param e key event
 	 */
 	public void keyPressed(KeyEvent e) {
-		// TODO Auto-generated method stub
+		// Override in child class
 	}
 }

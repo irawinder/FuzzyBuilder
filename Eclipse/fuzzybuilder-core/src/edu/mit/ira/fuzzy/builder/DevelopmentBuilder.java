@@ -338,6 +338,10 @@ public class DevelopmentBuilder extends Development {
 	
 	@Override
 	public String toString() {
-		return this.name + " X-Extents: (" + this.minTileX + " - " + this.maxTileX + "), " + " Y-Extents: (" + this.minTileY + " - " + this.maxTileY + ")";
+		return this.name;
+	}
+	
+	public String extents() {
+		return "X-Extents:\n(" + this.minTileX + " <-> " + this.maxTileX + ")" + "\n\nY-Extents:\n(" + this.minTileY + " <-> " + this.maxTileY + ")";
 	}
 }

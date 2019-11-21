@@ -94,6 +94,10 @@ public class FuzzyBuilder extends Application {
 			((Status)     status).keyPressed(e);
         });
         
+        content.setOnMouseMoved(me -> {
+        	if(scenario_form.isEditing()) ((Navigate) navigate).init(scenario_form);
+        });
+        
         // Set the stage and start the show
         appWindow.setScene(content);
         appWindow.show();

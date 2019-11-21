@@ -60,7 +60,7 @@ public class Massing extends Container3D {
  	final protected static double HOVER_SIZE_SCALER 	= 1.2; // increase size of something when hovering
  	final protected static double VOXEL_HEIGHT_BUFFER 	= 0.9; // fraction of voxel to draw, leaving vertical gap between adjacent voxels
  	final protected static double VOXEL_WIDTH_BUFFER 	= 0.8; // fraction of voxel to draw, leaving horizontal gap between adjacent voxels
- 	final protected static double GRID_UNIT_WIDTH 		= 1.0; // fraction of a TileArray() tile width
+ 	final protected static double GRID_UNIT_WIDTH 		= 0.5; // fraction of a TileArray() tile width
  	final protected static int	  GRID_UNIT_BLEED 		=  25; // number of selection grid units to bleed outside of Development extents
  	
     // "Back End" Elements to Render to Container
@@ -102,6 +102,7 @@ public class Massing extends Container3D {
 		gridMap = new HashMap<Node, Point>();
 		controlMap = new HashMap<ControlPoint, Node>();
 		
+		this.setFill(Color.TRANSPARENT);
 	}
 	
     /**
