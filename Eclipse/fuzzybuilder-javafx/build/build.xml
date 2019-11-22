@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<project default="create_run_jar" name="Create Runnable Jar for Project space-builder-javafx with libraries in sub-folder">
+<project default="create_run_jar" name="Create Runnable Jar for Project fuzzybuilder-javafx with libraries in sub-folder">
 	<!--this file was created by Eclipse Runnable JAR Export Wizard-->
 	<!--ANT 1.7 is required                                        -->
 	<!--define folder properties-->
@@ -15,11 +15,11 @@
 		<!--Make FuzzyBuilder.jar-->
 		<jar destfile="${dir.jarfile}/FuzzyBuilder.jar">
 			<manifest>
-				<attribute name="Main-Class" value="edu.mit.ira.builder.fx.GUI_FX"/>
-				<attribute name="Class-Path" value=". FuzzyBuilder_lib/javafx-swt.jar FuzzyBuilder_lib/javafx.base.jar FuzzyBuilder_lib/javafx.controls.jar FuzzyBuilder_lib/javafx.fxml.jar FuzzyBuilder_lib/javafx.graphics.jar FuzzyBuilder_lib/javafx.media.jar FuzzyBuilder_lib/javafx.swing.jar FuzzyBuilder_lib/javafx.web.jar"/>
+				<attribute name="Main-Class" value="edu.mit.ira.fuzzy.fx.stage.FuzzyBuilder"/>
+				<attribute name="Class-Path" value=". lib/javafx-swt.jar lib/javafx.base.jar lib/javafx.controls.jar lib/javafx.fxml.jar lib/javafx.graphics.jar lib/javafx.media.jar lib/javafx.swing.jar lib/javafx.web.jar"/>
 			</manifest>
-			<fileset dir="/Users/irawinder/Gits/FuzzyBuilder/Eclipse/space-builder-javafx/bin"/>
-			<fileset dir="/Users/irawinder/Gits/FuzzyBuilder/Eclipse/space-builder/bin"/>
+			<fileset dir="/Users/irawinder/Gits/FuzzyBuilder/Eclipse/fuzzybuilder-javafx/bin"/>
+			<fileset dir="/Users/irawinder/Gits/FuzzyBuilder/Eclipse/fuzzybuilder-core/bin"/>
 		</jar>
 
 		<!--copy files from data to dist top level-->
