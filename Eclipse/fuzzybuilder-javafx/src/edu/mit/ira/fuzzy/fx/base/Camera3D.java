@@ -174,11 +174,11 @@ public class Camera3D {
 	}
 	
 	/**
-	 * update mouse location
+	 * press the mouse button
 	 * 
 	 * @param me mouse event
 	 */
-	public void move(MouseEvent me) {
+	public void press(MouseEvent me) {
 		if (!isDragged) {
 			this.mousePosX = me.getScreenX();
 			this.mousePosY = me.getScreenY();
@@ -188,6 +188,13 @@ public class Camera3D {
 			this.dYdrag = 0;
 			this.breakEvent = false;
 		}
+	}
+	
+	/**
+	 * release the mouse button
+	 */
+	public void release() {
+		this.isDragged = false;
 	}
 	
 	/**
@@ -218,6 +225,7 @@ public class Camera3D {
 		this.dXdrag += Math.abs(dXframe);
 		this.dYdrag += Math.abs(dYframe);
 		this.breakEvent = checkBreakEvent();
+		System.out.println(breakEvent);
 
 		// i.e. right mouse button
 		if (me.isSecondaryButtonDown()) {
@@ -249,11 +257,6 @@ public class Camera3D {
 		// Set new mouse position
 		this.mousePosX = me.getScreenX();
 		this.mousePosY = me.getScreenY();
-	}
-	
-	public void release() {
-		this.isDragged = false;
-		this.breakEvent = false;
 	}
 	
 	private boolean checkBreakEvent() {

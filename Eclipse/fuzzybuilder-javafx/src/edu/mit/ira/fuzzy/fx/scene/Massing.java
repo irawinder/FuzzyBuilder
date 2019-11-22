@@ -162,15 +162,12 @@ public class Massing extends Container3D {
 	private void handleMouseEvents() {
 		
 		this.setOnMouseMoved((MouseEvent me) -> {
-			cam.move(me);
-			updateHover(me);
+			mouseMoved = true;
+			checkGhostInBounds(me);
 		});
 		
 		this.setOnMouseDragged((MouseEvent me) -> {
-			if (form_model.selected == null || ghost.isVisible() || mouseMoved) {
-				cam.drag(me);
-			}
-			mouseMoved = true;
+			cam.drag(me);
 		});
 		
 		this.setOnScroll((ScrollEvent se) -> {
@@ -178,9 +175,11 @@ public class Massing extends Container3D {
 		});
 		
 		this.setOnMousePressed((MouseEvent me) -> {
+			cam.press(me);
+			
 			// Adding or Removing a Point
 			if (form_model.addPoint || form_model.removePoint) {
-				mouseMoved = false;
+				
 			} else {
 				// Ignore Selection on mouse release if already selected
 				if (form_model.selected != null) {
@@ -192,22 +191,23 @@ public class Massing extends Container3D {
 		});
 
 		this.setOnMouseReleased((MouseEvent me) -> {
+			cam.release();
+			
 			// Adding a Point
 			if (form_model.addPoint) {
 				// Use ghost as template to add new control point
-				if (ghost.isVisible() && !cam.breakEvent)
+				if (ghost.isVisible() && !cam.breakEvent) {
 					addPointAtMouse(me);
+				}
 			// Moving a Point
 			} else if (!form_model.removePoint) {
 				// If the control point is moved and camera has not been panned, deselect it
-				//if (mouseMoved && !cam.isDragged) {
 				if (mouseMoved && !cam.breakEvent && ignoreSelect) {
-					System.out.println("scene release: " + cam.dXdrag + "," + cam.dYdrag);
 					form_model.deselect();
-					mouseMoved = false;
 				}
 			}
-			cam.release();
+			mouseMoved = false;
+			
 		});
 	}
 	
@@ -216,7 +216,18 @@ public class Massing extends Container3D {
      * 
      * @param me mouse event
      */
-    public void updateHover(MouseEvent me) {
+    public void checkGhostInBounds(MouseEvent me) {
+    	// Hide hovering sphere when not over valid spot
+		Node intersected = me.getPickResult().getIntersectedNode();
+		String id = intersected.getId();
+		if (id != null) {
+			if (id.equals("scene3D")) {
+				ghost.setVisible(false);
+			}
+		}
+    }
+    
+    public void updateGhostVisibility(MouseEvent me) {
     	// Hide hovering sphere when not over valid spot
 		Node intersected = me.getPickResult().getIntersectedNode();
 		String id = intersected.getId();
@@ -336,9 +347,7 @@ public class Massing extends Container3D {
 						mouseMoved = false;
 					});
 					s.setOnMouseReleased((MouseEvent me) -> {
-						//if (!mouseMoved && form_model.selected == null && !ignoreSelect) {
 						if (form_model.selected == null && !ignoreSelect && !cam.breakEvent) {
-							System.out.println("node release (select): " + cam.breakEvent + ", " + cam.dXdrag + "," + cam.dYdrag);
 							// Check to remove or select ControlPoint
 							ghost.setVisible(false);
 							form_model.mouseTrigger(newPointAtMouse);
@@ -346,11 +355,10 @@ public class Massing extends Container3D {
 							initGrid();
 							initControl();
 							initForm();
-						//} else if (form_model.selected != null && !cam.isDragged) {
 						} else if (form_model.selected != null && !cam.breakEvent) {
-							System.out.println("node release: " + cam.breakEvent + ", " + cam.dXdrag + "," + cam.dYdrag);
 							// check to deselect a Control Point
 							form_model.deselect();
+							mouseMoved = false;
 						}
 					});
 				}
@@ -403,7 +411,6 @@ public class Massing extends Container3D {
 					
 						// Move point around after clicking it
 						if (form_model.selected != null) {
-							mouseMoved = true;
 							Point new_location = gridMap.get(b);
 							if (new_location != null) {
 								form_model.selected.x = newPointAtMouse.x;
