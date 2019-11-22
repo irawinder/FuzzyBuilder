@@ -29,10 +29,23 @@
 			<fileset dir="${dir.buildfile}/../data" includes="**" />
 		</copy>
 
+		<!--copy files from lib to dist top level-->
 		<delete dir="${dir.jarfile}/lib" />
 		<mkdir dir="${dir.jarfile}/lib" />
 		<copy todir="${dir.jarfile}/lib">
 			<fileset dir="${dir.workspace}/libraries/javafx-sdk-13/lib" includes="**" />
 		</copy>
+
+		<!--copy icon-->
+		<delete dir="${dir.jarfile}/icon" />
+		<mkdir dir="${dir.jarfile}/icon" />
+		<copy file="${dir.buildfile}/icon/icon.ico" tofile="${dir.jarfile}/icon/icon.ico" overwrite="true" />
+
+		<!--copy launch4j configuration file-->
+		<delete dir="${dir.jarfile}/install" />
+		<mkdir dir="${dir.jarfile}/install" />
+		<copy file="${dir.buildfile}/windows/launch4j.xml" tofile="${dir.jarfile}/install/windows/launch4j.xml" overwrite="true" />
+		<copy file="${dir.buildfile}/mac/fuzzybuilder.install4j" tofile="${dir.jarfile}/install/mac/fuzzybuilder.install4j" overwrite="true" />
+
 	</target>
 </project>
