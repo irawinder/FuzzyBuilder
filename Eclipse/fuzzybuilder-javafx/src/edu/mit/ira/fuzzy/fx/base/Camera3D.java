@@ -18,6 +18,9 @@ public class Camera3D {
 	// Point to the in-memory SubScene to which the camera is applied 
 	SubScene scene3D;
 	
+    // Amount of pixels to allow camera drag before it triggers a break from an execution event
+	final private static double CAMERA_PAN_BREAK_LIMIT = 30;
+	
  	// Default Camera Values
 	final public static double DEFAULT_SCALER = 1.0;
 	final public static double DEFAULT_ZOOM = -700;
@@ -42,6 +45,16 @@ public class Camera3D {
  	// Mouse locations on Canvas
  	public double mousePosX, mousePosY;
  	
+ 	// Mouse displacement while pressed and dragged (frame by frame and for entire mouse event)
+ 	public double dXframe, dYframe, dXdrag, dYdrag;
+ 	
+ 	// Is mouse being dragged
+ 	public boolean isDragged;
+ 	
+ 	// Should an an execution event be overridden due to user's camera usage?
+ 	// (for example, an object is not placed at mouse at the end of a camera drag)
+ 	public boolean breakEvent;
+ 	
     /**
      * Initialize a new framework for handling 3D Camera Exploration
      * 
@@ -59,6 +72,12 @@ public class Camera3D {
     	// Initialize Mouse Interaction Objects
     	this.mousePosX = 0;
     	this.mousePosY = 0;
+    	this.dXframe = 0;
+    	this.dYframe = 0;
+    	this.dXdrag = 0;
+    	this.dYdrag = 0;
+    	this.isDragged = false;
+    	this.breakEvent = false;
     }
     
     /**
@@ -160,8 +179,15 @@ public class Camera3D {
 	 * @param me mouse event
 	 */
 	public void move(MouseEvent me) {
-		this.mousePosX = me.getScreenX();
-		this.mousePosY = me.getScreenY();
+		if (!isDragged) {
+			this.mousePosX = me.getScreenX();
+			this.mousePosY = me.getScreenY();
+			this.dXframe = 0;
+			this.dYframe = 0;
+			this.dXdrag = 0;
+			this.dYdrag = 0;
+			this.breakEvent = false;
+		}
 	}
 	
 	/**
@@ -170,8 +196,8 @@ public class Camera3D {
 	 * @param se scroll event
 	 */
 	public void zoom(ScrollEvent se) {
-		double dy = viewScaler * se.getDeltaY();
-		double new_zoom = zoom.getZ() - dy;
+		double dY = viewScaler * se.getDeltaY();
+		double new_zoom = zoom.getZ() - dY;
 		new_zoom = ensureRange(new_zoom, maxZoom, minZoom);
 		this.zoom.setZ(new_zoom);
 	}
@@ -182,16 +208,23 @@ public class Camera3D {
 	 * @param me mouse event
 	 */
 	public void drag(MouseEvent me) {
-		// Mouse displacement while pressed and dragged
-		double dx = + (mousePosX - me.getScreenX());
-		double dy = - (mousePosY - me.getScreenY());
+		this.isDragged = true;
+		
+		// Mouse displacement while pressed and dragged (over single frame of drag)
+		this.dXframe = + (mousePosX - me.getScreenX());
+		this.dYframe = - (mousePosY - me.getScreenY());
+		
+		// Mouse displacement while pressed and dragged (across multiple render frames of entire drag event)
+		this.dXdrag += Math.abs(dXframe);
+		this.dYdrag += Math.abs(dYframe);
+		this.breakEvent = checkBreakEvent();
 
 		// i.e. right mouse button
 		if (me.isSecondaryButtonDown()) {
 
 			// Rotate View
-			double angleV = rotateV.getAngle() - (dy / 10 * +360) * (Math.PI / 180);
-			double angleH = rotateH.getAngle() - (dx / 10 * -360) * (Math.PI / 180);
+			double angleV = rotateV.getAngle() - (dYframe / 10 * +360) * (Math.PI / 180);
+			double angleH = rotateH.getAngle() - (dXframe / 10 * -360) * (Math.PI / 180);
 			angleV = ensureRange(angleV, -90, 90);
 			this.rotateV.setAngle(angleV);
 			this.rotateH.setAngle(angleH);
@@ -201,14 +234,14 @@ public class Camera3D {
 
 			// Pan View
 			double angleH = DegreeToRadian((float) rotateH.getAngle());
-			double dx_r, dy_r;
+			double dX_r, dYframe_r;
 			int flip = 1;
 			if (rotateV.getAngle() > 0)
 				flip = -1;
-			dx_r = +dx * Math.cos(angleH) - flip * dy * Math.sin(angleH);
-			dy_r = +dx * Math.sin(angleH) + flip * dy * Math.cos(angleH);
-			double panU = pan.getX() - viewScaler * dx_r;
-			double panV = pan.getZ() - viewScaler * dy_r;
+			dX_r = +dXframe * Math.cos(angleH) - flip * dYframe * Math.sin(angleH);
+			dYframe_r = +dXframe * Math.sin(angleH) + flip * dYframe * Math.cos(angleH);
+			double panU = pan.getX() - viewScaler * dX_r;
+			double panV = pan.getZ() - viewScaler * dYframe_r;
 			this.pan.setX(panU);
 			this.pan.setZ(panV);
 		}
@@ -216,6 +249,15 @@ public class Camera3D {
 		// Set new mouse position
 		this.mousePosX = me.getScreenX();
 		this.mousePosY = me.getScreenY();
+	}
+	
+	public void release() {
+		this.isDragged = false;
+		this.breakEvent = false;
+	}
+	
+	private boolean checkBreakEvent() {
+		return Math.abs(dXdrag) > CAMERA_PAN_BREAK_LIMIT && Math.abs(dYdrag) > CAMERA_PAN_BREAK_LIMIT;
 	}
 	
 	/**

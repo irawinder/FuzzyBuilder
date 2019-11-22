@@ -37,7 +37,7 @@ import javafx.scene.transform.Rotate;
 public class Massing extends Container3D {
     
     // Scale up/down draw units of back end geometry
-    final private static double DEFAULT_VIEW_SCALER = 4.0;
+	final private static double DEFAULT_VIEW_SCALER = 4.0;
     
  	// Default Elevation Values
  	final private static double DEFAULT_MAP_Z     	= - 0.4;
@@ -83,7 +83,7 @@ public class Massing extends Container3D {
   	private HashMap<ControlPoint, Node> controlMap;
   	
   	// Is A Control Point or Camera being Dragged?
-   	private boolean mouseMoved, camDragged, ignoreSelect;
+   	private boolean mouseMoved, ignoreSelect;
  	
 	public Massing(String id, String friendlyName) {
 		super(id, friendlyName);
@@ -103,7 +103,6 @@ public class Massing extends Container3D {
     	
     	ignoreSelect = false;
 		mouseMoved = false;
-		camDragged = false;
 		
 		gridMap = new HashMap<Node, Point>();
 		controlMap = new HashMap<ControlPoint, Node>();
@@ -170,7 +169,6 @@ public class Massing extends Container3D {
 		this.setOnMouseDragged((MouseEvent me) -> {
 			if (form_model.selected == null || ghost.isVisible() || mouseMoved) {
 				cam.drag(me);
-				camDragged = true;
 			}
 			mouseMoved = true;
 		});
@@ -181,9 +179,25 @@ public class Massing extends Container3D {
 		
 		this.setOnMousePressed((MouseEvent me) -> {
 			// Adding or Removing a Point
-			if (form_model.addPoint || form_model.removePoint)
+			if (form_model.addPoint || form_model.removePoint) {
 				mouseMoved = false;
-			camDragged = false;
+				
+				// Adding a Point
+				if (form_model.addPoint) {
+					// Use ghost as template to add new control point
+					if (ghost.isVisible() && !mouseMoved) {
+						addPointAtMouse(me);
+					}
+				}
+				mouseMoved = false;
+			} else {
+				// Ignore Selection on mouse release if already selected
+				if (form_model.selected != null) {
+					ignoreSelect = true;
+				} else {
+					ignoreSelect = false;
+				}
+			}
 		});
 
 		this.setOnMouseReleased((MouseEvent me) -> {
@@ -195,12 +209,14 @@ public class Massing extends Container3D {
 			// Moving a Point
 			} else if (!form_model.removePoint) {
 				// If the control point is moved and camera has not been panned, deselect it
-				if (mouseMoved && !camDragged) {
+				//if (mouseMoved && !cam.isDragged) {
+				if (mouseMoved && !cam.breakEvent && ignoreSelect) {
+					System.out.println("scene release: " + cam.dXdrag + "," + cam.dYdrag);
 					form_model.deselect();
 					mouseMoved = false;
 				}
 			}
-			camDragged = false;
+			cam.release();
 		});
 	}
 	
@@ -329,7 +345,9 @@ public class Massing extends Container3D {
 						mouseMoved = false;
 					});
 					s.setOnMouseReleased((MouseEvent me) -> {
-						if (!mouseMoved && form_model.selected == null && !ignoreSelect) {
+						//if (!mouseMoved && form_model.selected == null && !ignoreSelect) {
+						if (form_model.selected == null && !ignoreSelect && !cam.breakEvent) {
+							System.out.println("node release (select): " + cam.breakEvent + ", " + cam.dXdrag + "," + cam.dYdrag);
 							// Check to remove or select ControlPoint
 							ghost.setVisible(false);
 							form_model.mouseTrigger(newPointAtMouse);
@@ -337,7 +355,9 @@ public class Massing extends Container3D {
 							initGrid();
 							initControl();
 							initForm();
-						} else if (form_model.selected != null && !camDragged) {
+						//} else if (form_model.selected != null && !cam.isDragged) {
+						} else if (form_model.selected != null && !cam.breakEvent) {
+							System.out.println("node release: " + cam.breakEvent + ", " + cam.dXdrag + "," + cam.dYdrag);
 							// check to deselect a Control Point
 							form_model.deselect();
 						}
