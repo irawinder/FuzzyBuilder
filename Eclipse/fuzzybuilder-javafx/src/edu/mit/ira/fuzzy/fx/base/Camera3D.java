@@ -257,7 +257,7 @@ public class Camera3D {
 	}
 	
 	private boolean checkBreakEvent() {
-		return Math.abs(dXdrag) > CAMERA_PAN_BREAK_LIMIT && Math.abs(dYdrag) > CAMERA_PAN_BREAK_LIMIT;
+		return Math.abs(dXdrag) > CAMERA_PAN_BREAK_LIMIT || Math.abs(dYdrag) > CAMERA_PAN_BREAK_LIMIT;
 	}
 	
 	/**

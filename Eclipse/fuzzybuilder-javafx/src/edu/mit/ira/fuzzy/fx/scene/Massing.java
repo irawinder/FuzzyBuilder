@@ -181,15 +181,6 @@ public class Massing extends Container3D {
 			// Adding or Removing a Point
 			if (form_model.addPoint || form_model.removePoint) {
 				mouseMoved = false;
-				
-				// Adding a Point
-				if (form_model.addPoint) {
-					// Use ghost as template to add new control point
-					if (ghost.isVisible() && !mouseMoved) {
-						addPointAtMouse(me);
-					}
-				}
-				mouseMoved = false;
 			} else {
 				// Ignore Selection on mouse release if already selected
 				if (form_model.selected != null) {
@@ -204,7 +195,7 @@ public class Massing extends Container3D {
 			// Adding a Point
 			if (form_model.addPoint) {
 				// Use ghost as template to add new control point
-				if (ghost.isVisible() && !mouseMoved)
+				if (ghost.isVisible() && !cam.breakEvent)
 					addPointAtMouse(me);
 			// Moving a Point
 			} else if (!form_model.removePoint) {
