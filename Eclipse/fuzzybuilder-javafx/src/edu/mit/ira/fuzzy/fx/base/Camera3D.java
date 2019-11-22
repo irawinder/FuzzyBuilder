@@ -225,7 +225,6 @@ public class Camera3D {
 		this.dXdrag += Math.abs(dXframe);
 		this.dYdrag += Math.abs(dYframe);
 		this.breakEvent = checkBreakEvent();
-		System.out.println(breakEvent);
 
 		// i.e. right mouse button
 		if (me.isSecondaryButtonDown()) {
