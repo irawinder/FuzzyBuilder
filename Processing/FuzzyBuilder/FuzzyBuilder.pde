@@ -2,6 +2,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
 import java.util.HashMap;
+import java.util.UUID;
 
 // Fuzzy Builder v1.0-alpha.1
 
@@ -52,7 +53,7 @@ public void setup(){
   // Set size of canvas to (X, Y) pixels
   size(900, 500, P3D);
   
-  frame.setTitle("Fuzzy Builder v1.0-alpha.1");
+  surface.setTitle("Fuzzy Builder v1.0-alpha.1");
   
   builder = new Builder("random");
 }

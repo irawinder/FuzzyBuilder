@@ -1,5 +1,6 @@
 /**
  * Line Segment class
+ * 
  * @author ira
  * 
  */
@@ -8,10 +9,10 @@ public class Line {
 
   /**
    * Constructs a Line
+   * 
    * @param o origin
    * @param f destination
    */
-   
   Line(Point o, Point f) {
     this.o = o;
     this.f = f;
@@ -19,6 +20,7 @@ public class Line {
 
   /**
    * Checks to see if two line segments, defined by end points, intersect
+   * 
    * @param b another line to intersect
    * @returns intersection point (null if no solution)
    */
@@ -53,7 +55,8 @@ public class Line {
       //
       boolean onLineA = inRange(intersect_x, o.x, f.x) && inRange(intersect_y, o.y, f.y);
       boolean onLineB = inRange(intersect_x, b.o.x, b.f.x) && inRange(intersect_y, b.o.y, b.f.y);
-      if (onLineA && onLineB) intersect = new Point(intersect_x, intersect_y);
+      if (onLineA && onLineB)
+        intersect = new Point(intersect_x, intersect_y);
     }
 
     return intersect;
@@ -61,8 +64,8 @@ public class Line {
 
   /**
    * @param num a number to check
-   * @param r1 the min (or max) value of a range
-   * @param r2 the max (or min) value of a range
+   * @param r1  the min (or max) value of a range
+   * @param r2  the max (or min) value of a range
    * @return true if num is equal to or lies in an interval between r1 and r2
    */
   boolean inRange(float num, float r1, float r2) {
@@ -70,7 +73,9 @@ public class Line {
     // Create a list of our numbers to sort
     //
     ArrayList<Float> val = new ArrayList<Float>();
-    val.add(num); val.add(r1); val.add(r2);
+    val.add(num);
+    val.add(r1);
+    val.add(r2);
 
     // Sort the list from smallest to largest
     //
@@ -81,10 +86,10 @@ public class Line {
     // Floating points aren't precise enough, so we allow for a
     // number that is "close enough"
     //
-    float tolerance = (float)0.001;
+    float tolerance = (float) 0.001;
     boolean isRange1 = Math.abs(num - r1) <= tolerance;
     boolean isRange2 = Math.abs(num - r2) <= tolerance;
-    if(num == val.get(1) || isRange1 || isRange2) {
+    if (num == val.get(1) || isRange1 || isRange2) {
       return true;
     } else {
       return false;

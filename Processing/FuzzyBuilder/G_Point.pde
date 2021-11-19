@@ -1,5 +1,6 @@
 /**
  * A 3D Point object with x, y, and z value
+ * 
  * @author ira
  *
  */
@@ -8,6 +9,7 @@ public class Point {
 
   /**
    * Constructs a 3D Point object with (x,y) and z-value is set to zero
+   * 
    * @param x x-location (horizontal)
    * @param y y-location (horizontal)
    */
@@ -17,6 +19,7 @@ public class Point {
 
   /**
    * Constructs a 3D Point object
+   * 
    * @param x x-location (horizontal)
    * @param y y-location (horizontal)
    * @param z z-location (vertical)

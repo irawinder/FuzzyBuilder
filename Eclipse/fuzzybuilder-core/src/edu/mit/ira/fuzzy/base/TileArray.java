@@ -346,7 +346,7 @@ public class TileArray {
 		float boundary_w = boundary.xMax() - boundary.xMin();
 		float boundary_h = boundary.yMax() - boundary.yMin();
 
-		// maximum additional bounding box dimensions if polygon is rotated 90 degrees
+		// maximum additional bounding box dimensions if polygon is rotated 45 degrees
 		float easement = (float) (Math.max(boundary_w, boundary_h) * (Math.sqrt(2) - 1));
 		boundary_w += easement;
 		boundary_h += easement;
