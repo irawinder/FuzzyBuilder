@@ -43,7 +43,7 @@ Underlay map;
  */
 public void setup(){
   
-  map = new Underlay("site.png", 0.5);
+  map = new Underlay("siteEW.png", 0.5);
   //map = new Underlay("euston_site.png", 0.5);
   
   // Init Application canvas size to match site_map
