@@ -14,6 +14,9 @@ final float PLOT_X = 0;
 final float PLOT_Y = -1000;
 final float PLOT_MIN = 200;
 final float PLOT_MAX = 1000;
+final float VOXEL_WIDTH = 25;
+final float VOXEL_HEIGHT = 10;
+final float VOXEL_ROTATION = 0.25 * PI;
 
 final int DEFAULT_COLOR = #999999;
 final int BACKGROUND_COLOR = #222222;
@@ -22,6 +25,7 @@ Camera cam;
 
 Test test = new Test();
 Polygon plot;
+VoxelArray volume;
 
 void setup() {
   size(1280, 800, RENDERER);
@@ -29,6 +33,8 @@ void setup() {
   cam.eye.y = - 0.50 * PLOT_MAX;
   cam.angleYZ = 0.20 * PI;
   this.plot = test.randomShape(PLOT_X, PLOT_Y, NUM_VERTICES, PLOT_MIN, PLOT_MAX);
+  this.volume = new VoxelArray();
+  this.volume.makeVoxels(this.plot, VOXEL_WIDTH, VOXEL_HEIGHT, VOXEL_ROTATION, new Point(), null);
 }
 
 void draw() {
@@ -41,6 +47,7 @@ void draw() {
   cam.pov();
   this.drawGrids(GRID_WIDTH, GRID_UNITS, GRID_HEIGHT);
   this.drawShape(this.plot);
+  this.drawVoxels(this.volume);
   
   // 2D Overlay
   cam.overlay();
@@ -63,6 +70,18 @@ void drawShape(Polygon p) {
   }
 }
 
+void drawVoxels(VoxelArray voxelArray) {
+  fill(255, 100);
+  noStroke();
+  for(Voxel voxel : voxelArray.voxelList) {
+    pushMatrix();
+    translate(voxel.location.x, voxel.location.z, voxel.location.y);
+    rotateY(voxel.rotation);
+    box(0.9 * voxel.w, 0.9 * voxel.h, 0.9 * voxel.w);  
+    popMatrix();
+  }
+}
+
 void keyPressed() {
   switch(key) {
     case 'c':
@@ -70,6 +89,7 @@ void keyPressed() {
       break;
     case 'r':
       this.plot = test.randomShape(PLOT_X, PLOT_Y, NUM_VERTICES, PLOT_MIN, PLOT_MAX);
+      this.volume.makeVoxels(this.plot, VOXEL_WIDTH, VOXEL_HEIGHT, VOXEL_ROTATION, new Point(), null);
       break;
   }
 }

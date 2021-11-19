@@ -21,10 +21,6 @@ public class Voxel {
   // Type of Voxel
   public String type;
 
-  // Adjacent Voxels
-  public ArrayList<Voxel> neighbors; // 0 - 8 horizontal neighbors
-  public Voxel above, below;
-
   /**
    * Constructs a default Voxel
    */
@@ -35,9 +31,6 @@ public class Voxel {
     this.w = 1;
     this.h = 1;
     this.type = null;
-    this.neighbors = new ArrayList<Voxel>();
-    this.above = null;
-    this.below = null;
   }
   
   public void setLocation(float x, float y, float z) {
@@ -52,9 +45,18 @@ public class Voxel {
     this.w = w;
     this.h = h;
   }
-
-  public void addNeighbor(Voxel neighbor) {
-    neighbors.add(neighbor);
+  
+  public void setType(String type) {
+    this.type = type;
+  }
+  
+  public Voxel copy() {
+    Voxel copy = new Voxel();
+    copy.setLocation(location.x, location.y, location.z);
+    copy.setRotation(rotation);
+    copy.setSize(w, h);
+    copy.setType(type);
+    return copy;
   }
 
   @Override
