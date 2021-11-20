@@ -338,14 +338,14 @@ public class TileArray {
     float origin_y = (float) (0.5 * (boundary.yMax() + boundary.yMin()));
     float boundary_w = boundary.xMax() - boundary.xMin();
     float boundary_h = boundary.yMax() - boundary.yMin();
-
+    float bounds = max(boundary_w, boundary_h);
+    
     // maximum additional bounding box dimensions if polygon is rotated 45 degrees
     float easement = (float) (Math.max(boundary_w, boundary_h) * (Math.sqrt(2) - 1));
-    boundary_w += easement;
-    boundary_h += easement;
+    bounds += easement;
 
-    int U = (int) ((boundary_w / scale_uv) + 1);
-    int V = (int) ((boundary_h / scale_uv) + 1);
+    int U = (int) ((bounds / scale_uv) + 1);
+    int V = U;
     float t_x = translation.x % scale_uv;
     float t_y = translation.y % scale_uv;
 
@@ -353,8 +353,8 @@ public class TileArray {
       for (int v = 0; v < V; v++) {
 
         // grid coordinates before rotation is applied
-        float x_0 = (float) (boundary.xMin() - 0.5 * easement + u * scale_uv);
-        float y_0 = (float) (boundary.yMin() - 0.5 * easement + v * scale_uv);
+        float x_0 = (float) (origin_x - 0.5 * bounds + u * scale_uv);
+        float y_0 = (float) (origin_y - 0.5 * bounds + v * scale_uv);
 
         // translate origin, rotate, shift back, then translate
         float sin = (float) Math.sin(rotation);
