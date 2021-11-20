@@ -5,13 +5,9 @@
  * 
  */
 public class VoxelArray {
-  
-  // Unique identifier for this voxel
-  final private UUID uniqueID;
 
   // Collection of Voxels
-  private HashMap<UUID, Voxel> voxelMap;
-  
+  private HashMap<String, Voxel> voxelMap;
   private ArrayList<Voxel> voxelList;
   
   /**
@@ -21,8 +17,7 @@ public class VoxelArray {
    * @param type Type of VoxelArray
    */
   public VoxelArray() {
-    this.uniqueID = UUID.randomUUID();
-    this.voxelMap = new HashMap<UUID, Voxel>();
+    this.voxelMap = new HashMap<String, Voxel>();
     this.voxelList = new ArrayList<Voxel>();
   }
 
@@ -33,7 +28,7 @@ public class VoxelArray {
    */
   public void addVoxel(Voxel t) {
     if (!voxelList.contains(t)) {
-      voxelMap.put(t.uniqueID, t);
+      voxelMap.put(t.coordKey(), t);
       voxelList.add(t);
     }
   }
@@ -44,11 +39,11 @@ public class VoxelArray {
    * @param voxelKey Key value by which to look up Voxel in HashMap of Voxels in
    *                VoxelArray
    */
-  public void removeVoxel(UUID id) {
-    if (voxelMap.containsKey(id)) {
-      Voxel t = voxelMap.get(id);
+  public void removeVoxel(String coordKey) {
+    if (voxelMap.containsKey(coordKey)) {
+      Voxel t = voxelMap.get(coordKey);
       voxelList.remove(t);
-      voxelMap.remove(id);
+      voxelMap.remove(t.coordKey());
     }
   }
 
@@ -60,7 +55,7 @@ public class VoxelArray {
   public void removeVoxel(Voxel t) {
     if (voxelList.contains(t)) {
       voxelList.remove(t);
-      voxelMap.remove(t.uniqueID);
+      voxelMap.remove(t.coordKey());
     }
   }
   

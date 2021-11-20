@@ -1,6 +1,5 @@
 import java.util.Random;
 import java.util.Collections;
-import java.util.UUID;
 
 // Either JAVA2D (default), P2D or P3D
 final String RENDERER = P3D;

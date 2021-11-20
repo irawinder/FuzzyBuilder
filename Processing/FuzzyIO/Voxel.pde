@@ -6,9 +6,6 @@
  */
 public class Voxel {
   
-  // Unique identifier for this voxel
-  final private UUID uniqueID;
-  
   // Center Point of Voxel in real "geospatial" coordinates
   public Point location;
   
@@ -28,7 +25,6 @@ public class Voxel {
    * Constructs a default Voxel
    */
   public Voxel() {
-    this.uniqueID = UUID.randomUUID();
     this.location = new Point();
     this.rotation = 0;
     this.width = 1;
@@ -60,6 +56,10 @@ public class Voxel {
   
   public void setType(String type) {
     this.type = type;
+  }
+  
+  public String coordKey() {
+    return this.u + "," + this.v + "," + this.w;
   }
 
   @Override
