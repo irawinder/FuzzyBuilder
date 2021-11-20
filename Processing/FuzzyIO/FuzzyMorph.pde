@@ -1,7 +1,7 @@
 /**
- * Morph is a class deicated to functional transformations of geometry
+ * FuzzyMorph is a class deicated to functional transformations of geometry
  */
-class Morph {
+class FuzzyMorph {
   
   // geographic height of ground
   private float GROUND_Z = 0;

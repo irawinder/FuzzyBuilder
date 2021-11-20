@@ -1,26 +1,4 @@
-class RandomShape {
-  
-  /**
-   * generates a random polygon shape
-   * 
-   * @param num_pts number of corners to include in new random polygon
-   * @return random polygon 
-   */
-  public Polygon make(int num_pts) {
-    return this.make(0, 0, num_pts);
-  }
-  
-  /**
-   * generates a random polygon shape
-   * 
-   * @param num_pts  number of corners to include in new random polygon
-   * @param x_center x-coordinate or polygon center
-   * @param y_center y-coordinate or polygon center
-   * @return random polygon 
-   */
-  public Polygon make(float x_center, float y_center, int num_pts) {
-    return this.make(x_center, y_center, num_pts, 50, 100);
-  }
+class FuzzyRandom {
   
   /**
    * generates a random polygon shape
@@ -32,7 +10,7 @@ class RandomShape {
    * @param max_radius max distance of corner from center point
    * @return random polygon 
    */
-  public Polygon make(float x_center, float y_center, int num_pts, float min_radius, float max_radius) {
+  public Polygon polygon(float x_center, float y_center, int num_pts, float min_radius, float max_radius) {
   
     Polygon polygon = new Polygon();
     ArrayList<Float> angle, radius;

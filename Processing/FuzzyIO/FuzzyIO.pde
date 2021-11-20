@@ -23,8 +23,8 @@ final int BACKGROUND_COLOR = #222222;
 
 Camera cam;
 
-RandomShape randomShape;
-Morph morph;
+FuzzyRandom random;
+FuzzyMorph morph;
 Polygon plot;
 VoxelArray volume;
 
@@ -36,8 +36,8 @@ void setup() {
   cam.eye.y = - 0.50 * PLOT_MAX_RADIUS;
   cam.angleYZ = 0.20 * PI;
   
-  randomShape = new RandomShape();
-  this.plot = randomShape.make(
+  random = new FuzzyRandom();
+  this.plot = random.polygon(
     PLOT_X, 
     PLOT_Y, 
     NUM_VERTICES, 
@@ -45,7 +45,7 @@ void setup() {
     PLOT_MAX_RADIUS
   );
   
-  this.morph = new Morph();
+  this.morph = new FuzzyMorph();
   this.volume = this.morph.make(
     this.plot, 
     VOXEL_WIDTH, 
@@ -106,7 +106,7 @@ void keyPressed() {
       cam.init();
       break;
     case 'r':
-      this.plot = randomShape.make(PLOT_X, PLOT_Y, NUM_VERTICES, PLOT_MIN_RADIUS, PLOT_MAX_RADIUS);
+      this.plot = random.polygon(PLOT_X, PLOT_Y, NUM_VERTICES, PLOT_MIN_RADIUS, PLOT_MAX_RADIUS);
       this.volume = this.morph.make(this.plot, VOXEL_WIDTH, VOXEL_HEIGHT, VOXEL_ROTATION, VOXEL_TRANSLATE);
       break;
   }
