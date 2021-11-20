@@ -69,6 +69,17 @@ public class VoxelArray {
       voxel.setType(type);  
     }
   }
+  
+  /**
+   * Set the height of all voxels
+   *
+   * @param type
+   */
+  public void setHeight(float height) {
+    for(Voxel voxel : voxelList) {
+      voxel.setSize(voxel.width, height);  
+    }
+  }
 
   @Override
   public String toString() {

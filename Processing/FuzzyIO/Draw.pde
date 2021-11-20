@@ -22,7 +22,7 @@ void drawCursor() {
 
 void drawShape(Polygon p) {
   noFill();
-  stroke(255);
+  stroke(100);
   for(Line edge : p.edge) {
     line(edge.o.x, edge.o.z, edge.o.y, edge.f.x, edge.f.z, edge.f.y);
   }
@@ -33,9 +33,24 @@ void drawVoxels(VoxelArray voxelArray) {
   noStroke();
   for(Voxel voxel : voxelArray.voxelList) {
     pushMatrix();
-    translate(voxel.location.x, - voxel.location.z, voxel.location.y);
+    translate(voxel.location.x, - voxel.location.z - 0.5 * voxel.height, voxel.location.y);
     rotateY(voxel.rotation);
     box(0.9 * voxel.width, 0.9 * voxel.height, 0.9 * voxel.width);  
     popMatrix();
   }
+}
+
+void drawTiles(VoxelArray voxelArray) {
+  noFill();
+  stroke(255, 100);
+  rectMode(CENTER);
+  for(Voxel voxel : voxelArray.voxelList) {
+    pushMatrix();
+    translate(voxel.location.x, - voxel.location.z - 0.5 * voxel.height, voxel.location.y);
+    rotateY(voxel.rotation);
+    rotateX(0.5 * PI);
+    rect(0, 0, 0.9 * voxel.width, 0.9 * voxel.width); 
+    popMatrix();
+  }
+  rectMode(CORNER);
 }

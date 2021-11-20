@@ -23,6 +23,20 @@ class FuzzyMorph {
   }
   
   /**
+   * Inherit the Voxels from a input VoxelArray (child voxels ARE cloned)
+   * 
+   * @param input A parent VoxelArray
+   */
+  public VoxelArray hardCloneVoxelArray(VoxelArray input) {
+    VoxelArray arrayCopy = new VoxelArray();
+    for (Voxel t : input.voxelList) {
+      Voxel clone = this.cloneVoxel(t);
+      arrayCopy.addVoxel(clone);
+    }
+    return arrayCopy;
+  }
+  
+  /**
    * Clone a voxel with a new UUID
    * 
    * @param input A parent Voxel
@@ -73,18 +87,15 @@ class FuzzyMorph {
 
     for (int u = 0; u < U; u++) {
       for (int v = 0; v < V; v++) {
-
+        
         // grid coordinates before rotation is applied
         float x_0 = (float) (origin_x - 0.5 * bounds + u * voxelWidth);
         float y_0 = (float) (origin_y - 0.5 * bounds + v * voxelWidth);
 
-        // translate origin, rotate, shift back, then translate
-        float sin = (float) Math.sin(rotation);
-        float cos = (float) Math.cos(rotation);
-        float x_f = +(x_0 - origin_x) * cos - (y_0 - origin_y) * sin + origin_x + t_x;
-        float y_f = +(x_0 - origin_x) * sin + (y_0 - origin_y) * cos + origin_y + t_y;
-
-        Point location = new Point(x_f, y_f);
+        // rotate, then translate
+        Point location = rotateXY(new Point(x_0, y_0), new Point(origin_x, origin_y), rotation);
+        location.x += t_x;
+        location.y += t_y;
 
         // Test which points are in the polygon boundary
         // and add them to voxel set
@@ -271,5 +282,45 @@ class FuzzyMorph {
   
   public String coordKey(int u, int v, int w) {
     return u + "," + v + "," + w;
+  }
+  
+  /**
+   * Generate a rectangular polygon on the ground plane
+   *
+   * @param location center of rectangle
+   * @param width
+   * @param length
+   * @param rotation
+   * @return resulting rectangle
+   */
+  public Polygon rectangle(Point location, float width, float height, float rotation) {
+    ArrayList<Point> corners = new ArrayList<Point>();
+    corners.add(new Point(location.x - 0.5 * width, location.y - 0.5 * height));
+    corners.add(new Point(location.x + 0.5 * width, location.y - 0.5 * height));
+    corners.add(new Point(location.x + 0.5 * width, location.y + 0.5 * height));
+    corners.add(new Point(location.x - 0.5 * width, location.y + 0.5 * height));
+    
+    Polygon rectangle = new Polygon();
+    for(Point corner : corners) {
+      Point rCorner = this.rotateXY(corner, location, rotation);
+      rectangle.addVertex(rCorner);
+    }
+    return rectangle;
+  }
+  
+  /**
+   * Rotate a 2D point about a specified origin
+   *
+   * @param input point to rotate
+   * @param origin frame of reference to rotate about
+   * @param amount to rotate in radians
+   * @return rotated point
+   */
+  private Point rotateXY(Point input, Point origin, float rotation) {
+    float sin = (float) Math.sin(rotation);
+    float cos = (float) Math.cos(rotation);
+    float x_f = +(input.x - origin.x) * cos - (input.y - origin.y) * sin + origin.x;
+    float y_f = +(input.x - origin.x) * sin + (input.y - origin.y) * cos + origin.y;
+    return new Point(x_f, y_f);
   }
 }
