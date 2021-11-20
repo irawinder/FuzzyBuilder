@@ -17,6 +17,7 @@ final float VOXEL_WIDTH = 25;
 final float VOXEL_HEIGHT = 10;
 final float VOXEL_ROTATION = 0.25 * PI;
 final Point VOXEL_TRANSLATE = new Point(0, 0, 0);
+final float SETBACK_DISTANCE = 50;
 
 final int DEFAULT_COLOR = #999999;
 final int BACKGROUND_COLOR = #222222;
@@ -36,23 +37,15 @@ void setup() {
   cam.eye.y = - 0.50 * PLOT_MAX_RADIUS;
   cam.angleYZ = 0.20 * PI;
   
-  random = new FuzzyRandom();
-  this.plot = random.polygon(
-    PLOT_X, 
-    PLOT_Y, 
-    NUM_VERTICES, 
-    PLOT_MIN_RADIUS, 
-    PLOT_MAX_RADIUS
-  );
-  
+  this.random = new FuzzyRandom();
   this.morph = new FuzzyMorph();
-  this.volume = this.morph.make(
-    this.plot, 
-    VOXEL_WIDTH, 
-    VOXEL_HEIGHT, 
-    VOXEL_ROTATION, 
-    VOXEL_TRANSLATE
-  );
+  this.initGeometry();
+}
+
+void initGeometry() {
+  this.plot = this.random.polygon(PLOT_X, PLOT_Y, NUM_VERTICES, PLOT_MIN_RADIUS, PLOT_MAX_RADIUS);
+  this.volume = this.morph.make(this.plot, VOXEL_WIDTH, VOXEL_HEIGHT, VOXEL_ROTATION, VOXEL_TRANSLATE);
+  this.volume = this.morph.setback(this.volume, SETBACK_DISTANCE);
 }
 
 void draw() {
@@ -106,8 +99,7 @@ void keyPressed() {
       cam.init();
       break;
     case 'r':
-      this.plot = random.polygon(PLOT_X, PLOT_Y, NUM_VERTICES, PLOT_MIN_RADIUS, PLOT_MAX_RADIUS);
-      this.volume = this.morph.make(this.plot, VOXEL_WIDTH, VOXEL_HEIGHT, VOXEL_ROTATION, VOXEL_TRANSLATE);
+      this.initGeometry();
       break;
   }
 }

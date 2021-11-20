@@ -49,7 +49,7 @@ class FuzzyMorph {
    */
   public VoxelArray make(Polygon boundary, float voxelWidth, float voxelHeight, float rotation, Point translation) {
 
-    VoxelArray voxels = new VoxelArray();
+    VoxelArray result = new VoxelArray();
     
     // Create a field of grid points that is certain
     // to uniformly saturate polygon boundary
@@ -94,12 +94,56 @@ class FuzzyMorph {
           t.setCoordinates(u, v, GROUND_W);
           t.setRotation(rotation);
           t.setSize(voxelWidth, voxelHeight);
-          voxels.addVoxel(t);
+          result.addVoxel(t);
         }
       }
     }
     
-    return voxels;
+    return result;
+  }
+  
+  /**
+   * Given an input VoxelArray, returns a new VoxelArray with outer ring of voxels removed
+   * 
+   * @param parent voxel array to apply setback to
+   * @return new VoxelArray with outer ring of voxels removed removed
+   */
+  private VoxelArray setback(VoxelArray parent) {
+    VoxelArray result = new VoxelArray();
+
+    // Add tiles that are at edge of parent TileArray
+    for (Voxel t : parent.voxelList) {
+      // Tile surrounded on all sides has 8 neighbors
+      if (this.getNeighborsUV(t, parent).size() >= 7) {
+        result.addVoxel(t);
+      }
+    }
+    return result;
+  }
+  
+  /**
+   * Given an input VoxelArray, returns a new VoxelArray with outer ring of voxels removed
+   * 
+   * @param parent voxel array to apply setback to
+   * @param setbackDistance distance to apply setback ffrom edge
+   * @return new VoxelArray with outer ring of voxels removed
+   */
+  public VoxelArray setback(VoxelArray parent, float setbackDistance) {
+    VoxelArray result = parent;
+    
+    // Get the width of the first voxel in the array
+    float voxelWidth;
+    if (parent.voxelList.size() > 0) {
+      voxelWidth = parent.voxelList.get(0).width;
+    } else {
+      return result;
+    }
+    
+    // repeat offset as necessary to achieve desired distance
+    int numSetbacks = int(0.5 + setbackDistance / voxelWidth);
+    for(int i=0; i<numSetbacks; i++) result = this.setback(result);
+    
+    return result;
   }
   
   /**
@@ -110,13 +154,13 @@ class FuzzyMorph {
    * @return New VoxelArray with child subtracted from this VoxelArray
    */
   public VoxelArray sub(VoxelArray parent, VoxelArray child) {
-    VoxelArray diff = new VoxelArray();
+    VoxelArray result = new VoxelArray();
     for (Voxel t : parent.voxelList) {
       if (!child.voxelList.contains(t)) {
-        diff.addVoxel(t);
+        result.addVoxel(t);
       }
     }
-    return diff;
+    return result;
   }
 
   /**
@@ -127,14 +171,71 @@ class FuzzyMorph {
    * @return New VoxelArray with child subtracted from this VoxelArray
    */
   public VoxelArray add(VoxelArray parent, VoxelArray child) {
-    VoxelArray add = new VoxelArray();
+    VoxelArray result = new VoxelArray();
     for (Voxel t : child.voxelList) {
       if (!parent.voxelList.contains(t)) {
-        add.addVoxel(t);
+        result.addVoxel(t);
       }
     }
-    return add;
+    return result;
   }
   
-  //public ArrayList<ArrayList<Voxel>> adjacencyList(VoxelArray
+  /**
+   * Get the horizontal neighboring Voxels of a specific Voxel
+   * 
+   * @param t Voxel we wish to know the Neighbors of
+   * @param tArray that encapsulates t
+   * @return Adjacent Voxels that Exist within a VoxelArray
+   */
+  public ArrayList<Voxel> getNeighborsUV(Voxel t, VoxelArray tArray) {
+    ArrayList<Voxel> neighbors = new ArrayList<Voxel>();
+    for (int dU = -1; dU <= +1; dU++) {
+      for (int dV = -1; dV <= +1; dV++) {
+        if (!(dU == 0 && dV == 0)) { // tile skips itself
+          String coordKey = this.coordKey(t.u + dU, t.v + dV, t.w);
+          if (tArray.voxelMap.containsKey(coordKey)) {
+            Voxel adj = tArray.voxelMap.get(coordKey);
+            neighbors.add(adj);
+          }
+        }
+      }
+    }
+    return neighbors;
+  }
+  
+  /**
+   * Get the Voxel directly above a specific Voxel; null if none
+   * 
+   * @param t Voxel we wish to know the Neighbor of
+   * @param tArray that encapsulates t
+   * @return Voxel directly above a specific Voxel; null if none
+   */
+  public Voxel getNeighborTop(Voxel t, VoxelArray tArray) {
+    String coordKey = this.coordKey(t.u, t.v, t.w + 1);
+    if (tArray.voxelMap.containsKey(coordKey)) {
+      return tArray.voxelMap.get(coordKey);
+    } else {
+      return null;
+    }
+  }
+  
+  /**
+   * Get the Voxel directly below a specific Voxel; null if none
+   * 
+   * @param t Voxel we wish to know the Neighbor of
+   * @param tArray that encapsulates t
+   * @return Voxel directly below a specific Voxel; null if none
+   */
+  public Voxel getNeighborBottom(Voxel t, VoxelArray tArray) {
+    String coordKey = this.coordKey(t.u, t.v, t.w - 1);
+    if (tArray.voxelMap.containsKey(coordKey)) {
+      return tArray.voxelMap.get(coordKey);
+    } else {
+      return null;
+    }
+  }
+  
+  public String coordKey(int u, int v, int w) {
+    return u + "," + v + "," + w;
+  }
 }
