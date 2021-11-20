@@ -16,8 +16,9 @@ final float PLOT_MAX_RADIUS = 1000;
 final float VOXEL_WIDTH = 25;
 final float VOXEL_HEIGHT = 10;
 final float VOXEL_ROTATION = 0.25 * PI;
-final Point VOXEL_TRANSLATE = new Point(0, 0, 0);
+final Point VOXEL_TRANSLATE = new Point(5, 5);
 final float SETBACK_DISTANCE = 50;
+final int LEVELS_TO_EXTRUDE = 5;
 
 final int DEFAULT_COLOR = #999999;
 final int BACKGROUND_COLOR = #222222;
@@ -46,6 +47,7 @@ void initGeometry() {
   this.plot = this.random.polygon(PLOT_X, PLOT_Y, NUM_VERTICES, PLOT_MIN_RADIUS, PLOT_MAX_RADIUS);
   this.volume = this.morph.make(this.plot, VOXEL_WIDTH, VOXEL_HEIGHT, VOXEL_ROTATION, VOXEL_TRANSLATE);
   this.volume = this.morph.setback(this.volume, SETBACK_DISTANCE);
+  this.volume = this.morph.extrude(this.volume, LEVELS_TO_EXTRUDE);
 }
 
 void draw() {
@@ -70,26 +72,6 @@ void draw() {
     
     // reset mouse position
     cam.setMouseToCenter();
-  }
-}
-
-void drawShape(Polygon p) {
-  noFill();
-  stroke(255);
-  for(Line edge : p.edge) {
-    line(edge.o.x, edge.o.z, edge.o.y, edge.f.x, edge.f.z, edge.f.y);
-  }
-}
-
-void drawVoxels(VoxelArray voxelArray) {
-  fill(255, 100);
-  noStroke();
-  for(Voxel voxel : voxelArray.voxelList) {
-    pushMatrix();
-    translate(voxel.location.x, voxel.location.z, voxel.location.y);
-    rotateY(voxel.rotation);
-    box(0.9 * voxel.width, 0.9 * voxel.height, 0.9 * voxel.width);  
-    popMatrix();
   }
 }
 
@@ -121,26 +103,4 @@ void mouseWheel(MouseEvent event) {
     float e = event.getCount();
     cam.fly(e);
   }
-}
-
-void drawGrids(float gridSize, int gridUnits, float z) {
-  this.drawGrid(gridSize, gridUnits, -z);
-  this.drawGrid(gridSize, gridUnits, +z);
-}
-
-void drawGrid(float gridSize, int gridUnits, float z) {
-  stroke(DEFAULT_COLOR, 20);
-  float gridWidth = gridSize / gridUnits;
-  for (int u=0; u<gridUnits; u++) {
-    line(-0.5 * gridSize, z, -0.5 * gridSize + u * gridWidth, 0.5 * gridSize, z, -0.5 * gridSize + u * gridWidth);
-    line(-0.5 * gridSize + u * gridWidth, z, -0.5 * gridSize, -0.5 * gridSize + u * gridWidth, z, 0.5 * gridSize);
-  }
-}
-
-void drawCursor() {
-  stroke(DEFAULT_COLOR, 200);
-  pushMatrix(); translate(width/2, height/2);
-  line(0, -20, 0, 20);
-  line(-20, 0, 20, 0);
-  popMatrix();
 }

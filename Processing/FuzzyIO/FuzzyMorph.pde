@@ -10,13 +10,13 @@ class FuzzyMorph {
   private int GROUND_W = 0;
   
   /**
-   * Inherit the Voxels from a parent VoxelArray (child voxels are NOT cloned)
+   * Inherit the Voxels from a input VoxelArray (child voxels are NOT cloned)
    * 
-   * @param parent A parent VoxelArray
+   * @param input A parent VoxelArray
    */
-  public VoxelArray cloneVoxelArray(VoxelArray parent) {
+  public VoxelArray cloneVoxelArray(VoxelArray input) {
     VoxelArray arrayCopy = new VoxelArray();
-    for (Voxel t : parent.voxelList) {
+    for (Voxel t : input.voxelList) {
       arrayCopy.addVoxel(t);
     }
     return arrayCopy;
@@ -25,14 +25,15 @@ class FuzzyMorph {
   /**
    * Clone a voxel with a new UUID
    * 
-   * @param parent A parent Voxel
+   * @param input A parent Voxel
    */
-  public Voxel cloneVoxel(Voxel parent) {
+  public Voxel cloneVoxel(Voxel input) {
     Voxel copy = new Voxel();
-    copy.setLocation(parent.location.x, parent.location.y, parent.location.z);
-    copy.setRotation(parent.rotation);
-    copy.setSize(parent.width, parent.height);
-    copy.setType(parent.type);
+    copy.setLocation(input.location.x, input.location.y, input.location.z);
+    copy.setCoordinates(input.u, input.v, input.w);
+    copy.setRotation(input.rotation);
+    copy.setSize(input.width, input.height);
+    copy.setType(input.type);
     return copy;
   }
   
@@ -103,18 +104,51 @@ class FuzzyMorph {
   }
   
   /**
+   * Generate a vertical extrusion of an existing Voxel Array
+   *
+   * @param input VoxelArray to extrude
+   * @param levels number of vertical voxel layers to extrude upward
+   * @return extruded VoxelArray
+   * 
+   */
+  public VoxelArray extrude(VoxelArray input, int levels) {
+    VoxelArray topLayer = new VoxelArray();
+    
+    // Collect all non-covered voxels
+    for(Voxel t : input.voxelList) {
+      if(this.getNeighborTop(t, input) == null) {
+        topLayer.addVoxel(t);
+      }
+    }
+    
+    // Create the extruded voxels
+    VoxelArray extruded = new VoxelArray();
+    for(int i=1; i<=levels; i++) {
+      for(Voxel t : topLayer.voxelList) {
+        Voxel verticalCopy = this.cloneVoxel(t);
+        verticalCopy.setCoordinates(t.u, t.v, t.w + i);
+        verticalCopy.setLocation(t.location.x, t.location.y, t.location.z + i * t.height);
+        extruded.addVoxel(verticalCopy);
+      }
+    }
+    
+    // Add extruded voxels to input and return
+    return this.add(input, extruded);
+  }
+  
+  /**
    * Given an input VoxelArray, returns a new VoxelArray with outer ring of voxels removed
    * 
-   * @param parent voxel array to apply setback to
+   * @param input voxel array to apply setback to
    * @return new VoxelArray with outer ring of voxels removed removed
    */
-  private VoxelArray setback(VoxelArray parent) {
+  private VoxelArray setback(VoxelArray input) {
     VoxelArray result = new VoxelArray();
 
-    // Add tiles that are at edge of parent TileArray
-    for (Voxel t : parent.voxelList) {
+    // Add tiles that are at edge of input TileArray
+    for (Voxel t : input.voxelList) {
       // Tile surrounded on all sides has 8 neighbors
-      if (this.getNeighborsUV(t, parent).size() >= 7) {
+      if (this.getNeighborsUV(t, input).size() >= 7) {
         result.addVoxel(t);
       }
     }
@@ -124,17 +158,17 @@ class FuzzyMorph {
   /**
    * Given an input VoxelArray, returns a new VoxelArray with outer ring of voxels removed
    * 
-   * @param parent voxel array to apply setback to
+   * @param input voxel array to apply setback to
    * @param setbackDistance distance to apply setback ffrom edge
    * @return new VoxelArray with outer ring of voxels removed
    */
-  public VoxelArray setback(VoxelArray parent, float setbackDistance) {
-    VoxelArray result = parent;
+  public VoxelArray setback(VoxelArray input, float setbackDistance) {
+    VoxelArray result = input;
     
     // Get the width of the first voxel in the array
     float voxelWidth;
-    if (parent.voxelList.size() > 0) {
-      voxelWidth = parent.voxelList.get(0).width;
+    if (input.voxelList.size() > 0) {
+      voxelWidth = input.voxelList.get(0).width;
     } else {
       return result;
     }
@@ -147,15 +181,15 @@ class FuzzyMorph {
   }
   
   /**
-   * Returns a new VoxelArray with child voxels subtracted from parent
+   * Returns a new VoxelArray with child voxels subtracted from input
    * 
-   * @param parent VoxelArray to be subtracted from
-   * @param child VoxelArray to subtract from parent
+   * @param input VoxelArray to be subtracted from
+   * @param child VoxelArray to subtract from input
    * @return New VoxelArray with child subtracted from this VoxelArray
    */
-  public VoxelArray sub(VoxelArray parent, VoxelArray child) {
+  public VoxelArray sub(VoxelArray input, VoxelArray child) {
     VoxelArray result = new VoxelArray();
-    for (Voxel t : parent.voxelList) {
+    for (Voxel t : input.voxelList) {
       if (!child.voxelList.contains(t)) {
         result.addVoxel(t);
       }
@@ -164,16 +198,16 @@ class FuzzyMorph {
   }
 
   /**
-   * Returns a new VoxelArray with child voxels added to parent
+   * Returns a new VoxelArray with child voxels added to input
    * 
-   * @param parent VoxelArray to be added to
-   * @param child VoxelArray to add to parent
+   * @param input VoxelArray to be added to
+   * @param child VoxelArray to add to input
    * @return New VoxelArray with child subtracted from this VoxelArray
    */
-  public VoxelArray add(VoxelArray parent, VoxelArray child) {
-    VoxelArray result = new VoxelArray();
-    for (Voxel t : child.voxelList) {
-      if (!parent.voxelList.contains(t)) {
+  public VoxelArray add(VoxelArray input, VoxelArray toAdd) {
+    VoxelArray result = this.cloneVoxelArray(input);
+    for (Voxel t : toAdd.voxelList) {
+      if (!input.voxelList.contains(t)) {
         result.addVoxel(t);
       }
     }
