@@ -99,6 +99,18 @@ public class Camera {
     }
     
     switch(key) {
+      case 'a':
+        this.stepLeft(KEY_DISTANCE);
+        break;
+      case 'd':
+        this.stepRight(KEY_DISTANCE);
+        break;
+      case 'w':
+        this.flyUp(KEY_DISTANCE);
+        break;
+      case 's':
+        this.flyDown(KEY_DISTANCE);
+        break;
       case '[':
         this.lookLeft(KEY_ANGLE);
         break;

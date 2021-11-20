@@ -1,4 +1,4 @@
-class Test {
+class RandomShape {
   
   /**
    * generates a random polygon shape
@@ -6,8 +6,8 @@ class Test {
    * @param num_pts number of corners to include in new random polygon
    * @return random polygon 
    */
-  public Polygon randomShape(int num_pts) {
-    return randomShape(0, 0, num_pts);
+  public Polygon make(int num_pts) {
+    return this.make(0, 0, num_pts);
   }
   
   /**
@@ -18,8 +18,8 @@ class Test {
    * @param y_center y-coordinate or polygon center
    * @return random polygon 
    */
-  public Polygon randomShape(float x_center, float y_center, int num_pts) {
-    return randomShape(x_center, y_center, num_pts, 50, 100);
+  public Polygon make(float x_center, float y_center, int num_pts) {
+    return this.make(x_center, y_center, num_pts, 50, 100);
   }
   
   /**
@@ -32,7 +32,7 @@ class Test {
    * @param max_radius max distance of corner from center point
    * @return random polygon 
    */
-  public Polygon randomShape(float x_center, float y_center, int num_pts, float min_radius, float max_radius) {
+  public Polygon make(float x_center, float y_center, int num_pts, float min_radius, float max_radius) {
   
     Polygon polygon = new Polygon();
     ArrayList<Float> angle, radius;

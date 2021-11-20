@@ -49,15 +49,6 @@ public class Voxel {
   public void setType(String type) {
     this.type = type;
   }
-  
-  public Voxel copy() {
-    Voxel copy = new Voxel();
-    copy.setLocation(location.x, location.y, location.z);
-    copy.setRotation(rotation);
-    copy.setSize(w, h);
-    copy.setType(type);
-    return copy;
-  }
 
   @Override
   public String toString() {

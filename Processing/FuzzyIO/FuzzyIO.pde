@@ -12,29 +12,48 @@ final int GRID_UNITS = 100;
 final int NUM_VERTICES = 4;
 final float PLOT_X = 0;
 final float PLOT_Y = -1000;
-final float PLOT_MIN = 200;
-final float PLOT_MAX = 1000;
+final float PLOT_MIN_RADIUS = 200;
+final float PLOT_MAX_RADIUS = 1000;
 final float VOXEL_WIDTH = 25;
 final float VOXEL_HEIGHT = 10;
 final float VOXEL_ROTATION = 0.25 * PI;
+final Point VOXEL_TRANSLATE = new Point(0, 0, 0);
 
 final int DEFAULT_COLOR = #999999;
 final int BACKGROUND_COLOR = #222222;
 
 Camera cam;
 
-Test test = new Test();
+RandomShape randomShape;
+Morph morph;
 Polygon plot;
 VoxelArray volume;
 
 void setup() {
+  
   size(1280, 800, RENDERER);
+  
   cam = new Camera(RENDERER);
-  cam.eye.y = - 0.50 * PLOT_MAX;
+  cam.eye.y = - 0.50 * PLOT_MAX_RADIUS;
   cam.angleYZ = 0.20 * PI;
-  this.plot = test.randomShape(PLOT_X, PLOT_Y, NUM_VERTICES, PLOT_MIN, PLOT_MAX);
-  this.volume = new VoxelArray();
-  this.volume.makeVoxels(this.plot, VOXEL_WIDTH, VOXEL_HEIGHT, VOXEL_ROTATION, new Point(), null);
+  
+  randomShape = new RandomShape();
+  this.plot = randomShape.make(
+    PLOT_X, 
+    PLOT_Y, 
+    NUM_VERTICES, 
+    PLOT_MIN_RADIUS, 
+    PLOT_MAX_RADIUS
+  );
+  
+  this.morph = new Morph();
+  this.volume = this.morph.make(
+    this.plot, 
+    VOXEL_WIDTH, 
+    VOXEL_HEIGHT, 
+    VOXEL_ROTATION, 
+    VOXEL_TRANSLATE
+  );
 }
 
 void draw() {
@@ -88,8 +107,8 @@ void keyPressed() {
       cam.init();
       break;
     case 'r':
-      this.plot = test.randomShape(PLOT_X, PLOT_Y, NUM_VERTICES, PLOT_MIN, PLOT_MAX);
-      this.volume.makeVoxels(this.plot, VOXEL_WIDTH, VOXEL_HEIGHT, VOXEL_ROTATION, new Point(), null);
+      this.plot = randomShape.make(PLOT_X, PLOT_Y, NUM_VERTICES, PLOT_MIN_RADIUS, PLOT_MAX_RADIUS);
+      this.volume = this.morph.make(this.plot, VOXEL_WIDTH, VOXEL_HEIGHT, VOXEL_ROTATION, VOXEL_TRANSLATE);
       break;
   }
 }
