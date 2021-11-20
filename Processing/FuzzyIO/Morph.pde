@@ -3,7 +3,11 @@
  */
 class Morph {
   
+  // geographic height of ground
   private float GROUND_Z = 0;
+  
+  // local w (vertical) coordinate of ground
+  private int GROUND_W = 0;
   
   /**
    * Inherit the Voxels from a parent VoxelArray (child voxels are NOT cloned)
@@ -12,7 +16,7 @@ class Morph {
    */
   public VoxelArray cloneVoxelArray(VoxelArray parent) {
     VoxelArray arrayCopy = new VoxelArray();
-    for (Voxel t : parent.voxelList()) {
+    for (Voxel t : parent.voxelList) {
       arrayCopy.addVoxel(t);
     }
     return arrayCopy;
@@ -27,7 +31,7 @@ class Morph {
     Voxel copy = new Voxel();
     copy.setLocation(parent.location.x, parent.location.y, parent.location.z);
     copy.setRotation(parent.rotation);
-    copy.setSize(parent.w, parent.h);
+    copy.setSize(parent.width, parent.height);
     copy.setType(parent.type);
     return copy;
   }
@@ -87,12 +91,14 @@ class Morph {
         if (boundary.containsPoint(location)) {
           Voxel t = new Voxel();
           t.setLocation(location.x, location.y, GROUND_Z);
+          t.setCoordinates(u, v, GROUND_W);
           t.setRotation(rotation);
           t.setSize(voxelWidth, voxelHeight);
           voxels.addVoxel(t);
         }
       }
     }
+    
     return voxels;
   }
   
@@ -122,11 +128,13 @@ class Morph {
    */
   public VoxelArray add(VoxelArray parent, VoxelArray child) {
     VoxelArray add = new VoxelArray();
-    for (Voxel t : child.voxelList()) {
+    for (Voxel t : child.voxelList) {
       if (!parent.voxelList.contains(t)) {
         add.addVoxel(t);
       }
     }
     return add;
   }
+  
+  //public ArrayList<ArrayList<Voxel>> adjacencyList(VoxelArray
 }

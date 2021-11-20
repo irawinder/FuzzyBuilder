@@ -11,6 +11,7 @@ public class VoxelArray {
 
   // Collection of Voxels
   private HashMap<UUID, Voxel> voxelMap;
+  
   private ArrayList<Voxel> voxelList;
   
   /**
@@ -26,59 +27,15 @@ public class VoxelArray {
   }
 
   /**
-   * Return Voxels
-   * 
-   * @return HashMap of all voxels in VoxelArray
-   */
-  public HashMap<UUID, Voxel> voxelMap() {
-    return voxelMap;
-  }
-
-  /**
-   * Return Voxels
-   * 
-   * @return ArrayList of all voxels in VoxelArray
-   */
-  public ArrayList<Voxel> voxelList() {
-    return voxelList;
-  }
-
-  /**
-   * Returns true if a point is within the VoxelArray
-   * 
-   * @param x x-coordinate
-   * @param y y-coordinate
-   * @return true if (x, y) lies within one of the voxels in VoxelArray
-   */
-  public boolean pointInArray(float x, float y) {
-    boolean inArray = false;
-    for (Voxel t : voxelList) {
-      float dX = Math.abs(t.location.x - x);
-      float dY = Math.abs(t.location.y - y);
-      if (dX < 0.51 * t.w && dY < 0.51 * t.w + 1) {
-        inArray = true;
-        break;
-      }
-    }
-    return inArray;
-  }
-
-  /**
-   * Clear All Voxels in VoxelArray
-   */
-  public void clearVoxels() {
-    voxelMap.clear();
-    voxelList.clear();
-  }
-
-  /**
    * Add Voxel to VoxelArray
    * 
    * @param t Voxel to add to Array
    */
   public void addVoxel(Voxel t) {
-    voxelMap.put(t.uniqueID,t);
-    voxelList.add(t);
+    if (!voxelList.contains(t)) {
+      voxelMap.put(t.uniqueID, t);
+      voxelList.add(t);
+    }
   }
 
   /**
@@ -88,9 +45,11 @@ public class VoxelArray {
    *                VoxelArray
    */
   public void removeVoxel(UUID id) {
-    Voxel t = voxelMap.get(id);
-    voxelList.remove(t);
-    voxelMap.remove(id);
+    if (voxelMap.containsKey(id)) {
+      Voxel t = voxelMap.get(id);
+      voxelList.remove(t);
+      voxelMap.remove(id);
+    }
   }
 
   /**
@@ -99,8 +58,10 @@ public class VoxelArray {
    * @param t The Voxel to Remove from VoxelArray
    */
   public void removeVoxel(Voxel t) {
-    voxelList.remove(t);
-    voxelMap.remove(t.uniqueID);
+    if (voxelList.contains(t)) {
+      voxelList.remove(t);
+      voxelMap.remove(t.uniqueID);
+    }
   }
   
   /**

@@ -96,7 +96,7 @@ void drawVoxels(VoxelArray voxelArray) {
     pushMatrix();
     translate(voxel.location.x, voxel.location.z, voxel.location.y);
     rotateY(voxel.rotation);
-    box(0.9 * voxel.w, 0.9 * voxel.h, 0.9 * voxel.w);  
+    box(0.9 * voxel.width, 0.9 * voxel.height, 0.9 * voxel.width);  
     popMatrix();
   }
 }
