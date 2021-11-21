@@ -65,4 +65,12 @@ class FuzzyRandom {
     
     return polygon;
   }
+  
+  /**
+   * Get a random use
+   */
+  public Use use() {
+    int index = (int) random(Use.values().length);
+    return Use.values()[index];
+  }
 }

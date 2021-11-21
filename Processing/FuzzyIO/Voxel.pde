@@ -16,7 +16,7 @@ public class Voxel {
   public float width, height;
 
   // Type of Voxel
-  public String type;
+  public Use type;
   
   // Local integer coordinates of this voxel (for efficient adjacency analysis)
   public int u, v, w;
@@ -54,7 +54,7 @@ public class Voxel {
     this.height = height;
   }
   
-  public void setType(String type) {
+  public void setUse(Use type) {
     this.type = type;
   }
   
@@ -64,6 +64,6 @@ public class Voxel {
 
   @Override
   public String toString() {
-    return type + " Voxel [" + this.u + "," + this.v + "," + this.w + "] at " + location;
+    return type.toString() + " Voxel [" + this.u + "," + this.v + "," + this.w + "] at " + location;
   }
 }

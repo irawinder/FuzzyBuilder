@@ -29,9 +29,10 @@ void drawShape(Polygon p) {
 }
 
 void drawVoxels(VoxelArray voxelArray) {
-  fill(255, 100);
   noStroke();
   for(Voxel voxel : voxelArray.voxelList) {
+    int col = this.useColor(voxel.type);
+    fill(col, 100);
     pushMatrix();
     translate(voxel.location.x, - voxel.location.z - 0.5 * voxel.height, voxel.location.y);
     rotateY(voxel.rotation);
@@ -42,9 +43,10 @@ void drawVoxels(VoxelArray voxelArray) {
 
 void drawTiles(VoxelArray voxelArray) {
   noFill();
-  stroke(255, 100);
   rectMode(CENTER);
   for(Voxel voxel : voxelArray.voxelList) {
+    int col = this.useColor(voxel.type);
+    stroke(col, 100);
     pushMatrix();
     translate(voxel.location.x, - voxel.location.z - 0.5 * voxel.height, voxel.location.y);
     rotateY(voxel.rotation);
@@ -54,3 +56,32 @@ void drawTiles(VoxelArray voxelArray) {
   }
   rectMode(CORNER);
 }
+
+public int useColor(Use use) {
+    if(use != null) {
+      switch(use) {
+        case Office:
+          return #6666CC;
+        case Residential:
+          return #CCCC66;
+        case Retail:
+          return #CC66CC;
+        case Landscape:
+          return #66CC66;
+        case Carpark:
+          return #CCCCCC;
+        case Government:
+          return #66CCCC;
+        case Hotel:
+          return #6666CC;
+        case Convention:
+          return #CC6666;
+        case Community:
+          return #CC6666;
+        default:
+          return DEFAULT_COLOR;
+      }
+    } else {
+      return DEFAULT_COLOR;
+    }
+  }

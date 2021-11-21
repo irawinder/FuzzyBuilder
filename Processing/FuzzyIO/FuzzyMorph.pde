@@ -47,7 +47,7 @@ class FuzzyMorph {
     copy.setCoordinates(input.u, input.v, input.w);
     copy.setRotation(input.rotation);
     copy.setSize(input.width, input.height);
-    copy.setType(input.type);
+    copy.setUse(input.type);
     return copy;
   }
   
@@ -193,6 +193,7 @@ class FuzzyMorph {
    * 
    */
   public VoxelArray extrude(VoxelArray input, int levels) {
+    VoxelArray inputClone = this.hardCloneVoxelArray(input);
     VoxelArray topLayer = new VoxelArray();
     
     // Collect all non-covered voxels
@@ -214,7 +215,7 @@ class FuzzyMorph {
     }
     
     // Add extruded voxels to input and return
-    return this.add(input, extruded);
+    return this.add(inputClone, extruded);
   }
   
   /**
@@ -341,7 +342,7 @@ class FuzzyMorph {
    * @param tArray that encapsulates t
    * @return Voxel directly below a specific Voxel; null if none
    */
-  public Voxel getNeighborBottom(Voxel t, VoxelArray tArray) { //<>// //<>//
+  public Voxel getNeighborBottom(Voxel t, VoxelArray tArray) { //<>//
     String coordKey = this.coordKey(t.u, t.v, t.w - 1);
     if (tArray.voxelMap.containsKey(coordKey)) {
       return tArray.voxelMap.get(coordKey);

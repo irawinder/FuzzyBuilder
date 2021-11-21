@@ -64,9 +64,9 @@ public class VoxelArray {
    *
    * @param type
    */
-  public void setVoxelType(String type) {
+  public void setVoxelUse(Use type) {
     for(Voxel voxel : voxelList) {
-      voxel.setType(type);  
+      voxel.setUse(type);  
     }
   }
   

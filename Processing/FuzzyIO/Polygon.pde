@@ -169,7 +169,7 @@ public class Polygon {
 
     // If polygon has 3 or more vertices, count how many times a
     // horizontal line drawn from negative infinity to point p
-    // intersects with the polygon. If off, the Point p is inside
+    // intersects with the polygon. If odd, the Point p is inside
     // the polygon - https://en.wikipedia.org/wiki/Point_in_polygon
     //
     if (num_nodes > 2) {
