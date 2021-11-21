@@ -4,7 +4,7 @@ void drawGrids(float gridSize, int gridUnits, float z) {
 }
 
 void drawGrid(float gridSize, int gridUnits, float z) {
-  stroke(DEFAULT_COLOR, 20);
+  stroke(DEFAULT_COLOR, 10);
   float gridWidth = gridSize / gridUnits;
   for (int u=0; u<gridUnits; u++) {
     line(-0.5 * gridSize, z, -0.5 * gridSize + u * gridWidth, 0.5 * gridSize, z, -0.5 * gridSize + u * gridWidth);

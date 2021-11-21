@@ -7,55 +7,22 @@ final String RENDERER = P3D;
 final float GRID_WIDTH = 10000;
 final float GRID_HEIGHT = 1000;
 final int GRID_UNITS = 100;
-
-final int NUM_VERTICES = 4;
-final float PLOT_X = 0;
-final float PLOT_Y = -1000;
-final float PLOT_MIN_RADIUS = 200;
-final float PLOT_MAX_RADIUS = 1000;
-final float VOXEL_WIDTH = 25;
-final float VOXEL_HEIGHT = 10;
-final float VOXEL_ROTATION = 0.25 * PI;
-final Point VOXEL_TRANSLATE = new Point(5, 5);
-final float SETBACK_DISTANCE = 50;
-final int LEVELS_TO_EXTRUDE = 5;
-final float TOWER_X = 0;
-final float TOWER_Y = -1000;
-final float TOWER_WIDTH = 100;
-final float TOWER_DEPTH = 200;
-final float TOWER_ROTATION = 0.25 * PI;
-
 final int DEFAULT_COLOR = #999999;
 final int BACKGROUND_COLOR = #222222;
 
 Camera cam;
 
-FuzzyRandom random;
-FuzzyMorph morph;
-Polygon plotShape, towerShape;
-VoxelArray plot, podium, tower;
+Test test;
 
 void setup() {
   
   size(1280, 800, RENDERER);
   
   cam = new Camera(RENDERER);
-  cam.eye.y = - 0.50 * PLOT_MAX_RADIUS;
+  cam.eye.y = - 0.50 * GRID_HEIGHT;
   cam.angleYZ = 0.20 * PI;
   
-  this.random = new FuzzyRandom();
-  this.morph = new FuzzyMorph();
-  this.initGeometry();
-}
-
-void initGeometry() {
-  this.plotShape = this.random.polygon(PLOT_X, PLOT_Y, NUM_VERTICES, PLOT_MIN_RADIUS, PLOT_MAX_RADIUS);
-  this.plot = this.morph.make(this.plotShape, VOXEL_WIDTH, 0, VOXEL_ROTATION, VOXEL_TRANSLATE);
-  this.podium = this.morph.hardCloneVoxelArray(this.plot);
-  this.podium.setHeight(VOXEL_HEIGHT);
-  this.podium = this.morph.setback(this.podium, SETBACK_DISTANCE);
-  this.podium = this.morph.extrude(this.podium, LEVELS_TO_EXTRUDE);
-  this.towerShape = this.morph.rectangle(new Point(TOWER_X, TOWER_Y), TOWER_WIDTH, TOWER_DEPTH, TOWER_ROTATION);
+  this.test = new Test();
 }
 
 void draw() {
@@ -67,10 +34,10 @@ void draw() {
   // 3D Objects
   cam.pov();
   this.drawGrids(GRID_WIDTH, GRID_UNITS, GRID_HEIGHT);
-  this.drawShape(this.plotShape);
-  this.drawShape(this.towerShape);
-  this.drawTiles(this.plot);
-  this.drawVoxels(this.podium);
+  this.drawShape(this.test.plotShape);
+  this.drawShape(this.test.towerShape);
+  this.drawTiles(this.test.plot);
+  this.drawVoxels(this.test.massing);
   
   // 2D Overlay
   cam.overlay();
@@ -91,7 +58,7 @@ void keyPressed() {
       cam.init();
       break;
     case 'r':
-      this.initGeometry();
+      this.test = new Test();
       break;
   }
 }

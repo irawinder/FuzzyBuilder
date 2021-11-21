@@ -64,7 +64,7 @@ public class VoxelArray {
    *
    * @param type
    */
-  public void setType(String type) {
+  public void setVoxelType(String type) {
     for(Voxel voxel : voxelList) {
       voxel.setType(type);  
     }
@@ -75,10 +75,36 @@ public class VoxelArray {
    *
    * @param type
    */
-  public void setHeight(float height) {
+  public void setVoxelHeight(float height) {
     for(Voxel voxel : voxelList) {
       voxel.setSize(voxel.width, height);  
     }
+  }
+  
+  /**
+   * Get the maximum height coordinate, w,  of any Voxel
+   */
+  public int maxW() {
+    int maxW = 0;
+    for(Voxel t : this.voxelList) {
+      if (maxW < t.w) {
+        maxW = t.w;
+      }
+    }
+    return maxW;
+  }
+  
+  /**
+   * Get the minimum height coordinate, w,  of any Voxel
+   */
+  public int minW() {
+    int minW = +1000000;
+    for(Voxel t : this.voxelList) {
+      if (minW > t.w) {
+        minW = t.w;
+      }
+    }
+    return minW;
   }
 
   @Override

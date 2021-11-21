@@ -115,6 +115,76 @@ class FuzzyMorph {
   }
   
   /**
+   * Clip a portion of a VoxelArray contained within a Polygon
+   * 
+   * @param input     VoxelArray to clip from
+   * @param boundary  Polygon that defines boundary of area to clip
+   * @result subset of ipput VoxelArray bounded by polygon
+   */
+  public VoxelArray clip(VoxelArray input, Polygon boundary) {
+    VoxelArray result = new VoxelArray();
+    for (Voxel t : input.voxelList) {
+      if (boundary.containsPoint(t.location)) {
+        result.addVoxel(t);
+      }
+    }
+    return result;
+  }
+  
+  /**
+   * Drops an input VoxelArray from the sky so it rests on the target VoxelArray without any overlap
+   * 
+   * @param input  VoxelArray to drop from sky
+   * @param target VoxelArray to drop the input on top of
+   * @result the input is vertically shifted so that it rests on either the target or the ground
+   */
+  public VoxelArray drop(VoxelArray input, VoxelArray target) {
+    int inputMinW = input.minW();
+    int targetLocalMaxW = GROUND_W - 1;
+    int targetGlobalMaxW = target.maxW();
+    for (Voxel t : input.voxelList) {
+      for (int w=GROUND_W; w<=targetGlobalMaxW; w++) {
+        String keyCoord = this.coordKey(t.u, t.v, w);
+        if (target.voxelMap.containsKey(keyCoord)) {
+          if (targetLocalMaxW < w) {
+            targetLocalMaxW = w;
+          }
+        }
+      }
+    }
+    return this.translate(input, 0, 0, 1 + targetLocalMaxW - inputMinW);
+  }
+  
+  /**
+   * Translates an input VoxelArray using discrete coordinate system
+   * 
+   * @param input  VoxelArray to drop from sky
+   * @param dU amount of voxel units to shift in the u direction
+   * @param dV amount of voxel units to shift in the v direction
+   * @param dW amount of voxel units to shift in the W direction
+   * @result the translated VoxelArray
+   */
+  public VoxelArray translate(VoxelArray input, int dU, int dV, int dW) {
+    if(input.voxelList.size() > 0) {
+      VoxelArray result = new VoxelArray();
+      for(Voxel t : input.voxelList) {
+        t.u += dU;
+        t.v += dV;
+        t.w += dW;
+        t.setLocation(
+          t.location.x + t.width * dU,
+          t.location.y + t.width * dV,
+          t.location.z + t.height * dW
+        );
+        result.addVoxel(t);
+      }
+      return result;
+    } else {
+      return new VoxelArray();
+    }
+  }
+  
+  /**
    * Generate a vertical extrusion of an existing Voxel Array
    *
    * @param input VoxelArray to extrude
@@ -126,8 +196,8 @@ class FuzzyMorph {
     VoxelArray topLayer = new VoxelArray();
     
     // Collect all non-covered voxels
-    for(Voxel t : input.voxelList) {
-      if(this.getNeighborTop(t, input) == null) {
+    for (Voxel t : input.voxelList) {
+      if (this.getNeighborTop(t, input) == null) {
         topLayer.addVoxel(t);
       }
     }
@@ -271,7 +341,7 @@ class FuzzyMorph {
    * @param tArray that encapsulates t
    * @return Voxel directly below a specific Voxel; null if none
    */
-  public Voxel getNeighborBottom(Voxel t, VoxelArray tArray) { //<>//
+  public Voxel getNeighborBottom(Voxel t, VoxelArray tArray) { //<>// //<>//
     String coordKey = this.coordKey(t.u, t.v, t.w - 1);
     if (tArray.voxelMap.containsKey(coordKey)) {
       return tArray.voxelMap.get(coordKey);
