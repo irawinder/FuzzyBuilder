@@ -69,8 +69,8 @@ void draw() {
   this.drawGrids(GRID_WIDTH, GRID_UNITS, GRID_HEIGHT);
   this.drawShape(this.plotShape);
   this.drawShape(this.towerShape);
-  //this.drawTiles(this.plot);
-  //this.drawVoxels(this.podium);
+  this.drawTiles(this.plot);
+  this.drawVoxels(this.podium);
   
   // 2D Overlay
   cam.overlay();

@@ -271,7 +271,7 @@ class FuzzyMorph {
    * @param tArray that encapsulates t
    * @return Voxel directly below a specific Voxel; null if none
    */
-  public Voxel getNeighborBottom(Voxel t, VoxelArray tArray) {
+  public Voxel getNeighborBottom(Voxel t, VoxelArray tArray) { //<>//
     String coordKey = this.coordKey(t.u, t.v, t.w - 1);
     if (tArray.voxelMap.containsKey(coordKey)) {
       return tArray.voxelMap.get(coordKey);
@@ -295,15 +295,17 @@ class FuzzyMorph {
    */
   public Polygon rectangle(Point location, float width, float height, float rotation) {
     ArrayList<Point> corners = new ArrayList<Point>();
-    corners.add(new Point(location.x - 0.5 * width, location.y - 0.5 * height));
-    corners.add(new Point(location.x + 0.5 * width, location.y - 0.5 * height));
-    corners.add(new Point(location.x + 0.5 * width, location.y + 0.5 * height));
-    corners.add(new Point(location.x - 0.5 * width, location.y + 0.5 * height));
+    corners.add(new Point(- 0.5, - 0.5));
+    corners.add(new Point(+ 0.5, - 0.5));
+    corners.add(new Point(+ 0.5, + 0.5));
+    corners.add(new Point(- 0.5, + 0.5));
     
     Polygon rectangle = new Polygon();
     for(Point corner : corners) {
-      Point rCorner = this.rotateXY(corner, location, rotation);
-      rectangle.addVertex(rCorner);
+      corner.x = location.x + corner.x * width;
+      corner.y = location.y + corner.y * height;
+      corner = this.rotateXY(corner, location, rotation);
+      rectangle.addVertex(corner);
     }
     return rectangle;
   }
