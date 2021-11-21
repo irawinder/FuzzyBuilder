@@ -285,7 +285,7 @@ class FuzzyMorph {
   }
   
   /**
-   * Generate a rectangular polygon on the ground plane
+   * Generate a rectangular polygon on the ground plane rotated about an origin
    *
    * @param location center of rectangle
    * @param width
@@ -293,7 +293,7 @@ class FuzzyMorph {
    * @param rotation
    * @return resulting rectangle
    */
-  public Polygon rectangle(Point location, float width, float height, float rotation) {
+  public Polygon rectangle(Point origin, float width, float height, float rotation) {
     ArrayList<Point> corners = new ArrayList<Point>();
     corners.add(new Point(- 0.5, - 0.5));
     corners.add(new Point(+ 0.5, - 0.5));
@@ -302,9 +302,9 @@ class FuzzyMorph {
     
     Polygon rectangle = new Polygon();
     for(Point corner : corners) {
-      corner.x = location.x + corner.x * width;
-      corner.y = location.y + corner.y * height;
-      corner = this.rotateXY(corner, location, rotation);
+      corner.x = origin.x + corner.x * width;
+      corner.y = origin.y + corner.y * height;
+      corner = this.rotateXY(corner, origin, rotation);
       rectangle.addVertex(corner);
     }
     return rectangle;
