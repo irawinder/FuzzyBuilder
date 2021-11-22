@@ -83,13 +83,11 @@ class Test {
         int pZones = (int) random(4);
         for (int i=0; i<pZones; i++) {
           int levels = (int) random(1, 5);
-          println(levels);
           VoxelArray zone = this.morph.extrude(podium, levels - 1);
           zone = this.morph.drop(zone, massing, CANTILEVER_ALLOWANCE);
           zone.setVoxelUse(this.random.use());
           this.massing = this.morph.add(this.massing, zone);
         }
-        println("---");
         
         for(Polygon towerShape : this.towerShapes.get(plotShape)) {
           if(plotShape.containsPolygon(towerShape)) {
