@@ -205,4 +205,27 @@ public class Polygon {
     }
     return true;
   }
+  
+  /**
+   * Check if a Polygon intersects another polygon
+   *
+   * @param polygon shape that we wish to know is intersecting
+   * @return returns "true" if polygons intersect polygon
+   */
+  public boolean intersectsPolygon(Polygon polygon) {
+    if (this.containsPolygon(polygon)) {
+      return true;
+    } else if (polygon.containsPolygon(this)) {
+      return true;
+    } else {
+      for (Line thisEdge : this.edge) {
+        for (Line thatEdge : polygon.edge) {
+          if( thisEdge.lineIntersect(thatEdge) != null) {
+            return true;
+          }
+        }
+      }
+    }
+    return false;
+  }
 }

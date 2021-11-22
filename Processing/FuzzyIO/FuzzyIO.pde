@@ -34,9 +34,13 @@ void draw() {
   // 3D Objects
   cam.pov();
   this.drawGrids(GRID_WIDTH, GRID_UNITS, GRID_HEIGHT);
-  this.drawShape(this.test.plotShape);
-  this.drawShape(this.test.towerShape);
-  this.drawTiles(this.test.plot);
+  for(Polygon plotShape : this.test.plotShapes) {
+    this.drawShape(plotShape);
+    for(Polygon towerShape : this.test.towerShapes.get(plotShape)) {
+      this.drawShape(towerShape);
+    }
+  }
+  this.drawTiles(this.test.site);
   this.drawVoxels(this.test.massing);
   
   // 2D Overlay
