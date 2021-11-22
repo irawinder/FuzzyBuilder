@@ -12,7 +12,7 @@ class Test {
   final float TOWER_WIDTH = 100;
   final float TOWER_DEPTH = 200;
   final float TOWER_ROTATION = 0.25 * PI;
-  final int NUM_PLOTS = 1;
+  final int NUM_PLOTS = 3;
   final int NUM_TOWERS = 3;
   
   // local w (vertical) coordinate of ground
@@ -32,6 +32,7 @@ class Test {
     this.towerShapes = new HashMap<Polygon, ArrayList<Polygon>>();
     this.site = new VoxelArray();
     this.massing = new VoxelArray();
+    
     for (int i=0; i<NUM_PLOTS; i++) {
       float p_x = PLOT_X + random(-1, 1) * PLOT_MAX_RADIUS;
       float p_y = PLOT_Y + random(-1, 1) * PLOT_MAX_RADIUS;
@@ -45,7 +46,7 @@ class Test {
       this.plotShapes.add(plotShape);
       ArrayList<Polygon> tShapes = new ArrayList<Polygon>();
       for (int j=0; j<NUM_TOWERS; j++) {
-        float t_x = p_x + random(-.1, .1) * PLOT_MIN_RADIUS;
+        float t_x = p_x + random(-.5, .5) * PLOT_MIN_RADIUS;
         float t_y = p_y + random(-.1, .1) * PLOT_MIN_RADIUS;
         Polygon towerShape = this.morph.rectangle(
           new Point(t_x, t_y), 
@@ -76,17 +77,16 @@ class Test {
         VoxelArray plot = this.morph.make(plotShape, VOXEL_WIDTH, 0, VOXEL_ROTATION, VOXEL_TRANSLATE);
         this.site = this.morph.add(this.site, plot);
         
+        VoxelArray plotMassing = new VoxelArray();
+        
         VoxelArray podium = this.morph.hardCloneVoxelArray(plot);
         podium = this.morph.setback(podium, SETBACK_DISTANCE);
         podium.setVoxelHeight(VOXEL_HEIGHT);
         
-        int pZones = (int) random(4);
+        int pZones = (int) random(1, 4);
         for (int i=0; i<pZones; i++) {
           int levels = (int) random(1, 5);
-          VoxelArray zone = this.morph.extrude(podium, levels - 1);
-          zone = this.morph.drop(zone, massing, CANTILEVER_ALLOWANCE);
-          zone.setVoxelUse(this.random.use());
-          this.massing = this.morph.add(this.massing, zone);
+          plotMassing = this.addZone(podium, plotMassing, levels, this.random.use());
         }
         
         for(Polygon towerShape : this.towerShapes.get(plotShape)) {
@@ -96,17 +96,23 @@ class Test {
             tower.setVoxelHeight(VOXEL_HEIGHT);
             tower = this.morph.clip(tower, towerShape);
             
-            int tZones = (int) random(5);
+            int tZones = (int) random(1, 5);
             for (int i=0; i<tZones; i++) {
               int levels = (int) random(1, 10);
-              VoxelArray zone = this.morph.extrude(tower, levels - 1);
-              zone = this.morph.drop(zone, massing, CANTILEVER_ALLOWANCE);
-              zone.setVoxelUse(this.random.use());
-              this.massing = this.morph.add(this.massing, zone);
+              plotMassing = this.addZone(tower, plotMassing, levels, this.random.use());
             }
           }
         }
+        
+        this.massing = this.morph.add(this.massing, plotMassing);
       }
     }
+  }
+  
+  VoxelArray addZone(VoxelArray template, VoxelArray base, int levels, Use type) {
+    VoxelArray zone = this.morph.extrude(template, levels - 1);
+    zone = this.morph.drop(zone, base, CANTILEVER_ALLOWANCE);
+    zone.setVoxelUse(type);
+    return this.morph.add(base, zone);
   }
 }
