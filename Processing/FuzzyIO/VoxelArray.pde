@@ -106,6 +106,28 @@ public class VoxelArray {
     }
     return minW;
   }
+  
+  /**
+   * Get the width of the first voxel. Zero if Empty
+   */
+  public float voxelWidth() {
+    if (this.voxelList.size() > 0) {
+      return this.voxelList.get(0).width;
+    } else {
+      return 0;
+    }
+  }
+  
+  /**
+   * Get the height of the first voxel. Zero if Empty
+   */
+  public float voxelHeight() {
+    if (this.voxelList.size() > 0) {
+      return this.voxelList.get(0).height;
+    } else {
+      return 0;
+    }
+  }
 
   @Override
   public String toString() {

@@ -194,14 +194,7 @@ class FuzzyMorph {
    */
   public VoxelArray extrude(VoxelArray input, int levels) {
     VoxelArray inputClone = this.hardCloneVoxelArray(input);
-    VoxelArray topLayer = new VoxelArray();
-    
-    // Collect all non-covered voxels
-    for (Voxel t : input.voxelList) {
-      if (this.getNeighborTop(t, input) == null) {
-        topLayer.addVoxel(t);
-      }
-    }
+    VoxelArray topLayer = this.topLayer(input);
     
     // Create the extruded voxels
     VoxelArray extruded = new VoxelArray();
@@ -219,18 +212,31 @@ class FuzzyMorph {
   }
   
   /**
-   * Given an input VoxelArray, returns a new VoxelArray with outer ring of voxels removed
-   * 
-   * @param input voxel array to apply setback to
-   * @return new VoxelArray with outer ring of voxels removed removed
+   * Get just the voxels that are open to the sky
+   *
+   * @param input voxels to scrape the top off of
+   * @return top of the muffin, TO YOU!
    */
-  private VoxelArray setback(VoxelArray input) {
+  public VoxelArray topLayer(VoxelArray input) {
     VoxelArray result = new VoxelArray();
-
-    // Add tiles that are at edge of input TileArray
     for (Voxel t : input.voxelList) {
-      // Tile surrounded on all sides has 8 neighbors
-      if (this.getNeighborsUV(t, input).size() >= 7) {
+      if (this.getNeighborTop(t, input) == null) {
+        result.addVoxel(t);
+      }
+    }
+    return result;
+  }
+  
+  /**
+   * Get just the voxels that are on the bottom
+   *
+   * @param input voxels to scrape the bottom off of
+   * @return muffin stump
+   */
+  public VoxelArray bottomLayer(VoxelArray input) {
+    VoxelArray result = new VoxelArray();
+    for (Voxel t : input.voxelList) {
+      if (this.getNeighborBottom(t, input) == null) {
         result.addVoxel(t);
       }
     }
@@ -241,24 +247,40 @@ class FuzzyMorph {
    * Given an input VoxelArray, returns a new VoxelArray with outer ring of voxels removed
    * 
    * @param input voxel array to apply setback to
+   * @return new VoxelArray with outer ring of voxels removed removed
+   */
+  private VoxelArray setback(VoxelArray input) {
+    VoxelArray result = new VoxelArray();
+    for (Voxel t : input.voxelList) {
+      // Tile surrounded on all sides has 8 neighbors
+      if (this.getNeighborsUV(t, input).size() >= 7) {
+        result.addVoxel(t);
+      }
+    }
+    return result;
+  }
+  
+  /**
+   * Given an input VoxelArray and offset distance, returns a new VoxelArray with outer ring of voxels removed
+   * 
+   * @param input voxel array to apply setback to
    * @param setbackDistance distance to apply setback ffrom edge
    * @return new VoxelArray with outer ring of voxels removed
    */
   public VoxelArray setback(VoxelArray input, float setbackDistance) {
-    VoxelArray result = input;
     
     // Get the width of the first voxel in the array
-    float voxelWidth;
-    if (input.voxelList.size() > 0) {
-      voxelWidth = input.voxelList.get(0).width;
-    } else {
-      return result;
+    float voxelWidth = input.voxelWidth();
+    if(voxelWidth == 0) {
+      return new VoxelArray();
     }
     
     // repeat offset as necessary to achieve desired distance
+    VoxelArray result = input;
     int numSetbacks = int(0.5 + setbackDistance / voxelWidth);
-    for(int i=0; i<numSetbacks; i++) result = this.setback(result);
-    
+    for(int i=0; i<numSetbacks; i++) {
+      result = this.setback(result);
+    }
     return result;
   }
   

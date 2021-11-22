@@ -163,8 +163,8 @@ public class Polygon {
 
     // Make a horizontal line to cut through geometries
     //
-    Point o = new Point(-1000000, p.y);
-    Point f = new Point(+1000000, p.y);
+    Point o = new Point(this.xMin(), p.y);
+    Point f = new Point(this.xMax(), p.y);
     Line horizontal = new Line(o, f);
 
     // If polygon has 3 or more vertices, count how many times a
@@ -189,5 +189,20 @@ public class Polygon {
     } else {
       return false;
     }
+  }
+  
+  /**
+   * Check if a Polygon is inside of this polygon
+   *
+   * @param polygon shape that we wish to know is contained
+   * @return returns "true" if polygon paramter is inside of this polygon
+   */
+  public boolean containsPolygon(Polygon polygon) {
+    for (Point p : polygon.getCorners()) {
+      if (!this.containsPoint(p)) {
+        return false;
+      }
+    }
+    return true;
   }
 }

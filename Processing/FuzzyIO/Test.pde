@@ -41,16 +41,20 @@ class Test {
     zone2.setVoxelUse(this.random.use());
     podium = this.morph.add(zone1, zone2);
     towerShape = this.morph.rectangle(new Point(TOWER_X, TOWER_Y), TOWER_WIDTH, TOWER_DEPTH, TOWER_ROTATION);
-    tower = this.morph.hardCloneVoxelArray(plot);
-    tower.setVoxelHeight(VOXEL_HEIGHT);
-    tower = this.morph.clip(tower, towerShape);
-    zone3 = this.morph.extrude(tower, ZONE3_LEVELS - 1);
-    zone3 = this.morph.drop(zone3, podium);
-    zone3.setVoxelUse(this.random.use());
-    zone4 = this.morph.extrude(tower, ZONE4_LEVELS - 1);
-    zone4 = this.morph.drop(zone4, zone3);
-    zone4.setVoxelUse(this.random.use());
-    tower = this.morph.add(zone3, zone4);
+    if(plotShape.containsPolygon(towerShape)) {
+      tower = this.morph.hardCloneVoxelArray(plot);
+      tower.setVoxelHeight(VOXEL_HEIGHT);
+      tower = this.morph.clip(tower, towerShape);
+      zone3 = this.morph.extrude(tower, ZONE3_LEVELS - 1);
+      zone3 = this.morph.drop(zone3, podium);
+      zone3.setVoxelUse(this.random.use());
+      zone4 = this.morph.extrude(tower, ZONE4_LEVELS - 1);
+      zone4 = this.morph.drop(zone4, zone3);
+      zone4.setVoxelUse(this.random.use());
+      tower = this.morph.add(zone3, zone4);
+    } else {
+      tower = new VoxelArray();
+    }
     massing = this.morph.add(podium, tower);
   }
 }
