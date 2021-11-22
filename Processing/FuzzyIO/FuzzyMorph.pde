@@ -136,13 +136,17 @@ class FuzzyMorph {
    * 
    * @param input  VoxelArray to drop from sky
    * @param target VoxelArray to drop the input on top of
+   * @param cantileverAllowance a number between 0 and 1 (0 => no allowance; 1 => allowed to hover in mid air)
    * @result the input is vertically shifted so that it rests on either the target or the ground
    */
-  public VoxelArray drop(VoxelArray input, VoxelArray target) {
-    int inputMinW = input.minW();
+  public VoxelArray drop(VoxelArray input, VoxelArray target, float cantileverAllowance) {
+    
+    // Determine vertical coordinate at which the input array will land
+    VoxelArray inputBase = this.bottomLayer(input);
+    int inputMinW = inputBase.minW();
     int targetLocalMaxW = GROUND_W - 1;
     int targetGlobalMaxW = target.maxW();
-    for (Voxel t : input.voxelList) {
+    for (Voxel t : inputBase.voxelList) {
       for (int w=GROUND_W; w<=targetGlobalMaxW; w++) {
         String keyCoord = this.coordKey(t.u, t.v, w);
         if (target.voxelMap.containsKey(keyCoord)) {
@@ -152,7 +156,36 @@ class FuzzyMorph {
         }
       }
     }
-    return this.translate(input, 0, 0, 1 + targetLocalMaxW - inputMinW);
+    
+    // Drop the input array as a rigid body onto the target array
+    VoxelArray result = this.translate(input, 0, 0, 1 + targetLocalMaxW - inputMinW);
+    
+    // Check for valid cantilever
+    if (this.cantileverFeasible(result, target, cantileverAllowance)) {
+      return result;
+    } else {
+      return new VoxelArray();
+    }
+  }
+  
+  /**
+   * test to see whether an input VoxelArray is cantilevered off of a base VoxelArray within a specified limit
+   *
+   * @param input VoxelArray to Cantilever
+   * @param base VoxelArray that input should be resting upon
+   * @param cantileverAllowance a number between 0 and 1 (0 => no allowance; 1 => allowed to hover in mid air)
+   * @return true if feasible
+   */
+  public boolean cantileverFeasible(VoxelArray input, VoxelArray base, float cantileverAllowance) {
+    VoxelArray inputBase = this.bottomLayer(input);
+    int inputBaseCount = inputBase.voxelList.size();
+    float cantileverCount = 0;
+    for(Voxel t : inputBase.voxelList) {
+      if (this.getNeighborBottom(t, base) == null && t.w != 0) {
+        cantileverCount ++;
+      }
+    }
+    return cantileverCount / inputBaseCount <= cantileverAllowance;
   }
   
   /**
