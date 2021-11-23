@@ -33,13 +33,19 @@ void draw() {
   
   // 3D Objects
   cam.pov();
+  
+  // World Grid
   this.drawGrids(GRID_WIDTH, GRID_UNITS, GRID_HEIGHT);
+  
+  // Polygons
   for(Polygon plotShape : this.test.plotShapes) {
     this.drawShape(plotShape);
     for(Polygon towerShape : this.test.towerShapes.get(plotShape)) {
       this.drawShape(towerShape);
     }
   }
+  
+  // Voxels
   this.drawTiles(this.test.site);
   this.drawVoxels(this.test.massing);
   

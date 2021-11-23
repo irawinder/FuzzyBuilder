@@ -34,6 +34,8 @@ class Test {
     this.massing = new VoxelArray();
     
     for (int i=0; i<NUM_PLOTS; i++) {
+      
+      // Random Plot Shape
       float p_x = PLOT_X + random(-1, 1) * PLOT_MAX_RADIUS;
       float p_y = PLOT_Y + random(-1, 1) * PLOT_MAX_RADIUS;
       Polygon plotShape = this.random.polygon(
@@ -44,6 +46,8 @@ class Test {
         PLOT_MAX_RADIUS
       );
       this.plotShapes.add(plotShape);
+      
+      // Random Tower Base
       ArrayList<Polygon> tShapes = new ArrayList<Polygon>();
       for (int j=0; j<NUM_TOWERS; j++) {
         float t_x = p_x + random(-.5, .5) * PLOT_MIN_RADIUS;
@@ -79,27 +83,27 @@ class Test {
         
         VoxelArray plotMassing = new VoxelArray();
         
-        VoxelArray podium = this.morph.hardCloneVoxelArray(plot);
-        podium = this.morph.setback(podium, SETBACK_DISTANCE);
-        podium.setVoxelHeight(VOXEL_HEIGHT);
+        VoxelArray podiumTemplate = this.morph.hardCloneVoxelArray(plot);
+        podiumTemplate = this.morph.setback(podiumTemplate, SETBACK_DISTANCE);
+        podiumTemplate.setVoxelHeight(VOXEL_HEIGHT);
         
         int pZones = (int) random(1, 4);
         for (int i=0; i<pZones; i++) {
           int levels = (int) random(1, 5);
-          plotMassing = this.addZone(podium, plotMassing, levels, this.random.use());
+          plotMassing = this.addZone(podiumTemplate, plotMassing, levels, this.random.use());
         }
         
         for(Polygon towerShape : this.towerShapes.get(plotShape)) {
           if(plotShape.containsPolygon(towerShape)) {
             
-            VoxelArray tower = this.morph.hardCloneVoxelArray(plot);
-            tower.setVoxelHeight(VOXEL_HEIGHT);
-            tower = this.morph.clip(tower, towerShape);
+            VoxelArray towerTemplate = this.morph.hardCloneVoxelArray(plot);
+            towerTemplate.setVoxelHeight(VOXEL_HEIGHT);
+            towerTemplate = this.morph.clip(towerTemplate, towerShape);
             
             int tZones = (int) random(1, 5);
             for (int i=0; i<tZones; i++) {
               int levels = (int) random(1, 10);
-              plotMassing = this.addZone(tower, plotMassing, levels, this.random.use());
+              plotMassing = this.addZone(towerTemplate, plotMassing, levels, this.random.use());
             }
           }
         }
