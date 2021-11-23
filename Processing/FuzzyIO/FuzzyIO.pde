@@ -26,6 +26,7 @@ void setup() {
 }
 
 void draw() {
+  
   // Update Camera Movement
   if (keyPressed) cam.move();
   
@@ -51,6 +52,7 @@ void draw() {
   
   // 2D Overlay
   cam.overlay();
+  text(frameRate, 50, 50);
   
   if (mousePressed) {
     
