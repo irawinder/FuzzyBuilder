@@ -1,5 +1,14 @@
 import java.util.Random;
 import java.util.Collections;
+import processing.net.*;
+  
+// Server Settings
+private final String HTTP_VERSION = "1.1";
+private final String SERVER = "Processing Server (Java " + System.getProperty("java.version") + ")";
+private final int PORT = 8080;
+private final boolean RUN_SERVER = true;
+
+private FuzzyServer fuzzyIO;
 
 // Either JAVA2D (default), P2D or P3D
 final String RENDERER = P3D;
@@ -10,23 +19,41 @@ final int GRID_UNITS = 100;
 final int DEFAULT_COLOR = #999999;
 final int BACKGROUND_COLOR = #222222;
 
-Camera cam;
+// Test Scripts (Set to false for production)
+private final boolean RUN_TESTS = true;
 
+Camera cam;
 Test test;
 
 void setup() {
   
   size(1280, 800, RENDERER);
   
+  if(RUN_SERVER) {
+  
+    // Initialize and Start Server
+    fuzzyIO = new FuzzyServer(PORT);
+  } 
+  
   cam = new Camera(RENDERER);
   cam.eye.y = - 0.50 * GRID_HEIGHT;
   cam.angleYZ = 0.20 * PI;
   
+  // Test Scripts:
   this.test = new Test();
+    
+  if(RUN_TESTS) {
+    this.test.init();
+  }
 }
 
 void draw() {
   
+  // Listen for client requests
+  if(fuzzyIO != null) {
+    fuzzyIO.listenForRequest();
+  }
+    
   // Update Camera Movement
   if (keyPressed) cam.move();
   
@@ -52,15 +79,17 @@ void draw() {
   
   // 2D Overlay
   cam.overlay();
-  text(frameRate, 50, 50);
   
   if (mousePressed) {
     
-    // Update Camera Angle relative to cursor
-    cam.updateCursorAngle();
-    
-    // reset mouse position
-    cam.setMouseToCenter();
+    if (!cam.isPaused()) {
+      
+      // Update Camera Angle relative to cursor
+      cam.updateCursorAngle();
+      
+      // reset mouse position
+      cam.setMouseToCenter();
+    }
   }
 }
 
@@ -70,18 +99,24 @@ void keyPressed() {
       cam.init();
       break;
     case 'r':
-      this.test = new Test();
+      this.test.init();
+      break;
+    case ' ':
+      cam.pause();
       break;
   }
 }
 
 void mouseMoved() {
-    
-  // Update Camera Angle relative to cursor
-  cam.updateCursorAngle();
   
-  // reset mouse position
-  cam.setMouseToCenter();
+  if (!cam.isPaused()) {
+    
+    // Update Camera Angle relative to cursor
+    cam.updateCursorAngle();
+    
+    // reset mouse position
+    cam.setMouseToCenter();
+  }
 }
       
 void mouseWheel(MouseEvent event) {
@@ -92,4 +127,10 @@ void mouseWheel(MouseEvent event) {
     float e = event.getCount();
     cam.fly(e);
   }
+}
+
+// This method runs when a client first connects to the Server
+//
+void serverEvent(Server s, Client c) {
+  //println("Server: We have a new client: " + c.ip());
 }

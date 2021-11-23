@@ -24,14 +24,21 @@ class Test {
   public ArrayList<Polygon> plotShapes;
   public HashMap<Polygon, ArrayList<Polygon>> towerShapes;
   public VoxelArray site, massing;
-    
+  
   public Test() {
-    int time = millis();
-    
     this.random = new FuzzyRandom();
     this.morph = new FuzzyMorph();
     this.plotShapes = new ArrayList<Polygon>();
     this.towerShapes = new HashMap<Polygon, ArrayList<Polygon>>();
+    this.site = new VoxelArray();
+    this.massing = new VoxelArray();
+  }
+  public void init() {
+    
+    int time = millis();
+    
+    this.plotShapes.clear();
+    this.towerShapes.clear();
     this.site = new VoxelArray();
     this.massing = new VoxelArray();
     
@@ -80,8 +87,13 @@ class Test {
         
         builtPlots.add(plotShape);
         
+        time = millis();
+        
         VoxelArray plot = this.morph.make(plotShape, VOXEL_WIDTH, 0, VOXEL_ROTATION, VOXEL_TRANSLATE);
         this.site = this.morph.add(this.site, plot);
+        
+        //println("Time to generate site: " +  (millis() - time)/1000.0/(1/60.0) + " frames at 60fps");
+        //time = millis();
         
         VoxelArray plotMassing = new VoxelArray();
         
@@ -94,6 +106,9 @@ class Test {
           int levels = (int) random(1, 5);
           plotMassing = this.addZone(podiumTemplate, plotMassing, levels, this.random.use());
         }
+        
+        //println("Time to generate podiums: " +  (millis() - time)/1000.0/(1/60.0) + " frames at 60fps");
+        //time = millis();
         
         for(Polygon towerShape : this.towerShapes.get(plotShape)) {
           if(plotShape.containsPolygon(towerShape)) {
@@ -111,9 +126,10 @@ class Test {
         }
         
         this.massing = this.morph.add(this.massing, plotMassing);
+        //println("Time to generate towers: " +  (millis() - time)/1000.0/(1/60.0) + " frames at 60fps");
       }
     }
-    println("Time to generate site: " +  (millis() - time)/1000.0/(1/60.0) + " frames at 60fps");
+    println("Time to generate: " +  (millis() - time)/1000.0/(1/60.0) + " frames at 60fps");
   }
   
   VoxelArray addZone(VoxelArray template, VoxelArray base, int levels, Use type) {
