@@ -26,6 +26,8 @@ class Test {
   public VoxelArray site, massing;
     
   public Test() {
+    int time = millis();
+    
     this.random = new FuzzyRandom();
     this.morph = new FuzzyMorph();
     this.plotShapes = new ArrayList<Polygon>();
@@ -111,6 +113,7 @@ class Test {
         this.massing = this.morph.add(this.massing, plotMassing);
       }
     }
+    println("Time to generate site: " +  (millis() - time)/1000.0/(1/60.0) + " frames at 60fps");
   }
   
   VoxelArray addZone(VoxelArray template, VoxelArray base, int levels, Use type) {
