@@ -5,10 +5,6 @@
  *
  */
 class FuzzyBuilder {
-  
-  // Non-user settings
-  float VOXEL_HEIGHT = 10;
-  float CANTILEVER_ALLOWANCE = 0.5;
     
   private FuzzyMorph morph;
   
@@ -27,6 +23,9 @@ class FuzzyBuilder {
     
     // Track plot polygons that have already been built
     ArrayList<Polygon> builtPlots = new ArrayList<Polygon>();
+    
+    float voxelHeight = parseFloat(settings.settingValues.get(0).value);
+    float cantileverAllowance = parseFloat(settings.settingValues.get(1).value) / 100f;
     
     // Iterate through plots
     SettingGroup plots = settings.settingGroups.get(0);
@@ -67,7 +66,7 @@ class FuzzyBuilder {
           float setbackDistance = parseFloat(podiumSettings.settingValues.get(0).value);
           VoxelArray podiumTemplate = morph.hardCloneVoxelArray(plot);
           podiumTemplate = morph.setback(podiumTemplate, setbackDistance);
-          podiumTemplate.setVoxelHeight(VOXEL_HEIGHT);
+          podiumTemplate.setVoxelHeight(voxelHeight);
           
           // Remove Open Area Polygons from Podium Template
           SettingGroup openGroup = podiumSettings.settingGroups.get(0);
@@ -84,7 +83,7 @@ class FuzzyBuilder {
             SettingGroup zone = zoneGroup.settingGroups.get(i);
             int levels = parseInt(zone.settingValues.get(0).value);
             Use use = this.parseUse(zone.settingValues.get(1).value);
-            plotMassing = morph.makeAndDrop(podiumTemplate, plotMassing, levels, use, CANTILEVER_ALLOWANCE);
+            plotMassing = morph.makeAndDrop(podiumTemplate, plotMassing, levels, use, cantileverAllowance);
           }
         }
         fuzzy.openShapes.put(plotShape, openShapes);
@@ -105,7 +104,7 @@ class FuzzyBuilder {
             
             // Generate Tower Template
             VoxelArray towerTemplate = morph.hardCloneVoxelArray(plot);
-            towerTemplate.setVoxelHeight(VOXEL_HEIGHT);
+            towerTemplate.setVoxelHeight(voxelHeight);
             towerTemplate = morph.clip(towerTemplate, towerShape);
               
             // Generate Tower Zones
@@ -114,7 +113,7 @@ class FuzzyBuilder {
               SettingGroup zone = zoneGroup.settingGroups.get(i);
               int levels = parseInt(zone.settingValues.get(0).value);
               Use use = this.parseUse(zone.settingValues.get(1).value);
-              plotMassing = morph.makeAndDrop(towerTemplate, plotMassing, levels, use, CANTILEVER_ALLOWANCE);
+              plotMassing = morph.makeAndDrop(towerTemplate, plotMassing, levels, use, cantileverAllowance);
             }
           }
         }
