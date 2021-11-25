@@ -7,7 +7,7 @@ class FuzzyRandom {
   final float PLOT_MAX_RADIUS = 1000;
   final float VOXEL_WIDTH = 25;
   final float VOXEL_HEIGHT = 10;
-  final float VOXEL_ROTATION = 0.25 * PI;
+  final float VOXEL_ROTATION = 0.15 * PI;
   final Point VOXEL_TRANSLATE = new Point(5, 5);
   final float SETBACK_DISTANCE = 100;
   final float TOWER_WIDTH = 100;

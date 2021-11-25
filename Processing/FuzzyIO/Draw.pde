@@ -35,7 +35,7 @@ void drawVoxels(VoxelArray voxelArray) {
     fill(col, 100);
     pushMatrix();
     translate(voxel.location.x, - voxel.location.z - 0.5 * voxel.height, voxel.location.y);
-    rotateY(voxel.rotation);
+    rotateY(-voxel.rotation);
     box(0.9 * voxel.width, 0.9 * voxel.height, 0.9 * voxel.width);  
     popMatrix();
   }
@@ -49,7 +49,7 @@ void drawTiles(VoxelArray voxelArray) {
     stroke(col, 100);
     pushMatrix();
     translate(voxel.location.x, - voxel.location.z - 0.5 * voxel.height, voxel.location.y);
-    rotateY(voxel.rotation);
+    rotateY(-voxel.rotation);
     rotateX(0.5 * PI);
     rect(0, 0, 0.9 * voxel.width, 0.9 * voxel.width); 
     popMatrix();

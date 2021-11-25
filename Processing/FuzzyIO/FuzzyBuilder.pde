@@ -44,7 +44,6 @@ class FuzzyBuilder {
           break;
         }
       }
-      
       if(validPlot) {
         builtPlots.add(plotShape);
         
