@@ -1,3 +1,9 @@
+/**
+ * FuzzyRandom is class for generating random fuzzy geometry
+ *
+ * @author Ira Winder
+ *
+ */
 class FuzzyRandom {
   
   final int NUM_VERTICES = 4;
@@ -16,37 +22,43 @@ class FuzzyRandom {
   final int NUM_PLOTS = 1;
   final int NUM_TOWERS = 3;
   
-  public FuzzyBuilder fuzzy() {
-    
-    FuzzyBuilder fuzzy = new FuzzyBuilder();
-    
+  // How much a given VoxelArray is allowed to dangle into space (0 - 1)
+  private float CANTILEVER_ALLOWANCE = 0.5;
+  
+  /**
+   * Build a psuedo-random development without any user input
+   */
+  public Development development() {
     int time = millis();
     
-    fuzzy.plotShapes.clear();
-    fuzzy.towerShapes.clear();
-    fuzzy.site = new VoxelArray();
-    fuzzy.massing = new VoxelArray();
+    FuzzyMorph morph = new FuzzyMorph();
+    Development development = new Development();
+    
+    development.plotShapes.clear();
+    development.towerShapes.clear();
+    development.site = new VoxelArray();
+    development.massing = new VoxelArray();
     
     for (int i=0; i<NUM_PLOTS; i++) {
       
       // Random Plot Shape
       float p_x = PLOT_X; // + random(-1, 1) * PLOT_MAX_RADIUS;
       float p_y = PLOT_Y; // + random(-1, 1) * PLOT_MAX_RADIUS;
-      Polygon plotShape = fuzzy.random.polygon(
+      Polygon plotShape = this.polygon(
         p_x, 
         p_y,
         NUM_VERTICES, 
         PLOT_MIN_RADIUS, 
         PLOT_MAX_RADIUS
       );
-      fuzzy.plotShapes.add(plotShape);
+      development.plotShapes.add(plotShape);
       
       // Random Tower Base
       ArrayList<Polygon> tShapes = new ArrayList<Polygon>();
       for (int j=0; j<NUM_TOWERS; j++) {
         float t_x = p_x + random(-.5, .5) * PLOT_MIN_RADIUS;
         float t_y = p_y + random(-.1, .1) * PLOT_MIN_RADIUS;
-        Polygon towerShape = fuzzy.morph.rectangle(
+        Polygon towerShape = morph.rectangle(
           new Point(t_x, t_y), 
           TOWER_WIDTH, 
           TOWER_DEPTH, 
@@ -54,11 +66,11 @@ class FuzzyRandom {
         );
         tShapes.add(towerShape);
       }
-      fuzzy.towerShapes.put(plotShape, tShapes);
+      development.towerShapes.put(plotShape, tShapes);
     }
     
     ArrayList<Polygon> builtPlots = new ArrayList<Polygon>();
-    for(Polygon plotShape : fuzzy.plotShapes) {
+    for(Polygon plotShape : development.plotShapes) {
       
       boolean validPlot = true;;
       for (Polygon priorPlotShape : builtPlots) {
@@ -74,49 +86,42 @@ class FuzzyRandom {
         
         time = millis();
         
-        VoxelArray plot = fuzzy.morph.make(plotShape, VOXEL_WIDTH, 0, VOXEL_ROTATION, VOXEL_TRANSLATE);
-        fuzzy.site = fuzzy.morph.add(fuzzy.site, plot);
-        
-        //println("Time to generate site: " +  (millis() - time)/1000.0/(1/60.0) + " frames at 60fps");
-        //time = millis();
+        VoxelArray plot = morph.make(plotShape, VOXEL_WIDTH, 0, VOXEL_ROTATION, VOXEL_TRANSLATE);
+        development.site = morph.add(development.site, plot);
         
         VoxelArray plotMassing = new VoxelArray();
         
-        VoxelArray podiumTemplate = fuzzy.morph.hardCloneVoxelArray(plot);
-        podiumTemplate = fuzzy.morph.setback(podiumTemplate, SETBACK_DISTANCE);
+        VoxelArray podiumTemplate = morph.hardCloneVoxelArray(plot);
+        podiumTemplate = morph.setback(podiumTemplate, SETBACK_DISTANCE);
         podiumTemplate.setVoxelHeight(VOXEL_HEIGHT);
         
         int pZones = (int) random(1, 4);
         for (int i=0; i<pZones; i++) {
           int levels = (int) random(1, 5);
-          plotMassing = fuzzy.addZone(podiumTemplate, plotMassing, levels, fuzzy.random.use());
+          plotMassing = morph.makeAndDrop(podiumTemplate, plotMassing, levels, this.use(), CANTILEVER_ALLOWANCE);
         }
         
-        //println("Time to generate podiums: " +  (millis() - time)/1000.0/(1/60.0) + " frames at 60fps");
-        //time = millis();
-        
-        for(Polygon towerShape : fuzzy.towerShapes.get(plotShape)) {
+        for(Polygon towerShape : development.towerShapes.get(plotShape)) {
           if(plotShape.containsPolygon(towerShape)) {
             
-            VoxelArray towerTemplate = fuzzy.morph.hardCloneVoxelArray(plot);
+            VoxelArray towerTemplate = morph.hardCloneVoxelArray(plot);
             towerTemplate.setVoxelHeight(VOXEL_HEIGHT);
-            towerTemplate = fuzzy.morph.clip(towerTemplate, towerShape);
+            towerTemplate = morph.clip(towerTemplate, towerShape);
             
             int tZones = (int) random(1, 5);
             for (int i=0; i<tZones; i++) {
               int levels = (int) random(1, 10);
-              plotMassing = fuzzy.addZone(towerTemplate, plotMassing, levels, fuzzy.random.use());
+              plotMassing = morph.makeAndDrop(towerTemplate, plotMassing, levels, this.use(), CANTILEVER_ALLOWANCE);
             }
           }
         }
         
-        fuzzy.massing = fuzzy.morph.add(fuzzy.massing, plotMassing);
-        //println("Time to generate towers: " +  (millis() - time)/1000.0/(1/60.0) + " frames at 60fps");
+        development.massing = morph.add(development.massing, plotMassing);
       }
     }
     println("Time to generate: " +  (millis() - time)/1000.0/(1/60.0) + " frames at 60fps");
     
-    return fuzzy;
+    return development;
   }
   
   /**

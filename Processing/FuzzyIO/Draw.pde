@@ -58,30 +58,30 @@ void drawTiles(VoxelArray voxelArray) {
 }
 
 public int useColor(Use use) {
-    if(use != null) {
-      switch(use) {
-        case Office:
-          return #6666CC;
-        case Residential:
-          return #CCCC66;
-        case Retail:
-          return #CC66CC;
-        case Landscape:
-          return #66CC66;
-        case Carpark:
-          return #CCCCCC;
-        case Government:
-          return #66CCCC;
-        case Hotel:
-          return #6666CC;
-        case Convention:
-          return #CC6666;
-        case Community:
-          return #CC6666;
-        default:
-          return DEFAULT_COLOR;
-      }
-    } else {
-      return DEFAULT_COLOR;
+  if(use != null) {
+    switch(use) {
+      case Office:
+        return #6666CC;
+      case Residential:
+        return #CCCC66;
+      case Retail:
+        return #CC66CC;
+      case Landscape:
+        return #66CC66;
+      case Carpark:
+        return #CCCCCC;
+      case Government:
+        return #66CCCC;
+      case Hotel:
+        return #6666CC;
+      case Convention:
+        return #CC6666;
+      case Community:
+        return #CC6666;
+      default:
+        return DEFAULT_COLOR;
     }
+  } else {
+    return DEFAULT_COLOR;
   }
+}

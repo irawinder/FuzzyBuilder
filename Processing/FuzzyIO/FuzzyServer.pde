@@ -1,21 +1,36 @@
+/**
+ * Fuzzy Server listens and responds to requests for fuzzy masses via HTTP
+ *
+ * @author Ira Winder
+ *
+ */
 class FuzzyServer {
-
-  // Server Objects
+  private final String SERVER = "Processing Server (Java " + System.getProperty("java.version") + ")";
   private final String SERVER_VERSION = "1";
+  private final String HTTP_VERSION = "1.1";
   private Server server; 
-  String info;
+  private FuzzyBuilder builder;
+  private SettingGroupAdapter adapter;
+  private String info;
   
+  /**
+   * Construct a new FuzzyServer
+   *
+   * @param port on the machine to open/reserve for this server
+   */
   public FuzzyServer(int port) {
   
     // Start Server Objects
     this.server = new Server(FuzzyIO.this, port);
-    
+    this.builder = new FuzzyBuilder();
+    this.adapter = new SettingGroupAdapter();
     this.info = "--- FuzzyIO V" + SERVER_VERSION + " ---\nActive on port: " + port;
     println("\n" + info);
   }
   
-  /** Listen for HTTP requests and generate a response
-  */
+  /**
+   * Listen for an HTTP Request every frame
+   */
   public void listenForRequest() {
     
     // Receive word query from client (HTTP Request protocol)
@@ -31,25 +46,37 @@ class FuzzyServer {
     }
   }
   
-  /** Parse a standard HTTP request
-  * @return an HTTP server response
+  /** 
+  * Generate the response for a standard HTTP request
+  *
+  * @param request the raw HTTP 1.1 request including header and body
+  * @param clientIP the IP address of the client who sent this request
+  * @return an HTTP 1.1 server response with fuzzy data attached
   */
   String getResponse(String request, String clientIP) {
     
     String[] message = request.split("\r\n\r\n");
-    // Only consider the top line of a multi-line request
-    // Reason: Browsers like Chrome will automatically add a bunch of junk after the first line
+    
     String header = message[0];
     
     if (message.length > 1) {
       String body = message[1];
-      SettingGroup settings = fuzzy.parseSettingGroup(body);
-      fuzzy.build(settings);
+      SettingGroup settings = adapter.parse(body);
+      fuzzy = this.builder.build(settings);
     }
     
     return formatResponse("200", "Request Recieved", "application/json", "{\"success\": true}");
   }
   
+  /**
+   * Format inputs as a standard HTTP 1.1 response
+   *
+   * @param statusCode the standard HTTP status code to tag this response with
+   * @param reasonPhrase short message describing the reason for this code
+   * @param contentType the type of data attached on this response
+   * @param data data of interest to pass via this response
+   * @return an entire HTTP response including header and body
+   */
   private String formatResponse(String statusCode, String reasonPhrase, String contentType, String data) {
   
   // HTTP Response formatted according to 

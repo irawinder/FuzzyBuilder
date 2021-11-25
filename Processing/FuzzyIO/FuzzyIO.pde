@@ -3,55 +3,53 @@ import java.util.Collections;
 import processing.net.*;
   
 // Server Settings
-private final String HTTP_VERSION = "1.1";
-private final String SERVER = "Processing Server (Java " + System.getProperty("java.version") + ")";
+private FuzzyServer server;
 private final int PORT = 8080;
 private final boolean RUN_SERVER = true;
 
-private FuzzyServer fuzzyIO;
-private FuzzyBuilder fuzzy;
+// Test Scripts (Set to false for production)
+private final boolean RUN_TESTS = true;
 private FuzzyRandom random;
 
-// Either JAVA2D (default), P2D or P3D
-final String RENDERER = P3D;
+// Main global object for holding Fuzzy State as Voxels
+private Development fuzzy;
 
+// Superficial Draw Stuff
+Camera cam;
 final float GRID_WIDTH = 10000;
 final float GRID_HEIGHT = 1000;
 final int GRID_UNITS = 100;
 final int DEFAULT_COLOR = #999999;
 final int BACKGROUND_COLOR = #222222;
+private boolean drawVoxels = true;
 
-boolean drawVoxels = true;
+// Either JAVA2D (default), P2D or P3D
+final String RENDERER = P3D;
 
-// Test Scripts (Set to false for production)
-private final boolean RUN_TESTS = true;
-
-Camera cam;
 void setup() {
   
   size(1280, 800, RENDERER);
   
-  if(RUN_SERVER) {
+  this.cam = new Camera(RENDERER);
+  this.cam.eye.y = - 0.50 * GRID_HEIGHT;
+  this.cam.angleYZ = 0.20 * PI; 
+    
+  this.random = new FuzzyRandom();
   
-    // Initialize and Start Server
-    fuzzyIO = new FuzzyServer(PORT);
+  if(RUN_SERVER) {
+    this.server = new FuzzyServer(PORT);
   } 
   
-  cam = new Camera(RENDERER);
-  cam.eye.y = - 0.50 * GRID_HEIGHT;
-  cam.angleYZ = 0.20 * PI;
-  
-  random = new FuzzyRandom();
   if(RUN_TESTS) {
-    this.fuzzy = random.fuzzy();
+    this.fuzzy = random.development();
   }
 }
 
 void draw() {
   
   // Listen for client requests
-  if(fuzzyIO != null) {
-    fuzzyIO.listenForRequest();
+  if(server != null) {
+    server.listenForRequest();
   }
   
   // Update Camera Movement
@@ -65,12 +63,14 @@ void draw() {
   // World Grid
   this.drawGrids(GRID_WIDTH, GRID_UNITS, GRID_HEIGHT);
   
-  if(fuzzy != null) {
-    
-    // Polygons
+  // Polygons
+  if(this.fuzzy != null) {
     for(Polygon plotShape : this.fuzzy.plotShapes) {
+      
+      // Plot Polygons
       this.drawShape(plotShape);
       
+      // Tower Polygons
       if(this.fuzzy.towerShapes.get(plotShape) != null) {
         for(Polygon towerShape : this.fuzzy.towerShapes.get(plotShape)) {
           this.drawShape(towerShape);
@@ -84,11 +84,12 @@ void draw() {
       this.drawVoxels(this.fuzzy.massing);
     }
   }
+  
   // 2D Overlay
   cam.overlay();
+  // TBD
   
   if (mousePressed) {
-    
     if (!cam.isPaused()) {
       
       // Update Camera Angle relative to cursor
@@ -106,7 +107,7 @@ void keyPressed() {
       cam.init();
       break;
     case 'r':
-      this.fuzzy = random.fuzzy();
+      this.fuzzy = random.development();
       break;
     case ' ':
       cam.pause();
@@ -118,7 +119,6 @@ void keyPressed() {
 }
 
 void mouseMoved() {
-  
   if (!cam.isPaused()) {
     
     // Update Camera Angle relative to cursor
@@ -130,7 +130,6 @@ void mouseMoved() {
 }
       
 void mouseWheel(MouseEvent event) {
-  
   if (!cam.isPaused()) {
     
     // Fly Up or Down using mouse wheel
@@ -140,7 +139,6 @@ void mouseWheel(MouseEvent event) {
 }
 
 // This method runs when a client first connects to the Server
-//
 void serverEvent(Server s, Client c) {
   //println("Server: We have a new client: " + c.ip());
 }

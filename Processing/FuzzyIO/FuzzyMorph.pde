@@ -1,5 +1,8 @@
 /**
  * FuzzyMorph is a class deicated to functional transformations of geometry
+ *
+ * @author Ira Winder
+ *
  */
 class FuzzyMorph {
   
@@ -112,6 +115,22 @@ class FuzzyMorph {
     }
     
     return result;
+  }
+  
+  /**
+   * Extrude a VoxelArray from a template, Set its use, and drop it onto a  of a base massing all in one method
+   *
+   * @param template New zone will have the same 2D outline as the template VoxelArray
+   * @param base the zone will be dropped on top of existing mass contained in base
+   * @param levels the zone will have this many levels (floors)
+   * @param type the use of the zone
+   * @return a new Voxel Array with the new zone added to the base massing
+   */
+  VoxelArray makeAndDrop(VoxelArray template, VoxelArray base, int levels, Use type, float cantileverAllowance) {
+    VoxelArray zone = this.extrude(template, levels - 1);
+    zone = this.drop(zone, base, cantileverAllowance);
+    zone.setVoxelUse(type);
+    return this.add(base, zone);
   }
   
   /**

@@ -1,28 +1,24 @@
+/**
+ * FuzzyBuilder generates a fuzzy massing according to settings that are passed to it
+ *
+ * @author Ira Winder
+ *
+ */
 class FuzzyBuilder {
   
-  private float CANTILEVER_ALLOWANCE = 0.5;
-  
-  private FuzzyRandom random;
   private FuzzyMorph morph;
   
-  public ArrayList<Polygon> plotShapes;
-  public HashMap<Polygon, ArrayList<Polygon>> towerShapes;
-  public VoxelArray site, massing;
-  
   public FuzzyBuilder() {
-    this.random = new FuzzyRandom();
     this.morph = new FuzzyMorph();
-    this.plotShapes = new ArrayList<Polygon>();
-    this.towerShapes = new HashMap<Polygon, ArrayList<Polygon>>();
-    this.site = new VoxelArray();
-    this.massing = new VoxelArray();
   }
   
-  public void build(SettingGroup settings) {
-    this.plotShapes.clear();
-    this.towerShapes.clear();
-    this.site = new VoxelArray();
-    this.massing = new VoxelArray();
+  /**
+   * Build a mass of fuzzy voxels according to a fairly specific configuration of settings from the GUI
+   *
+   * @param settings
+   */
+  public Development build(SettingGroup settings) {
+    Development fuzzy = new Development();
     
     // Track plot polygons that have already been built
     ArrayList<Polygon> builtPlots = new ArrayList<Polygon>();
@@ -34,7 +30,7 @@ class FuzzyBuilder {
       // Define Plot polygon
       SettingGroup vectorGroup = plotSettings.settingGroups.get(0);
       Polygon plotShape = this.parsePolygon(vectorGroup);
-      this.plotShapes.add(plotShape);
+      fuzzy.plotShapes.add(plotShape);
       
       // Determine if Plot Polygon is valid for fuzzification
       boolean validPlot = true;
@@ -52,9 +48,11 @@ class FuzzyBuilder {
         float gridRotation = 2 * PI * parseInt(plotSettings.settingValues.get(1).value) / 360f;
         Point gridTranslation = new Point();
         VoxelArray plot = this.morph.make(plotShape, gridSize, 0, gridRotation, gridTranslation);
-        this.site = fuzzy.morph.add(this.site, plot);
+        fuzzy.site = this.morph.add(fuzzy.site, plot);
       }
     }
+    
+    return fuzzy;
   }
   
   /**
@@ -83,75 +81,5 @@ class FuzzyBuilder {
       }
     }
     return shape;
-  }
-  
-  /**
-   * Convert a JSON string of model settings to the SettingGroup class
-   *
-   * @param data settings formatted as json string
-   * @return settings formatted as SettingGRoup class
-   */
-  public SettingGroup parseSettingGroup(String data) {
-    JSONObject settingGroupJSON = parseJSONObject(data);
-    try {
-      return this.serialize(settingGroupJSON);
-    } catch (Exception e) {
-      println("JSON is not formatted correctly");
-      return new SettingGroup();
-    }
-  }
-  
-  /**
-   * serialize a JSONObject to SettingGroup class
-   *
-   * @param settingGroup data formatted as JSON
-   * @return data formatted as SettingGroup class
-   */
-  public SettingGroup serialize(JSONObject settingGroup) {
-    SettingGroup group = new SettingGroup();
-    
-    // Check for type group
-    if (settingGroup.getString("type").equals("group")) {
-      group.type = settingGroup.getString("type");
-      group.name = settingGroup.getString("name");
-      
-      // Add SettingValues Associated with group
-      JSONArray settingValues = settingGroup.getJSONArray("settingValues");
-      for (int i=0; i<settingValues.size(); i++) {
-        JSONObject settingValue = settingValues.getJSONObject(i);
-        SettingValue value = new SettingValue();
-        value.name = settingValue.getString("name");
-        value.type = settingValue.getString("type");
-        value.value = settingValue.getString("value");
-        group.settingValues.add(value);
-      }
-      
-      // Add Child SettingGroups attached to Group
-      JSONArray settingGroups = settingGroup.getJSONArray("settingGroups");
-      for (int i=0; i<settingGroups.size(); i++) {
-        JSONObject childSettingGroup = settingGroups.getJSONObject(i);
-        SettingGroup childGroup = serialize(childSettingGroup);
-        group.settingGroups.add(childGroup);
-      }
-    } else {
-      println("type must be group");
-    }
-    return group;
-  }
-  
-  /**
-   * Add a new zone on top of a base massing
-   *
-   * @param template New zone will have the same 2D outline as the template VoxelArray
-   * @param base the zone will be dropped on top of existing mass contained in base
-   * @param levels the zone will have this many levels (floors)
-   * @param type the use of the zone
-   * @return a new Voxel Array with the new zone added to the base massing
-   */
-  VoxelArray addZone(VoxelArray template, VoxelArray base, int levels, Use type) {
-    VoxelArray zone = this.morph.extrude(template, levels - 1);
-    zone = this.morph.drop(zone, base, CANTILEVER_ALLOWANCE);
-    zone.setVoxelUse(type);
-    return this.morph.add(base, zone);
   }
 }
