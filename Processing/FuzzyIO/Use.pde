@@ -1,3 +1,9 @@
+/**
+ * A collection of common use types in real estate
+ *
+ * @author Ira Winder
+ *
+ */
 public enum Use {
   Retail,
   Community,
