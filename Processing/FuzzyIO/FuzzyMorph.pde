@@ -433,7 +433,7 @@ class FuzzyMorph {
    * @param tArray that encapsulates t
    * @return Voxel directly below a specific Voxel; null if none
    */
-  public Voxel getNeighborBottom(Voxel t, VoxelArray tArray) { //<>// //<>//
+  public Voxel getNeighborBottom(Voxel t, VoxelArray tArray) { //<>//
     String coordKey = this.coordKey(t.u, t.v, t.w - 1);
     if (tArray.voxelMap.containsKey(coordKey)) {
       return tArray.voxelMap.get(coordKey);

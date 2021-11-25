@@ -59,6 +59,7 @@ class FuzzyBuilder {
         VoxelArray plotMassing = new VoxelArray();
         
         // Generate Podiums
+        ArrayList<Polygon> openShapes = new ArrayList<Polygon>();
         SettingGroup podiumGroup = plotSettings.settingGroups.get(1);
         for (SettingGroup podiumSettings : podiumGroup.settingGroups) {
           
@@ -70,14 +71,12 @@ class FuzzyBuilder {
           
           // Remove Open Area Polygons from Podium Template
           SettingGroup openGroup = podiumSettings.settingGroups.get(0);
-          ArrayList<Polygon> openShapes = new ArrayList<Polygon>();
           for(int i=0; i<openGroup.settingGroups.size(); i++) {
             SettingGroup openAreaVertices = openGroup.settingGroups.get(i).settingGroups.get(0);
             Polygon openArea = this.parsePolygon(openAreaVertices);
             openShapes.add(openArea);
             podiumTemplate = morph.cut(podiumTemplate, openArea);
           }
-          fuzzy.openShapes.put(plotShape, openShapes);
           
           // Generate Podium Zones
           SettingGroup zoneGroup = podiumSettings.settingGroups.get(1);
@@ -88,13 +87,40 @@ class FuzzyBuilder {
             plotMassing = morph.makeAndDrop(podiumTemplate, plotMassing, levels, use, CANTILEVER_ALLOWANCE);
           }
         }
+        fuzzy.openShapes.put(plotShape, openShapes);
         
         // Generate Towers
+        ArrayList<Polygon> towerShapes = new ArrayList<Polygon>();
         SettingGroup towerGroup = plotSettings.settingGroups.get(2);
         for (SettingGroup towerSettings : towerGroup.settingGroups) {
           
+          // Generate Tower Polygon (and check if its in the current plot)
+          Point towerLocation = this.parsePoint(towerSettings.settingValues.get(0));
+          float towerRotation = parseFloat(towerSettings.settingValues.get(1).value);
+          float towerWidth = parseFloat(towerSettings.settingValues.get(2).value);
+          float towerDepth = parseFloat(towerSettings.settingValues.get(3).value);
+          Polygon towerShape = morph.rectangle(towerLocation, towerWidth, towerDepth, towerRotation);
+          towerShapes.add(towerShape);
+          if(plotShape.containsPolygon(towerShape)) {
+            
+            // Generate Tower Template
+            VoxelArray towerTemplate = morph.hardCloneVoxelArray(plot);
+            towerTemplate.setVoxelHeight(VOXEL_HEIGHT);
+            towerTemplate = morph.clip(towerTemplate, towerShape);
+              
+            // Generate Tower Zones
+            SettingGroup zoneGroup = towerSettings.settingGroups.get(0);
+            for (int i=0; i<zoneGroup.settingGroups.size(); i++) {
+              SettingGroup zone = zoneGroup.settingGroups.get(i);
+              int levels = parseInt(zone.settingValues.get(0).value);
+              Use use = this.parseUse(zone.settingValues.get(1).value);
+              plotMassing = morph.makeAndDrop(towerTemplate, plotMassing, levels, use, CANTILEVER_ALLOWANCE);
+            }
+          }
         }
+        fuzzy.towerShapes.put(plotShape, towerShapes);
         
+        // Add the current plot's massing to the overall result
         fuzzy.massing = morph.add(fuzzy.massing, plotMassing);
       }
     }
@@ -109,25 +135,34 @@ class FuzzyBuilder {
    * @return a new polygon made from the vertices in the group
    */
   private Polygon parsePolygon(SettingGroup vertexGroup) {
-    ArrayList<float[]> coords = new ArrayList<float[]>();
-    for (int l=0; l<vertexGroup.settingValues.size(); l++) {
-      SettingValue plotVertex = vertexGroup.settingValues.get(l);
-      String[] coordString = plotVertex.value.split(",");
-      float[] coord = new float[coordString.length];
-      for (int m=0; m<coordString.length; m++) {
-        coord[m] = parseFloat(coordString[m]);
-      }
-      coords.add(coord);
-    }
     Polygon shape = new Polygon();
-    for (float[] coord : coords) {
-      if (coord.length == 2) {
-        shape.addVertex(new Point(coord[0], coord[1]));
-      } else if (coord.length == 3) {
-        shape.addVertex(new Point(coord[0], coord[2], coord[1]));
-      }
+    for (int i=0; i<vertexGroup.settingValues.size(); i++) {
+      SettingValue plotVertex = vertexGroup.settingValues.get(i);
+      shape.addVertex(this.parsePoint(plotVertex));
     }
     return shape;
+  }
+  
+  /**
+   * Parse a string into a Point object (assumes "x,y,z")
+   *
+   * @param a vertex
+   * @return a new point made from the SettingValue
+   */
+  private Point parsePoint(SettingValue vector) {
+    String[] coordString = vector.value.split(",");
+    float[] coord = new float[coordString.length];
+    for (int m=0; m<coordString.length; m++) {
+      coord[m] = parseFloat(coordString[m]);
+    }
+    if (coord.length == 2) {
+      return new Point(coord[0], coord[1]);
+    } else if (coord.length == 3) {
+      return new Point(coord[0], coord[2], coord[1]);
+    } else {
+      println("SettingValue must formatted as 'x,y' or 'x,y,z'");
+      return new Point();
+    }
   }
   
   /**
