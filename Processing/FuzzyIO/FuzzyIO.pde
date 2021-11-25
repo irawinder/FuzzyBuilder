@@ -70,6 +70,13 @@ void draw() {
       // Plot Polygons
       this.drawShape(plotShape);
       
+      // Open Space Polygons
+      if(this.fuzzy.openShapes.get(plotShape) != null) {
+        for(Polygon openShape : this.fuzzy.openShapes.get(plotShape)) {
+          this.drawShape(openShape);
+        }
+      }
+      
       // Tower Polygons
       if(this.fuzzy.towerShapes.get(plotShape) != null) {
         for(Polygon towerShape : this.fuzzy.towerShapes.get(plotShape)) {

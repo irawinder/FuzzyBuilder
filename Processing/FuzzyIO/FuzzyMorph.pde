@@ -151,6 +151,23 @@ class FuzzyMorph {
   }
   
   /**
+   * Remove a portion of a VoxelArray contained within a Polygon
+   * 
+   * @param input     VoxelArray to cut
+   * @param boundary  Polygon that defines boundary of area to cut
+   * @result subset of input VoxelArray not bounded by boundary Polygon
+   */
+  public VoxelArray cut(VoxelArray input, Polygon boundary) {
+    VoxelArray result = new VoxelArray();
+    for (Voxel t : input.voxelList) {
+      if (!boundary.containsPoint(t.location)) {
+        result.addVoxel(t);
+      }
+    }
+    return result;
+  }
+  
+  /**
    * Drops an input VoxelArray from the sky so it rests on the target VoxelArray without any overlap
    * 
    * @param input  VoxelArray to drop from sky
@@ -416,7 +433,7 @@ class FuzzyMorph {
    * @param tArray that encapsulates t
    * @return Voxel directly below a specific Voxel; null if none
    */
-  public Voxel getNeighborBottom(Voxel t, VoxelArray tArray) { //<>//
+  public Voxel getNeighborBottom(Voxel t, VoxelArray tArray) { //<>// //<>//
     String coordKey = this.coordKey(t.u, t.v, t.w - 1);
     if (tArray.voxelMap.containsKey(coordKey)) {
       return tArray.voxelMap.get(coordKey);

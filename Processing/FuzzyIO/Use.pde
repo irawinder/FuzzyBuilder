@@ -13,5 +13,6 @@ public enum Use {
   Convention,
   Carpark,
   Landscape,
-  Hotel
+  Hotel,
+  Unspecified
 }

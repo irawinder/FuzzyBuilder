@@ -8,11 +8,13 @@
  */
 class Development {
   public ArrayList<Polygon> plotShapes;
+  public HashMap<Polygon, ArrayList<Polygon>> openShapes;
   public HashMap<Polygon, ArrayList<Polygon>> towerShapes;
   public VoxelArray site, massing;
   
   public Development() {
     this.plotShapes = new ArrayList<Polygon>();
+    this.openShapes = new HashMap<Polygon, ArrayList<Polygon>>();
     this.towerShapes = new HashMap<Polygon, ArrayList<Polygon>>();
     this.site = new VoxelArray();
     this.massing = new VoxelArray();
