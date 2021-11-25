@@ -9,6 +9,8 @@ private final int PORT = 8080;
 private final boolean RUN_SERVER = true;
 
 private FuzzyServer fuzzyIO;
+private FuzzyBuilder fuzzy;
+private FuzzyRandom random;
 
 // Either JAVA2D (default), P2D or P3D
 final String RENDERER = P3D;
@@ -19,12 +21,12 @@ final int GRID_UNITS = 100;
 final int DEFAULT_COLOR = #999999;
 final int BACKGROUND_COLOR = #222222;
 
+boolean drawVoxels = true;
+
 // Test Scripts (Set to false for production)
 private final boolean RUN_TESTS = true;
 
 Camera cam;
-Test test;
-
 void setup() {
   
   size(1280, 800, RENDERER);
@@ -39,11 +41,9 @@ void setup() {
   cam.eye.y = - 0.50 * GRID_HEIGHT;
   cam.angleYZ = 0.20 * PI;
   
-  // Test Scripts:
-  this.test = new Test();
-    
+  random = new FuzzyRandom();
   if(RUN_TESTS) {
-    this.test.init();
+    this.fuzzy = random.fuzzy();
   }
 }
 
@@ -53,7 +53,7 @@ void draw() {
   if(fuzzyIO != null) {
     fuzzyIO.listenForRequest();
   }
-    
+  
   // Update Camera Movement
   if (keyPressed) cam.move();
   
@@ -61,22 +61,29 @@ void draw() {
   
   // 3D Objects
   cam.pov();
-  
+    
   // World Grid
   this.drawGrids(GRID_WIDTH, GRID_UNITS, GRID_HEIGHT);
   
-  // Polygons
-  for(Polygon plotShape : this.test.plotShapes) {
-    this.drawShape(plotShape);
-    for(Polygon towerShape : this.test.towerShapes.get(plotShape)) {
-      this.drawShape(towerShape);
+  if(fuzzy != null) {
+    
+    // Polygons
+    for(Polygon plotShape : this.fuzzy.plotShapes) {
+      this.drawShape(plotShape);
+      
+      if(this.fuzzy.towerShapes.get(plotShape) != null) {
+        for(Polygon towerShape : this.fuzzy.towerShapes.get(plotShape)) {
+          this.drawShape(towerShape);
+        }
+      }
+    }
+    
+    // Voxels
+    if (drawVoxels) {
+      this.drawTiles(this.fuzzy.site);
+      this.drawVoxels(this.fuzzy.massing);
     }
   }
-  
-  // Voxels
-  this.drawTiles(this.test.site);
-  this.drawVoxels(this.test.massing);
-  
   // 2D Overlay
   cam.overlay();
   
@@ -99,10 +106,13 @@ void keyPressed() {
       cam.init();
       break;
     case 'r':
-      this.test.init();
+      this.fuzzy = random.fuzzy();
       break;
     case ' ':
       cam.pause();
+      break;
+    case 'v':
+      drawVoxels = !drawVoxels;
       break;
   }
 }

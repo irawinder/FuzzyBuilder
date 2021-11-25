@@ -8,9 +8,9 @@ class FuzzyServer {
   public FuzzyServer(int port) {
   
     // Start Server Objects
-    server = new Server(FuzzyIO.this, port);
+    this.server = new Server(FuzzyIO.this, port);
     
-    info = "--- FuzzyIO V" + SERVER_VERSION + " ---\nActive on port: " + port;
+    this.info = "--- FuzzyIO V" + SERVER_VERSION + " ---\nActive on port: " + port;
     println("\n" + info);
   }
   
@@ -43,7 +43,8 @@ class FuzzyServer {
     
     if (message.length > 1) {
       String body = message[1];
-      println(body);
+      SettingGroup settings = fuzzy.parseSettingGroup(body);
+      fuzzy.build(settings);
     }
     
     return formatResponse("200", "Request Recieved", "application/json", "{\"success\": true}");
