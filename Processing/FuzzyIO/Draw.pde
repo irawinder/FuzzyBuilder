@@ -23,7 +23,7 @@ void drawCursor() {
 void drawShape(Polygon p) {
   noFill();
   stroke(100);
-  for(Line edge : p.edge) {
+  for(Line edge : p.edges) {
     line(edge.o.x, edge.o.z, edge.o.y, edge.f.x, edge.f.z, edge.f.y);
   }
 }

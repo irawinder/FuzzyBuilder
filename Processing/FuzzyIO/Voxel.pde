@@ -66,4 +66,14 @@ public class Voxel {
   public String toString() {
     return type.toString() + " Voxel [" + this.u + "," + this.v + "," + this.w + "] at " + location;
   }
+  
+  public JSONObject serialize() {
+    JSONObject voxelJSON = new JSONObject();
+    voxelJSON.setJSONObject("location", this.location.serialize());
+    voxelJSON.setFloat("rotation", this.rotation);
+    voxelJSON.setFloat("width", this.width);
+    voxelJSON.setFloat("height", this.height);
+    voxelJSON.setString("use", this.type.toString());
+    return voxelJSON;
+  }
 }

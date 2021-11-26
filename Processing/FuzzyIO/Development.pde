@@ -19,4 +19,10 @@ class Development {
     this.site = new VoxelArray();
     this.massing = new VoxelArray();
   }
+  
+  public JSONObject serialize() {
+    JSONObject data = new JSONObject();
+    data.setJSONArray("voxels", this.massing.serialize());
+    return data;
+  }
 }

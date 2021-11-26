@@ -36,4 +36,16 @@ public class Point {
     this.y = y;
     this.z = z;
   }
+  
+  public JSONObject serialize() {
+    JSONObject pointJSON = new JSONObject();
+    double decimals = 1000d;
+    double _x = Math.round(decimals * this.x) / decimals;
+    double _y = Math.round(decimals * this.y) / decimals;
+    double _z = Math.round(decimals * this.z) / decimals;
+    pointJSON.setDouble("x", _x);
+    pointJSON.setDouble("y", _y);
+    pointJSON.setDouble("z", _z);
+    return pointJSON;
+  }
 }

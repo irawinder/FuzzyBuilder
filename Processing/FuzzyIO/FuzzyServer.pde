@@ -59,13 +59,20 @@ class FuzzyServer {
     
     String header = message[0];
     
+    SettingGroup settings;
+    Development solution;
     if (message.length > 1) {
       String body = message[1];
-      SettingGroup settings = adapter.parse(body);
-      fuzzy = this.builder.build(settings);
+      settings = adapter.parse(body);
+    } else {
+      settings = new SettingGroup();
     }
     
-    return formatResponse("200", "Request Recieved", "application/json", "{\"success\": true}");
+    fuzzy = this.builder.build(settings);
+    JSONObject dataJSON = fuzzy.serialize();
+    String data = this.wrapApi(dataJSON);
+    println(data);
+    return formatResponse("200", "Success", "application/json", data);
   }
   
   /**
@@ -79,17 +86,35 @@ class FuzzyServer {
    */
   private String formatResponse(String statusCode, String reasonPhrase, String contentType, String data) {
   
-  // HTTP Response formatted according to 
-  // https://www.tutorialspoint.com/http/http_responses.htm
-  //
-  String response = "";
-  response += "HTTP/" + HTTP_VERSION + " " + statusCode + " " + reasonPhrase + "\r\n";
-  response += "Server: " + SERVER + "\r\n";
-  response += "Content-Type: " + contentType + "\r\n";
-  response += "Connection: close\r\n";
-  response += "\r\n";
-  response += data;
+    // HTTP Response formatted according to 
+    // https://www.tutorialspoint.com/http/http_responses.htm
+    //
+    String response = "";
+    response += "HTTP/" + HTTP_VERSION + " " + statusCode + " " + reasonPhrase + "\r\n";
+    response += "Server: " + SERVER + "\r\n";
+    response += "Content-Type: " + contentType + "\r\n";
+    response += "Connection: close\r\n";
+    response += "\r\n";
+    response += data;
+    
+    return response;
+  }
   
-  return response;
-}
+  /**
+   * Wrap JSON data with a standard JSON header and return as string
+   *
+   * @param data serialization of fuzzybuilder voxels, etc
+   * @return original data wrapped by a json header with information about the data (api version, etc)
+   */
+  public String wrapApi(JSONObject data) {
+    
+    //Compile Root JSON Object
+    String apiVersion = SERVER_VERSION;
+    JSONObject root = new JSONObject();
+    root.setString("apiVersion", apiVersion);
+    root.setString("method", "FuzzyBuilder.build");
+    root.setJSONObject("data", data);
+    
+    return root.toString();
+  }
 }

@@ -5,16 +5,16 @@
  * 
  */
 public class Polygon {
-  private ArrayList<Point> vertex;
-  private ArrayList<Line> edge;
+  private ArrayList<Point> vertices;
+  private ArrayList<Line> edges;
   private float xMin, xMax, yMin, yMax;
 
   /**
    * Constructs an empty polygon
    */
   public Polygon() {
-    vertex = new ArrayList<Point>();
-    edge = new ArrayList<Line>();
+    vertices = new ArrayList<Point>();
+    edges = new ArrayList<Line>();
   }
   
   /**
@@ -36,7 +36,7 @@ public class Polygon {
    * @return corners of polygon
    */
   public ArrayList<Point> getCorners() {
-    return vertex;
+    return vertices;
   }
 
   /**
@@ -45,11 +45,11 @@ public class Polygon {
    * @param p Point location of new vertex
    */
   public void addVertex(Point p) {
-    vertex.add(p);
+    vertices.add(p);
 
     // Generate Edges for Polygon once it has more than 3 vertices
     //
-    if (vertex.size() > 2) {
+    if (vertices.size() > 2) {
       createEdges();
     }
 
@@ -62,14 +62,14 @@ public class Polygon {
    * Create Polygon Edge Objects, Composed of vertices
    */
   private void createEdges() {
-    edge.clear();
-    int n = vertex.size();
+    edges.clear();
+    int n = vertices.size();
     for (int i = 0; i < n - 1; i++) {
-      Line l = new Line(vertex.get(i), vertex.get(i + 1));
-      edge.add(l);
+      Line l = new Line(vertices.get(i), vertices.get(i + 1));
+      edges.add(l);
     }
-    Line l = new Line(vertex.get(n - 1), vertex.get(0));
-    edge.add(l);
+    Line l = new Line(vertices.get(n - 1), vertices.get(0));
+    edges.add(l);
   }
 
   /**
@@ -81,7 +81,7 @@ public class Polygon {
     yMin = Float.POSITIVE_INFINITY;
     yMax = Float.NEGATIVE_INFINITY;
 
-    for (Point p : vertex) {
+    for (Point p : vertices) {
       xMin = Math.min(xMin, p.x);
       xMax = Math.max(xMax, p.x);
       yMin = Math.min(yMin, p.y);
@@ -121,8 +121,8 @@ public class Polygon {
    * clear entire polygon of vertices and edges
    */
   public void clear() {
-    vertex.clear();
-    edge.clear();
+    vertices.clear();
+    edges.clear();
   }
 
   /**
@@ -141,7 +141,7 @@ public class Polygon {
    * @param z z-coordinate
    */
   public void translate(float x, float y, float z) {
-    for (Point p : vertex) {
+    for (Point p : vertices) {
       p.x += x;
       p.y += y;
       p.z += z;
@@ -159,7 +159,7 @@ public class Polygon {
    * @return Returns 'true' if Point p is inside of polygon
    */
   public boolean containsPoint(Point p) {
-    int num_nodes = vertex.size();
+    int num_nodes = vertices.size();
 
     // Make a horizontal line to cut through geometries
     //
@@ -174,7 +174,7 @@ public class Polygon {
     //
     if (num_nodes > 2) {
       int num_intersect = 0;
-      for (Line l : edge) {
+      for (Line l : edges) {
         Point intersect = horizontal.lineIntersect(l);
         if (intersect != null && intersect.x < p.x) {
           num_intersect++;
@@ -218,8 +218,8 @@ public class Polygon {
     } else if (polygon.containsPolygon(this)) {
       return true;
     } else {
-      for (Line thisEdge : this.edge) {
-        for (Line thatEdge : polygon.edge) {
+      for (Line thisEdge : this.edges) {
+        for (Line thatEdge : polygon.edges) {
           if( thisEdge.lineIntersect(thatEdge) != null) {
             return true;
           }
@@ -227,5 +227,14 @@ public class Polygon {
       }
     }
     return false;
+  }
+  
+  public JSONArray serialize() {
+    JSONArray polygonJSON = new JSONArray();
+    for (int i=0; i<this.vertices.size(); i++) {
+      JSONObject vertex = vertices.get(i).serialize();
+      polygonJSON.setJSONObject(i, vertex);
+    }
+    return polygonJSON;
   }
 }

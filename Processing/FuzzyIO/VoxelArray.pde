@@ -133,4 +133,13 @@ public class VoxelArray {
   public String toString() {
     return "Voxel Array [" + voxelMap.size() + "]";
   }
+  
+  public JSONArray serialize() {
+    JSONArray voxelArrayJSON = new JSONArray();
+    for (int i=0; i<this.voxelList.size(); i++) {
+      JSONObject voxelJSON = this.voxelList.get(i).serialize();
+      voxelArrayJSON.setJSONObject(i, voxelJSON);
+    }
+    return voxelArrayJSON;
+  }
 }
