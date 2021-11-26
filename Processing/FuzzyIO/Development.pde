@@ -10,7 +10,7 @@ class Development {
   public ArrayList<Polygon> plotShapes;
   public HashMap<Polygon, ArrayList<Polygon>> openShapes;
   public HashMap<Polygon, ArrayList<Polygon>> towerShapes;
-  public VoxelArray site, massing;
+  public VoxelArray site, massing, all;
   
   public Development() {
     this.plotShapes = new ArrayList<Polygon>();
@@ -18,11 +18,12 @@ class Development {
     this.towerShapes = new HashMap<Polygon, ArrayList<Polygon>>();
     this.site = new VoxelArray();
     this.massing = new VoxelArray();
+    this.all = new VoxelArray();
   }
   
   public JSONObject serialize() {
     JSONObject data = new JSONObject();
-    data.setJSONArray("voxels", this.massing.serialize());
+    data.setJSONArray("voxels", this.all.serialize());
     return data;
   }
 }

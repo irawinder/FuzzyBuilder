@@ -71,7 +71,6 @@ class FuzzyServer {
     fuzzy = this.builder.build(settings);
     JSONObject dataJSON = fuzzy.serialize();
     String data = this.wrapApi(dataJSON);
-    println(data);
     return formatResponse("200", "Success", "application/json", data);
   }
   

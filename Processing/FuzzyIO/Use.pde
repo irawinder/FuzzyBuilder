@@ -14,5 +14,6 @@ public enum Use {
   Carpark,
   Landscape,
   Hotel,
+  Site,
   Unspecified
 }

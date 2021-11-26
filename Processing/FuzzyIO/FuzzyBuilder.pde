@@ -53,6 +53,7 @@ class FuzzyBuilder {
         Point gridTranslation = new Point();
         VoxelArray plot = this.morph.make(plotShape, gridSize, 0, gridRotation, gridTranslation);
         fuzzy.site = this.morph.add(fuzzy.site, plot);
+        fuzzy.site.setVoxelUse(Use.Site);
         
         // Initialize massing for this entire plot
         VoxelArray plotMassing = new VoxelArray();
@@ -95,7 +96,7 @@ class FuzzyBuilder {
           
           // Generate Tower Polygon (and check if its in the current plot)
           Point towerLocation = this.parsePoint(towerSettings.settingValues.get(0));
-          float towerRotation = parseFloat(towerSettings.settingValues.get(1).value);
+          float towerRotation = 2 * PI * parseFloat(towerSettings.settingValues.get(1).value) / 360f;
           float towerWidth = parseFloat(towerSettings.settingValues.get(2).value);
           float towerDepth = parseFloat(towerSettings.settingValues.get(3).value);
           Polygon towerShape = morph.rectangle(towerLocation, towerWidth, towerDepth, towerRotation);
@@ -122,6 +123,8 @@ class FuzzyBuilder {
         // Add the current plot's massing to the overall result
         fuzzy.massing = morph.add(fuzzy.massing, plotMassing);
       }
+      // Combine flat site tiles on ground plane with massing
+      fuzzy.all = morph.add(fuzzy.site, fuzzy.massing);
     }
     
     return fuzzy;

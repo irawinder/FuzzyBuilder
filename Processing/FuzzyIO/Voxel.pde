@@ -73,7 +73,7 @@ public class Voxel {
     voxelJSON.setFloat("rotation", this.rotation);
     voxelJSON.setFloat("width", this.width);
     voxelJSON.setFloat("height", this.height);
-    voxelJSON.setString("use", this.type.toString());
+    voxelJSON.setString("type", this.type.toString());
     return voxelJSON;
   }
 }
