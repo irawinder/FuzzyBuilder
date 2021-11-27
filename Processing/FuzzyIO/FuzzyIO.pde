@@ -30,21 +30,22 @@ void setup() {
   
   size(1280, 800, RENDERER);
   
+  this.fuzzy = new Development();
+  
   if (RUN_SERVER) {
     this.server = new FuzzyServer(PORT);
+    background(BACKGROUND_COLOR);
+    textAlign(CENTER, CENTER); fill(255);
+    text(server.info, width/2, height/2);
   } 
   
   if (RUN_VIZ) {
-    this.initViz();
+    this.cam = new Camera(RENDERER);
+    this.cam.eye.y = - 0.50 * GRID_HEIGHT;
+    this.cam.angleYZ = 0.20 * PI; 
+    this.random = new FuzzyRandom();
+    this.fuzzy = random.development();
   }
-}
-
-void initViz() {
-  this.cam = new Camera(RENDERER);
-  this.cam.eye.y = - 0.50 * GRID_HEIGHT;
-  this.cam.angleYZ = 0.20 * PI; 
-  this.random = new FuzzyRandom();
-  this.fuzzy = random.development();
 }
 
 void draw() {
@@ -54,12 +55,12 @@ void draw() {
     server.listenForRequest();
   }
   
-  background(BACKGROUND_COLOR);
-  
   if (RUN_VIZ) {
   
     // Update Camera Movement
     if (keyPressed) cam.move();
+    
+    background(BACKGROUND_COLOR);
     
     // 3D Objects
     cam.pov();
@@ -110,11 +111,6 @@ void draw() {
         cam.setMouseToCenter();
       }
     }
-  } else {
-    
-    textAlign(CENTER, CENTER); fill(255);
-    text(server.info, width/2, height/2);
-    noLoop();
   }
 }
 
@@ -163,5 +159,5 @@ void mouseWheel(MouseEvent event) {
 
 // This method runs when a client first connects to the Server
 void serverEvent(Server s, Client c) {
-  //println("Server: We have a new client: " + c.ip());
+  // println("Server: We have a new client: " + c.ip());
 }

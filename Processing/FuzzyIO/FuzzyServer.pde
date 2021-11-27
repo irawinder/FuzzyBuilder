@@ -61,10 +61,15 @@ class FuzzyServer {
     
     SettingGroup settings;
     Development solution;
-    String body = message[1];
-    settings = adapter.parse(body);
+    if (message.length > 1) {
+      String body = message[1];
+      settings = adapter.parse(body);
+    } else  {
+      settings = new SettingGroup();
+    }
     fuzzy = this.builder.build(settings);
     JSONObject dataJSON = fuzzy.serialize();
+    println(dataJSON.getJSONArray("voxels").size() + " delivered to " + clientIP);
     String data = this.wrapApi(dataJSON);
     return formatResponse("200", "Success", "application/json", data);
   }
