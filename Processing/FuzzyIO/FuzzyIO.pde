@@ -8,7 +8,7 @@ private final int PORT = 8080;
 private final boolean RUN_SERVER = true;
 
 // Visualization Scripts (Set to false for production)
-private final boolean RUN_VIZ = false;
+private final boolean RUN_VIZ = true;
 private FuzzyRandom random;
 
 // Main global object for holding Fuzzy State as Voxels
