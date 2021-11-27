@@ -61,13 +61,8 @@ class FuzzyServer {
     
     SettingGroup settings;
     Development solution;
-    if (message.length > 1) {
-      String body = message[1];
-      settings = adapter.parse(body);
-    } else {
-      settings = new SettingGroup();
-    }
-    
+    String body = message[1];
+    settings = adapter.parse(body);
     fuzzy = this.builder.build(settings);
     JSONObject dataJSON = fuzzy.serialize();
     String data = this.wrapApi(dataJSON);

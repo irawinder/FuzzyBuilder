@@ -7,8 +7,8 @@ private FuzzyServer server;
 private final int PORT = 8080;
 private final boolean RUN_SERVER = true;
 
-// Test Scripts (Set to false for production)
-private final boolean RUN_TESTS = true;
+// Visualization Scripts (Set to false for production)
+private final boolean RUN_VIZ = false;
 private FuzzyRandom random;
 
 // Main global object for holding Fuzzy State as Voxels
@@ -30,19 +30,21 @@ void setup() {
   
   size(1280, 800, RENDERER);
   
-  this.cam = new Camera(RENDERER);
-  this.cam.eye.y = - 0.50 * GRID_HEIGHT;
-  this.cam.angleYZ = 0.20 * PI; 
-    
-  this.random = new FuzzyRandom();
-  
-  if(RUN_SERVER) {
+  if (RUN_SERVER) {
     this.server = new FuzzyServer(PORT);
   } 
   
-  if(RUN_TESTS) {
-    this.fuzzy = random.development();
+  if (RUN_VIZ) {
+    this.initViz();
   }
+}
+
+void initViz() {
+  this.cam = new Camera(RENDERER);
+  this.cam.eye.y = - 0.50 * GRID_HEIGHT;
+  this.cam.angleYZ = 0.20 * PI; 
+  this.random = new FuzzyRandom();
+  this.fuzzy = random.development();
 }
 
 void draw() {
@@ -52,81 +54,91 @@ void draw() {
     server.listenForRequest();
   }
   
-  // Update Camera Movement
-  if (keyPressed) cam.move();
-  
   background(BACKGROUND_COLOR);
   
-  // 3D Objects
-  cam.pov();
-    
-  // World Grid
-  this.drawGrids(GRID_WIDTH, GRID_UNITS, GRID_HEIGHT);
+  if (RUN_VIZ) {
   
-  // Polygons
-  if(this.fuzzy != null) {
-    for(Polygon plotShape : this.fuzzy.plotShapes) {
+    // Update Camera Movement
+    if (keyPressed) cam.move();
+    
+    // 3D Objects
+    cam.pov();
       
-      // Plot Polygons
-      this.drawShape(plotShape);
-      
-      // Open Space Polygons
-      if(this.fuzzy.openShapes.get(plotShape) != null) {
-        for(Polygon openShape : this.fuzzy.openShapes.get(plotShape)) {
-          this.drawShape(openShape);
+    // World Grid
+    this.drawGrids(GRID_WIDTH, GRID_UNITS, GRID_HEIGHT);
+    
+    // Polygons
+    if(this.fuzzy != null) {
+      for(Polygon plotShape : this.fuzzy.plotShapes) {
+        
+        // Plot Polygons
+        this.drawShape(plotShape);
+        
+        // Open Space Polygons
+        if(this.fuzzy.openShapes.get(plotShape) != null) {
+          for(Polygon openShape : this.fuzzy.openShapes.get(plotShape)) {
+            this.drawShape(openShape);
+          }
+        }
+        
+        // Tower Polygons
+        if(this.fuzzy.towerShapes.get(plotShape) != null) {
+          for(Polygon towerShape : this.fuzzy.towerShapes.get(plotShape)) {
+            this.drawShape(towerShape);
+          }
         }
       }
       
-      // Tower Polygons
-      if(this.fuzzy.towerShapes.get(plotShape) != null) {
-        for(Polygon towerShape : this.fuzzy.towerShapes.get(plotShape)) {
-          this.drawShape(towerShape);
-        }
+      // Voxels
+      if (drawVoxels) {
+        this.drawTiles(this.fuzzy.site);
+        this.drawVoxels(this.fuzzy.massing);
       }
     }
     
-    // Voxels
-    if (drawVoxels) {
-      this.drawTiles(this.fuzzy.site);
-      this.drawVoxels(this.fuzzy.massing);
+    // 2D Overlay
+    cam.overlay();
+    // TBD
+    
+    if (mousePressed) {
+      if (!cam.isPaused()) {
+        
+        // Update Camera Angle relative to cursor
+        cam.updateCursorAngle();
+        
+        // reset mouse position
+        cam.setMouseToCenter();
+      }
     }
-  }
-  
-  // 2D Overlay
-  cam.overlay();
-  // TBD
-  
-  if (mousePressed) {
-    if (!cam.isPaused()) {
-      
-      // Update Camera Angle relative to cursor
-      cam.updateCursorAngle();
-      
-      // reset mouse position
-      cam.setMouseToCenter();
-    }
+  } else {
+    
+    textAlign(CENTER, CENTER); fill(255);
+    text(server.info, width/2, height/2);
+    noLoop();
   }
 }
 
 void keyPressed() {
-  switch(key) {
-    case 'c':
-      cam.init();
-      break;
-    case 'r':
-      this.fuzzy = random.development();
-      break;
-    case ' ':
-      cam.pause();
-      break;
-    case 'v':
-      drawVoxels = !drawVoxels;
-      break;
+  if (RUN_VIZ) {
+    switch(key) {
+      case 'c':
+        cam.init();
+        break;
+      case 'r':
+        this.fuzzy = random.development();
+        break;
+      case ' ':
+        cam.pause();
+        break;
+      case 'v':
+        drawVoxels = !drawVoxels;
+        break;
+    }
   }
 }
 
 void mouseMoved() {
-  if (!cam.isPaused()) {
+  if (!cam.isPaused() && RUN_VIZ) {
     
     // Update Camera Angle relative to cursor
     cam.updateCursorAngle();
@@ -137,7 +149,7 @@ void mouseMoved() {
 }
       
 void mouseWheel(MouseEvent event) {
-  if (!cam.isPaused()) {
+  if (!cam.isPaused() && RUN_VIZ) {
     
     // Fly Up or Down using mouse wheel
     float e = event.getCount();
