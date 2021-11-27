@@ -55,23 +55,37 @@ class FuzzyServer {
   */
   String getResponse(String request, String clientIP) {
     
-    String[] message = request.split("\r\n\r\n");
+    String lineBreak = "\r\n";
+    
+    String[] message = request.split(lineBreak + lineBreak);
     
     String header = message[0];
+    String method = header.split(lineBreak)[0].split(" ")[0];
     
-    SettingGroup settings;
-    Development solution;
-    if (message.length > 1) {
-      String body = message[1];
-      settings = adapter.parse(body);
-    } else  {
-      settings = new SettingGroup();
+    if (method.equals("OPTIONS")) {
+      
+      return formatResponse("200", "Success", "application/json", "");
+      
+    } else if (method.equals("POST")) {
+      
+      SettingGroup settings;
+      Development solution;
+      if (message.length > 1) {
+        String body = message[1];
+        settings = adapter.parse(body);
+      } else  {
+        settings = new SettingGroup();
+      }
+      fuzzy = this.builder.build(settings);
+      JSONObject dataJSON = fuzzy.serialize();
+      println(dataJSON.getJSONArray("voxels").size() + " voxels delivered to " + clientIP);
+      String data = this.wrapApi(dataJSON);
+      return formatResponse("200", "Success", "application/json", data);
+      
+    } else {
+      
+      return formatResponse("405", "Method Not Allowed", "application/json", "{}");
     }
-    fuzzy = this.builder.build(settings);
-    JSONObject dataJSON = fuzzy.serialize();
-    println(dataJSON.getJSONArray("voxels").size() + " delivered to " + clientIP);
-    String data = this.wrapApi(dataJSON);
-    return formatResponse("200", "Success", "application/json", data);
   }
   
   /**
@@ -89,11 +103,14 @@ class FuzzyServer {
     // https://www.tutorialspoint.com/http/http_responses.htm
     //
     String response = "";
-    response += "HTTP/" + HTTP_VERSION + " " + statusCode + " " + reasonPhrase + "\r\n";
-    response += "Server: " + SERVER + "\r\n";
-    response += "Content-Type: " + contentType + "\r\n";
-    response += "Connection: close\r\n";
-    response += "\r\n";
+    String lineBreak = "\r\n";
+    response += "HTTP/" + HTTP_VERSION + " " + statusCode + " " + reasonPhrase + lineBreak;
+    response += "Server: " + SERVER + lineBreak;
+    response += "Content-Type: " + contentType + lineBreak;
+    response += "Connection: close" + lineBreak;
+    response += "Access-Control-Allow-Origin: *" + lineBreak;
+    response += "Access-Control-Allow-Headers: *" + lineBreak;
+    response += lineBreak;
     response += data;
     
     return response;
