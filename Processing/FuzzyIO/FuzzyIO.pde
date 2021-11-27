@@ -138,22 +138,26 @@ void keyPressed() {
 }
 
 void mouseMoved() {
-  if (!cam.isPaused() && RUN_VIZ) {
+  if (RUN_VIZ) {
+    if (!cam.isPaused()) {
     
-    // Update Camera Angle relative to cursor
-    cam.updateCursorAngle();
-    
-    // reset mouse position
-    cam.setMouseToCenter();
+      // Update Camera Angle relative to cursor
+      cam.updateCursorAngle();
+      
+      // reset mouse position
+      cam.setMouseToCenter();
+    }
   }
 }
       
 void mouseWheel(MouseEvent event) {
-  if (!cam.isPaused() && RUN_VIZ) {
+  if (RUN_VIZ) {
+    if (!cam.isPaused()) {
     
-    // Fly Up or Down using mouse wheel
-    float e = event.getCount();
-    cam.fly(e);
+      // Fly Up or Down using mouse wheel
+      float e = event.getCount();
+      cam.fly(e);
+    }
   }
 }
 
