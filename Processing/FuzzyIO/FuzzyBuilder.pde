@@ -139,6 +139,7 @@ class FuzzyBuilder {
       } 
     } catch (Exception e) {
       println ("Settings are not formatted correctly for this build of FuzzyIO");
+      return null;
     }
     
     return fuzzy;

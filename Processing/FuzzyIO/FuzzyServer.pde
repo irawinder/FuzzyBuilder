@@ -73,18 +73,22 @@ class FuzzyServer {
       if (message.length > 1) {
         String body = message[1];
         settings = adapter.parse(body);
+        fuzzy = this.builder.build(settings);
+        if (fuzzy == null) {
+           return formatResponse("400", "Bad Request", "application/json", "");
+        }
+        JSONObject dataJSON = fuzzy.serialize();
+        println(dataJSON.getJSONArray("voxels").size() + " voxels delivered to " + clientIP);
+        String data = this.wrapApi(dataJSON);
+        return formatResponse("200", "Success", "application/json", data);
       } else  {
         settings = new SettingGroup();
+        println("This POST request has no body");
+        return formatResponse("400", "Bad Request", "application/json", "");
       }
-      fuzzy = this.builder.build(settings);
-      JSONObject dataJSON = fuzzy.serialize();
-      println(dataJSON.getJSONArray("voxels").size() + " voxels delivered to " + clientIP);
-      String data = this.wrapApi(dataJSON);
-      return formatResponse("200", "Success", "application/json", data);
-      
     } else {
       
-      return formatResponse("405", "Method Not Allowed", "application/json", "{}");
+      return formatResponse("405", "Method Not Allowed", "application/json", "");
     }
   }
   
@@ -110,6 +114,8 @@ class FuzzyServer {
     response += "Connection: close" + lineBreak;
     response += "Access-Control-Allow-Origin: *" + lineBreak;
     response += "Access-Control-Allow-Headers: *" + lineBreak;
+    response += "Access-Control-Allow-Methods: *" + lineBreak;
+    response += "Access-Control-Allow-Credentials: true" + lineBreak;
     response += lineBreak;
     response += data;
     
