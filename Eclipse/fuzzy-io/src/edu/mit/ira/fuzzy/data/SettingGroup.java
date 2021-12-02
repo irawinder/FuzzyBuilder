@@ -9,11 +9,11 @@ import java.util.ArrayList;
  *
  */
 public class SettingGroup extends Setting {
-  public ArrayList<SettingValue> settingValues;
-  public ArrayList<SettingGroup> settingGroups;
-  
-  public SettingGroup() {
-    this.settingValues = new ArrayList<SettingValue>();
-    this.settingGroups = new ArrayList<SettingGroup>();
-  }
+	public ArrayList<SettingValue> settingValues;
+	public ArrayList<SettingGroup> settingGroups;
+
+	public SettingGroup() {
+		this.settingValues = new ArrayList<SettingValue>();
+		this.settingGroups = new ArrayList<SettingGroup>();
+	}
 }

@@ -6,11 +6,11 @@ package edu.mit.ira.fuzzy.data;
  * @author Ira
  *
  */
- class Setting {
-  public String name, type;
-  
-  public Setting() {
-    name = "";
-    type = "";
-  }
+class Setting {
+	public String name, type;
+
+	public Setting() {
+		name = "";
+		type = "";
+	}
 }

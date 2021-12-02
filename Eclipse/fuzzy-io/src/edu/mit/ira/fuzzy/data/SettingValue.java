@@ -7,9 +7,9 @@ package edu.mit.ira.fuzzy.data;
  *
  */
 public class SettingValue extends Setting {
-  public String value;
-  
-  public SettingValue() {
-    value = "";
-  }
+	public String value;
+
+	public SettingValue() {
+		value = "";
+	}
 }

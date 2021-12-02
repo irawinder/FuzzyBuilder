@@ -27,64 +27,64 @@ import edu.mit.ira.fuzzy.data.SettingGroupAdapter;
  *
  */
 public class FuzzyServer {
-	private final static String SERVER = "Processing Server (Java " + System.getProperty("java.version") + ")";
-	private final static String SERVER_VERSION = "1";
+	private final String SERVER = "Processing Server (Java " + System.getProperty("java.version") + ")";
+	private final String SERVER_VERSION = "1";
 	private FuzzyBuilder builder;
 	private SettingGroupAdapter adapter;
 	private String info;
-	
+
 	HttpServer server;
 
 	/**
 	 * Construct a new FuzzyServer
 	 *
 	 * @param port on the machine to open/reserve for this server
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	public FuzzyServer(int port) throws IOException {
-		
+
 		server = HttpServer.create(new InetSocketAddress(port), 0);
 		server.createContext("/", new MyHandler());
 		server.setExecutor(null); // creates a default executor
 		server.start();
-		
+
 		builder = new FuzzyBuilder();
 		adapter = new SettingGroupAdapter();
 		info = "--- FuzzyIO V" + SERVER_VERSION + " ---\nActive on port: " + port;
 		System.out.println(info);
 	}
-	
+
 	/**
 	 * Listen for an HTTP Requests
 	 */
 	private class MyHandler implements HttpHandler {
 		@Override
 		public void handle(HttpExchange t) throws IOException {
-			
+
 			// Parse Request
 			String requestURI = t.getRequestURI().toString();
 			String requestMethod = t.getRequestMethod();
 			String clientIP = t.getRemoteAddress().toString();
-			
+
 			// Parse Request Body
-			InputStreamReader isr =  new InputStreamReader(t.getRequestBody(),"utf-8");
+			InputStreamReader isr = new InputStreamReader(t.getRequestBody(), "utf-8");
 			BufferedReader br = new BufferedReader(isr);
 			int b;
 			StringBuilder buf = new StringBuilder(512);
 			while ((b = br.read()) != -1) {
-			    buf.append((char) b);
+				buf.append((char) b);
 			}
 			br.close();
 			isr.close();
 			String requestBody = buf.toString();
-			
-	        // Format Response Headers and Body
-	        if (requestURI.equals("/")) {
+
+			// Format Response Headers and Body
+			if (requestURI.equals("/")) {
 				if (requestMethod.equals("OPTIONS")) {
-					
+
 					packItShipIt(t, 200);
 					log(clientIP, "Options Requested");
-		
+
 				} else if (requestMethod.equals("POST")) {
 					if (requestBody.length() > 0) {
 						SettingGroup settings = adapter.parse(requestBody);
@@ -111,7 +111,14 @@ public class FuzzyServer {
 			}
 		}
 	}
-	
+
+	/**
+	 * Attach Data and Headers to HttpResponse and send it off to the client
+	 * @param t
+	 * @param responseCode
+	 * @param data a string of data, such as a JSON file
+	 * @throws IOException
+	 */
 	public void packItShipIt(HttpExchange t, int responseCode, String data) throws IOException {
 		makeHeaders(t);
 		t.sendResponseHeaders(responseCode, data.length());
@@ -120,39 +127,52 @@ public class FuzzyServer {
 		os.close();
 	}
 	
+	/**
+	 * Attach Headers to HttpResponse and send it off to client
+	 * @param t
+	 * @param responseCode
+	 * @throws IOException
+	 */
 	public void packItShipIt(HttpExchange t, int responseCode) throws IOException {
 		makeHeaders(t);
 		t.sendResponseHeaders(responseCode, -1);
 	}
 	
+	/**
+	 * Prints a log to console. Also returns the log as a string
+	 * @param clientIP
+	 * @param message
+	 * @return
+	 */
 	public String log(String clientIP, String message) {
-		
+
 		// Time
-		SimpleDateFormat formatter= new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss z");
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss z");
 		Date date = new Date(System.currentTimeMillis());
 		String timeStamp = formatter.format(date);
-					
+
 		String log = timeStamp + " " + clientIP + " : " + message;
 		System.out.println(log);
 		return log;
 	}
-	
+
 	/**
 	 * Format Headers for HTTP response
-	 * @param contentType  the type of data attached on this response
+	 * 
+	 * @param contentType the type of data attached on this response
 	 * @return header fields for the response
 	 */
 	private void makeHeaders(HttpExchange t) {
 
 		Headers headers = t.getResponseHeaders();
 		headers.set("Server", SERVER);
-        headers.set("Content-Type", "application/json");
-        headers.set("Connection", "close");
-        headers.set("Connection", "close");
-        headers.set("Access-Control-Allow-Origin", "*");
-        headers.set("Access-Control-Allow-Headers", "*");
-        headers.set("Access-Control-Allow-Methods", "*");
-        headers.set("Access-Control-Allow-Credentials", "true");
+		headers.set("Content-Type", "application/json");
+		headers.set("Connection", "close");
+		headers.set("Connection", "close");
+		headers.set("Access-Control-Allow-Origin", "*");
+		headers.set("Access-Control-Allow-Headers", "*");
+		headers.set("Access-Control-Allow-Methods", "*");
+		headers.set("Access-Control-Allow-Credentials", "true");
 	}
 
 	/**
