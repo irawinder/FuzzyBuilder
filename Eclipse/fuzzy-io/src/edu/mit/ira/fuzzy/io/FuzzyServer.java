@@ -97,6 +97,7 @@ public class FuzzyServer {
 						String data = wrapApi(dataJSON);
 						packItShipIt(t, 200, data);
 						log(clientIP, dataJSON.getJSONArray("voxels").length() + " voxels delivered");
+						
 					} else {
 						packItShipIt(t, 400);
 						log(clientIP, "This POST request has no body");
