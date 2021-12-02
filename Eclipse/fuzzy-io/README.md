@@ -27,8 +27,3 @@ Installation
     docker container run --name FuzzyIO -d -p 8080:8080 fuzzy:1.0
     ```
 6. go to http://localhost:8080 on your browser. if you see a 405 error, it is working
-
-### Dockerfile
-CMD ["java", "FuzzyIO"] line of Dockerfile
-will automatically run the server when you deploy
-this docker image into the container for operational use, not for development.
