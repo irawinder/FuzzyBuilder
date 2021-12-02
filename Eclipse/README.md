@@ -3,12 +3,25 @@ Ira Winder (jiw@mit.edu)
 
 Current development of FuzzyBuilder is conducted using a more traditional workflow structured around Java projects located in the "Eclipse/" folder. Thusly, we recommend viewing and contributing using the Eclipse IDE.
 
+## How to use the Eclipse IDE for /Eclipse (v1.0-alpha.3)
+
+Version alpha.3 scripts are organized around the project "fuzzy-io", which is a headless HTTP server designed to be deployed to a docker container. Furthmore, it is designed to interface with a generic front end environment such as [openSUI] (https://github.com/hiekata-lab/openSUI)
+
+FuzzyIO is significantly easier to open and run compared to alpha.2's JavaFX implementation. However, it has not front end components.
+
+1. Download and install latest Eclipse IDE for Java Developers
+
+2. Import **fuzzy-io/** project folder into Eclipse as its own java project
+
+3. Entry point (main) can be found in edu.mit.ira.fuzzy.io.FuzzyIO
+
+4. For running the docker container, go [here](/fuzzy-io/)
+
+## How to use the Eclipse IDE for JavaFX in /Eclipse (v1.0-alpha.2) - deprecated
+
 ![Fuzzy Builder by Ira Winder](../screenshots/current_release.png "Fuzzy Builder by Ira Winder")
 
-## How to use the Eclipse IDE for projects in /Eclipse
-
-1. Download and install latest [Eclipse IDE for Java Developers](
-https://www.eclipse.org/downloads/packages/release/2019-09/r/eclipse-ide-java-developers)
+1. Download and install latest Eclipse IDE for Java Developers
 
 2. Download and install [Java SDK 13](https://www.oracle.com/technetwork/java/javase/downloads/jdk13-downloads-5672538.html)
 
