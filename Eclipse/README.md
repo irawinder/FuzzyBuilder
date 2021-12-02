@@ -1,11 +1,11 @@
-## Development: (v1.0-alpha.2+)
+## Development:
 Ira Winder (jiw@mit.edu)
 
 Current development of FuzzyBuilder is conducted using a more traditional workflow structured around Java projects located in the "Eclipse/" folder. Thusly, we recommend viewing and contributing using the Eclipse IDE.
 
-## How to use the Eclipse IDE for /Eclipse (v1.0-alpha.3)
+## How to use FuzzyIO (v1.0)
 
-Version alpha.3 scripts are organized around the project "fuzzy-io", which is a headless HTTP server designed to be deployed to a docker container. Furthmore, it is designed to interface with a generic front end environment such as [openSUI] (https://github.com/hiekata-lab/openSUI)
+FuzzyIO scripts are organized around the project "fuzzy-io", which is a headless HTTP server designed to be deployed to a docker container. Furthmore, it is designed to interface with a generic front end environment such as [openSUI] (https://github.com/hiekata-lab/openSUI)
 
 FuzzyIO is significantly easier to open and run compared to alpha.2's JavaFX implementation. However, it has not front end components.
 
@@ -17,7 +17,7 @@ FuzzyIO is significantly easier to open and run compared to alpha.2's JavaFX imp
 
 4. For running the docker container, go [here](/fuzzy-io/)
 
-## How to use the Eclipse IDE for JavaFX in /Eclipse (v1.0-alpha.2) - deprecated
+## How to use FuzzyBuilder w/ JavaFX (v1.0-alpha.2) - deprecated
 
 ![Fuzzy Builder by Ira Winder](../screenshots/current_release.png "Fuzzy Builder by Ira Winder")
 
