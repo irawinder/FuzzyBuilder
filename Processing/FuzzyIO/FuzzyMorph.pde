@@ -1,5 +1,5 @@
-/**
- * FuzzyMorph is a class deicated to functional transformations of geometry
+/** //<>//
+ * FuzzyMorph is a class dedicated to functional transformations of geometry
  *
  * @author Ira Winder
  *
@@ -77,7 +77,7 @@ class FuzzyMorph {
     float origin_y = (float) (0.5 * (boundary.yMax() + boundary.yMin()));
     float boundary_w = boundary.xMax() - boundary.xMin();
     float boundary_h = boundary.yMax() - boundary.yMin();
-    float bounds = max(boundary_w, boundary_h);
+    float bounds = (boundary_w > boundary_h) ? boundary_w : boundary_h;
     
     // maximum additional bounding box dimensions if polygon is rotated 45 degrees
     float easement = (float) (Math.max(boundary_w, boundary_h) * (Math.sqrt(2) - 1));
@@ -333,7 +333,7 @@ class FuzzyMorph {
    * Given an input VoxelArray and offset distance, returns a new VoxelArray with outer ring of voxels removed
    * 
    * @param input voxel array to apply setback to
-   * @param setbackDistance distance to apply setback ffrom edge
+   * @param setbackDistance distance to apply setback from edge
    * @return new VoxelArray with outer ring of voxels removed
    */
   public VoxelArray setback(VoxelArray input, float setbackDistance) {
@@ -346,7 +346,7 @@ class FuzzyMorph {
     
     // repeat offset as necessary to achieve desired distance
     VoxelArray result = input;
-    int numSetbacks = int(0.5 + setbackDistance / voxelWidth);
+    int numSetbacks = (int)(0.5f + setbackDistance / voxelWidth);
     for(int i=0; i<numSetbacks; i++) {
       result = this.setback(result);
     }
@@ -433,7 +433,7 @@ class FuzzyMorph {
    * @param tArray that encapsulates t
    * @return Voxel directly below a specific Voxel; null if none
    */
-  public Voxel getNeighborBottom(Voxel t, VoxelArray tArray) { //<>//
+  public Voxel getNeighborBottom(Voxel t, VoxelArray tArray) {
     String coordKey = this.coordKey(t.u, t.v, t.w - 1);
     if (tArray.voxelMap.containsKey(coordKey)) {
       return tArray.voxelMap.get(coordKey);
@@ -457,10 +457,10 @@ class FuzzyMorph {
    */
   public Polygon rectangle(Point origin, float width, float height, float rotation) {
     ArrayList<Point> corners = new ArrayList<Point>();
-    corners.add(new Point(- 0.5, - 0.5));
-    corners.add(new Point(+ 0.5, - 0.5));
-    corners.add(new Point(+ 0.5, + 0.5));
-    corners.add(new Point(- 0.5, + 0.5));
+    corners.add(new Point(- 0.5f, - 0.5f));
+    corners.add(new Point(+ 0.5f, - 0.5f));
+    corners.add(new Point(+ 0.5f, + 0.5f));
+    corners.add(new Point(- 0.5f, + 0.5f));
     
     Polygon rectangle = new Polygon();
     for(Point corner : corners) {
