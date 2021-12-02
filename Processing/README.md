@@ -1,7 +1,8 @@
 # Fuzzy Builder Prototype (v1.0-alpha.1)
 Ira Winder (jiw@mit.edu)
 
-NOTE! AS OF 2019.10.01 THIS PROCESSING CODE IS DEPRECATED, AS IT IS BEING MIGRATED FROM PROCESSING TO A JAVAFX GUI PLATFORM.
+NOTE! AS OF 2019.10.01, MOST OF THIS PROCESSING CODE IS DEPRECATED, AS IT IS BEING MIGRATED FROM PROCESSING TO ECLIPSE
+Generally, Processing applications (such as FuzzyIO) are developed here with the intention of ultimately porting them to Eclipse.
 
 Prototype demonstration of low-fidelity zone creation with Voronoi algorithm.
 
