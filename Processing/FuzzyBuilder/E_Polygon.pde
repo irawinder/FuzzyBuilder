@@ -1,5 +1,6 @@
 /**
  * Polygon class: a series of connected, closed points
+ * 
  * @author ira
  * 
  */
@@ -18,6 +19,7 @@ public class Polygon {
 
   /**
    * Retrieve the list of polygon corners
+   * 
    * @return corners of polygon
    */
   public ArrayList<Point> getCorners() {
@@ -26,6 +28,7 @@ public class Polygon {
 
   /**
    * Add a vertex to the polygon
+   * 
    * @param p Point location of new vertex
    */
   public void addVertex(Point p) {
@@ -33,7 +36,7 @@ public class Polygon {
 
     // Generate Edges for Polygon once it has more than 3 vertices
     //
-    if(vertex.size() > 2) {
+    if (vertex.size() > 2) {
       createEdges();
     }
 
@@ -48,11 +51,11 @@ public class Polygon {
   private void createEdges() {
     edge.clear();
     int n = vertex.size();
-    for (int i=0; i<n-1; i++) {
-      Line l = new Line( vertex.get(i), vertex.get(i+1) );
+    for (int i = 0; i < n - 1; i++) {
+      Line l = new Line(vertex.get(i), vertex.get(i + 1));
       edge.add(l);
     }
-    Line l = new Line( vertex.get(n-1), vertex.get(0) );
+    Line l = new Line(vertex.get(n - 1), vertex.get(0));
     edge.add(l);
   }
 
@@ -111,6 +114,7 @@ public class Polygon {
 
   /**
    * generates a random polygon shape
+   * 
    * @param num_pts number of corners to include in new random polygon
    */
   public void randomShape(int num_pts) {
@@ -119,7 +123,8 @@ public class Polygon {
 
   /**
    * generates a random polygon shape
-   * @param num_pts number of corners to include in new random polygon
+   * 
+   * @param num_pts  number of corners to include in new random polygon
    * @param x_center x-coordinate or polygon center
    * @param y_center y-coordinate or polygon center
    */
@@ -129,9 +134,10 @@ public class Polygon {
 
   /**
    * generates a random polygon shape
-   * @param num_pts number of corners to include in new random polygon
-   * @param x_center x-coordinate or polygon center
-   * @param y_center y-coordinate or polygon center
+   * 
+   * @param num_pts    number of corners to include in new random polygon
+   * @param x_center   x-coordinate or polygon center
+   * @param y_center   y-coordinate or polygon center
    * @param min_radius min distance of corner from center point
    * @param max_radius max distance of corner from center point
    */
@@ -150,7 +156,7 @@ public class Polygon {
       total = 0;
       this.clear();
 
-      for(int i=0; i<num_pts; i++) {
+      for (int i = 0; i < num_pts; i++) {
 
         // Generate random numbers relatively proportional to angle size
         float random_number = rand.nextFloat();
@@ -164,18 +170,18 @@ public class Polygon {
       }
 
       // Fit angle size to radian value
-      for (int i=0; i<angle.size(); i++) {
+      for (int i = 0; i < angle.size(); i++) {
         float mag = angle.get(i);
-        angle.set(i, mag * 2 * (float) Math.PI / total); 
+        angle.set(i, mag * 2 * (float) Math.PI / total);
       }
 
       // generate each point around a circle
       float a = 0;
-      for (int i=0; i<num_pts; i++) {
+      for (int i = 0; i < num_pts; i++) {
         a += angle.get(i);
         float r = radius.get(i);
-        float x = (float) (r*Math.cos(a));
-        float y = (float) (r*Math.sin(a));
+        float x = (float) (r * Math.cos(a));
+        float y = (float) (r * Math.sin(a));
         Point p = new Point(x, y);
         addVertex(p);
       }
@@ -217,6 +223,7 @@ public class Polygon {
 
   /**
    * Check if a point is within the polygon
+   * 
    * @param p Point we wish to know whether inside polygon or not
    * @return Returns 'true' if Point p is inside of polygon
    */
@@ -229,9 +236,9 @@ public class Polygon {
     Point f = new Point(+1000000, p.y);
     Line horizontal = new Line(o, f);
 
-    // If polygon has 3 or more vertices, count how many times a 
+    // If polygon has 3 or more vertices, count how many times a
     // horizontal line drawn from negative infinity to point p
-    // intersects with the polygon.  If off, the Point p is inside
+    // intersects with the polygon. If off, the Point p is inside
     // the polygon - https://en.wikipedia.org/wiki/Point_in_polygon
     //
     if (num_nodes > 2) {

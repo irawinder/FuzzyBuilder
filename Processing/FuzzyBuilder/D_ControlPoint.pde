@@ -1,11 +1,15 @@
 /**
- * ControlPoint class, a point with associated abstract attributes of 
- * tag, type, and weight
+ * ControlPoint class, a point with associated abstract attributes of tag, type,
+ * and weight
+ * 
  * @author ira
  *
  */
 public class ControlPoint extends Point {
-
+  
+  // Unique ID
+  final private UUID uniqueID;
+  
   // String tag of point
   private String tag;
 
@@ -20,14 +24,25 @@ public class ControlPoint extends Point {
 
   /**
    * Constructor for Control Point
+   * 
    * @param x x-location
    * @param y y-location
    */
   public ControlPoint(float x, float y) {
-    super(x,y);
+    super(x, y);
+    uniqueID = UUID.randomUUID();
     tag = "";
     weight = (float) 1;
     active = true;
+  }
+  
+  /**
+   * Get the UniqueID of the Control Point
+   * 
+   * @return UUID
+   */
+  public UUID getUniqueID() {
+    return uniqueID;
   }
 
   /**
@@ -46,6 +61,7 @@ public class ControlPoint extends Point {
 
   /**
    * Is ControlPoint Active
+   * 
    * @return true if ControlPoint is active
    */
   public boolean active() {
@@ -54,6 +70,7 @@ public class ControlPoint extends Point {
 
   /**
    * Set the Tag Value of the Point
+   * 
    * @param tag value
    */
   public void setTag(String tag) {
@@ -62,6 +79,7 @@ public class ControlPoint extends Point {
 
   /**
    * Get the Tag Value of the Point
+   * 
    * @return tag
    */
   public String getTag() {
@@ -70,6 +88,7 @@ public class ControlPoint extends Point {
 
   /**
    * Set the Type Value of the Point
+   * 
    * @param type value
    */
   public void setType(String type) {
@@ -78,6 +97,7 @@ public class ControlPoint extends Point {
 
   /**
    * Get the Type Value of the Point
+   * 
    * @return type
    */
   public String getType() {
@@ -86,6 +106,7 @@ public class ControlPoint extends Point {
 
   /**
    * Set the Weight of the Point
+   * 
    * @param weight value
    */
   public void setWeight(float weight) {
@@ -94,6 +115,7 @@ public class ControlPoint extends Point {
 
   /**
    * Get the Weight of the Point
+   * 
    * @return weight
    */
   public float getWeight() {

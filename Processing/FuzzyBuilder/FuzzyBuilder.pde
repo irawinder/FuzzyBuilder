@@ -2,6 +2,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
 import java.util.HashMap;
+import java.util.UUID;
 
 // Fuzzy Builder v1.0-alpha.1
 
@@ -43,7 +44,7 @@ Underlay map;
  */
 public void setup(){
   
-  map = new Underlay("site.png", 0.5);
+  map = new Underlay("siteEW.png", 0.5);
   //map = new Underlay("euston_site.png", 0.5);
   
   // Init Application canvas size to match site_map
@@ -52,7 +53,7 @@ public void setup(){
   // Set size of canvas to (X, Y) pixels
   size(900, 500, P3D);
   
-  frame.setTitle("Fuzzy Builder v1.0-alpha.1");
+  surface.setTitle("Fuzzy Builder v1.0-alpha.1");
   
   builder = new Builder("random");
 }

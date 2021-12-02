@@ -17,7 +17,7 @@ public class Line {
     this.o = o;
     this.f = f;
   }
-
+  
   /**
    * Checks to see if two line segments, defined by end points, intersect
    * 
@@ -36,19 +36,41 @@ public class Line {
     //
     if (m_A != m_B) {
 
-      // Line Y-Intercepts (at x = 0)
-      //
-      float i_A = o.y - m_A * o.x;
-      float i_B = b.o.y - m_B * b.o.x;
+      float intersect_y, intersect_x;
 
       // Calculate line intersections, as if lines are infinite
       //
-      float intersect_y = ((m_A * i_B) - (m_B * i_A)) / (m_A - m_B);
-      float intersect_x;
-      if (m_A == 0) {
-        intersect_x = (intersect_y - i_B) / m_B;
+      if (m_A == Float.POSITIVE_INFINITY || m_A == Float.NEGATIVE_INFINITY) {
+        
+        // Line Y-Intercepts (at x = 0)
+        //
+        float i_B = b.o.y - m_B * b.o.x;
+        
+        intersect_x = o.x;
+        intersect_y = m_B * o.x + i_B;
+        
+      } else if (m_B == Float.POSITIVE_INFINITY || m_B == Float.NEGATIVE_INFINITY) {
+        
+        // Line Y-Intercepts (at x = 0)
+        //
+        float i_A = o.y - m_A * o.x;
+        
+        intersect_x = b.o.x;
+        intersect_y = m_A * b.o.x + i_A;
+        
       } else {
-        intersect_x = (intersect_y - i_A) / m_A;
+      
+        // Line Y-Intercepts (at x = 0)
+        //
+        float i_A = o.y - m_A * o.x;
+        float i_B = b.o.y - m_B * b.o.x;
+        
+        intersect_y = ((m_A * i_B) - (m_B * i_A)) / (m_A - m_B);
+        if (m_A == 0) {
+          intersect_x = (intersect_y - i_B) / m_B;
+        } else {
+          intersect_x = (intersect_y - i_A) / m_A;
+        }
       }
 
       // Check if exists on line segments; if so set point intersect
@@ -94,8 +116,8 @@ public class Line {
     } else {
       return false;
     }
-  }
-
+  }  
+  
   @Override
   public String toString() {
     return "Line[" + o.x + ", " + o.y + ", " + o.z + "][" + f.x + ", " + f.y + ", " + f.z + "]";

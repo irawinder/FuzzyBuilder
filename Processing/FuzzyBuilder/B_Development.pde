@@ -1,12 +1,14 @@
 /**
- * An entire development project; (i.e. a dictionary of 
- * TileArray spaces and their ControlPoints)
+ * An entire development project; (i.e. a dictionary of TileArray spaces and
+ * their ControlPoints)
+ * 
  * @author ira
  *
  */
 public class Development {
 
   public String name;
+  final private UUID uniqueID;
 
   // space and point dictionaries share the same key from TileArray.hashKey()
   // Dictionaries for collection of TileArrays that compose development
@@ -15,31 +17,53 @@ public class Development {
 
   /**
    * Constructor for new Development
+   * 
    * @param name Name of Development
    */
-  Development(String name) {
+  public Development(String name) {
     this.name = name;
+    uniqueID = UUID.randomUUID();
     spaceMap = new HashMap<String, TileArray>();
     spaceList = new ArrayList<TileArray>();
   }
-  
+
   /**
    * Constructor for new Development
    */
-  Development() {
+  public Development() {
     this("New Development");
   }
-  
+
   /**
    * Set Name of Development
+   * 
    * @param name name
    */
   public void setName(String name) {
     this.name = name;
   }
+  
+  /**
+   * Set Name of Development
+   * 
+   * @return name of development
+   */
+  public String getName() {
+    return name;
+  }
+  
+  /**
+   * Set UUID of Development
+   * 
+   * @return unique identifying number for development
+   */
+  public UUID getUniqueID() {
+    return uniqueID;
+  }
 
   /**
    * Return Space Map
+   * 
    * @return HashMap of TileArray spaces within development
    */
   public HashMap<String, TileArray> spaceMap() {
@@ -48,6 +72,7 @@ public class Development {
 
   /**
    * Return Space List
+   * 
    * @return ArrayList of TileArray spaces within development
    */
   public ArrayList<TileArray> spaceList() {
@@ -56,6 +81,7 @@ public class Development {
 
   /**
    * Returns a subset of spaces according to their type
+   * 
    * @param type Type of spaces to Return
    * @return TileArray spaces of 'type'
    */
@@ -71,7 +97,9 @@ public class Development {
 
   /**
    * Get Specific Space
-   * @param hashKey hash key value of a TileArray space, same as TileArray.hashKey()
+   * 
+   * @param hashKey hash key value of a TileArray space, same as
+   *                TileArray.hashKey()
    * @return matching Tile Array Space
    */
   public TileArray getSpace(String hashKey) {
@@ -88,6 +116,7 @@ public class Development {
 
   /**
    * Remove all spaces of a certain type from development
+   * 
    * @param type Type of space to remove
    */
   public void clearType(String type) {
@@ -109,6 +138,7 @@ public class Development {
 
   /**
    * Adds TileArray to Map and List dictionaries
+   * 
    * @param space TileArray space to add
    */
   public void addSpace(TileArray space) {

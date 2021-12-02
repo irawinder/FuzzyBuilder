@@ -50,7 +50,6 @@ public class FuzzyBuilder extends PApplet {
 		
 		editor = new RandomSite(21, 7, 400, 200, 100, 200);
 		map = new Underlay(this, "data/site.png", (float) 0.5);
-		
 	}
 
 	/**

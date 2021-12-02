@@ -9,6 +9,13 @@ public class Point {
 
   /**
    * Constructs a 3D Point object with (x,y) and z-value is set to zero
+   */
+  public Point() {
+    this(0, 0);
+  }
+  
+  /**
+   * Constructs a 3D Point object with (x,y) and z-value is set to zero
    * 
    * @param x x-location (horizontal)
    * @param y y-location (horizontal)
@@ -29,9 +36,16 @@ public class Point {
     this.y = y;
     this.z = z;
   }
-
-  @Override
-  public String toString() {
-    return "Point[" + x + ", " + y + ", " + z + "]";
+  
+  public JSONObject serialize() {
+    JSONObject pointJSON = new JSONObject();
+    double decimals = 1000d;
+    double _x = Math.round(decimals * this.x) / decimals;
+    double _y = Math.round(decimals * this.y) / decimals;
+    double _z = Math.round(decimals * this.z) / decimals;
+    pointJSON.setDouble("x", _x);
+    pointJSON.setDouble("y", _y);
+    pointJSON.setDouble("z", _z);
+    return pointJSON;
   }
 }

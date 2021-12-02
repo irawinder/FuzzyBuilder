@@ -1,6 +1,7 @@
 package edu.mit.ira.fuzzy.processing;
 
 import edu.mit.ira.fuzzy.base.ControlPoint;
+import edu.mit.ira.fuzzy.base.Point;
 import edu.mit.ira.fuzzy.base.Tile;
 import edu.mit.ira.fuzzy.base.TileArray;
 import edu.mit.ira.fuzzy.builder.DevelopmentEditor;
@@ -108,7 +109,8 @@ public class Canvas {
 		applet.pushMatrix();
 		applet.translate(0, 0, -2);
 		applet.beginShape();
-		// for(Point p : editor.site_boundary.getCorners()) vertex(p.x, p.y);
+		for(Point p : editor.site_boundary.getCorners()) 
+			applet.vertex(p.x, p.y);
 		applet.endShape(PConstants.CLOSE);
 		applet.popMatrix();
 
