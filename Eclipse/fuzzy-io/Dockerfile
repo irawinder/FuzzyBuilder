@@ -1,6 +1,5 @@
-FROM java
-WORKDIR /app
-ADD src/HelloHTTP.java /app
-RUN javac HelloHTTP.java -d .
-EXPOSE 8000
-CMD ["java", "HelloHTTP"]
+FROM openjdk
+WORKDIR /
+ADD build/FuzzyIO.jar FuzzyIO.jar
+EXPOSE 8080
+CMD java -jar FuzzyIO.jar
