@@ -15,7 +15,7 @@ FuzzyIO is significantly easier to open and run compared to alpha.2's JavaFX imp
 
 3. Entry point (main) can be found in edu.mit.ira.fuzzy.io.FuzzyIO
 
-4. For running the docker container, go [here](/fuzzy-io/)
+4. For running the docker container, go [here](fuzzy-io/)
 
 ## How to use the Eclipse IDE for JavaFX in /Eclipse (v1.0-alpha.2) - deprecated
 
