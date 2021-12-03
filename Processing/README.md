@@ -1,3 +1,6 @@
+# FuzzyIO (v1.0 Processing Wireframe)
+![Fuzzy Builder by Ira Winder](../screenshots/v1.0.png "Fuzzy Builder by Ira Winder")
+
 # Fuzzy Builder Prototype (v1.0-alpha.1)
 Ira Winder (jiw@mit.edu)
 
