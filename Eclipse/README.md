@@ -5,6 +5,8 @@ Current development of FuzzyBuilder is conducted using a more traditional workfl
 
 ## How to use FuzzyIO (v1.0)
 
+![Fuzzy Builder by Ira Winder](../screenshots/v1.0.png "Fuzzy Builder by Ira Winder")
+
 FuzzyIO scripts are organized around the project "fuzzy-io", which is a headless HTTP server designed to be deployed to a docker container. Furthmore, it is designed to interface with a generic front end environment such as [openSUI] (https://github.com/hiekata-lab/openSUI)
 
 FuzzyIO is significantly easier to open and run compared to alpha.2's JavaFX implementation. However, it has not front end components.
