@@ -161,24 +161,26 @@ public class Development {
 	 * @return
 	 */
 	public JSONObject serialize() {
-
+		
 		JSONArray voxelsJSON = this.hollowed.serialize();
 		JSONArray shapesJSON = new JSONArray();
 		for (int i = 0; i < this.allShapes.size(); i++) {
 			Polygon shape = this.allShapes.get(i);
 			shapesJSON.put(i, shape.serialize());
 		}
+		/*
 		JSONArray objectivesJSON = new JSONArray();
 		ArrayList<Objective> objectives = this.evaluation();
 		for(int i=0; i<objectives.size(); i++) {
 			Objective objective = objectives.get(i);
 			objectivesJSON.put(i, objective.serialize());
 		}
-
+		*/
+		
 		JSONObject data = new JSONObject();
 		data.put("voxels", voxelsJSON);
 		data.put("shapes", shapesJSON);
-		data.put("objectives", objectivesJSON);
+		//data.put("objectives", objectivesJSON);
 		return data;
 	}
 }

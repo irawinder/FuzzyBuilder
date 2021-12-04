@@ -98,6 +98,7 @@ public class FuzzyServer {
 						}
 						JSONObject dataJSON = solution.serialize();
 						String data = wrapApi(dataJSON);
+						System.out.println(dataJSON.toString(4));
 						packItShipIt(t, 200, data);
 						log(clientIP, dataJSON.getJSONArray("voxels").length() + " voxels delivered");
 						
