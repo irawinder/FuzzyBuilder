@@ -155,7 +155,11 @@ public class Development {
 		
 		return objectives;
 	}
-
+	
+	/**
+	 * Serialize this development for export
+	 * @return
+	 */
 	public JSONObject serialize() {
 
 		JSONArray voxelsJSON = this.allVoxels.serialize();
