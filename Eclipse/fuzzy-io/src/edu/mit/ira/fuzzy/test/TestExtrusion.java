@@ -4,7 +4,7 @@ import edu.mit.ira.fuzzy.Extrusion;
 import edu.mit.ira.fuzzy.Point;
 import edu.mit.ira.fuzzy.Polygon;
 
-public class Test {
+public class TestExtrusion {
 
 	public static void main(String[] args) throws Exception {
 
