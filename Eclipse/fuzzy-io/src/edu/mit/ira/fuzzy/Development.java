@@ -162,7 +162,7 @@ public class Development {
 	 */
 	public JSONObject serialize() {
 
-		JSONArray voxelsJSON = this.allVoxels.serialize();
+		JSONArray voxelsJSON = this.hollowed.serialize();
 		JSONArray shapesJSON = new JSONArray();
 		for (int i = 0; i < this.allShapes.size(); i++) {
 			Polygon shape = this.allShapes.get(i);

@@ -241,7 +241,7 @@ class FuzzyMorph {
 	 * @param input the VoxelArray that you wish to hollow out
 	 * @return a voxel array with no voxels completely surrounded
 	 */
-	public VoxelArray hollowArray(VoxelArray input) {
+	public VoxelArray hollow(VoxelArray input) {
 		VoxelArray hollowed = new VoxelArray();
 		for (Voxel t : input.voxelList) {
 			boolean hasTop = this.getNeighborTop(t, input) != null;

@@ -152,6 +152,7 @@ public class FuzzyBuilder {
 				}
 				// Combine flat site tiles on ground plane with massing
 				fuzzy.allVoxels = morph.add(fuzzy.site, fuzzy.massing);
+				fuzzy.hollowed = morph.hollow(fuzzy.allVoxels);
 			}
 		} catch (Exception e) {
 			System.out.println("Settings are not formatted correctly for this build of FuzzyIO");
