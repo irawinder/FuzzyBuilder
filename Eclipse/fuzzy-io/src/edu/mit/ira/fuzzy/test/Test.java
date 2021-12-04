@@ -34,5 +34,19 @@ public class Test {
 		base4.addVertex(new Point(1, 1, 0));
 		base4.addVertex(new Point(1, 1, 1));
 		System.out.println("Pass Coplanar Test #4: " + !base4.isCoplanar());
+		
+		Polygon base5 = new Polygon();
+		base5.addVertex(new Point(1, 0, 0));
+		base5.addVertex(new Point(0, 1, 0));
+		base5.addVertex(new Point(1, 1, 0));
+		base5.addVertex(new Point(2, 2, 0.01f));
+		System.out.println("Pass Coplanar Test #5: " + !base5.isCoplanar());
+		
+		Polygon base6 = new Polygon();
+		base6.addVertex(new Point(1, 0, 0));
+		base6.addVertex(new Point(0, 1, 0));
+		base6.addVertex(new Point(1, 1, 0));
+		base6.addVertex(new Point(2, 2, 0.001f));
+		System.out.println("Pass Coplanar Test #5: " + base6.isCoplanar());
 	}
 }
