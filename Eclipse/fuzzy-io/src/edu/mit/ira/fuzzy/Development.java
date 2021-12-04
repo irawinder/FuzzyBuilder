@@ -3,6 +3,7 @@ package edu.mit.ira.fuzzy;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
@@ -16,20 +17,31 @@ public class Development {
 	public ArrayList<Polygon> plotShapes;
 	public HashMap<Polygon, ArrayList<Polygon>> openShapes;
 	public HashMap<Polygon, ArrayList<Polygon>> towerShapes;
-	public VoxelArray site, massing, all;
+	ArrayList<Polygon> allShapes;
+	public VoxelArray site, massing, allVoxels;
 
 	public Development() {
 		this.plotShapes = new ArrayList<Polygon>();
 		this.openShapes = new HashMap<Polygon, ArrayList<Polygon>>();
 		this.towerShapes = new HashMap<Polygon, ArrayList<Polygon>>();
+		this.allShapes = new ArrayList<Polygon>();
 		this.site = new VoxelArray();
 		this.massing = new VoxelArray();
-		this.all = new VoxelArray();
+		this.allVoxels = new VoxelArray();
 	}
 
 	public JSONObject serialize() {
+		
+		JSONArray voxelsJSON = this.allVoxels.serialize();
+		JSONArray shapesJSON = new JSONArray();
+		for(int index=0; index<this.allShapes.size(); index++) {
+			Polygon shape = this.allShapes.get(index);
+			shapesJSON.put(index, shape.serialize());
+		}
+		
 		JSONObject data = new JSONObject();
-		data.put("voxels", this.all.serialize());
+		data.put("voxels", voxelsJSON);
+		data.put("shapes", shapesJSON);
 		return data;
 	}
 }

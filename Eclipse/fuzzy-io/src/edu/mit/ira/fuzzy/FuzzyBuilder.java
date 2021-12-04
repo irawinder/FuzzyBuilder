@@ -22,7 +22,7 @@ public class FuzzyBuilder {
 	public FuzzyBuilder() {
 		this.morph = new FuzzyMorph();
 	}
-
+	
 	/**
 	 * Build a mass of fuzzy voxels according to a fairly specific configuration of
 	 * settings from the GUI
@@ -55,6 +55,7 @@ public class FuzzyBuilder {
 				SettingGroup vectorGroup = plotSettings.settingGroups.get(0);
 				Polygon plotShape = this.parsePolygon(vectorGroup);
 				fuzzy.plotShapes.add(plotShape);
+				fuzzy.allShapes.add(plotShape);
 
 				// Determine if Plot Polygon is valid for fuzzification
 				boolean validPlot = true;
@@ -83,7 +84,7 @@ public class FuzzyBuilder {
 					ArrayList<Polygon> openShapes = new ArrayList<Polygon>();
 					SettingGroup podiumGroup = plotSettings.settingGroups.get(1);
 					for (SettingGroup podiumSettings : podiumGroup.settingGroups) {
-
+						
 						// Generate Podium Template
 						float setbackDistance = Float.parseFloat(podiumSettings.settingValues.get(0).value);
 						VoxelArray podiumTemplate = morph.hardCloneVoxelArray(plot);
@@ -92,10 +93,11 @@ public class FuzzyBuilder {
 
 						// Remove Open Area Polygons from Podium Template
 						SettingGroup openGroup = podiumSettings.settingGroups.get(0);
-						for (int i = 0; i < openGroup.settingGroups.size(); i++) {
-							SettingGroup openAreaVertices = openGroup.settingGroups.get(i).settingGroups.get(0);
+						for (SettingGroup openSettings : openGroup.settingGroups) {
+							SettingGroup openAreaVertices = openSettings.settingGroups.get(0);
 							Polygon openArea = this.parsePolygon(openAreaVertices);
 							openShapes.add(openArea);
+							fuzzy.allShapes.add(openArea);
 							podiumTemplate = morph.cut(podiumTemplate, openArea);
 						}
 
@@ -112,18 +114,15 @@ public class FuzzyBuilder {
 					fuzzy.openShapes.put(plotShape, openShapes);
 
 					// Generate Towers
-					ArrayList<Polygon> towerShapes = new ArrayList<Polygon>();
 					SettingGroup towerGroup = plotSettings.settingGroups.get(2);
+					ArrayList<Polygon> towerShapes = new ArrayList<Polygon>();
 					for (SettingGroup towerSettings : towerGroup.settingGroups) {
 
 						// Generate Tower Polygon (and check if its in the current plot)
-						Point towerLocation = this.parsePoint(towerSettings.settingValues.get(0));
-						float towerRotation = (float) (2 * Math.PI
-								* Float.parseFloat(towerSettings.settingValues.get(1).value) / 360f);
-						float towerWidth = Float.parseFloat(towerSettings.settingValues.get(2).value);
-						float towerDepth = Float.parseFloat(towerSettings.settingValues.get(3).value);
-						Polygon towerShape = morph.rectangle(towerLocation, towerWidth, towerDepth, towerRotation);
+						Polygon towerShape = this.towerShape(towerSettings);
 						towerShapes.add(towerShape);
+						fuzzy.allShapes.add(towerShape);
+						
 						if (plotShape.containsPolygon(towerShape)) {
 
 							// Generate Tower Template
@@ -148,7 +147,7 @@ public class FuzzyBuilder {
 					fuzzy.massing = morph.add(fuzzy.massing, plotMassing);
 				}
 				// Combine flat site tiles on ground plane with massing
-				fuzzy.all = morph.add(fuzzy.site, fuzzy.massing);
+				fuzzy.allVoxels = morph.add(fuzzy.site, fuzzy.massing);
 			}
 		} catch (Exception e) {
 			System.out.println("Settings are not formatted correctly for this build of FuzzyIO");
@@ -157,6 +156,75 @@ public class FuzzyBuilder {
 
 		return fuzzy;
 	}
+	
+	/**
+	 * Build a partial model with extrusion polygons but no voxels
+	 *
+	 * @param settings
+	 */
+	public Development basicBuild(SettingGroup settings) {
+		
+		Development fuzzy = new Development();
+
+		try {
+
+			// Iterate through plots
+			SettingGroup plots = settings.settingGroups.get(0);
+			for (SettingGroup plotSettings : plots.settingGroups) {
+
+				// Define Plot polygon
+				SettingGroup vectorGroup = plotSettings.settingGroups.get(0);
+				Polygon plotShape = this.parsePolygon(vectorGroup);
+				fuzzy.plotShapes.add(plotShape);
+				fuzzy.allShapes.add(plotShape);
+				
+				// Generate Podiums
+				ArrayList<Polygon> openShapes = new ArrayList<Polygon>();
+				SettingGroup podiumGroup = plotSettings.settingGroups.get(1);
+				for (SettingGroup podiumSettings : podiumGroup.settingGroups) {
+
+					// Remove Open Area Polygons from Podium Template
+					SettingGroup openGroup = podiumSettings.settingGroups.get(0);
+					for (SettingGroup openSettings : openGroup.settingGroups) {
+						SettingGroup openAreaVertices = openSettings.settingGroups.get(0);
+						Polygon openArea = this.parsePolygon(openAreaVertices);
+						openShapes.add(openArea);
+						fuzzy.allShapes.add(openArea);
+					}
+				}
+				fuzzy.openShapes.put(plotShape, openShapes);
+				
+				// Generate Towers
+				SettingGroup towerGroup = plotSettings.settingGroups.get(2);
+				ArrayList<Polygon> towerShapes = new ArrayList<Polygon>();
+				for (SettingGroup towerSettings : towerGroup.settingGroups) {
+					Polygon towerShape = this.towerShape(towerSettings);
+					towerShapes.add(towerShape);
+					fuzzy.allShapes.add(towerShape);
+				}
+				fuzzy.towerShapes.put(plotShape, towerShapes);
+			}
+		} catch (Exception e) {
+			System.out.println("Settings are not formatted correctly for this build of FuzzyIO");
+			return null;
+		}
+
+		return fuzzy;
+	}
+	
+	/**
+	 * Generate a Tower Polygon from an appropriate SettingGroup
+	 * @param towerSettings
+	 * @return
+	 */
+	public Polygon towerShape(SettingGroup towerSettings) {
+		Point towerLocation = this.parsePoint(towerSettings.settingValues.get(0));
+		float towerRotation = (float) (2 * Math.PI * Float.parseFloat(towerSettings.settingValues.get(1).value) / 360f);
+		float towerWidth = Float.parseFloat(towerSettings.settingValues.get(2).value);
+		float towerDepth = Float.parseFloat(towerSettings.settingValues.get(3).value);
+		return morph.rectangle(towerLocation, towerWidth, towerDepth, towerRotation);
+	}
+
 
 	/**
 	 * Parse a SettingGroup of points into a polygon (assumes that y and z are
