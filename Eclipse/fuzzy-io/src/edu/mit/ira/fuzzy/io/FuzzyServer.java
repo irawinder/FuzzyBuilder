@@ -17,6 +17,7 @@ import com.sun.net.httpserver.HttpServer;
 
 import edu.mit.ira.fuzzy.Development;
 import edu.mit.ira.fuzzy.FuzzyBuilder;
+import edu.mit.ira.fuzzy.FuzzySchema;
 import edu.mit.ira.fuzzy.data.SettingGroup;
 import edu.mit.ira.fuzzy.data.SettingGroupAdapter;
 
@@ -29,6 +30,7 @@ import edu.mit.ira.fuzzy.data.SettingGroupAdapter;
 public class FuzzyServer {
 	private final String SERVER = "Processing Server (Java " + System.getProperty("java.version") + ")";
 	private final String SERVER_VERSION = "1";
+	private FuzzySchema schema;
 	private FuzzyBuilder builder;
 	private SettingGroupAdapter adapter;
 	private String info;
@@ -47,7 +49,8 @@ public class FuzzyServer {
 		server.createContext("/", new MyHandler());
 		server.setExecutor(null); // creates a default executor
 		server.start();
-
+		
+		schema = new FuzzySchema();
 		builder = new FuzzyBuilder();
 		adapter = new SettingGroupAdapter();
 		info = "--- FuzzyIO V" + SERVER_VERSION + " ---\nActive on port: " + port;
@@ -103,8 +106,9 @@ public class FuzzyServer {
 						log(clientIP, "This POST request has no body");
 					}
 				} else if (requestMethod.equals("GET")) {
-					packItShipIt(t, 200, "{TBD}");
-					log(clientIP, "Setting Schema Requested");
+					String data = schema.serialize().toString();
+					packItShipIt(t, 200, data);
+					log(clientIP, "Setting Schema Delivered");
 				} else {
 					packItShipIt(t, 405);
 					log(clientIP, "Method Not Allowed");
