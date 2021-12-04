@@ -9,7 +9,7 @@ Current development of FuzzyBuilder is conducted using a more traditional workfl
 
 FuzzyIO scripts are organized around the project "fuzzy-io", which is a headless HTTP server designed to be deployed to a docker container. Furthmore, it is designed to interface with a generic front end environment such as [openSUI] (https://github.com/hiekata-lab/openSUI)
 
-FuzzyIO is significantly easier to open and run compared to alpha.2's JavaFX implementation. However, it has not front end components.
+FuzzyIO is significantly easier to open and run compared to alpha.2's JavaFX implementation. However, it has no front end components.
 
 1. Download and install latest Eclipse IDE for Java Developers
 
