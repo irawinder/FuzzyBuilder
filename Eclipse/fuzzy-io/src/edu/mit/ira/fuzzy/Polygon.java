@@ -74,7 +74,7 @@ public class Polygon {
 
 		// Generate Edges for Polygon once it has more than 3 vertices
 		//
-		if (vertices.size() > 2) {
+		if (vertices.size() > 1) {
 			createEdges();
 		}
 
@@ -93,8 +93,10 @@ public class Polygon {
 			Line l = new Line(vertices.get(i), vertices.get(i + 1));
 			edges.add(l);
 		}
-		Line l = new Line(vertices.get(n - 1), vertices.get(0));
-		edges.add(l);
+		if(n > 2) {
+			Line l = new Line(vertices.get(n - 1), vertices.get(0));
+			edges.add(l);
+		}
 	}
 
 	/**

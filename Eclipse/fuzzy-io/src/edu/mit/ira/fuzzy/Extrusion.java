@@ -34,8 +34,8 @@ public class Extrusion {
 		this.sideEdges = new ArrayList<Line>();
 		this.sideFaces = new ArrayList<Polygon>();
 
-		// Can't extrude by 0
-		if (distance != 0) {
+		// Can't extrude by distance of 0, nor can you extrude a polygon with no vertices
+		if (distance != 0 && base.getVertices().size() > 0) {
 
 			// Create the top, offset upward from base by distance parameter
 			this.top = new Polygon();
@@ -98,9 +98,11 @@ public class Extrusion {
 			edgesJSON.put(edgeIndex, edge.serialize());
 			edgeIndex++;
 		}
-		for (Line edge : this.top.getEdges()) {
-			edgesJSON.put(edgeIndex, edge.serialize());
-			edgeIndex++;
+		if (this.top != null) {
+			for (Line edge : this.top.getEdges()) {
+				edgesJSON.put(edgeIndex, edge.serialize());
+				edgeIndex++;
+			}
 		}
 		for (Line edge : this.sideEdges) {
 			edgesJSON.put(edgeIndex, edge.serialize());
