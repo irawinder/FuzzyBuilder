@@ -38,11 +38,8 @@ public class Extrusion {
 		if (distance != 0 && base.getVertices().size() > 0) {
 
 			// Create the top, offset upward from base by distance parameter
-			this.top = new Polygon();
-			for (Point vertex : this.base.getVertices()) {
-				Point p = new Point(vertex.x, vertex.y, vertex.z + distance);
-				this.top.addVertex(p);
-			}
+			this.top = this.base.clone();
+			this.top.translate(0, 0, distance);
 
 			// Create the sides (vertical rectangles)
 			int numVertices = this.base.getVertices().size();
