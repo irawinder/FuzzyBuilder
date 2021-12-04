@@ -97,11 +97,12 @@ public class FuzzyServer {
 							log(clientIP, "Bad Request");
 						}
 						JSONObject dataJSON = solution.serialize();
-						System.out.println(dataJSON.toString(4));
 						String data = wrapApi(dataJSON);
 						packItShipIt(t, 200, data);
-						log(clientIP, dataJSON.getJSONArray("voxels").length() + " voxels delivered");
-						
+						log(clientIP, "Delivered " + 
+								dataJSON.getJSONArray("voxels").length() + " voxels, " + 
+								dataJSON.getJSONArray("shapes").length() + " shapes, and " + 
+								dataJSON.getJSONArray("objectives").length() + " objectives");
 					} else {
 						packItShipIt(t, 400);
 						log(clientIP, "This POST request has no body");
