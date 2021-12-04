@@ -6,7 +6,7 @@ public class TestSchema {
 
 	public static void main(String[] args) throws Exception {
 
-		FuzzySchema testSchema = new FuzzySchema();
+		FuzzySchema testSchema = new FuzzySchema("0.1", "Test");
 		System.out.println(testSchema.serialize().toString(4));
 	}
 }

@@ -9,19 +9,21 @@ import edu.mit.ira.fuzzy.data.SettingValueSchema;
 
 public class FuzzySchema {
 	
-	private final String API_VERSION = "0.1";
-	private final String ID = "FuzzyIO";
-	private final String universeName;
+	private String apiVersion;
+	private String id;
+	private String universeName;
 	
-	public FuzzySchema() {
-		this.universeName = "Site";
+	public FuzzySchema(String apiVersion, String id) {
+		this.apiVersion = apiVersion;
+		this.id = id;
+		this.universeName = "";
 	}
 	
 	public JSONObject serialize() {
 		JSONArray settings = this.settings();
 		JSONObject schema = new JSONObject();
-		schema.put("apiVersion", API_VERSION);
-		schema.put("id", ID);
+		schema.put("apiVersion", apiVersion);
+		schema.put("id", id);
 		schema.put("label", universeName);
 		schema.put("settings", settings);
 		return schema;
@@ -32,6 +34,8 @@ public class FuzzySchema {
 	 * @return
 	 */
 	public JSONArray settings() {
+		
+		this.universeName = "Site";
 		
 		SettingValueSchema floorHeight = new SettingValueSchema(Schema.slider, "Floor Height", false);
 		floorHeight.values.add("10"); // default

@@ -28,8 +28,9 @@ import edu.mit.ira.fuzzy.data.SettingGroupAdapter;
  *
  */
 public class FuzzyServer {
-	private final String SERVER = "Processing Server (Java " + System.getProperty("java.version") + ")";
-	private final String SERVER_VERSION = "1";
+	private final String SERVER_ID = "FuzzyIO";
+	private final String SERVER_SYSTEM = "Java " + System.getProperty("java.version");
+	private final String SERVER_VERSION = "1.1.1";
 	private FuzzySchema schema;
 	private FuzzyBuilder builder;
 	private SettingGroupAdapter adapter;
@@ -50,7 +51,7 @@ public class FuzzyServer {
 		server.setExecutor(null); // creates a default executor
 		server.start();
 		
-		schema = new FuzzySchema();
+		schema = new FuzzySchema(SERVER_VERSION, SERVER_ID);
 		builder = new FuzzyBuilder();
 		adapter = new SettingGroupAdapter();
 		info = "--- FuzzyIO V" + SERVER_VERSION + " ---\nActive on port: " + port;
@@ -108,7 +109,7 @@ public class FuzzyServer {
 						log(clientIP, "This POST request has no body");
 					}
 				} else if (requestMethod.equals("GET")) {
-					String data = schema.serialize().toString();
+					String data = schema.serialize().toString(4);
 					packItShipIt(t, 200, data);
 					log(clientIP, "Setting Schema Delivered");
 				} else {
@@ -175,7 +176,7 @@ public class FuzzyServer {
 	private void makeHeaders(HttpExchange t) {
 
 		Headers headers = t.getResponseHeaders();
-		headers.set("Server", SERVER);
+		headers.set("Server", SERVER_ID + ", " + SERVER_SYSTEM);
 		headers.set("Content-Type", "application/json");
 		headers.set("Connection", "close");
 		headers.set("Connection", "close");
