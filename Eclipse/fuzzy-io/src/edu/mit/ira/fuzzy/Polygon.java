@@ -36,7 +36,7 @@ public class Polygon {
 			this.addVertex(vertex);
 		}
 	}
-	
+
 	public Polygon clone() {
 		Polygon clone = new Polygon();
 		for (Point vertex : this.vertices) {
@@ -54,7 +54,7 @@ public class Polygon {
 	public ArrayList<Point> getVertices() {
 		return this.vertices;
 	}
-	
+
 	/**
 	 * Retrieve the list of polygon corners
 	 * 
@@ -302,13 +302,13 @@ public class Polygon {
 	}
 
 	public JSONObject serialize() {
-		
+
 		JSONArray vertexArray = new JSONArray();
 		for (int i = 0; i < this.vertices.size(); i++) {
 			JSONObject vertex = vertices.get(i).serialize();
 			vertexArray.put(i, vertex);
 		}
-		
+
 		JSONObject polygonJSON = new JSONObject();
 		polygonJSON.put("vertices", vertexArray);
 		return polygonJSON;
