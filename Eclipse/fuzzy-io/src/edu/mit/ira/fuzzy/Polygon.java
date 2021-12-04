@@ -36,14 +36,32 @@ public class Polygon {
 			this.addVertex(vertex);
 		}
 	}
+	
+	public Polygon clone() {
+		Polygon clone = new Polygon();
+		for (Point vertex : this.vertices) {
+			Point p = new Point(vertex.x, vertex.y, vertex.z);
+			clone.addVertex(p);
+		}
+		return clone;
+	}
 
 	/**
 	 * Retrieve the list of polygon corners
 	 * 
 	 * @return corners of polygon
 	 */
-	public ArrayList<Point> getCorners() {
-		return vertices;
+	public ArrayList<Point> getVertices() {
+		return this.vertices;
+	}
+	
+	/**
+	 * Retrieve the list of polygon corners
+	 * 
+	 * @return corners of polygon
+	 */
+	public ArrayList<Line> getEdges() {
+		return this.edges;
 	}
 
 	/**
@@ -205,7 +223,7 @@ public class Polygon {
 	 * @return returns "true" if polygon paramter is inside of this polygon
 	 */
 	public boolean containsPolygon(Polygon polygon) {
-		for (Point p : polygon.getCorners()) {
+		for (Point p : polygon.getVertices()) {
 			if (!this.containsPoint(p)) {
 				return false;
 			}
@@ -283,12 +301,16 @@ public class Polygon {
 		}
 	}
 
-	public JSONArray serialize() {
-		JSONArray polygonJSON = new JSONArray();
+	public JSONObject serialize() {
+		
+		JSONArray vertexArray = new JSONArray();
 		for (int i = 0; i < this.vertices.size(); i++) {
 			JSONObject vertex = vertices.get(i).serialize();
-			polygonJSON.put(i, vertex);
+			vertexArray.put(i, vertex);
 		}
+		
+		JSONObject polygonJSON = new JSONObject();
+		polygonJSON.put("vertices", vertexArray);
 		return polygonJSON;
 	}
 }

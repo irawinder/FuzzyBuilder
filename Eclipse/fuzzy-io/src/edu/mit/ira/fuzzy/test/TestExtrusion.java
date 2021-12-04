@@ -47,6 +47,9 @@ public class TestExtrusion {
 		base6.addVertex(new Point(0, 1, 0));
 		base6.addVertex(new Point(1, 1, 0));
 		base6.addVertex(new Point(2, 2, 0.001f));
-		System.out.println("Pass Coplanar Test #5: " + base6.isCoplanar());
+		System.out.println("Pass Coplanar Test #6: " + base6.isCoplanar());
+		
+		Extrusion extrusion = new Extrusion(base1, 10.0f);
+		System.out.println("Extrusion Serialized:\n" + extrusion.serialize().toString(4));
 	}
 }
