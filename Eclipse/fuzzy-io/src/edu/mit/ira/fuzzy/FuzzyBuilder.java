@@ -54,8 +54,10 @@ public class FuzzyBuilder {
 				// Define Plot polygon
 				SettingGroup vectorGroup = plotSettings.settingGroups.get(0);
 				Polygon plotShape = this.parsePolygon(vectorGroup);
+				String plotName = plotSettings.name;
 				fuzzy.plotShapes.add(plotShape);
 				fuzzy.allShapes.add(plotShape);
+				fuzzy.plotNames.put(plotShape, plotName);
 
 				// Determine if Plot Polygon is valid for fuzzification
 				boolean validPlot = true;
@@ -74,8 +76,9 @@ public class FuzzyBuilder {
 							* Integer.parseInt(plotSettings.settingValues.get(1).value) / 360f);
 					Point gridTranslation = new Point();
 					VoxelArray plot = this.morph.make(plotShape, gridSize, 0, gridRotation, gridTranslation);
+					plot.setVoxelUse(Use.Site);
+					fuzzy.plotSite.put(plotShape, plot);
 					fuzzy.site = this.morph.add(fuzzy.site, plot);
-					fuzzy.site.setVoxelUse(Use.Site);
 
 					// Initialize massing for this entire plot
 					VoxelArray plotMassing = new VoxelArray();
@@ -144,6 +147,7 @@ public class FuzzyBuilder {
 					fuzzy.towerShapes.put(plotShape, towerShapes);
 
 					// Add the current plot's massing to the overall result
+					fuzzy.plotMassing.put(plotShape, plotMassing);
 					fuzzy.massing = morph.add(fuzzy.massing, plotMassing);
 				}
 				// Combine flat site tiles on ground plane with massing
