@@ -38,14 +38,18 @@ public class Development {
 		this.hollowed = new VoxelArray();
 	}
 
+	/**
+	 * Generate an array of unique objective performances
+	 * @return
+	 */
 	public ArrayList<Objective> evaluation() {
 		
-		double siteArea = 0;
-		double builtArea = 0;
-		double far = 0;
-		HashMap<Use, Double> useArea = new HashMap<Use, Double>();
+		float siteArea = 0;
+		float builtArea = 0;
+		float far = 0;
+		HashMap<Use, Float> useArea = new HashMap<Use, Float>();
 		for(Use use : Use.values()) {
-			useArea.put(use, 0.0);
+			useArea.put(use, 0f);
 		}
 		
 		ArrayList<Objective> subObjectives = new ArrayList<Objective>();
@@ -54,11 +58,11 @@ public class Development {
 			VoxelArray pSite = plotSite.get(plot);
 			VoxelArray pMassing = plotMassing.get(plot);
 			
-			double plotSiteArea, plotBuiltArea, plotFAR;
+			float plotSiteArea, plotBuiltArea, plotFAR;
 			
-			double voxelArea = 0;
+			float voxelArea = 0;
 			if (pSite.voxelList.size() > 0) {
-				voxelArea = Math.pow(pSite.voxelList.get(0).width, 2);
+				voxelArea = (float) Math.pow(pSite.voxelList.get(0).width, 2);
 				plotSiteArea = voxelArea * pSite.voxelList.size();
 				plotBuiltArea = voxelArea * pMassing.voxelList.size();
 				plotFAR = plotBuiltArea / plotSiteArea;
@@ -75,15 +79,15 @@ public class Development {
 			subObjectives.add(new Objective(
 					plotName + "Site Area", 
 					"total area enclosed by " + plotName, 
-					plotSiteArea, "sqft", 0d));
+					plotSiteArea, "sqft"));
 			subObjectives.add(new Objective(
 					plotName + "Built Area", 
 					"total floor area of massing on " + plotName, 
-					plotBuiltArea, "sqft", 0d));
+					plotBuiltArea, "sqft"));
 			subObjectives.add(new Objective(
 					plotName + "Floor Area Ratio", 
 					"ratio of built area to site area on " + plotName, 
-					plotFAR, "sqft/sqft", 100d));
+					plotFAR, "sqft/sqft"));
 			
 			HashMap<Use, Integer> plotUseCount = new HashMap<Use, Integer>();
 			for(Use use : Use.values()) {
@@ -95,9 +99,9 @@ public class Development {
 			}
 			for(Use use : Use.values()) {
 				String useName = "[" + use + "] ";
-				double plotUseArea = voxelArea * plotUseCount.get(use);
+				float plotUseArea = voxelArea * plotUseCount.get(use);
 				useArea.put(use, useArea.get(use) + plotUseArea);
-				double plotUseRatio;
+				float plotUseRatio;
 				if(plotBuiltArea == 0) {
 					plotUseRatio = 0;
 				} else {
@@ -106,11 +110,11 @@ public class Development {
 				subObjectives.add(new Objective(
 						plotName + useName + "Built Area", 
 						"total floor area of " + use + "on " + plotName, 
-						plotUseArea, "sqft", 0d));
+						plotUseArea, "sqft"));
 				subObjectives.add(new Objective(
 						plotName + useName + "Area Ratio", 
 						"portion of total built area on " + plotName, 
-						100 * plotUseRatio, "%", 10d));
+						100 * plotUseRatio, "%"));
 			}
 		}
 		
@@ -120,20 +124,20 @@ public class Development {
 		objectives.add(new Objective(
 				"Total Site Area", 
 				"total area enclosed by site", 
-				siteArea, "sqft", 0d));
+				siteArea, "sqft"));
 		objectives.add(new Objective(
 				"Total Built Area", 
 				"total floor area of massing on site", 
-				builtArea, "sqft", 0d));
+				builtArea, "sqft"));
 		objectives.add(new Objective(
 				"Floor Area Ratio (FAR)", 
 				"ratio of built area to site area", 
-				far, "sqft/sqft", 100d));
+				far, "sqft/sqft"));
 		
 		for(Use use : Use.values()) {
 			String useName = "[" + use + "] ";
-			double uArea = useArea.get(use);
-			double useRatio;
+			float uArea = useArea.get(use);
+			float useRatio;
 			if(builtArea == 0) {
 				useRatio = 0;
 			} else {
@@ -142,11 +146,11 @@ public class Development {
 			objectives.add(new Objective(
 					useName + "Built Area", 
 					"total floor area of " + use + "on site", 
-					uArea, "sqft", 0d));
+					uArea, "sqft"));
 			objectives.add(new Objective(
 					useName + "Area Ratio", 
 					"portion of total " + use + "built area on site", 
-					100 * useRatio, "%", 10d));
+					100 * useRatio, "%"));
 		}
 		
 		for(Objective secondary : subObjectives) {
@@ -168,19 +172,18 @@ public class Development {
 			Polygon shape = this.allShapes.get(i);
 			shapesJSON.put(i, shape.serialize());
 		}
-		/*
+		
 		JSONArray objectivesJSON = new JSONArray();
 		ArrayList<Objective> objectives = this.evaluation();
-		for(int i=0; i<objectives.size(); i++) {
+	    for(int i=0; i<objectives.size(); i++) {
 			Objective objective = objectives.get(i);
 			objectivesJSON.put(i, objective.serialize());
 		}
-		*/
 		
 		JSONObject data = new JSONObject();
 		data.put("voxels", voxelsJSON);
 		data.put("shapes", shapesJSON);
-		//data.put("objectives", objectivesJSON);
+		data.put("objectives", objectivesJSON);
 		return data;
 	}
 }
