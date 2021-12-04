@@ -7,5 +7,5 @@ package edu.mit.ira.fuzzy;
  *
  */
 public enum Use {
-	Retail, Community, Residential, Office, Government, Convention, Carpark, Landscape, Hotel, Site, Unspecified
+	Retail, Community, Residential, Office, Government, Convention, Carpark, Landscape, Hotel, Unspecified
 }

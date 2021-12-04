@@ -76,7 +76,7 @@ public class FuzzyBuilder {
 							* Integer.parseInt(plotSettings.settingValues.get(1).value) / 360f);
 					Point gridTranslation = new Point();
 					VoxelArray plot = this.morph.make(plotShape, gridSize, 0, gridRotation, gridTranslation);
-					plot.setVoxelUse(Use.Site);
+					plot.setVoxelUse(Use.Unspecified);
 					fuzzy.plotSite.put(plotShape, plot);
 					fuzzy.site = this.morph.add(fuzzy.site, plot);
 
