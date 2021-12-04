@@ -102,6 +102,9 @@ public class FuzzyServer {
 						packItShipIt(t, 400);
 						log(clientIP, "This POST request has no body");
 					}
+				} else if (requestMethod.equals("GET")) {
+					packItShipIt(t, 200, "{TBD}");
+					log(clientIP, "Setting Schema Requested");
 				} else {
 					packItShipIt(t, 405);
 					log(clientIP, "Method Not Allowed");
