@@ -29,7 +29,7 @@ public class Extrusion {
 
 		// Clone the base
 		this.base = base.clone();
-		
+
 		this.top = null;
 		this.sideEdges = new ArrayList<Line>();
 		this.sideFaces = new ArrayList<Polygon>();
