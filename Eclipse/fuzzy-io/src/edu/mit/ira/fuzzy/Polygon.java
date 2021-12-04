@@ -37,13 +37,31 @@ public class Polygon {
 		}
 	}
 
+	public Polygon clone() {
+		Polygon clone = new Polygon();
+		for (Point vertex : this.vertices) {
+			Point p = new Point(vertex.x, vertex.y, vertex.z);
+			clone.addVertex(p);
+		}
+		return clone;
+	}
+
 	/**
 	 * Retrieve the list of polygon corners
 	 * 
 	 * @return corners of polygon
 	 */
-	public ArrayList<Point> getCorners() {
-		return vertices;
+	public ArrayList<Point> getVertices() {
+		return this.vertices;
+	}
+
+	/**
+	 * Retrieve the list of polygon corners
+	 * 
+	 * @return corners of polygon
+	 */
+	public ArrayList<Line> getEdges() {
+		return this.edges;
 	}
 
 	/**
@@ -56,7 +74,7 @@ public class Polygon {
 
 		// Generate Edges for Polygon once it has more than 3 vertices
 		//
-		if (vertices.size() > 2) {
+		if (vertices.size() > 1) {
 			createEdges();
 		}
 
@@ -75,8 +93,10 @@ public class Polygon {
 			Line l = new Line(vertices.get(i), vertices.get(i + 1));
 			edges.add(l);
 		}
-		Line l = new Line(vertices.get(n - 1), vertices.get(0));
-		edges.add(l);
+		if(n > 2) {
+			Line l = new Line(vertices.get(n - 1), vertices.get(0));
+			edges.add(l);
+		}
 	}
 
 	/**
@@ -205,7 +225,7 @@ public class Polygon {
 	 * @return returns "true" if polygon paramter is inside of this polygon
 	 */
 	public boolean containsPolygon(Polygon polygon) {
-		for (Point p : polygon.getCorners()) {
+		for (Point p : polygon.getVertices()) {
 			if (!this.containsPoint(p)) {
 				return false;
 			}
@@ -236,12 +256,63 @@ public class Polygon {
 		return false;
 	}
 
-	public JSONArray serialize() {
-		JSONArray polygonJSON = new JSONArray();
+	/**
+	 * Check if Polygon points are coplanar
+	 * 
+	 * @return true of polygon vertices are in the same plane
+	 */
+	public boolean isCoplanar() {
+
+		// polygons of three points or less are always coplanar
+		if (this.vertices.size() < 4) {
+			return true;
+
+		} else {
+
+			// derive the equation for the plan defined by the first three points
+			// https://www.tutorialspoint.com/program-to-find-equation-of-a-plane-passing-through-3-points-in-cplusplus
+			// ax + by + cz = d
+			Point p1 = this.vertices.get(0);
+			Point p2 = this.vertices.get(1);
+			Point p3 = this.vertices.get(2);
+			float a1 = p2.x - p1.x;
+			float b1 = p2.y - p1.y;
+			float c1 = p2.z - p1.z;
+			float a2 = p3.x - p1.x;
+			float b2 = p3.y - p1.y;
+			float c2 = p3.z - p1.z;
+			float a = b1 * c2 - b2 * c1;
+			float b = a2 * c1 - a1 * c2;
+			float c = a1 * b2 - b1 * a2;
+			float d = (-a * p1.x - b * p1.y - c * p1.z);
+
+			// check that all remaining points are in this plan
+			for (int i = 3; i < this.vertices.size(); i++) {
+				Point vertex = this.vertices.get(i);
+				float d_i = a * vertex.x + b * vertex.y + c * vertex.z;
+
+				// floating points aren't precise enough, so we allow for a
+				// number that is "close enough"
+				//
+				float tolerance = (float) 0.001;
+				if (d_i < d - tolerance || d_i > d + tolerance) {
+					return false;
+				}
+			}
+			return true;
+		}
+	}
+
+	public JSONObject serialize() {
+
+		JSONArray vertexArray = new JSONArray();
 		for (int i = 0; i < this.vertices.size(); i++) {
 			JSONObject vertex = vertices.get(i).serialize();
-			polygonJSON.put(i, vertex);
+			vertexArray.put(i, vertex);
 		}
+
+		JSONObject polygonJSON = new JSONObject();
+		polygonJSON.put("vertices", vertexArray);
 		return polygonJSON;
 	}
 }

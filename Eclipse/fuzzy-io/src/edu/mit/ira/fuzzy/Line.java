@@ -3,6 +3,9 @@ package edu.mit.ira.fuzzy;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 /**
  * Line Segment class
  * 
@@ -126,5 +129,15 @@ public class Line {
 	@Override
 	public String toString() {
 		return "Line[" + o.x + ", " + o.y + ", " + o.z + "][" + f.x + ", " + f.y + ", " + f.z + "]";
+	}
+	
+	public JSONObject serialize() {
+		JSONArray vertexArray = new JSONArray();
+		vertexArray.put(0, o.serialize());
+		vertexArray.put(1, f.serialize());
+		
+		JSONObject lineJSON = new JSONObject();
+		lineJSON.put("vertices", vertexArray);
+		return lineJSON;
 	}
 }

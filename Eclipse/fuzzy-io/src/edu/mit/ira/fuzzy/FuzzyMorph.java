@@ -235,6 +235,24 @@ class FuzzyMorph {
 		}
 		return cantileverCount / inputBaseCount <= cantileverAllowance;
 	}
+	
+	/**
+	 * Return a hollowed out array. Useful for creating smaller voxel arrays for visualization purposes.
+	 * @param input the VoxelArray that you wish to hollow out
+	 * @return a voxel array with no voxels completely surrounded
+	 */
+	public VoxelArray hollow(VoxelArray input) {
+		VoxelArray hollowed = new VoxelArray();
+		for (Voxel t : input.voxelList) {
+			boolean hasTop = this.getNeighborTop(t, input) != null;
+			boolean hasBot = this.getNeighborBottom(t, input) != null;
+			boolean surrounded = this.getNeighborsUV(t, input).size() == 8;
+			if(!hasTop || !hasBot || !surrounded) {
+				hollowed.addVoxel(t);
+			}
+		}
+		return hollowed;
+	}
 
 	/**
 	 * Translates an input VoxelArray using discrete coordinate system
