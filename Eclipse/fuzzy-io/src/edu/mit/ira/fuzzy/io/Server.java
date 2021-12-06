@@ -60,7 +60,7 @@ public class Server {
 		builder = new Builder();
 		evaluator = new Evaluator();
 		adapter = new SettingGroupAdapter();
-		info = "--- FuzzyIO V" + serverVersion + " ---\nActive on port: " + port;
+		info = "--- FuzzyIO " + serverVersion + " ---\nActive on port: " + port;
 		System.out.println(info);
 	}
 
