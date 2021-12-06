@@ -16,6 +16,7 @@ import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
 import edu.mit.ira.fuzzy.model.Development;
+import edu.mit.ira.fuzzy.objective.MultiObjective;
 import edu.mit.ira.fuzzy.setting.SettingGroup;
 import edu.mit.ira.fuzzy.setting.SettingGroupAdapter;
 
@@ -31,6 +32,7 @@ public class Server {
 	private final String SERVER_VERSION = "1.1.1";
 	private Schema schema;
 	private Builder builder;
+	private Evaluator evaluator;
 	private SettingGroupAdapter adapter;
 	private String info;
 
@@ -51,6 +53,7 @@ public class Server {
 		
 		schema = new Schema(SERVER_VERSION, SERVER_ID);
 		builder = new Builder();
+		evaluator = new Evaluator();
 		adapter = new SettingGroupAdapter();
 		info = "--- FuzzyIO V" + SERVER_VERSION + " ---\nActive on port: " + port;
 		System.out.println(info);
@@ -89,19 +92,26 @@ public class Server {
 
 				} else if (requestMethod.equals("POST")) {
 					if (requestBody.length() > 0) {
+						
+						// Generate FuzzyIO Response Data
 						SettingGroup settings = adapter.parse(requestBody);
 						Development solution = builder.build(settings);
+						MultiObjective performance = evaluator.evaluate(solution);
 						if (solution == null) {
 							packItShipIt(t, 200);
 							log(clientIP, "Bad Request");
 						}
+						
+						// Serialize the Response Data
 						JSONObject dataJSON = solution.serialize();
+						dataJSON.put("performance", performance.serialize());
 						String data = wrapApi(dataJSON);
 						packItShipIt(t, 200, data);
 						log(clientIP, "Delivered " + 
 								dataJSON.getJSONArray("voxels").length() + " voxels, " + 
-								dataJSON.getJSONArray("shapes").length() + " shapes, and " + 
-								dataJSON.getJSONArray("objectives").length() + " objectives");
+								dataJSON.getJSONArray("shapes").length() + " shapes, " + 
+								dataJSON.getJSONObject("performance").getJSONArray("primary").length() + " primary objectives, and " + 
+								dataJSON.getJSONObject("performance").getJSONArray("secondary").length() + " secondary objectives");
 					} else {
 						packItShipIt(t, 400);
 						log(clientIP, "This POST request has no body");
