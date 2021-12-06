@@ -4,7 +4,7 @@ import java.util.HashMap;
 
 import edu.mit.ira.fuzzy.model.Development;
 import edu.mit.ira.fuzzy.model.Polygon;
-import edu.mit.ira.fuzzy.model.Use;
+import edu.mit.ira.fuzzy.model.Function;
 import edu.mit.ira.fuzzy.model.Voxel;
 import edu.mit.ira.fuzzy.model.VoxelArray;
 import edu.mit.ira.fuzzy.objective.MultiObjective;
@@ -29,8 +29,8 @@ public class Evaluator {
 		// Initialize global counters
 		float siteArea = 0;
 		float builtArea = 0;
-		HashMap<Use, Float> useArea = new HashMap<Use, Float>();
-		for (Use use : Use.values()) {
+		HashMap<Function, Float> useArea = new HashMap<Function, Float>();
+		for (Function use : Function.values()) {
 			useArea.put(use, 0f);
 		}
 		
@@ -67,15 +67,15 @@ public class Evaluator {
 				plotName + "Floor Area Ratio", "ratio of built area to site area on " + plotName, plotFAR, "sqft/sqft"));
 			
 			// Calculate plot areas itemized by Use
-			HashMap<Use, Integer> plotUseCount = new HashMap<Use, Integer>();
-			for (Use use : Use.values()) {
+			HashMap<Function, Integer> plotUseCount = new HashMap<Function, Integer>();
+			for (Function use : Function.values()) {
 				plotUseCount.put(use, 0);
 			}
 			for (Voxel t : pMassing.voxelList) {
 				int count = plotUseCount.get(t.type);
 				plotUseCount.put(t.type, count + 1);
 			}
-			for (Use use : Use.values()) {
+			for (Function use : Function.values()) {
 				String useName = "[" + use + "] ";
 				float plotUseArea = voxelArea * plotUseCount.get(use);
 				useArea.put(use, useArea.get(use) + plotUseArea);
@@ -106,7 +106,7 @@ public class Evaluator {
 			"Floor Area Ratio (FAR)", "ratio of built area to site area", far, "sqft/sqft"));
 		
 		// Calculate total areas itemized by use
-		for (Use use : Use.values()) {
+		for (Function use : Function.values()) {
 			String useName = "[" + use + "] ";
 			float uArea = useArea.get(use);
 			float useRatio;

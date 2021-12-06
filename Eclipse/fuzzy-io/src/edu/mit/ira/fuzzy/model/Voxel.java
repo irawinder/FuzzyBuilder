@@ -20,7 +20,7 @@ public class Voxel {
 	public float width, height;
 
 	// Type of Voxel
-	public Use type;
+	public Function type;
 
 	// Local integer coordinates of this voxel (for efficient adjacency analysis)
 	public int u, v, w;
@@ -58,7 +58,7 @@ public class Voxel {
 		this.height = height;
 	}
 
-	public void setUse(Use type) {
+	public void setUse(Function type) {
 		this.type = type;
 	}
 

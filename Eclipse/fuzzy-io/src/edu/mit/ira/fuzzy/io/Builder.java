@@ -6,7 +6,7 @@ import edu.mit.ira.fuzzy.model.Development;
 import edu.mit.ira.fuzzy.model.Morph;
 import edu.mit.ira.fuzzy.model.Point;
 import edu.mit.ira.fuzzy.model.Polygon;
-import edu.mit.ira.fuzzy.model.Use;
+import edu.mit.ira.fuzzy.model.Function;
 import edu.mit.ira.fuzzy.model.VoxelArray;
 import edu.mit.ira.fuzzy.setting.SettingGroup;
 import edu.mit.ira.fuzzy.setting.SettingValue;
@@ -82,7 +82,7 @@ public class Builder {
 							* Integer.parseInt(plotSettings.settingValues.get(1).value) / 360f);
 					Point gridTranslation = new Point();
 					VoxelArray plot = this.morph.make(plotShape, gridSize, 0, gridRotation, gridTranslation);
-					plot.setVoxelUse(Use.Unspecified);
+					plot.setVoxelUse(Function.Unspecified);
 					fuzzy.plotSite.put(plotShape, plot);
 					fuzzy.site = this.morph.add(fuzzy.site, plot);
 
@@ -115,8 +115,8 @@ public class Builder {
 						for (int i = 0; i < zoneGroup.settingGroups.size(); i++) {
 							SettingGroup zone = zoneGroup.settingGroups.get(i);
 							int levels = Integer.parseInt(zone.settingValues.get(0).value);
-							Use use = this.parseUse(zone.settingValues.get(1).value);
-							plotMassing = morph.makeAndDrop(podiumTemplate, plotMassing, levels, use,
+							Function function = this.parseUse(zone.settingValues.get(1).value);
+							plotMassing = morph.makeAndDrop(podiumTemplate, plotMassing, levels, function,
 									cantileverAllowance);
 						}
 					}
@@ -144,8 +144,8 @@ public class Builder {
 							for (int i = 0; i < zoneGroup.settingGroups.size(); i++) {
 								SettingGroup zone = zoneGroup.settingGroups.get(i);
 								int levels = Integer.parseInt(zone.settingValues.get(0).value);
-								Use use = this.parseUse(zone.settingValues.get(1).value);
-								plotMassing = morph.makeAndDrop(towerTemplate, plotMassing, levels, use,
+								Function function = this.parseUse(zone.settingValues.get(1).value);
+								plotMassing = morph.makeAndDrop(towerTemplate, plotMassing, levels, function,
 										cantileverAllowance);
 							}
 						}
@@ -276,33 +276,16 @@ public class Builder {
 	}
 
 	/**
-	 * Parse a string of use to the enum Use
+	 * Parse a string of function to the enum Use
 	 *
-	 * @param use a string of the use
+	 * @param function a string of the function
 	 * @return an enum of type Use
 	 */
-	private Use parseUse(String use) {
-		use.toLowerCase();
-		if (use.equals("Retail")) {
-			return Use.Retail;
-		} else if (use.equals("Community")) {
-			return Use.Community;
-		} else if (use.equals("Residential")) {
-			return Use.Residential;
-		} else if (use.equals("Office")) {
-			return Use.Office;
-		} else if (use.equals("Government")) {
-			return Use.Government;
-		} else if (use.equals("Convention")) {
-			return Use.Convention;
-		} else if (use.equals("Carpark")) {
-			return Use.Carpark;
-		} else if (use.equals("Landscape")) {
-			return Use.Landscape;
-		} else if (use.equals("Hotel")) {
-			return Use.Hotel;
-		} else {
-			return Use.Unspecified;
+	private Function parseUse(String function) {
+		try	{
+			return Function.valueOf(function);
+		} catch (Exception e) {
+			return Function.Unspecified;
 		}
 	}
 }

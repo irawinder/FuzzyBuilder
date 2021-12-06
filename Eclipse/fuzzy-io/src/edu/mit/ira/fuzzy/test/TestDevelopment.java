@@ -7,7 +7,7 @@ import edu.mit.ira.fuzzy.model.Development;
 import edu.mit.ira.fuzzy.model.Morph;
 import edu.mit.ira.fuzzy.model.Point;
 import edu.mit.ira.fuzzy.model.Polygon;
-import edu.mit.ira.fuzzy.model.Use;
+import edu.mit.ira.fuzzy.model.Function;
 import edu.mit.ira.fuzzy.model.VoxelArray;
 
 /**
@@ -197,9 +197,9 @@ public class TestDevelopment {
 	/**
 	 * Get a random use
 	 */
-	public Use use() {
-		int index = (int) random(Use.values().length);
-		return Use.values()[index];
+	public Function use() {
+		int index = (int) random(Function.values().length);
+		return Function.values()[index];
 	}
 
 	// RANDOM NUMBERS

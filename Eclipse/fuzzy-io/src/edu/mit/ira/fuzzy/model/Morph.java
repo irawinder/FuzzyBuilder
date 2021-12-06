@@ -133,7 +133,7 @@ public class Morph {
 	 * @param type     the use of the zone
 	 * @return a new Voxel Array with the new zone added to the base massing
 	 */
-	public VoxelArray makeAndDrop(VoxelArray template, VoxelArray base, int levels, Use type, float cantileverAllowance) {
+	public VoxelArray makeAndDrop(VoxelArray template, VoxelArray base, int levels, Function type, float cantileverAllowance) {
 		VoxelArray zone = this.extrude(template, levels - 1);
 		zone = this.drop(zone, base, cantileverAllowance);
 		zone.setVoxelUse(type);
