@@ -1,4 +1,4 @@
-package edu.mit.ira.fuzzy.data;
+package edu.mit.ira.fuzzy.setting;
 
 import org.json.JSONArray;
 import org.json.JSONObject;

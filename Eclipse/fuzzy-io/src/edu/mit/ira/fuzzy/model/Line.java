@@ -1,4 +1,4 @@
-package edu.mit.ira.fuzzy;
+package edu.mit.ira.fuzzy.model;
 
 import java.util.ArrayList;
 import java.util.Collections;

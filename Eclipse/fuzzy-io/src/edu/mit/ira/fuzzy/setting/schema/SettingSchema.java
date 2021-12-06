@@ -1,4 +1,4 @@
-package edu.mit.ira.fuzzy.data;
+package edu.mit.ira.fuzzy.setting.schema;
 
 /**
  * A SettingSchema defines the nature of input needed from the GUI

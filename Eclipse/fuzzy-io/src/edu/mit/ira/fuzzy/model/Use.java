@@ -1,4 +1,4 @@
-package edu.mit.ira.fuzzy;
+package edu.mit.ira.fuzzy.model;
 
 /**
  * A collection of common use types in real estate

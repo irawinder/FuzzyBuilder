@@ -1,8 +1,8 @@
 package edu.mit.ira.fuzzy.test;
 
-import edu.mit.ira.fuzzy.Extrusion;
-import edu.mit.ira.fuzzy.Point;
-import edu.mit.ira.fuzzy.Polygon;
+import edu.mit.ira.fuzzy.model.Extrusion;
+import edu.mit.ira.fuzzy.model.Point;
+import edu.mit.ira.fuzzy.model.Polygon;
 
 public class TestExtrusion {
 

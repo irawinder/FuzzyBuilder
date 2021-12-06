@@ -1,4 +1,4 @@
-package edu.mit.ira.fuzzy.data;
+package edu.mit.ira.fuzzy.setting.schema;
 
 import java.util.ArrayList;
 
@@ -15,7 +15,7 @@ public class SettingGroupSchema extends SettingSchema {
 	public ArrayList<SettingSchema> settings;
 
 	public SettingGroupSchema(String label, boolean extendable) {
-		super(Schema.group.toString(), label, extendable);
+		super(SchemaType.group.toString(), label, extendable);
 		settings = new ArrayList<SettingSchema>();
 	}
 

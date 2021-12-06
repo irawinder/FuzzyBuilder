@@ -1,4 +1,4 @@
-package edu.mit.ira.fuzzy.data;
+package edu.mit.ira.fuzzy.setting.schema;
 
 import java.util.ArrayList;
 
@@ -22,7 +22,7 @@ public class SettingValueSchema extends SettingSchema {
 	 * @param extendable whether or not this setting should be the element of an
 	 *                   arbitrary list of such settings
 	 */
-	public SettingValueSchema(Schema type, String label, boolean extendable) {
+	public SettingValueSchema(SchemaType type, String label, boolean extendable) {
 		super(type.toString(), label, extendable);
 		values = new ArrayList<String>();
 	}

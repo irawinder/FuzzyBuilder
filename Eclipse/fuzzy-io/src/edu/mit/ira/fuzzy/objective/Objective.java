@@ -1,4 +1,4 @@
-package edu.mit.ira.fuzzy.data;
+package edu.mit.ira.fuzzy.objective;
 
 import org.json.JSONObject;
 

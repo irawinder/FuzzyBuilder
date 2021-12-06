@@ -15,11 +15,9 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
-import edu.mit.ira.fuzzy.Development;
-import edu.mit.ira.fuzzy.FuzzyBuilder;
-import edu.mit.ira.fuzzy.FuzzySchema;
-import edu.mit.ira.fuzzy.data.SettingGroup;
-import edu.mit.ira.fuzzy.data.SettingGroupAdapter;
+import edu.mit.ira.fuzzy.model.Development;
+import edu.mit.ira.fuzzy.setting.SettingGroup;
+import edu.mit.ira.fuzzy.setting.SettingGroupAdapter;
 
 /**
  * Fuzzy Server listens and responds to requests for fuzzy masses via HTTP
@@ -27,12 +25,12 @@ import edu.mit.ira.fuzzy.data.SettingGroupAdapter;
  * @author Ira Winder
  *
  */
-public class FuzzyServer {
+public class Server {
 	private final String SERVER_ID = "FuzzyIO";
 	private final String SERVER_SYSTEM = "Java " + System.getProperty("java.version");
 	private final String SERVER_VERSION = "1.1.1";
-	private FuzzySchema schema;
-	private FuzzyBuilder builder;
+	private Schema schema;
+	private Builder builder;
 	private SettingGroupAdapter adapter;
 	private String info;
 
@@ -44,15 +42,15 @@ public class FuzzyServer {
 	 * @param port on the machine to open/reserve for this server
 	 * @throws IOException
 	 */
-	public FuzzyServer(int port) throws IOException {
+	public Server(int port) throws IOException {
 
 		server = HttpServer.create(new InetSocketAddress(port), 0);
 		server.createContext("/", new MyHandler());
 		server.setExecutor(null); // creates a default executor
 		server.start();
 		
-		schema = new FuzzySchema(SERVER_VERSION, SERVER_ID);
-		builder = new FuzzyBuilder();
+		schema = new Schema(SERVER_VERSION, SERVER_ID);
+		builder = new Builder();
 		adapter = new SettingGroupAdapter();
 		info = "--- FuzzyIO V" + SERVER_VERSION + " ---\nActive on port: " + port;
 		System.out.println(info);

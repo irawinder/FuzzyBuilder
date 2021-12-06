@@ -1,7 +1,14 @@
-package edu.mit.ira.fuzzy;
+package edu.mit.ira.fuzzy.test;
 
 import java.util.ArrayList;
 import java.util.Random;
+
+import edu.mit.ira.fuzzy.model.Development;
+import edu.mit.ira.fuzzy.model.Morph;
+import edu.mit.ira.fuzzy.model.Point;
+import edu.mit.ira.fuzzy.model.Polygon;
+import edu.mit.ira.fuzzy.model.Use;
+import edu.mit.ira.fuzzy.model.VoxelArray;
 
 /**
  * FuzzyRandom is class for generating random fuzzy geometry
@@ -9,7 +16,7 @@ import java.util.Random;
  * @author Ira Winder
  *
  */
-public class FuzzyRandom {
+public class TestDevelopment {
 
 	final int NUM_VERTICES = 4;
 	final float PLOT_X = 0;
@@ -36,7 +43,7 @@ public class FuzzyRandom {
 	public Development development() {
 		int time = millis();
 
-		FuzzyMorph morph = new FuzzyMorph();
+		Morph morph = new Morph();
 		Development development = new Development();
 
 		development.plotShapes.clear();

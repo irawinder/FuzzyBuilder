@@ -1,4 +1,4 @@
-package edu.mit.ira.fuzzy;
+package edu.mit.ira.fuzzy.model;
 
 import java.util.ArrayList;
 
@@ -8,7 +8,7 @@ import java.util.ArrayList;
  * @author Ira Winder
  *
  */
-class FuzzyMorph {
+public class Morph {
 
 	// geographic height of ground
 	private float GROUND_Z = 0;
@@ -133,7 +133,7 @@ class FuzzyMorph {
 	 * @param type     the use of the zone
 	 * @return a new Voxel Array with the new zone added to the base massing
 	 */
-	VoxelArray makeAndDrop(VoxelArray template, VoxelArray base, int levels, Use type, float cantileverAllowance) {
+	public VoxelArray makeAndDrop(VoxelArray template, VoxelArray base, int levels, Use type, float cantileverAllowance) {
 		VoxelArray zone = this.extrude(template, levels - 1);
 		zone = this.drop(zone, base, cantileverAllowance);
 		zone.setVoxelUse(type);

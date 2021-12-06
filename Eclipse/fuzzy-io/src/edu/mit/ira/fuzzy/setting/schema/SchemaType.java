@@ -1,4 +1,4 @@
-package edu.mit.ira.fuzzy.data;
+package edu.mit.ira.fuzzy.setting.schema;
 
 /**
  * A collection of schema types used for settings
@@ -6,7 +6,7 @@ package edu.mit.ira.fuzzy.data;
  * @author Ira Winder
  *
  */
-public enum Schema {
+public enum SchemaType {
 	group,
 	slider,
 	control_point,

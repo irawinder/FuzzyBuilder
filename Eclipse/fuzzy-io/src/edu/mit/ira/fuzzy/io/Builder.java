@@ -1,9 +1,15 @@
-package edu.mit.ira.fuzzy;
+package edu.mit.ira.fuzzy.io;
 
 import java.util.ArrayList;
 
-import edu.mit.ira.fuzzy.data.SettingGroup;
-import edu.mit.ira.fuzzy.data.SettingValue;
+import edu.mit.ira.fuzzy.model.Development;
+import edu.mit.ira.fuzzy.model.Morph;
+import edu.mit.ira.fuzzy.model.Point;
+import edu.mit.ira.fuzzy.model.Polygon;
+import edu.mit.ira.fuzzy.model.Use;
+import edu.mit.ira.fuzzy.model.VoxelArray;
+import edu.mit.ira.fuzzy.setting.SettingGroup;
+import edu.mit.ira.fuzzy.setting.SettingValue;
 
 /**
  * FuzzyBuilder generates a fuzzy massing according to settings that are passed
@@ -12,15 +18,15 @@ import edu.mit.ira.fuzzy.data.SettingValue;
  * @author Ira Winder
  *
  */
-public class FuzzyBuilder {
+public class Builder {
 
-	private FuzzyMorph morph;
+	private Morph morph;
 
 	final private float DEFAULT_VOXEL_HEIGHT = 10;
 	final private float DEFAULT_CANTILEVER_ALLOWANCE = 0.5f;
 
-	public FuzzyBuilder() {
-		this.morph = new FuzzyMorph();
+	public Builder() {
+		this.morph = new Morph();
 	}
 	
 	/**

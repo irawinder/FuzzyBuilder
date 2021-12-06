@@ -1,4 +1,4 @@
-package edu.mit.ira.fuzzy.data;
+package edu.mit.ira.fuzzy.setting;
 
 /**
  * A SettingValue is a singular setting and its value
