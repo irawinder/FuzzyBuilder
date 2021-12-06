@@ -17,7 +17,7 @@ public enum Function {
 	Entertainment("#90EE90"),
 	Institutional("#0000FF"),
 	Agriculture("#228B22"),
-	Unspecified("#FFFFFF");
+	Unspecified("#CCCCCC");
 	
 	private String legendColor;
 	
