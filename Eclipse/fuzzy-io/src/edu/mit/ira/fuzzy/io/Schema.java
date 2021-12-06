@@ -12,11 +12,17 @@ public class Schema {
 
 	private String apiVersion;
 	private String id;
+	private String author;
+	private String contact;
+	private String sponsor;
 	private String universeName;
 
-	public Schema(String apiVersion, String id) {
+	public Schema(String apiVersion, String id, String author, String sponsor, String contact) {
 		this.apiVersion = apiVersion;
 		this.id = id;
+		this.author = author;
+		this.sponsor = sponsor;
+		this.contact = contact;
 		this.universeName = "";
 	}
 
@@ -27,6 +33,9 @@ public class Schema {
 		schema.put("apiVersion", apiVersion);
 		schema.put("id", id);
 		schema.put("label", universeName);
+		schema.put("author", author);
+		schema.put("sponsor", sponsor);
+		schema.put("contact", contact);
 		schema.put("settings", settings);
 		schema.put("legend", legend);
 		return schema;

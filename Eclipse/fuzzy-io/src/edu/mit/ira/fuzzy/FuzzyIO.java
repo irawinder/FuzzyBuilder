@@ -5,10 +5,13 @@ import edu.mit.ira.fuzzy.io.Server;
 public class FuzzyIO {
 	
 	private static final String NAME = "FuzzyIO";
-	private static final String VERSION = "v1.1.2";
+	private static final String VERSION = "v1.1.3";
+	private static final String AUTHOR = "Ira Winder, Daniel Fink, and Max Walker";
+	private static final String SPONSOR = "MIT Center for Real Estate and University of Tokyo Laboratory for Intelligent Systems Design";
+	private static final String CONTACT = "fuzzy-io@mit.edu";
 	private static final int PORT = 8080;
 	
 	public static void main(String[] args) throws Exception {
-		new Server(NAME, VERSION, PORT);
+		new Server(NAME, VERSION, AUTHOR, SPONSOR, CONTACT, PORT);
 	}
 }

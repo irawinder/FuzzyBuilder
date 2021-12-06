@@ -48,7 +48,7 @@ public class Server {
 	 * @param port port to open for HTTP Requests
 	 * @throws IOException
 	 */
-	public Server(String name, String version, int port) throws IOException {
+	public Server(String name, String version, String author, String sponsor, String contact, int port) throws IOException {
 		this.serverID = name;
 		this.serverVersion = version;
 		server = HttpServer.create(new InetSocketAddress(port), 0);
@@ -56,7 +56,7 @@ public class Server {
 		server.setExecutor(null); // creates a default executor
 		server.start();
 		
-		schema = new Schema(serverVersion, serverID);
+		schema = new Schema(serverVersion, serverID, author, sponsor, contact);
 		builder = new Builder();
 		evaluator = new Evaluator();
 		adapter = new SettingGroupAdapter();
