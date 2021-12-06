@@ -149,7 +149,7 @@ public class Schema {
 
 		SettingValueSchema tFunction = new SettingValueSchema(SchemaType.dropdown, "Function", false);
 		for (Function function : Function.values())
-			pFunction.values.add(function.toString());
+			tFunction.values.add(function.toString());
 		tZone.settings.add(tFunction);
 
 		JSONArray settings = new JSONArray();
@@ -167,13 +167,15 @@ public class Schema {
 		JSONArray functionLegend = new JSONArray();
 		int i = 0;
 		for (Function function : Function.values()) {
-			JSONObject functionColor = new JSONObject();
-			functionColor.put(function.toString(), function.legendColor());
-			functionLegend.put(i, functionColor);
+			JSONObject entry = new JSONObject();
+			entry.put("label", function.toString());
+			entry.put("color", function.legendColor());
+			functionLegend.put(i, entry);
 			i++;
 		}
 		JSONObject legend = new JSONObject();
-		legend.put("function", functionLegend);
+		legend.put("label", "Function");
+		legend.put("entries", functionLegend);
 		return legend;
 	}
 }
