@@ -27,35 +27,40 @@ import edu.mit.ira.fuzzy.setting.SettingGroupAdapter;
  *
  */
 public class Server {
-	private final String SERVER_ID = "FuzzyIO";
-	private final String SERVER_SYSTEM = "Java " + System.getProperty("java.version");
-	private final String SERVER_VERSION = "1.1.1";
+	
+	// Server Objects
+	private static final String SERVER_SYSTEM = "Java " + System.getProperty("java.version");
+	private String serverID;
+	private String serverVersion;
+	private HttpServer server;
+	private String info;
+	
+	// Fuzzy Objects
 	private Schema schema;
 	private Builder builder;
 	private Evaluator evaluator;
 	private SettingGroupAdapter adapter;
-	private String info;
-
-	HttpServer server;
 
 	/**
-	 * Construct a new FuzzyServer
-	 *
-	 * @param port on the machine to open/reserve for this server
+	 * Construct a new FuzzyIO Server
+	 * @param name name of server
+	 * @param version version of server
+	 * @param port port to open for HTTP Requests
 	 * @throws IOException
 	 */
-	public Server(int port) throws IOException {
-
+	public Server(String name, String version, int port) throws IOException {
+		this.serverID = name;
+		this.serverVersion = version;
 		server = HttpServer.create(new InetSocketAddress(port), 0);
 		server.createContext("/", new MyHandler());
 		server.setExecutor(null); // creates a default executor
 		server.start();
 		
-		schema = new Schema(SERVER_VERSION, SERVER_ID);
+		schema = new Schema(serverVersion, serverID);
 		builder = new Builder();
 		evaluator = new Evaluator();
 		adapter = new SettingGroupAdapter();
-		info = "--- FuzzyIO V" + SERVER_VERSION + " ---\nActive on port: " + port;
+		info = "--- FuzzyIO V" + serverVersion + " ---\nActive on port: " + port;
 		System.out.println(info);
 	}
 
@@ -184,7 +189,7 @@ public class Server {
 	private void makeHeaders(HttpExchange t) {
 
 		Headers headers = t.getResponseHeaders();
-		headers.set("Server", SERVER_ID + ", " + SERVER_SYSTEM);
+		headers.set("Server", serverID + ", " + SERVER_SYSTEM);
 		headers.set("Content-Type", "application/json");
 		headers.set("Connection", "close");
 		headers.set("Connection", "close");
@@ -204,7 +209,7 @@ public class Server {
 	private String wrapApi(JSONObject data) {
 
 		// Compile Root JSON Object
-		String apiVersion = SERVER_VERSION;
+		String apiVersion = serverVersion;
 		JSONObject root = new JSONObject();
 		root.put("apiVersion", apiVersion);
 		root.put("method", "FuzzyBuilder.build");
