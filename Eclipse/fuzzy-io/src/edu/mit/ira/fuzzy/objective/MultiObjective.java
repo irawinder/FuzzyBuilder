@@ -31,16 +31,16 @@ public class MultiObjective {
 		JSONArray primaryObjectivesJSON = new JSONArray();
 		for(int i=0; i<this.primaryObjectives.size(); i++) {
 			Objective objective = this.primaryObjectives.get(i);
-			primaryObjectivesJSON.put(i, objective);
+			primaryObjectivesJSON.put(i, objective.serialize());
 		}
 		JSONArray secondaryObjectivesJSON = new JSONArray();
 		for(int i=0; i<this.secondaryObjectives.size(); i++) {
 			Objective objective = this.secondaryObjectives.get(i);
-			secondaryObjectivesJSON.put(i, objective);
+			secondaryObjectivesJSON.put(i, objective.serialize());
 		}
 		JSONObject objectivesJSON = new JSONObject();
-		objectivesJSON.put("primary", primaryObjectives);
-		objectivesJSON.put("secondary", secondaryObjectives);
+		objectivesJSON.put("primary", primaryObjectivesJSON);
+		objectivesJSON.put("secondary", secondaryObjectivesJSON);
 		return objectivesJSON;
 	}
 }
