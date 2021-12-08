@@ -101,9 +101,8 @@ public class Schema {
 		for (Function function : Function.values())
 			pFunction.values.add(function.toString());
 		pZone.settings.add(pFunction);
-
+		
 		SettingGroupSchema tower = new SettingGroupSchema("Tower Volume", true);
-		plot.settings.add(tower);
 
 		SettingValueSchema tVertex = new SettingValueSchema(SchemaType.control_point, "Location", false);
 		tVertex.values.add("0"); // initial x
@@ -143,18 +142,20 @@ public class Schema {
 			tFunction.values.add(function.toString());
 		tZone.settings.add(tFunction);
 		
-		SettingGroupSchema openArea = new SettingGroupSchema("Open Area", true);
+		SettingGroupSchema openArea = new SettingGroupSchema("Building Exclusion Area", true);
 		SettingValueSchema openVertex = new SettingValueSchema(SchemaType.control_point, "Vertex", true);
 		openVertex.values.add("0"); // initial x
 		openVertex.values.add("0"); // initial y
 		openVertex.values.add("0"); // initial z
 		openArea.settings.add(openVertex);
-
+		
 		JSONArray settings = new JSONArray();
 		settings.put(0, floorHeight.serialize());
 		settings.put(1, cantilever.serialize());
 		settings.put(2, plot.serialize());
-		settings.put(3, openArea.serialize());
+		settings.put(3, tower.serialize());
+		settings.put(4, openArea.serialize());
+		
 		
 		return settings;
 	}

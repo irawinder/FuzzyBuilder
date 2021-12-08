@@ -1,6 +1,7 @@
 package edu.mit.ira.fuzzy.io;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import edu.mit.ira.fuzzy.model.Development;
 import edu.mit.ira.fuzzy.model.Morph;
@@ -50,14 +51,25 @@ public class Builder {
 				cantileverAllowance = DEFAULT_CANTILEVER_ALLOWANCE;
 			}
 			
-			// Populate Open Area(s)
+			// Populate Open Area Polygons
 			ArrayList<Polygon> openShapes = new ArrayList<Polygon>();
-			SettingGroup openGroup = settings.settingGroups.get(1);
+			SettingGroup openGroup = settings.settingGroups.get(2);
 			for (SettingGroup openSettings : openGroup.settingGroups) {
 				SettingGroup openAreaVertices = openSettings.settingGroups.get(0);
 				Polygon openArea = this.parsePolygon(openAreaVertices);
 				openShapes.add(openArea);
 				fuzzy.allShapes.add(openArea);
+			}
+			
+			// Populate Tower Polygons
+			ArrayList<Polygon> towerShapes = new ArrayList<Polygon>();
+			HashMap<Polygon, SettingGroup> towerSettingsMap = new HashMap<Polygon, SettingGroup>();
+			SettingGroup towerGroup = settings.settingGroups.get(1);
+			for (SettingGroup towerSettings : towerGroup.settingGroups) {
+				Polygon towerShape = this.towerShape(towerSettings);
+				towerSettingsMap.put(towerShape, towerSettings);
+				towerShapes.add(towerShape);
+				fuzzy.allShapes.add(towerShape);
 			}
 			
 			// Track plot polygons that have already been built
@@ -125,17 +137,8 @@ public class Builder {
 						}
 					}
 					fuzzy.openShapes.put(plotShape, openShapes);
-
-					// Generate Towers
-					SettingGroup towerGroup = plotSettings.settingGroups.get(2);
-					ArrayList<Polygon> towerShapes = new ArrayList<Polygon>();
-					for (SettingGroup towerSettings : towerGroup.settingGroups) {
-
-						// Generate Tower Polygon (and check if its in the current plot)
-						Polygon towerShape = this.towerShape(towerSettings);
-						towerShapes.add(towerShape);
-						fuzzy.allShapes.add(towerShape);
-						
+					
+					for(Polygon towerShape : towerShapes) {
 						if (plotShape.containsPolygon(towerShape) && !towerShape.intersectsPolygon(openShapes)) {
 
 							// Generate Tower Template
@@ -144,7 +147,7 @@ public class Builder {
 							towerTemplate = morph.clip(towerTemplate, towerShape);
 
 							// Generate Tower Zones
-							SettingGroup zoneGroup = towerSettings.settingGroups.get(0);
+							SettingGroup zoneGroup = towerSettingsMap.get(towerShape).settingGroups.get(0);
 							for (int i = 0; i < zoneGroup.settingGroups.size(); i++) {
 								SettingGroup zone = zoneGroup.settingGroups.get(i);
 								int levels = Integer.parseInt(zone.settingValues.get(0).value);
