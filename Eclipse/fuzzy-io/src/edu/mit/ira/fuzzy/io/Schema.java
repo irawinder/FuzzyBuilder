@@ -49,17 +49,17 @@ public class Schema {
 
 		this.universeName = "Site";
 
-		SettingValueSchema floorHeight = new SettingValueSchema(SchemaType.slider, "Floor Height", false);
+		SettingValueSchema floorHeight = new SettingValueSchema(SchemaType.slider, "Floor Height [ft]", false);
 		floorHeight.values.add("10"); // default
 		floorHeight.values.add("10"); // min
 		floorHeight.values.add("20"); // max
 
-		SettingValueSchema cantilever = new SettingValueSchema(SchemaType.slider, "Cantilever Allowance", false);
+		SettingValueSchema cantilever = new SettingValueSchema(SchemaType.slider, "Cantilever Allowance [%]", false);
 		cantilever.values.add("50"); // default
 		cantilever.values.add("0"); // min
 		cantilever.values.add("100"); // max
 
-		SettingGroupSchema plot = new SettingGroupSchema("Plot", true);
+		SettingGroupSchema plot = new SettingGroupSchema("Parcel", true);
 
 		SettingValueSchema plotVertex = new SettingValueSchema(SchemaType.control_point, "Vertex", true);
 		plotVertex.values.add("0"); // initial x
@@ -67,13 +67,13 @@ public class Schema {
 		plotVertex.values.add("0"); // initial z
 		plot.settings.add(plotVertex);
 
-		SettingValueSchema gridSize = new SettingValueSchema(SchemaType.slider, "Grid Size", false);
+		SettingValueSchema gridSize = new SettingValueSchema(SchemaType.slider, "Grid Size [ft]", false);
 		gridSize.values.add("10"); // default
 		gridSize.values.add("10"); // min
 		gridSize.values.add("50"); // max
 		plot.settings.add(gridSize);
 
-		SettingValueSchema gridRot = new SettingValueSchema(SchemaType.slider, "Grid Rotation", false);
+		SettingValueSchema gridRot = new SettingValueSchema(SchemaType.slider, "Grid Rotation [degrees]", false);
 		gridRot.values.add("0"); // default
 		gridRot.values.add("0"); // min
 		gridRot.values.add("90"); // max
@@ -82,7 +82,7 @@ public class Schema {
 		SettingGroupSchema podium = new SettingGroupSchema("Podium Volume", true);
 		plot.settings.add(podium);
 
-		SettingValueSchema setback = new SettingValueSchema(SchemaType.slider, "Setback", false);
+		SettingValueSchema setback = new SettingValueSchema(SchemaType.slider, "Setback [ft]", false);
 		setback.values.add("0"); // default
 		setback.values.add("0"); // min
 		setback.values.add("200"); // max
@@ -100,7 +100,7 @@ public class Schema {
 		SettingGroupSchema pZone = new SettingGroupSchema("Zone", true);
 		podium.settings.add(pZone);
 
-		SettingValueSchema pFloors = new SettingValueSchema(SchemaType.slider, "Floors", false);
+		SettingValueSchema pFloors = new SettingValueSchema(SchemaType.slider, "Floors [#]", false);
 		pFloors.values.add("1"); // default
 		pFloors.values.add("1"); // min
 		pFloors.values.add("6"); // max
@@ -120,19 +120,19 @@ public class Schema {
 		tVertex.values.add("0"); // initial z
 		tower.settings.add(tVertex);
 
-		SettingValueSchema tRot = new SettingValueSchema(SchemaType.slider, "Rotation", false);
+		SettingValueSchema tRot = new SettingValueSchema(SchemaType.slider, "Rotation [degrees]", false);
 		tRot.values.add("0"); // default
 		tRot.values.add("0"); // min
 		tRot.values.add("180"); // max
 		tower.settings.add(tRot);
 
-		SettingValueSchema tWidth = new SettingValueSchema(SchemaType.slider, "Width", false);
+		SettingValueSchema tWidth = new SettingValueSchema(SchemaType.slider, "Width [ft]", false);
 		tWidth.values.add("100"); // default
 		tWidth.values.add("100"); // min
 		tWidth.values.add("1000"); // max
 		tower.settings.add(tWidth);
 
-		SettingValueSchema tDepth = new SettingValueSchema(SchemaType.slider, "Depth", false);
+		SettingValueSchema tDepth = new SettingValueSchema(SchemaType.slider, "Depth [ft]", false);
 		tDepth.values.add("50"); // default
 		tDepth.values.add("50"); // min
 		tDepth.values.add("200"); // max
@@ -141,7 +141,7 @@ public class Schema {
 		SettingGroupSchema tZone = new SettingGroupSchema("Zone", true);
 		tower.settings.add(tZone);
 
-		SettingValueSchema tFloors = new SettingValueSchema(SchemaType.slider, "Floors", false);
+		SettingValueSchema tFloors = new SettingValueSchema(SchemaType.slider, "Floors [#]", false);
 		tFloors.values.add("1"); // default
 		tFloors.values.add("1"); // min
 		tFloors.values.add("40"); // max
