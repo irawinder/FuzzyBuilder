@@ -49,7 +49,17 @@ public class Builder {
 				voxelHeight = DEFAULT_VOXEL_HEIGHT;
 				cantileverAllowance = DEFAULT_CANTILEVER_ALLOWANCE;
 			}
-
+			
+			// Populate Open Area(s)
+			ArrayList<Polygon> openShapes = new ArrayList<Polygon>();
+			SettingGroup openGroup = settings.settingGroups.get(1);
+			for (SettingGroup openSettings : openGroup.settingGroups) {
+				SettingGroup openAreaVertices = openSettings.settingGroups.get(0);
+				Polygon openArea = this.parsePolygon(openAreaVertices);
+				openShapes.add(openArea);
+				fuzzy.allShapes.add(openArea);
+			}
+			
 			// Track plot polygons that have already been built
 			ArrayList<Polygon> builtPlots = new ArrayList<Polygon>();
 
@@ -90,7 +100,6 @@ public class Builder {
 					VoxelArray plotMassing = new VoxelArray();
 
 					// Generate Podiums
-					ArrayList<Polygon> openShapes = new ArrayList<Polygon>();
 					SettingGroup podiumGroup = plotSettings.settingGroups.get(1);
 					for (SettingGroup podiumSettings : podiumGroup.settingGroups) {
 						
@@ -101,17 +110,12 @@ public class Builder {
 						podiumTemplate.setVoxelHeight(voxelHeight);
 
 						// Remove Open Area Polygons from Podium Template
-						SettingGroup openGroup = podiumSettings.settingGroups.get(0);
-						for (SettingGroup openSettings : openGroup.settingGroups) {
-							SettingGroup openAreaVertices = openSettings.settingGroups.get(0);
-							Polygon openArea = this.parsePolygon(openAreaVertices);
-							openShapes.add(openArea);
-							fuzzy.allShapes.add(openArea);
-							podiumTemplate = morph.cut(podiumTemplate, openArea);
+						for (Polygon openShape : openShapes) {
+							podiumTemplate = morph.cut(podiumTemplate, openShape);
 						}
 
 						// Generate Podium Zones
-						SettingGroup zoneGroup = podiumSettings.settingGroups.get(1);
+						SettingGroup zoneGroup = podiumSettings.settingGroups.get(0);
 						for (int i = 0; i < zoneGroup.settingGroups.size(); i++) {
 							SettingGroup zone = zoneGroup.settingGroups.get(i);
 							int levels = Integer.parseInt(zone.settingValues.get(0).value);
@@ -132,7 +136,7 @@ public class Builder {
 						towerShapes.add(towerShape);
 						fuzzy.allShapes.add(towerShape);
 						
-						if (plotShape.containsPolygon(towerShape)) {
+						if (plotShape.containsPolygon(towerShape) && !towerShape.intersectsPolygon(openShapes)) {
 
 							// Generate Tower Template
 							VoxelArray towerTemplate = morph.hardCloneVoxelArray(plot);
@@ -235,7 +239,6 @@ public class Builder {
 		float towerDepth = Float.parseFloat(towerSettings.settingValues.get(3).value);
 		return morph.rectangle(towerLocation, towerWidth, towerDepth, towerRotation);
 	}
-
 
 	/**
 	 * Parse a SettingGroup of points into a polygon (assumes that y and z are

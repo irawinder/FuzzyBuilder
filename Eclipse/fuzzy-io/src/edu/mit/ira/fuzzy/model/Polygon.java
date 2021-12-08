@@ -255,6 +255,21 @@ public class Polygon {
 		}
 		return false;
 	}
+	
+	/**
+	 * Check if a Polygon intersects any of a list of polygons
+	 *
+	 * @param polygon list of shapes that we wish to know is intersecting
+	 * @return returns "true" if any of the polygons intersect this polygon
+	 */
+	public boolean intersectsPolygon(ArrayList<Polygon> polygons) {
+		for(Polygon polygon : polygons) {
+			if(this.intersectsPolygon(polygon)) {
+				return true;
+			}
+		}
+		return false;
+	}
 
 	/**
 	 * Check if Polygon points are coplanar

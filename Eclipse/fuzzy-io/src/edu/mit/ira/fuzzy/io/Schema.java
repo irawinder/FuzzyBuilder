@@ -58,7 +58,7 @@ public class Schema {
 		cantilever.values.add("50"); // default
 		cantilever.values.add("0"); // min
 		cantilever.values.add("100"); // max
-
+		
 		SettingGroupSchema plot = new SettingGroupSchema("Parcel", true);
 
 		SettingValueSchema plotVertex = new SettingValueSchema(SchemaType.control_point, "Vertex", true);
@@ -87,15 +87,6 @@ public class Schema {
 		setback.values.add("0"); // min
 		setback.values.add("200"); // max
 		podium.settings.add(setback);
-
-		SettingGroupSchema openArea = new SettingGroupSchema("Open Area", true);
-		podium.settings.add(openArea);
-
-		SettingValueSchema openVertex = new SettingValueSchema(SchemaType.control_point, "Vertex", true);
-		openVertex.values.add("0"); // initial x
-		openVertex.values.add("0"); // initial y
-		openVertex.values.add("0"); // initial z
-		openArea.settings.add(openVertex);
 
 		SettingGroupSchema pZone = new SettingGroupSchema("Zone", true);
 		podium.settings.add(pZone);
@@ -151,11 +142,20 @@ public class Schema {
 		for (Function function : Function.values())
 			tFunction.values.add(function.toString());
 		tZone.settings.add(tFunction);
+		
+		SettingGroupSchema openArea = new SettingGroupSchema("Open Area", true);
+		SettingValueSchema openVertex = new SettingValueSchema(SchemaType.control_point, "Vertex", true);
+		openVertex.values.add("0"); // initial x
+		openVertex.values.add("0"); // initial y
+		openVertex.values.add("0"); // initial z
+		openArea.settings.add(openVertex);
 
 		JSONArray settings = new JSONArray();
 		settings.put(0, floorHeight.serialize());
 		settings.put(1, cantilever.serialize());
 		settings.put(2, plot.serialize());
+		settings.put(3, openArea.serialize());
+		
 		return settings;
 	}
 
