@@ -82,7 +82,7 @@ public class Builder {
 				// Define Plot polygon
 				SettingGroup vectorGroup = plotSettings.settingGroups.get(0);
 				Polygon plotShape = this.parsePolygon(vectorGroup);
-				String plotName = plotSettings.name;
+				String plotName = plotSettings.label;
 				fuzzy.plotShapes.add(plotShape);
 				fuzzy.allShapes.add(plotShape);
 				fuzzy.plotNames.put(plotShape, plotName);

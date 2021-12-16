@@ -7,10 +7,10 @@ package edu.mit.ira.fuzzy.setting;
  *
  */
 class Setting {
-	public String name, type;
+	public String label, type;
 
 	public Setting() {
-		name = "";
+		label = "";
 		type = "";
 	}
 }

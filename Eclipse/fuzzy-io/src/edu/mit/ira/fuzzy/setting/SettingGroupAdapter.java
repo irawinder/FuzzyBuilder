@@ -40,14 +40,14 @@ public class SettingGroupAdapter {
 		// Check for type group
 		if (settingGroup.getString("type").equals("group")) {
 			group.type = settingGroup.getString("type");
-			group.name = settingGroup.getString("name");
+			group.label = settingGroup.getString("name");
 
 			// Add SettingValues Associated with group
 			JSONArray settingValues = settingGroup.getJSONArray("settingValues");
 			for (int i = 0; i < settingValues.length(); i++) {
 				JSONObject settingValue = settingValues.getJSONObject(i);
 				SettingValue value = new SettingValue();
-				value.name = settingValue.getString("name");
+				value.label = settingValue.getString("name");
 				value.type = settingValue.getString("type");
 				value.value = settingValue.getString("value");
 				group.settingValues.add(value);
