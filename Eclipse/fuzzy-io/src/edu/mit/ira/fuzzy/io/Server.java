@@ -90,6 +90,9 @@ public class Server {
 
 			// Format Response Headers and Body
 			if (requestURI.equals("/")) {
+				
+				// OPTIONS request is something browsers ask before 
+				// allowing an external server to provide data
 				if (requestMethod.equals("OPTIONS")) {
 
 					packItShipIt(t, 200);
@@ -103,7 +106,7 @@ public class Server {
 						Development solution = builder.build(settings);
 						MultiObjective performance = evaluator.evaluate(solution);
 						if (solution == null) {
-							packItShipIt(t, 200);
+							packItShipIt(t, 200, "{}");
 							log(clientIP, "Bad Request");
 						}
 						
