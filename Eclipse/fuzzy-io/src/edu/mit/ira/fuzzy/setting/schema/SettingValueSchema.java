@@ -12,33 +12,32 @@ import org.json.JSONObject;
  *
  */
 public class SettingValueSchema extends SettingSchema {
-	public ArrayList<String> values;
-
-	/**
-	 * 
-	 * @param type       usually refers to the type of GUI element needed (e.g.
-	 *                   slider)
-	 * @param label      the friendly name of the setting
-	 * @param extendable whether or not this setting should be the element of an
-	 *                   arbitrary list of such settings
-	 */
+	public ArrayList<String> value, bounds;
+	
 	public SettingValueSchema(SchemaType type, String label) {
 		super(type.toString(), label);
-		values = new ArrayList<String>();
+		value = new ArrayList<String>();
+		bounds = new ArrayList<String>();
 	}
 
 	public JSONObject serialize() {
 
-		JSONArray valuesJSON = new JSONArray();
-		for (int i = 0; i < this.values.size(); i++) {
-			String value = this.values.get(i);
-			valuesJSON.put(i, value);
+		JSONArray valueJSON = new JSONArray();
+		for (int i = 0; i < this.value.size(); i++) {
+			String val = this.value.get(i);
+			valueJSON.put(i, val);
+		}
+		JSONArray boundsJSON = new JSONArray();
+		for (int i = 0; i < this.bounds.size(); i++) {
+			String bound = this.bounds.get(i);
+			boundsJSON.put(i, bound);
 		}
 
 		JSONObject schema = new JSONObject();
 		schema.put("type", type);
 		schema.put("label", label);
-		schema.put("values", valuesJSON);
+		schema.put("value", valueJSON);
+		schema.put("bounds", boundsJSON);
 		return schema;
 	}
 }
