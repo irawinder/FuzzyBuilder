@@ -71,11 +71,9 @@ public class Server {
 		@Override
 		public void handle(HttpExchange t) throws IOException {
 
-			// Parse Request
+			// Parse and Log Request Header
 			String requestURI = t.getRequestURI().toString();
 			String requestMethod = t.getRequestMethod();
-			
-			// Log Request
 			log(t, requestMethod + " " +  requestURI);
 			
 			// Parse Request Body
@@ -96,9 +94,10 @@ public class Server {
 				// OPTIONS request is something browsers ask before 
 				// allowing an external server to provide data
 				if (requestMethod.equals("OPTIONS")) {
-
 					packItShipIt(t, 200, "Options Delivered");
-
+				
+				// POST request is how settings are submitted to 
+				// FuzzyIO via an external GUI (e.g. openSUI) 
 				} else if (requestMethod.equals("POST")) {
 					if (requestBody.length() > 0) {
 						
@@ -117,12 +116,18 @@ public class Server {
 					} else {
 						packItShipIt(t, 400, "POST request has no body");
 					}
+				
+				// GET request is initially made to retrieve default setting schema
 				} else if (requestMethod.equals("GET")) {
 					String data = schema.serialize().toString(4);
 					packItShipIt(t, 200, "Setting Schema Delivered", data);
+					
+				// No other request methods are allowed
 				} else {
 					packItShipIt(t, 405, "Method Not Allowed");
 				}
+				
+			// URI is not valid
 			} else {
 				packItShipIt(t, 404, "Resource Not Found");
 			}
