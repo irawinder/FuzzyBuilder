@@ -74,8 +74,10 @@ public class Server {
 			// Parse Request
 			String requestURI = t.getRequestURI().toString();
 			String requestMethod = t.getRequestMethod();
-			String clientIP = t.getRemoteAddress().toString();
-
+			
+			// Log Request
+			log(t, requestMethod + " " +  requestURI);
+			
 			// Parse Request Body
 			InputStreamReader isr = new InputStreamReader(t.getRequestBody(), "utf-8");
 			BufferedReader br = new BufferedReader(isr);
@@ -95,8 +97,7 @@ public class Server {
 				// allowing an external server to provide data
 				if (requestMethod.equals("OPTIONS")) {
 
-					packItShipIt(t, 200);
-					log(clientIP, "Options Requested");
+					packItShipIt(t, 200, "Options Delivered");
 
 				} else if (requestMethod.equals("POST")) {
 					if (requestBody.length() > 0) {
@@ -105,36 +106,25 @@ public class Server {
 						SettingGroup settings = adapter.parse(requestBody);
 						Development solution = builder.build(settings);
 						MultiObjective performance = evaluator.evaluate(solution);
-						if (solution == null) {
-							packItShipIt(t, 200, "{}");
-							log(clientIP, "Bad Request");
-						}
 						
 						// Serialize the Response Data
 						JSONObject dataJSON = solution.serialize();
 						dataJSON.put("performance", performance.serialize());
 						String data = wrapApi(dataJSON);
-						packItShipIt(t, 200, data);
-						log(clientIP, "Delivered " + 
-								dataJSON.getJSONArray("voxels").length() + " voxels, " + 
-								dataJSON.getJSONArray("shapes").length() + " shapes, " + 
-								dataJSON.getJSONObject("performance").getJSONArray("primary").length() + " primary objectives, and " + 
-								dataJSON.getJSONObject("performance").getJSONArray("secondary").length() + " secondary objectives");
+						String message = "Solution Delivered";
+						if (solution.error != null) message += " with errors";
+						packItShipIt(t, 200, message, data);
 					} else {
-						packItShipIt(t, 400);
-						log(clientIP, "This POST request has no body");
+						packItShipIt(t, 400, "POST request has no body");
 					}
 				} else if (requestMethod.equals("GET")) {
 					String data = schema.serialize().toString(4);
-					packItShipIt(t, 200, data);
-					log(clientIP, "Setting Schema Delivered");
+					packItShipIt(t, 200, "Setting Schema Delivered", data);
 				} else {
-					packItShipIt(t, 405);
-					log(clientIP, "Method Not Allowed");
+					packItShipIt(t, 405, "Method Not Allowed");
 				}
 			} else {
-				packItShipIt(t, 404);
-				log(clientIP, "Resource Not Found");
+				packItShipIt(t, 404, "Resource Not Found");
 			}
 		}
 	}
@@ -146,12 +136,14 @@ public class Server {
 	 * @param data a string of data, such as a JSON file
 	 * @throws IOException
 	 */
-	public void packItShipIt(HttpExchange t, int responseCode, String data) throws IOException {
+	public void packItShipIt(HttpExchange t, int responseCode, String responseMessage, String data) throws IOException {
 		makeHeaders(t);
-		t.sendResponseHeaders(responseCode, data.length());
+		int responseLength = data.length();
+		t.sendResponseHeaders(responseCode, responseLength);
 		OutputStream os = t.getResponseBody();
 		os.write(data.getBytes());
 		os.close();
+		log(t, "Response Code: " + responseCode + ", " + responseMessage + ", Response Length: " + responseLength);
 	}
 	
 	/**
@@ -160,9 +152,11 @@ public class Server {
 	 * @param responseCode
 	 * @throws IOException
 	 */
-	public void packItShipIt(HttpExchange t, int responseCode) throws IOException {
+	public void packItShipIt(HttpExchange t, int responseCode, String responseMessage) throws IOException {
 		makeHeaders(t);
+		int responseLength = -1;
 		t.sendResponseHeaders(responseCode, -1);
+		log(t, "Response Code: " + responseCode + ", " + responseMessage + ", Response Length: " + responseLength);
 	}
 	
 	/**
@@ -171,8 +165,11 @@ public class Server {
 	 * @param message
 	 * @return
 	 */
-	public String log(String clientIP, String message) {
-
+	public String log(HttpExchange t, String message) {
+		
+		// Log Response
+		String clientIP = t.getRemoteAddress().toString();
+				
 		// Time
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss z");
 		Date date = new Date(System.currentTimeMillis());

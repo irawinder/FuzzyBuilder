@@ -23,7 +23,7 @@ public class SettingGroupAdapter {
 		try {
 			return this.adapt(settingGroupJSON);
 		} catch (Exception e) {
-			System.out.println("JSON is not formatted correctly");
+			System.out.println("JSON data is not formatted correctly");
 			return new SettingGroup();
 		}
 	}

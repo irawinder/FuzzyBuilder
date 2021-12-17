@@ -168,8 +168,7 @@ public class Builder {
 				fuzzy.hollowed = morph.hollow(fuzzy.allVoxels);
 			}
 		} catch (Exception e) {
-			System.out.println("Settings are not formatted correctly for this build of FuzzyIO");
-			return null;
+			fuzzy.error = "Server Error: Settings are not formatted correctly for FuzzyIO";
 		}
 
 		return fuzzy;
