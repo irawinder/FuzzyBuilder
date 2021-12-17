@@ -110,7 +110,7 @@ public class Schema {
 		pZone.settings.add(pFloors);
 
 		SettingValueSchema pFunction = new SettingValueSchema(SchemaType.dropdown, "Function");
-		pFunction.value.add(Function.Residential.toString());
+		pFunction.value.add(Function.Commercial.toString());
 		for (Function function : Function.values())
 			pFunction.bounds.add(function.toString());
 		pZone.settings.add(pFunction);
