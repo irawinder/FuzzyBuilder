@@ -8,11 +8,9 @@ package edu.mit.ira.fuzzy.setting.schema;
  */
 public class SettingSchema {
 	protected String type, label;
-	protected boolean extendable;
 	
-	public SettingSchema(String type, String label, boolean extendable) {
+	public SettingSchema(String type, String label) {
 		this.type = type;
 		this.label = label;
-		this.extendable = extendable;
 	}
 }

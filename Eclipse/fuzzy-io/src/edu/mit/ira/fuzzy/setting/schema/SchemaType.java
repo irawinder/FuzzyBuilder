@@ -8,6 +8,7 @@ package edu.mit.ira.fuzzy.setting.schema;
  */
 public enum SchemaType {
 	group,
+	group_extendable,
 	slider,
 	control_point,
 	dropdown

@@ -14,8 +14,8 @@ import org.json.JSONObject;
 public class SettingGroupSchema extends SettingSchema {
 	public ArrayList<SettingSchema> settings;
 
-	public SettingGroupSchema(String label, boolean extendable) {
-		super(SchemaType.group.toString(), label, extendable);
+	public SettingGroupSchema(String label) {
+		super(SchemaType.group.toString(), label);
 		settings = new ArrayList<SettingSchema>();
 	}
 
@@ -24,19 +24,23 @@ public class SettingGroupSchema extends SettingSchema {
 		JSONArray settingsJSON = new JSONArray();
 		for (int i = 0; i < this.settings.size(); i++) {
 			SettingSchema settingSchema = this.settings.get(i);
+			JSONObject settingJSON = null;
 			if(settingSchema instanceof SettingValueSchema) {
-				JSONObject value = ((SettingValueSchema) settingSchema).serialize();
-				settingsJSON.put(i, value);
+				settingJSON = ((SettingValueSchema) settingSchema).serialize();
 			} else if (settingSchema instanceof SettingGroupSchema) {
-				JSONObject group = ((SettingGroupSchema) settingSchema).serialize();
-				settingsJSON.put(i, group);
+				settingJSON = ((SettingGroupSchema) settingSchema).serialize();
+			} else if (settingSchema instanceof SettingGroupExtendableSchema) {
+				settingJSON = ((SettingGroupExtendableSchema) settingSchema).serialize();
+				
+			}
+			if (settingJSON != null) {
+				settingsJSON.put(i, settingJSON);
 			}
 		}
 
 		JSONObject schema = new JSONObject();
 		schema.put("type", type);
 		schema.put("label", label);
-		schema.put("extendable", extendable);
 		schema.put("settings", settingsJSON);
 		return schema;
 	}

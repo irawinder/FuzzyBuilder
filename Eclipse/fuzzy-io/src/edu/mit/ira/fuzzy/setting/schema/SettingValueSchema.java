@@ -22,8 +22,8 @@ public class SettingValueSchema extends SettingSchema {
 	 * @param extendable whether or not this setting should be the element of an
 	 *                   arbitrary list of such settings
 	 */
-	public SettingValueSchema(SchemaType type, String label, boolean extendable) {
-		super(type.toString(), label, extendable);
+	public SettingValueSchema(SchemaType type, String label) {
+		super(type.toString(), label);
 		values = new ArrayList<String>();
 	}
 
@@ -38,7 +38,6 @@ public class SettingValueSchema extends SettingSchema {
 		JSONObject schema = new JSONObject();
 		schema.put("type", type);
 		schema.put("label", label);
-		schema.put("extendable", extendable);
 		schema.put("values", valuesJSON);
 		return schema;
 	}
