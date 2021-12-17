@@ -1,5 +1,6 @@
 package edu.mit.ira.fuzzy.setting.schema;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
@@ -17,14 +18,16 @@ public class SettingGroupExtendableSchema extends SettingGroupSchema {
 	}
 
 	public JSONObject serialize() {
-
-		JSONObject templateJSON = new JSONObject();
+		
+		// Even though the template is a single SettingSchema object,
+        // Unity's JSONUtility will only serialize it if it's in a List<> (ffs!)
+		JSONArray templateJSON = new JSONArray();
 		if (template instanceof SettingValueSchema) {
-			templateJSON = ((SettingValueSchema) template).serialize();
+			templateJSON.put(0, ((SettingValueSchema) template).serialize());
 		} else if (template instanceof SettingGroupSchema) {
-			templateJSON = ((SettingGroupSchema) template).serialize();
+			templateJSON.put(0, ((SettingGroupSchema) template).serialize());
 		} else if (template instanceof SettingGroupExtendableSchema) {
-			templateJSON = ((SettingGroupExtendableSchema) template).serialize();
+			templateJSON.put(0, ((SettingGroupExtendableSchema) template).serialize());
 		}
 
 		JSONObject schema = new JSONObject();
