@@ -16,6 +16,10 @@ public class SettingGroupExtendableSchema extends SettingGroupSchema {
 		super(label);
 		this.type = SchemaType.group_extendable.toString();
 	}
+	
+	public void extend() {
+		
+	}
 
 	public JSONObject serialize() {
 		
@@ -29,10 +33,29 @@ public class SettingGroupExtendableSchema extends SettingGroupSchema {
 		} else if (template instanceof SettingGroupExtendableSchema) {
 			templateJSON.put(0, ((SettingGroupExtendableSchema) template).serialize());
 		}
+		
+		// Add any existing/default settings to the schema
+		JSONArray settingsJSON = new JSONArray();
+		for (int i = 0; i < this.settings.size(); i++) {
+			SettingSchema settingSchema = this.settings.get(i);
+			JSONObject settingJSON = null;
+			if(settingSchema instanceof SettingValueSchema) {
+				settingJSON = ((SettingValueSchema) settingSchema).serialize();
+			} else if (settingSchema instanceof SettingGroupSchema) {
+				settingJSON = ((SettingGroupSchema) settingSchema).serialize();
+			} else if (settingSchema instanceof SettingGroupExtendableSchema) {
+				settingJSON = ((SettingGroupExtendableSchema) settingSchema).serialize();
+				
+			}
+			if (settingJSON != null) {
+				settingsJSON.put(i, settingJSON);
+			}
+		}
 
 		JSONObject schema = new JSONObject();
 		schema.put("type", type);
 		schema.put("label", label);
+		schema.put("settings", settingsJSON);
 		schema.put("template", templateJSON);
 		return schema;
 	}

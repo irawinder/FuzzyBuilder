@@ -7,7 +7,7 @@ package edu.mit.ira.fuzzy.setting.schema;
  *
  */
 public class SettingSchema {
-	protected String type, label;
+	public String type, label;
 	
 	public SettingSchema(String type, String label) {
 		this.type = type;
