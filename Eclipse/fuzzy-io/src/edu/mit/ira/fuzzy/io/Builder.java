@@ -32,58 +32,51 @@ public class Builder {
 	 *
 	 * @param settings
 	 */
-	public Development build(Setting root) {
+	public Development build(Setting root, Schema schema) {
 		
 		Development fuzzy = new Development();
 		
 		try {
-			Setting height 		= root.settings.get(0);
-			Setting cantilever 	= root.settings.get(1);
-			Setting plots 		= root.settings.get(2);
-			Setting towers 		= root.settings.get(3);
-			Setting openAreas 	= root.settings.get(4);
+			
+			Setting height 		= root.find(schema.FLOOR_HEIGHT);
+			Setting cantilever 	= root.find(schema.CANTILEVER);
+			Setting plots 		= root.find(schema.PARCELS);
+			Setting towers 		= root.find(schema.TOWER_VOLUMES);
+			Setting openAreas 	= root.find(schema.AREAS);
 			
 			// Global Settings
-			float voxelHeight 			= Float.parseFloat(height.value.get(0));
-			float cantileverAllowance 	= Float.parseFloat(cantilever.value.get(0)) / 100f;
+			float voxelHeight 			= height.getFloat();
+			float cantileverAllowance 	= cantilever.getFloat() / 100f;
+			
+			ArrayList<Polygon> openShapes = new ArrayList<Polygon>();
+			ArrayList<Polygon> towerShapes = new ArrayList<Polygon>();
+			HashMap<Polygon, Setting> towerSettingsMap = new HashMap<Polygon, Setting>();
+			ArrayList<Polygon> builtPlots = new ArrayList<Polygon>();
 			
 			// Pre-Populate Open Area Polygons
-			ArrayList<Polygon> openShapes = new ArrayList<Polygon>();
-			for (int i=0; i<openAreas.settings.size(); i++) {
-				
-				// Read from SettingSchema
-				Setting openArea = openAreas.settings.get(i);
-				Setting vertices = openArea.settings.get(0);
-				
+			for (Setting openArea : openAreas.settings) {
+				Setting vertices = openArea.find(schema.VERTICES);
 				Polygon openShape = this.parsePolygon(vertices);
 				openShapes.add(openShape);
 				fuzzy.allShapes.add(openShape);
 			}
 			
 			// Pre-Populate Tower Polygons
-			ArrayList<Polygon> towerShapes = new ArrayList<Polygon>();
-			HashMap<Polygon, Setting> towerSettingsMap = new HashMap<Polygon, Setting>();
-			for (int i=0; i<towers.settings.size(); i++) {
-				
-				// Read from SettingSchema
-				Setting tower = (Setting) towers.settings.get(i);
-				
-				Polygon towerShape = this.towerShape(tower);
+			for (Setting tower : towers.settings) {
+				Polygon towerShape = this.towerShape(tower, schema);
 				towerSettingsMap.put(towerShape, tower);
 				towerShapes.add(towerShape);
 				fuzzy.allShapes.add(towerShape);
 			}
 			
 			// Populate Plots and Build
-			ArrayList<Polygon> builtPlots = new ArrayList<Polygon>();
-			for (int i=0; i<plots.settings.size(); i++) {
+			for (Setting plot : plots.settings) {
 				
 				// Read from SettingSchema
-				Setting plot = plots.settings.get(i);
-				Setting vert = plot.settings.get(0);
-				Setting gSiz = plot.settings.get(1);
-				Setting gRot = plot.settings.get(2);
-				Setting pods = plot.settings.get(3);
+				Setting vert = plot.find(schema.VERTICES);
+				Setting gSiz = plot.find(schema.GRID_SIZE);
+				Setting gRot = plot.find(schema.GRID_ROTATION);
+				Setting pods = plot.find(schema.PODIUM_VOLUMES);
 				
 				// Define Plot polygon
 				Polygon plotShape = this.parsePolygon(vert);
@@ -104,8 +97,8 @@ public class Builder {
 					builtPlots.add(plotShape);
 					
 					// Initialize parcel
-					float gridSize = Integer.parseInt(gSiz.value.get(0));
-					float gridRotation = (float) (2 * Math.PI * Integer.parseInt(gRot.value.get(0)) / 360f);
+					float gridSize = gSiz.getInt();
+					float gridRotation = (float) (2 * Math.PI * gRot.getInt() / 360f);
 					Point gridTranslation = new Point();
 					VoxelArray plotVoxels = this.morph.make(plotShape, gridSize, 0, gridRotation, gridTranslation);
 					plotVoxels.setVoxelUse(Function.Unspecified);
@@ -116,15 +109,14 @@ public class Builder {
 					VoxelArray plotMassing = new VoxelArray();
 
 					// Generate Podiums
-					for (int j=0; j<pods.settings.size(); j++) {
+					for (Setting podium : pods.settings) {
 						
 						// Read from SettingSchema
-						Setting podium 	= pods.settings.get(j);
-						Setting setback = podium.settings.get(0);
-						Setting zones 	= podium.settings.get(1);
+						Setting setback = podium.find(schema.SETBACK);
+						Setting zones 	= podium.find(schema.ZONES);
 						
 						// Generate Podium Template
-						float setbackDistance = Float.parseFloat(setback.value.get(0));
+						float setbackDistance = setback.getFloat();
 						VoxelArray podiumTemplate = morph.hardCloneVoxelArray(plotVoxels);
 						podiumTemplate = morph.setback(podiumTemplate, setbackDistance);
 						podiumTemplate.setVoxelHeight(voxelHeight);
@@ -135,16 +127,15 @@ public class Builder {
 						}
 
 						// Generate Podium Zones
-						for (int k = 0; k < zones.settings.size(); k++) {
+						for (Setting zone : zones.settings) {
 							
 							// Read from SettingSchema
-							Setting zone	= zones.settings.get(k);
-							Setting l		= zone.settings.get(0);
-							Setting f		= zone.settings.get(1);
+							Setting l = zone.find(schema.FLOORS);
+							Setting f = zone.find(schema.FUNCTION);
 							
 							// Podium Zone
-							int levels = Integer.parseInt(l.value.get(0));
-							Function function = this.parseUse(f.value.get(0));
+							int levels = l.getInt();
+							Function function = this.parseUse(f.getString());
 							plotMassing = morph.makeAndDrop(podiumTemplate, plotMassing, levels, function,
 									cantileverAllowance);
 						}
@@ -154,7 +145,7 @@ public class Builder {
 					for(Polygon towerShape : towerShapes) {
 						
 						// Read from SettingSchema
-						Setting zones = towerSettingsMap.get(towerShape).settings.get(4);
+						Setting zones = towerSettingsMap.get(towerShape).find(schema.ZONES);
 						
 						if (plotShape.containsPolygon(towerShape) && !towerShape.intersectsPolygon(openShapes)) {
 							
@@ -164,15 +155,15 @@ public class Builder {
 							towerTemplate = morph.clip(towerTemplate, towerShape);
 
 							// Generate Tower Zones
-							for (int j = 0; j < zones.settings.size(); j++) {
+							for (Setting zone : zones.settings) {
 								
 								// Read from SettingSchema
-								Setting zone	= zones.settings.get(j);
-								Setting l		= zone.settings.get(0);
-								Setting f		= zone.settings.get(1);
+								Setting l = zone.find(schema.FLOORS);
+								Setting f = zone.find(schema.FUNCTION);
 								
-								int levels = Integer.parseInt(l.value.get(0));
-								Function function = this.parseUse(f.value.get(0));
+								// Podium Zone
+								int levels = l.getInt();
+								Function function = this.parseUse(f.getString());
 								plotMassing = morph.makeAndDrop(towerTemplate, plotMassing, levels, function,
 										cantileverAllowance);
 							}
@@ -200,18 +191,18 @@ public class Builder {
 	 * @param towerSettings
 	 * @return
 	 */
-	public Polygon towerShape(Setting towerSettings) {
+	public Polygon towerShape(Setting towerSettings, Schema schema) {
 		
 		// Read from SettingSchema
-		Setting loc = towerSettings.settings.get(0);
-		Setting rot = towerSettings.settings.get(1);
-		Setting wid = towerSettings.settings.get(2);
-		Setting dep = towerSettings.settings.get(3);
+		Setting loc = towerSettings.find(schema.LOCATION);
+		Setting rot = towerSettings.find(schema.ROTATION);
+		Setting wid = towerSettings.find(schema.WIDTH);
+		Setting dep = towerSettings.find(schema.DEPTH);
 		
 		Point towerLocation = this.parsePoint(loc);
-		float towerRotation = (float) (2 * Math.PI * Float.parseFloat(rot.value.get(0)) / 360f);
-		float towerWidth = Float.parseFloat(wid.value.get(0));
-		float towerDepth = Float.parseFloat(dep.value.get(0));
+		float towerRotation = (float) (2 * Math.PI * rot.getFloat() / 360f);
+		float towerWidth = wid.getFloat();
+		float towerDepth = dep.getFloat();
 		return morph.rectangle(towerLocation, towerWidth, towerDepth, towerRotation);
 	}
 
@@ -224,9 +215,8 @@ public class Builder {
 	 */
 	private Polygon parsePolygon(Setting vertexGroup) {
 		Polygon shape = new Polygon();
-		for (int i = 0; i < vertexGroup.settings.size(); i++) {
-			Setting plotVertex = vertexGroup.settings.get(i);
-			shape.addVertex(this.parsePoint(plotVertex));
+		for (Setting vertex : vertexGroup.settings) {
+			shape.addVertex(this.parsePoint(vertex));
 		}
 		return shape;
 	}

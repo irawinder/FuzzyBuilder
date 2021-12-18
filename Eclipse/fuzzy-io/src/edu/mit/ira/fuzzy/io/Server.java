@@ -103,7 +103,7 @@ public class Server {
 						
 						// Generate FuzzyIO Response Data
 						Setting settings = adapter.parse(requestBody);
-						Development solution = builder.build(settings);
+						Development solution = builder.build(settings, schema);
 						MultiObjective performance = evaluator.evaluate(solution);
 						
 						// Serialize the Response Data

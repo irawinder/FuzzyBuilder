@@ -1,9 +1,12 @@
 package edu.mit.ira.fuzzy.io;
 
+import java.util.ArrayList;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import edu.mit.ira.fuzzy.model.Function;
+import edu.mit.ira.fuzzy.setting.GUI;
 import edu.mit.ira.fuzzy.setting.Setting;
 
 public class Schema {
@@ -14,6 +17,7 @@ public class Schema {
 	private String contact;
 	private String sponsor;
 	private String universeName;
+	private ArrayList<Setting> settings;
 
 	public Schema(String apiVersion, String id, String author, String sponsor, String contact) {
 		this.apiVersion = apiVersion;
@@ -22,6 +26,7 @@ public class Schema {
 		this.sponsor = sponsor;
 		this.contact = contact;
 		this.universeName = "";
+		this.settings = new ArrayList<Setting>();
 	}
 
 	public JSONObject serialize() {
@@ -31,7 +36,7 @@ public class Schema {
 		schema.put("apiVersion", apiVersion);
 		schema.put("id", id);
 		schema.put("label", universeName);
-		schema.put("type", "group");
+		schema.put("type", GUI.GROUP.toString().toLowerCase());
 		schema.put("author", author);
 		schema.put("sponsor", sponsor);
 		schema.put("contact", contact);
@@ -39,7 +44,32 @@ public class Schema {
 		schema.put("legend", legend);
 		return schema;
 	}
-
+	
+	public final String UNIVERSE_NAME = "Site";
+	public final String FLOOR_HEIGHT = "Floor Height [ft]";
+	public final String CANTILEVER = "Cantilever Allowance [%]";
+	public final String PARCELS = "Parcels";
+	public final String PARCEL = "Parcel";
+	public final String VERTICES = "Vertices";
+	public final String VERTEX = "Vertex";
+	public final String GRID_SIZE = "Grid Size [ft]";
+	public final String GRID_ROTATION = "Grid Rotation [degrees]";
+	public final String PODIUM_VOLUMES = "Podium Volumes";
+	public final String PODIUM_VOLUME = "Podium Volume";
+	public final String SETBACK = "Setback [ft]";
+	public final String ZONES = "Zones";
+	public final String ZONE = "Zone";
+	public final String FLOORS = "Floors [#]";
+	public final String FUNCTION = "Function";
+	public final String TOWER_VOLUMES = "Tower Volumes";
+	public final String TOWER_VOLUME = "Tower Volume";
+	public final String LOCATION = "Location";
+	public final String ROTATION = "Rotation [degrees]";
+	public final String WIDTH = "Width [ft]";
+	public final String DEPTH = "Depth [ft]";
+	public final String AREAS = "Building Exclusion Areas";
+	public final String AREA = "Area";
+	
 	/**
 	 * make and return the setting schema for this model
 	 * @return
@@ -48,22 +78,22 @@ public class Schema {
 
 		this.universeName = "Site";
 
-		Setting floorHeight = new Setting("slider", "Floor Height [ft]");
+		Setting floorHeight = new Setting(GUI.SLIDER, FLOOR_HEIGHT);
 		floorHeight.value.add("10"); // default
 		floorHeight.bounds.add("10"); // min
 		floorHeight.bounds.add("20"); // max
 
-		Setting cantilever = new Setting("slider", "Cantilever Allowance [%]");
+		Setting cantilever = new Setting(GUI.SLIDER, CANTILEVER);
 		cantilever.value.add("50"); // default
 		cantilever.bounds.add("0"); // min
 		cantilever.bounds.add("100"); // max
 		
-		Setting plots = new Setting("group_extendable", "Parcels");
-		Setting plot = new Setting("group", "Parcel");
+		Setting plots = new Setting(GUI.GROUP_EXTENDABLE, PARCELS);
+		Setting plot = new Setting(GUI.GROUP, PARCEL);
 		plots.template = plot;
 		
-		Setting plotVertices = new Setting("group_extendable", "Vertices");
-		Setting plotVertex = new Setting("control_point", "Vertex");
+		Setting plotVertices = new Setting(GUI.GROUP_EXTENDABLE, VERTICES);
+		Setting plotVertex = new Setting(GUI.CONTROL_POINT, VERTEX);
 		plotVertices.template = plotVertex;
 		plotVertex.value.add("0"); // initial x
 		plotVertex.value.add("0"); // initial y
@@ -73,97 +103,97 @@ public class Schema {
 		// test the addition of default vertices
 		//for(int i=0; i<3; i++) plotVertices.settings.add(plotVertex);
 		
-		Setting gridSize = new Setting("slider", "Grid Size [ft]");
+		Setting gridSize = new Setting(GUI.SLIDER, GRID_SIZE);
 		gridSize.value.add("10"); // default
 		gridSize.bounds.add("10"); // min
 		gridSize.bounds.add("50"); // max
 		plot.settings.add(gridSize);
 
-		Setting gridRot = new Setting("slider", "Grid Rotation [degrees]");
+		Setting gridRot = new Setting(GUI.SLIDER, GRID_ROTATION);
 		gridRot.value.add("0"); // default
 		gridRot.bounds.add("0"); // min
 		gridRot.bounds.add("90"); // max
 		plot.settings.add(gridRot);
 		
-		Setting podiums = new Setting("group_extendable", "Podium Volumes");
-		Setting podium = new Setting("group", "Podium Volume");
+		Setting podiums = new Setting(GUI.GROUP_EXTENDABLE, PODIUM_VOLUMES);
+		Setting podium = new Setting(GUI.GROUP, PODIUM_VOLUME);
 		podiums.template = podium;
 		plot.settings.add(podiums);
 
-		Setting setback = new Setting("slider", "Setback [ft]");
+		Setting setback = new Setting(GUI.SLIDER, SETBACK);
 		setback.value.add("0"); // default
 		setback.bounds.add("0"); // min
 		setback.bounds.add("200"); // max
 		podium.settings.add(setback);
 		
-		Setting pZones = new Setting("group_extendable", "Zones");
-		Setting pZone = new Setting("group", "Zone");
+		Setting pZones = new Setting(GUI.GROUP_EXTENDABLE, ZONES);
+		Setting pZone = new Setting(GUI.GROUP, ZONE);
 		pZones.template = pZone;
 		podium.settings.add(pZones);
 
-		Setting pFloors = new Setting("slider", "Floors [#]");
+		Setting pFloors = new Setting(GUI.SLIDER, FLOORS);
 		pFloors.value.add("1"); // default
 		pFloors.bounds.add("1"); // min
 		pFloors.bounds.add("6"); // max
 		pZone.settings.add(pFloors);
 
-		Setting pFunction = new Setting("dropdown", "Function");
+		Setting pFunction = new Setting(GUI.DROPDOWN, FUNCTION);
 		pFunction.value.add(Function.Commercial.toString());
 		for (Function function : Function.values())
 			pFunction.bounds.add(function.toString());
 		pZone.settings.add(pFunction);
 		
-		Setting towers = new Setting("group_extendable", "Tower Volumes");
-		Setting tower = new Setting("group", "Tower Volume");
+		Setting towers = new Setting(GUI.GROUP_EXTENDABLE, TOWER_VOLUMES);
+		Setting tower = new Setting(GUI.GROUP, TOWER_VOLUME);
 		towers.template = tower;
 
-		Setting tVertex = new Setting("control_point", "Location");
+		Setting tVertex = new Setting(GUI.CONTROL_POINT, LOCATION);
 		tVertex.value.add("0"); // initial x
 		tVertex.value.add("0"); // initial y
 		tVertex.value.add("0"); // initial z
 		tower.settings.add(tVertex);
 
-		Setting tRot = new Setting("slider", "Rotation [degrees]");
+		Setting tRot = new Setting(GUI.SLIDER, ROTATION);
 		tRot.value.add("0"); // default
 		tRot.bounds.add("0"); // min
 		tRot.bounds.add("180"); // max
 		tower.settings.add(tRot);
 
-		Setting tWidth = new Setting("slider", "Width [ft]");
+		Setting tWidth = new Setting(GUI.SLIDER, WIDTH);
 		tWidth.value.add("100"); // default
 		tWidth.bounds.add("100"); // min
 		tWidth.bounds.add("1000"); // max
 		tower.settings.add(tWidth);
 
-		Setting tDepth = new Setting("slider", "Depth [ft]");
+		Setting tDepth = new Setting(GUI.SLIDER, DEPTH);
 		tDepth.value.add("50"); // default
 		tDepth.bounds.add("50"); // min
 		tDepth.bounds.add("200"); // max
 		tower.settings.add(tDepth);
 		
-		Setting tZones = new Setting("group_extendable", "Zones");
-		Setting tZone = new Setting("group", "Zone");
+		Setting tZones = new Setting(GUI.GROUP_EXTENDABLE, ZONES);
+		Setting tZone = new Setting(GUI.GROUP, ZONE);
 		tZones.template = tZone;
 		tower.settings.add(tZones);
 
-		Setting tFloors = new Setting("slider", "Floors [#]");
+		Setting tFloors = new Setting(GUI.SLIDER, FLOORS);
 		tFloors.value.add("1"); // default
 		tFloors.bounds.add("1"); // min
 		tFloors.bounds.add("40"); // max
 		tZone.settings.add(tFloors);
 
-		Setting tFunction = new Setting("dropdown", "Function");
+		Setting tFunction = new Setting(GUI.DROPDOWN, FUNCTION);
 		tFunction.value.add(Function.Residential.toString());
 		for (Function function : Function.values())
 			tFunction.bounds.add(function.toString());
 		tZone.settings.add(tFunction);
 		
-		Setting openAreas = new Setting("group_extendable", "Building Exclusion Areas");
-		Setting openArea = new Setting("group", "Area");
+		Setting openAreas = new Setting(GUI.GROUP_EXTENDABLE, AREAS);
+		Setting openArea = new Setting(GUI.GROUP, AREA);
 		openAreas.template = openArea;
 		
-		Setting openVertices = new Setting("group_extendable", "Vertices");
-		Setting openVertex = new Setting("control_point", "Vertex");
+		Setting openVertices = new Setting(GUI.GROUP_EXTENDABLE, VERTICES);
+		Setting openVertex = new Setting(GUI.CONTROL_POINT, VERTEX);
 		openVertices.template = openVertex;
 		openVertex.value.add("0"); // initial x
 		openVertex.value.add("0"); // initial y

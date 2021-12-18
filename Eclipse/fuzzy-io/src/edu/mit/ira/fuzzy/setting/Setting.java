@@ -17,11 +17,11 @@ public class Setting {
 	public ArrayList<Setting> settings;
 	public Setting template;
 	
+	public Setting(GUI type, String label) {
+		this(type.toString().toLowerCase(), label);
+	}
+	
 	public Setting(String type, String label) {
-		
-		// Check for illegal arguments
-		Type.valueOf(type);
-		
 		this.type = type;
 		this.label = label;
 		this.value = new ArrayList<String>();
@@ -29,11 +29,30 @@ public class Setting {
 		this.settings = new ArrayList<Setting>();
 	}
 	
+	/**
+	 * returns first child setting with matching label
+	 * @param label
+	 * @return
+	 */
+	public Setting find(String label) {
+		for (Setting setting : settings) {
+			if (setting.label.equals(label)) {
+				return setting;
+			}
+		}
+		for (Setting setting : settings) {
+			Setting match = setting.find(label);
+			if (match != null) return match;
+		}
+		System.out.println("No such setting: " + label);
+		return null;
+	}
+	
 	public float getFloat() {
 		return Float.parseFloat(this.value.get(0));
 	}
 	
-	public float getInt() {
+	public int getInt() {
 		return Integer.parseInt(this.value.get(0));
 	}
 	
@@ -81,15 +100,5 @@ public class Setting {
 		settingJSON.put("settings", settingsJSON);
 		settingJSON.put("template", templateJSON);
 		return settingJSON;
-	}
-	
-	private enum Type {
-		group,
-		group_extendable,
-		slider,
-		control_point,
-		dropdown,
-		text_input,
-	    toggle
 	}
 }
