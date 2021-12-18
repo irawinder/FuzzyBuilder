@@ -1,49 +1,13 @@
 package edu.mit.ira.fuzzy.io;
 
-import java.util.ArrayList;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import edu.mit.ira.fuzzy.model.Function;
+import edu.mit.ira.fuzzy.setting.Configuration;
 import edu.mit.ira.fuzzy.setting.GUI;
+import edu.mit.ira.fuzzy.setting.Legend;
+import edu.mit.ira.fuzzy.setting.Legend.Entry;
 import edu.mit.ira.fuzzy.setting.Setting;
 
 public class Schema {
-
-	private String apiVersion;
-	private String id;
-	private String author;
-	private String contact;
-	private String sponsor;
-	private String universeName;
-	private ArrayList<Setting> settings;
-
-	public Schema(String apiVersion, String id, String author, String sponsor, String contact) {
-		this.apiVersion = apiVersion;
-		this.id = id;
-		this.author = author;
-		this.sponsor = sponsor;
-		this.contact = contact;
-		this.universeName = "";
-		this.settings = new ArrayList<Setting>();
-	}
-
-	public JSONObject serialize() {
-		JSONArray settings = this.settings();
-		JSONObject legend = this.legend();
-		JSONObject schema = new JSONObject();
-		schema.put("apiVersion", apiVersion);
-		schema.put("id", id);
-		schema.put("label", universeName);
-		schema.put("type", GUI.GROUP.toString().toLowerCase());
-		schema.put("author", author);
-		schema.put("sponsor", sponsor);
-		schema.put("contact", contact);
-		schema.put("settings", settings);
-		schema.put("legend", legend);
-		return schema;
-	}
 	
 	public final String UNIVERSE_NAME = "Site";
 	public final String FLOOR_HEIGHT = "Floor Height [ft]";
@@ -74,9 +38,9 @@ public class Schema {
 	 * make and return the setting schema for this model
 	 * @return
 	 */
-	public JSONArray settings() {
-
-		this.universeName = "Site";
+	public Configuration baseConfiguration(String apiVersion, String id, String author, String sponsor, String contact) {
+		
+		Configuration base = new Configuration(UNIVERSE_NAME, apiVersion, id, author, sponsor, contact);
 
 		Setting floorHeight = new Setting(GUI.SLIDER, FLOOR_HEIGHT);
 		floorHeight.value.add("10"); // default
@@ -200,33 +164,23 @@ public class Schema {
 		openVertex.value.add("0"); // initial z
 		openArea.settings.add(openVertices);
 		
-		JSONArray settings = new JSONArray();
-		settings.put(0, floorHeight.serialize());
-		settings.put(1, cantilever.serialize());
-		settings.put(2, plots.serialize());
-		settings.put(3, towers.serialize());
-		settings.put(4, openAreas.serialize());
+		base.settings.add(floorHeight);
+		base.settings.add(cantilever);
+		base.settings.add(plots);
+		base.settings.add(towers);
+		base.settings.add(openAreas);
 		
-		return settings;
-	}
-
-	/**
-	 * Return the legend of colors for this model
-	 * @return
-	 */
-	JSONObject legend() {
-		JSONArray functionLegend = new JSONArray();
-		int i = 0;
+		// Create Legend
+		Legend legend = new Legend();
+		legend.label = "Function";
 		for (Function function : Function.values()) {
-			JSONObject entry = new JSONObject();
-			entry.put("label", function.toString());
-			entry.put("color", function.legendColor());
-			functionLegend.put(i, entry);
-			i++;
+			Entry entry = legend.new Entry();
+			entry.label = function.toString();
+			entry.color = function.legendColor();
+			legend.entries.add(entry);
 		}
-		JSONObject legend = new JSONObject();
-		legend.put("label", "Function");
-		legend.put("entries", functionLegend);
-		return legend;
+		base.legend = legend;
+		
+		return base;
 	}
 }

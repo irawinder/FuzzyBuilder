@@ -18,6 +18,7 @@ import com.sun.net.httpserver.HttpServer;
 import edu.mit.ira.fuzzy.model.Development;
 import edu.mit.ira.fuzzy.objective.MultiObjective;
 import edu.mit.ira.fuzzy.setting.Setting;
+import edu.mit.ira.fuzzy.setting.Configuration;
 import edu.mit.ira.fuzzy.setting.Deserializer;
 
 /**
@@ -37,6 +38,7 @@ public class Server {
 	
 	// Fuzzy Objects
 	private Schema schema;
+	private Configuration config;
 	private Builder builder;
 	private Evaluator evaluator;
 	private Deserializer adapter;
@@ -56,7 +58,8 @@ public class Server {
 		server.setExecutor(null); // creates a default executor
 		server.start();
 		
-		schema = new Schema(serverVersion, serverID, author, sponsor, contact);
+		schema = new Schema();
+		config = schema.baseConfiguration(version, name, author, sponsor, contact);
 		builder = new Builder();
 		evaluator = new Evaluator();
 		adapter = new Deserializer();
@@ -119,7 +122,7 @@ public class Server {
 				
 				// GET request is initially made to retrieve default setting schema
 				} else if (requestMethod.equals("GET")) {
-					String data = schema.serialize().toString(4);
+					String data = config.serialize().toString(4);
 					packItShipIt(t, 200, "Setting Schema Delivered", data);
 					
 				// No other request methods are allowed
