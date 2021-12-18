@@ -9,8 +9,7 @@ import edu.mit.ira.fuzzy.model.Point;
 import edu.mit.ira.fuzzy.model.Polygon;
 import edu.mit.ira.fuzzy.model.Function;
 import edu.mit.ira.fuzzy.model.VoxelArray;
-import edu.mit.ira.fuzzy.setting.schema.SettingGroupSchema;
-import edu.mit.ira.fuzzy.setting.schema.SettingValueSchema;
+import edu.mit.ira.fuzzy.setting.Setting;
 
 /**
  * FuzzyBuilder generates a fuzzy massing according to settings that are passed
@@ -33,28 +32,28 @@ public class Builder {
 	 *
 	 * @param settings
 	 */
-	public Development build(SettingGroupSchema root) {
-
+	public Development build(Setting root) {
+		
 		Development fuzzy = new Development();
-
+		
 		try {
-			SettingValueSchema height 		= (SettingValueSchema)root.settings.get(0);
-			SettingValueSchema cantilever 	= (SettingValueSchema)root.settings.get(1);
-			SettingGroupSchema plots 		= (SettingGroupSchema)root.settings.get(2);
-			SettingGroupSchema towers 		= (SettingGroupSchema)root.settings.get(3);
-			SettingGroupSchema openAreas 	= (SettingGroupSchema)root.settings.get(4);
+			Setting height 		= root.settings.get(0);
+			Setting cantilever 	= root.settings.get(1);
+			Setting plots 		= root.settings.get(2);
+			Setting towers 		= root.settings.get(3);
+			Setting openAreas 	= root.settings.get(4);
 			
 			// Global Settings
-			float voxelHeight 				= Float.parseFloat(height.value.get(0));
-			float cantileverAllowance 		= Float.parseFloat(cantilever.value.get(0)) / 100f;
+			float voxelHeight 			= Float.parseFloat(height.value.get(0));
+			float cantileverAllowance 	= Float.parseFloat(cantilever.value.get(0)) / 100f;
 			
 			// Pre-Populate Open Area Polygons
 			ArrayList<Polygon> openShapes = new ArrayList<Polygon>();
 			for (int i=0; i<openAreas.settings.size(); i++) {
 				
 				// Read from SettingSchema
-				SettingGroupSchema openArea = (SettingGroupSchema)openAreas.settings.get(i);
-				SettingGroupSchema vertices = (SettingGroupSchema)openArea.settings.get(0);
+				Setting openArea = openAreas.settings.get(i);
+				Setting vertices = openArea.settings.get(0);
 				
 				Polygon openShape = this.parsePolygon(vertices);
 				openShapes.add(openShape);
@@ -63,11 +62,11 @@ public class Builder {
 			
 			// Pre-Populate Tower Polygons
 			ArrayList<Polygon> towerShapes = new ArrayList<Polygon>();
-			HashMap<Polygon, SettingGroupSchema> towerSettingsMap = new HashMap<Polygon, SettingGroupSchema>();
+			HashMap<Polygon, Setting> towerSettingsMap = new HashMap<Polygon, Setting>();
 			for (int i=0; i<towers.settings.size(); i++) {
 				
 				// Read from SettingSchema
-				SettingGroupSchema tower = (SettingGroupSchema) towers.settings.get(i);
+				Setting tower = (Setting) towers.settings.get(i);
 				
 				Polygon towerShape = this.towerShape(tower);
 				towerSettingsMap.put(towerShape, tower);
@@ -80,11 +79,11 @@ public class Builder {
 			for (int i=0; i<plots.settings.size(); i++) {
 				
 				// Read from SettingSchema
-				SettingGroupSchema plot = (SettingGroupSchema)plots.settings.get(i);
-				SettingGroupSchema vert = (SettingGroupSchema)plot.settings.get(0);
-				SettingValueSchema gSiz = (SettingValueSchema)plot.settings.get(1);
-				SettingValueSchema gRot = (SettingValueSchema)plot.settings.get(2);
-				SettingGroupSchema pods = (SettingGroupSchema)plot.settings.get(3);
+				Setting plot = plots.settings.get(i);
+				Setting vert = plot.settings.get(0);
+				Setting gSiz = plot.settings.get(1);
+				Setting gRot = plot.settings.get(2);
+				Setting pods = plot.settings.get(3);
 				
 				// Define Plot polygon
 				Polygon plotShape = this.parsePolygon(vert);
@@ -120,9 +119,9 @@ public class Builder {
 					for (int j=0; j<pods.settings.size(); j++) {
 						
 						// Read from SettingSchema
-						SettingGroupSchema podium 	= (SettingGroupSchema)pods.settings.get(j);
-						SettingValueSchema setback 	= (SettingValueSchema)podium.settings.get(0);
-						SettingGroupSchema zones 	= (SettingGroupSchema)podium.settings.get(1);
+						Setting podium 	= pods.settings.get(j);
+						Setting setback = podium.settings.get(0);
+						Setting zones 	= podium.settings.get(1);
 						
 						// Generate Podium Template
 						float setbackDistance = Float.parseFloat(setback.value.get(0));
@@ -139,9 +138,9 @@ public class Builder {
 						for (int k = 0; k < zones.settings.size(); k++) {
 							
 							// Read from SettingSchema
-							SettingGroupSchema zone = (SettingGroupSchema)zones.settings.get(k);
-							SettingValueSchema l 	= (SettingValueSchema)zone.settings.get(0);
-							SettingValueSchema f 	= (SettingValueSchema)zone.settings.get(1);
+							Setting zone	= zones.settings.get(k);
+							Setting l		= zone.settings.get(0);
+							Setting f		= zone.settings.get(1);
 							
 							// Podium Zone
 							int levels = Integer.parseInt(l.value.get(0));
@@ -155,7 +154,7 @@ public class Builder {
 					for(Polygon towerShape : towerShapes) {
 						
 						// Read from SettingSchema
-						SettingGroupSchema zones = (SettingGroupSchema)towerSettingsMap.get(towerShape).settings.get(4);
+						Setting zones = towerSettingsMap.get(towerShape).settings.get(4);
 						
 						if (plotShape.containsPolygon(towerShape) && !towerShape.intersectsPolygon(openShapes)) {
 							
@@ -168,9 +167,9 @@ public class Builder {
 							for (int j = 0; j < zones.settings.size(); j++) {
 								
 								// Read from SettingSchema
-								SettingGroupSchema zone = (SettingGroupSchema)zones.settings.get(j);
-								SettingValueSchema l 	= (SettingValueSchema)zone.settings.get(0);
-								SettingValueSchema f 	= (SettingValueSchema)zone.settings.get(1);
+								Setting zone	= zones.settings.get(j);
+								Setting l		= zone.settings.get(0);
+								Setting f		= zone.settings.get(1);
 								
 								int levels = Integer.parseInt(l.value.get(0));
 								Function function = this.parseUse(f.value.get(0));
@@ -197,17 +196,17 @@ public class Builder {
 	}
 	
 	/**
-	 * Generate a Tower Polygon from an appropriate SettingGroup
+	 * Generate a Tower Polygon from an appropriate Setting
 	 * @param towerSettings
 	 * @return
 	 */
-	public Polygon towerShape(SettingGroupSchema towerSettings) {
+	public Polygon towerShape(Setting towerSettings) {
 		
 		// Read from SettingSchema
-		SettingValueSchema loc = (SettingValueSchema)towerSettings.settings.get(0);
-		SettingValueSchema rot = (SettingValueSchema)towerSettings.settings.get(1);
-		SettingValueSchema wid = (SettingValueSchema)towerSettings.settings.get(2);
-		SettingValueSchema dep = (SettingValueSchema)towerSettings.settings.get(3);
+		Setting loc = towerSettings.settings.get(0);
+		Setting rot = towerSettings.settings.get(1);
+		Setting wid = towerSettings.settings.get(2);
+		Setting dep = towerSettings.settings.get(3);
 		
 		Point towerLocation = this.parsePoint(loc);
 		float towerRotation = (float) (2 * Math.PI * Float.parseFloat(rot.value.get(0)) / 360f);
@@ -217,16 +216,16 @@ public class Builder {
 	}
 
 	/**
-	 * Parse a SettingGroupSchema of points into a polygon (assumes that y and z are
+	 * Parse a SettingSchema of points into a polygon (assumes that y and z are
 	 * flipped)
 	 *
 	 * @param vertexGroup a list of 2D or 3D vectors
 	 * @return a new polygon made from the vertices in the group
 	 */
-	private Polygon parsePolygon(SettingGroupSchema vertexGroup) {
+	private Polygon parsePolygon(Setting vertexGroup) {
 		Polygon shape = new Polygon();
 		for (int i = 0; i < vertexGroup.settings.size(); i++) {
-			SettingValueSchema plotVertex = (SettingValueSchema)vertexGroup.settings.get(i);
+			Setting plotVertex = vertexGroup.settings.get(i);
 			shape.addVertex(this.parsePoint(plotVertex));
 		}
 		return shape;
@@ -236,16 +235,16 @@ public class Builder {
 	 * Parse a string list into a Point object
 	 *
 	 * @param a vertex
-	 * @return a new point made from the SettingValue
+	 * @return a new point made from the Setting
 	 */
-	private Point parsePoint(SettingValueSchema vector) {
+	private Point parsePoint(Setting vector) {
 		float[] coord = vector.getVector();
 		if (coord.length == 2) {
 			return new Point(coord[0], coord[1]);
 		} else if (coord.length == 3) {
 			return new Point(coord[0], coord[2], coord[1]);
 		} else {
-			System.out.println("SettingValueSchema not formatted correctly");
+			System.out.println("SettingSchema not formatted correctly");
 			return new Point();
 		}
 	}

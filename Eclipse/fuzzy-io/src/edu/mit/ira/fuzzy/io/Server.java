@@ -17,8 +17,8 @@ import com.sun.net.httpserver.HttpServer;
 
 import edu.mit.ira.fuzzy.model.Development;
 import edu.mit.ira.fuzzy.objective.MultiObjective;
-import edu.mit.ira.fuzzy.setting.SettingGroupAdapter;
-import edu.mit.ira.fuzzy.setting.schema.SettingGroupSchema;
+import edu.mit.ira.fuzzy.setting.Setting;
+import edu.mit.ira.fuzzy.setting.Deserializer;
 
 /**
  * Fuzzy Server listens and responds to requests for fuzzy masses via HTTP
@@ -39,7 +39,7 @@ public class Server {
 	private Schema schema;
 	private Builder builder;
 	private Evaluator evaluator;
-	private SettingGroupAdapter adapter;
+	private Deserializer adapter;
 
 	/**
 	 * Construct a new FuzzyIO Server
@@ -59,7 +59,7 @@ public class Server {
 		schema = new Schema(serverVersion, serverID, author, sponsor, contact);
 		builder = new Builder();
 		evaluator = new Evaluator();
-		adapter = new SettingGroupAdapter();
+		adapter = new Deserializer();
 		info = "--- FuzzyIO " + serverVersion + " ---\nActive on port: " + port;
 		System.out.println(info);
 	}
@@ -102,7 +102,7 @@ public class Server {
 					if (requestBody.length() > 0) {
 						
 						// Generate FuzzyIO Response Data
-						SettingGroupSchema settings = adapter.parse(requestBody);
+						Setting settings = adapter.parse(requestBody);
 						Development solution = builder.build(settings);
 						MultiObjective performance = evaluator.evaluate(solution);
 						
