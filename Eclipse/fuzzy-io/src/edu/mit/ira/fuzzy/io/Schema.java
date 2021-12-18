@@ -168,8 +168,8 @@ public class Schema {
 		SettingValueSchema openVertex = new SettingValueSchema(SchemaType.control_point, "Vertex");
 		openVertices.template = openVertex;
 		openVertex.value.add("0"); // initial x
-		openVertex.bounds.add("0"); // initial y
-		openVertex.bounds.add("0"); // initial z
+		openVertex.value.add("0"); // initial y
+		openVertex.value.add("0"); // initial z
 		openArea.settings.add(openVertices);
 		
 		JSONArray settings = new JSONArray();
