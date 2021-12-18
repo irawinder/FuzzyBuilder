@@ -1,7 +1,13 @@
 package edu.mit.ira.fuzzy.setting;
 
+import java.util.ArrayList;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import edu.mit.ira.fuzzy.setting.schema.SchemaType;
+import edu.mit.ira.fuzzy.setting.schema.SettingGroupSchema;
+import edu.mit.ira.fuzzy.setting.schema.SettingValueSchema;
 
 /**
  * A Utility Class to deserialize setting data
@@ -15,54 +21,60 @@ public class SettingGroupAdapter {
 	 * Convert a JSON string of model settings to the SettingGroup class
 	 *
 	 * @param data settings formatted as json string
-	 * @return settings formatted as SettingGRoup class
+	 * @return settings formatted as java object
 	 */
-	public SettingGroup parse(String data) {
-		// JSONObject settingGroupJSON = parseJSONObject(data);
-		JSONObject settingGroupJSON = new JSONObject(data);
+	public SettingGroupSchema parse(String data) {
+		JSONObject configurationJSON = new JSONObject(data);
 		try {
-			return this.adapt(settingGroupJSON);
+			return this.adapt(configurationJSON);
 		} catch (Exception e) {
 			System.out.println("JSON data is not formatted correctly");
-			return new SettingGroup();
+			return new SettingGroupSchema("null");
 		}
 	}
 
 	/**
 	 * serialize a JSONObject to SettingGroup class
 	 *
-	 * @param settingGroup data formatted as JSON
+	 * @param config data formatted as JSON
 	 * @return data formatted as SettingGroup class
 	 */
-	private SettingGroup adapt(JSONObject settingGroup) {
-		SettingGroup group = new SettingGroup();
+	private SettingGroupSchema adapt(JSONObject config) {
+		
+		String rootLabel = config.getString("label");
+		SettingGroupSchema root = new SettingGroupSchema(rootLabel);
+		
+		// Add Children Settings
+		JSONArray settings = config.getJSONArray("settings");
+		for (int i = 0; i < settings.length(); i++) {
+			JSONObject setting = settings.getJSONObject(i);
+			String settingType = setting.getString("type");
+			String settingLabel = setting.getString("label");
+			
+			if (settingType.equals("group_extendable") || settingType.equals("group")) {
+				
+				// Parse Group
+				SettingGroupSchema schema = adapt(setting);
+				root.settings.add(schema);
 
-		// Check for type group
-		if (settingGroup.getString("type").equals("group")) {
-			group.type = settingGroup.getString("type");
-			group.label = settingGroup.getString("name");
-
-			// Add SettingValues Associated with group
-			JSONArray settingValues = settingGroup.getJSONArray("settingValues");
-			for (int i = 0; i < settingValues.length(); i++) {
-				JSONObject settingValue = settingValues.getJSONObject(i);
-				SettingValue value = new SettingValue();
-				value.label = settingValue.getString("name");
-				value.type = settingValue.getString("type");
-				value.value = settingValue.getString("value");
-				group.settingValues.add(value);
+			
+			} else {
+				
+				// Parse Value
+				SettingValueSchema schema = new SettingValueSchema(SchemaType.valueOf(settingType), settingLabel);
+				schema.value = new ArrayList<String>();
+				schema.bounds = new ArrayList<String>();
+				JSONArray values = setting.getJSONArray("value");
+				for (int j = 0; j < values.length(); j++) {
+					schema.value.add(values.getString(j));
+				}
+				JSONArray bounds = setting.getJSONArray("bounds");
+				for (int j = 0; j < bounds.length(); j++) {
+					schema.bounds.add(bounds.getString(j));
+				}
+				root.settings.add(schema);
 			}
-
-			// Add Child SettingGroups attached to Group
-			JSONArray settingGroups = settingGroup.getJSONArray("settingGroups");
-			for (int i = 0; i < settingGroups.length(); i++) {
-				JSONObject childSettingGroup = settingGroups.getJSONObject(i);
-				SettingGroup childGroup = adapt(childSettingGroup);
-				group.settingGroups.add(childGroup);
-			}
-		} else {
-			System.out.println("type must be group");
 		}
-		return group;
+		return root;
 	}
 }
