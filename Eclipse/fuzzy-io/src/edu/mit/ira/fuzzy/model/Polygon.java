@@ -225,6 +225,9 @@ public class Polygon {
 	 * @return returns "true" if polygon paramter is inside of this polygon
 	 */
 	public boolean containsPolygon(Polygon polygon) {
+		if (polygon.getVertices().size() == 0) {
+			return false;
+		}
 		for (Point p : polygon.getVertices()) {
 			if (!this.containsPoint(p)) {
 				return false;
