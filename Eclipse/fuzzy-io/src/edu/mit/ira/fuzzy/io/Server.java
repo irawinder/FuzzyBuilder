@@ -38,7 +38,7 @@ public class Server {
 	
 	// Fuzzy Objects
 	private Schema schema;
-	private Configuration config;
+	private Configuration baseConfig;
 	private Builder builder;
 	private Evaluator evaluator;
 	private Deserializer adapter;
@@ -59,7 +59,7 @@ public class Server {
 		server.start();
 		
 		schema = new Schema();
-		config = schema.baseConfiguration(version, name, author, sponsor, contact);
+		baseConfig = schema.baseConfiguration(version, name, author, sponsor, contact);
 		builder = new Builder();
 		evaluator = new Evaluator();
 		adapter = new Deserializer();
@@ -105,8 +105,8 @@ public class Server {
 					if (requestBody.length() > 0) {
 						
 						// Generate FuzzyIO Response Data
-						Setting settings = adapter.parse(requestBody);
-						Development solution = builder.build(settings, schema);
+						Configuration config = adapter.parse(requestBody);
+						Development solution = builder.build(config, schema);
 						MultiObjective performance = evaluator.evaluate(solution);
 						
 						// Serialize the Response Data
@@ -122,7 +122,7 @@ public class Server {
 				
 				// GET request is initially made to retrieve default setting schema
 				} else if (requestMethod.equals("GET")) {
-					String data = config.serialize().toString(4);
+					String data = baseConfig.serialize().toString(4);
 					packItShipIt(t, 200, "Setting Schema Delivered", data);
 					
 				// No other request methods are allowed

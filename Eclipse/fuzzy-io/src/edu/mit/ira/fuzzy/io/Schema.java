@@ -64,9 +64,6 @@ public class Schema {
 		plotVertex.value.add("0"); // initial z
 		plot.settings.add(plotVertices);
 		
-		// test the addition of default vertices
-		//for(int i=0; i<3; i++) plotVertices.settings.add(plotVertex);
-		
 		Setting gridSize = new Setting(GUI.SLIDER, GRID_SIZE);
 		gridSize.value.add("10"); // default
 		gridSize.bounds.add("10"); // min
@@ -82,10 +79,11 @@ public class Schema {
 		Setting podiums = new Setting(GUI.GROUP_EXTENDABLE, PODIUM_VOLUMES);
 		Setting podium = new Setting(GUI.GROUP, PODIUM_VOLUME);
 		podiums.template = podium;
+		podiums.settings.add(podium); // Add a podium volume by default
 		plot.settings.add(podiums);
 
 		Setting setback = new Setting(GUI.SLIDER, SETBACK);
-		setback.value.add("0"); // default
+		setback.value.add("20"); // default
 		setback.bounds.add("0"); // min
 		setback.bounds.add("200"); // max
 		podium.settings.add(setback);
@@ -93,6 +91,7 @@ public class Schema {
 		Setting pZones = new Setting(GUI.GROUP_EXTENDABLE, ZONES);
 		Setting pZone = new Setting(GUI.GROUP, ZONE);
 		pZones.template = pZone;
+		pZones.settings.add(pZone); // add 1 zone by default
 		podium.settings.add(pZones);
 
 		Setting pFloors = new Setting(GUI.SLIDER, FLOORS);
@@ -138,10 +137,11 @@ public class Schema {
 		Setting tZones = new Setting(GUI.GROUP_EXTENDABLE, ZONES);
 		Setting tZone = new Setting(GUI.GROUP, ZONE);
 		tZones.template = tZone;
+		tZones.settings.add(tZone); // add 1 zone by default
 		tower.settings.add(tZones);
 
 		Setting tFloors = new Setting(GUI.SLIDER, FLOORS);
-		tFloors.value.add("1"); // default
+		tFloors.value.add("3"); // default
 		tFloors.bounds.add("1"); // min
 		tFloors.bounds.add("40"); // max
 		tZone.settings.add(tFloors);

@@ -19,10 +19,22 @@ public class Deserializer {
 	 * @param data settings formatted as json string
 	 * @return settings formatted as java object
 	 */
-	public Setting parse(String data) {
+	public Configuration parse(String data) {
 		JSONObject configJSON = new JSONObject(data);
 		try {
-			return this.adapt(configJSON);
+			String label = configJSON.getString("label");
+			String apiVersion = configJSON.getString("apiVersion");
+			String id = configJSON.getString("id");
+			String author = configJSON.getString("author");
+			String contact = configJSON.getString("contact");
+			String sponsor = configJSON.getString("sponsor");
+			Configuration config = new Configuration(label, apiVersion, id, author, sponsor, contact);
+			JSONArray settingsJSON = configJSON.getJSONArray("settings");
+			for(int i=0; i<settingsJSON.length(); i++) {
+				JSONObject settingJSON = settingsJSON.getJSONObject(i);
+				config.settings.add(parseSetting(settingJSON));
+			}
+			return config;
 		} catch (Exception e) {
 			System.out.println("JSON data is not formatted correctly");
 			return null;
@@ -35,52 +47,43 @@ public class Deserializer {
 	 * @param config data formatted as JSON
 	 * @return data formatted as SettingGroup class
 	 */
-	private Setting adapt(JSONObject rootJSON) {
+	private Setting parseSetting(JSONObject settingJSON) {
+		String settingLabel = settingJSON.getString("label");
+		String settingType = settingJSON.getString("type");
+		Setting setting = new Setting(settingType, settingLabel);
 		
-		String rootLabel = rootJSON.getString("label");
-		String rootType = rootJSON.getString("type");
-		Setting root = new Setting(rootType, rootLabel);
-		
-		// Add Children Settings
-		JSONArray settings = rootJSON.getJSONArray("settings");
-		for (int i = 0; i < settings.length(); i++) {
-			JSONObject settingJSON = settings.getJSONObject(i);
-			String settingLabel = settingJSON.getString("label");
-			String settingType = settingJSON.getString("type");
+		if (settingType.equals("group_extendable") || settingType.equals("group")) {
 			
-			if (settingType.equals("group_extendable") || settingType.equals("group")) {
-				
-				// Parse Group
-				Setting setting = adapt(settingJSON);
-				root.settings.add(setting);
-				
+			// Parse Group
+			JSONArray childrenSettings = settingJSON.getJSONArray("settings");
+			for(int i=0; i<childrenSettings.length(); i++) {
+				JSONObject childSettingJSON = childrenSettings.getJSONObject(i);
+				Setting childSetting = parseSetting(childSettingJSON);
+				setting.settings.add(childSetting);
+	
 				// Parse Template
-				if(settingType.equals("group_extendable")) {
+				if (settingType.equals("group_extendable")) {
 					// Even though the template is a single Setting object,
-			        // Unity's JSONUtility will only serialize it if it's in a List<> (ffs!)
+					// Unity's JSONUtility will only serialize it if it's in a List<> (ffs!)
 					JSONObject templateJSON = settingJSON.getJSONArray("template").getJSONObject(0);
-					Setting template = adapt(templateJSON);
-					root.template = template;
+					setting.template = parseSetting(templateJSON);
 				}
+			}
 
-			
-			} else {
-				
-				// Parse Value
-				Setting setting = new Setting(settingType, settingLabel);
-				setting.value = new ArrayList<String>();
-				setting.bounds = new ArrayList<String>();
-				JSONArray values = settingJSON.getJSONArray("value");
-				for (int j = 0; j < values.length(); j++) {
-					setting.value.add(values.getString(j));
-				}
-				JSONArray bounds = settingJSON.getJSONArray("bounds");
-				for (int j = 0; j < bounds.length(); j++) {
-					setting.bounds.add(bounds.getString(j));
-				}
-				root.settings.add(setting);
+		} else {
+
+			// Parse Value
+			setting.value = new ArrayList<String>();
+			setting.bounds = new ArrayList<String>();
+			JSONArray values = settingJSON.getJSONArray("value");
+			for (int j = 0; j < values.length(); j++) {
+				setting.value.add(values.getString(j));
+			}
+			JSONArray bounds = settingJSON.getJSONArray("bounds");
+			for (int j = 0; j < bounds.length(); j++) {
+				setting.bounds.add(bounds.getString(j));
 			}
 		}
-		return root;
+		return setting;
 	}
 }

@@ -9,6 +9,7 @@ import edu.mit.ira.fuzzy.model.Point;
 import edu.mit.ira.fuzzy.model.Polygon;
 import edu.mit.ira.fuzzy.model.Function;
 import edu.mit.ira.fuzzy.model.VoxelArray;
+import edu.mit.ira.fuzzy.setting.Configuration;
 import edu.mit.ira.fuzzy.setting.Setting;
 
 /**
@@ -32,12 +33,10 @@ public class Builder {
 	 *
 	 * @param settings
 	 */
-	public Development build(Setting root, Schema schema) {
-		
+	public Development build(Configuration root, Schema schema) {
 		Development fuzzy = new Development();
 		
 		try {
-			
 			Setting height 		= root.find(schema.FLOOR_HEIGHT);
 			Setting cantilever 	= root.find(schema.CANTILEVER);
 			Setting plots 		= root.find(schema.PARCELS);

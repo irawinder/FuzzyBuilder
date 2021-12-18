@@ -1,23 +1,28 @@
 package edu.mit.ira.fuzzy.setting;
 
-import java.util.ArrayList;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-public class Configuration {
-	private String apiVersion, id, author, contact, sponsor, universeName;
-	public ArrayList<Setting> settings;
+public class Configuration extends Setting {
+	private String apiVersion, id, author, sponsor, contact;
 	public Legend legend;
-
-	public Configuration(String universe, String apiVersion, String id, String author, String sponsor, String contact) {
-		this.universeName = universe;
+	
+	/**
+	 * An object that contains all settings and schema for a Scenario
+	 * @param universe
+	 * @param apiVersion
+	 * @param id
+	 * @param author
+	 * @param sponsor
+	 * @param contact
+	 */
+	public Configuration(String label, String apiVersion, String id, String author, String sponsor, String contact) {
+		super(GUI.GROUP, label);
 		this.apiVersion = apiVersion;
 		this.id = id;
 		this.author = author;
 		this.sponsor = sponsor;
 		this.contact = contact;
-		this.settings = new ArrayList<Setting>();
 		this.legend = new Legend();
 	}
 
@@ -31,11 +36,11 @@ public class Configuration {
 		JSONObject configJSON = new JSONObject();
 		configJSON.put("apiVersion", apiVersion);
 		configJSON.put("id", id);
-		configJSON.put("label", universeName);
-		configJSON.put("type", GUI.GROUP.toString().toLowerCase());
 		configJSON.put("author", author);
 		configJSON.put("sponsor", sponsor);
 		configJSON.put("contact", contact);
+		configJSON.put("label", label);
+		configJSON.put("type", type);
 		configJSON.put("settings", settingsJSON);
 		configJSON.put("legend", legend.serialize());
 		return configJSON;
