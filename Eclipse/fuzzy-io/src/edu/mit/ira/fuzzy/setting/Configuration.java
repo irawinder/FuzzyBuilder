@@ -6,12 +6,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class Configuration {
-	private String apiVersion;
-	private String id;
-	private String author;
-	private String contact;
-	private String sponsor;
-	private String universeName;
+	private String apiVersion, id, author, contact, sponsor, universeName;
 	public ArrayList<Setting> settings;
 	public Legend legend;
 
@@ -22,8 +17,8 @@ public class Configuration {
 		this.author = author;
 		this.sponsor = sponsor;
 		this.contact = contact;
-		this.universeName = "";
 		this.settings = new ArrayList<Setting>();
+		this.legend = new Legend();
 	}
 
 	public JSONObject serialize() {
