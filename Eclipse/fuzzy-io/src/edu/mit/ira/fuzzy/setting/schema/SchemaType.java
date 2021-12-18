@@ -11,5 +11,7 @@ public enum SchemaType {
 	group_extendable,
 	slider,
 	control_point,
-	dropdown
+	dropdown,
+	text_input,
+    toggle
 }
