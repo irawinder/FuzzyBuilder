@@ -1,12 +1,19 @@
 package edu.mit.ira.fuzzy.io;
 
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.json.JSONObject;
 
@@ -16,10 +23,9 @@ import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
 import edu.mit.ira.fuzzy.model.Development;
-import edu.mit.ira.fuzzy.objective.MultiObjective;
-import edu.mit.ira.fuzzy.setting.Setting;
-import edu.mit.ira.fuzzy.setting.Configuration;
-import edu.mit.ira.fuzzy.setting.Deserializer;
+import edu.mit.ira.opensui.io.Deserializer;
+import edu.mit.ira.opensui.objective.MultiObjective;
+import edu.mit.ira.opensui.setting.Configuration;
 
 /**
  * Fuzzy Server listens and responds to requests for fuzzy masses via HTTP
@@ -73,11 +79,12 @@ public class Server {
 	private class MyHandler implements HttpHandler {
 		@Override
 		public void handle(HttpExchange t) throws IOException {
-
-			// Parse and Log Request Header
-			String requestURI = t.getRequestURI().toString();
+			
+			// Parse Request Header
 			String requestMethod = t.getRequestMethod();
-			log(t, requestMethod + " " +  requestURI);
+			String requestURI = t.getRequestURI().toString();
+			String requestProcess = process(requestURI);
+			Map<String, String> requestParameters = parameters(requestURI);
 			
 			// Parse Request Body
 			InputStreamReader isr = new InputStreamReader(t.getRequestBody(), "utf-8");
@@ -90,53 +97,125 @@ public class Server {
 			br.close();
 			isr.close();
 			String requestBody = buf.toString();
-
-			// Format Response Headers and Body
-			if (requestURI.equals("/")) {
+			int requestLength = requestBody.length();
+			
+			// Log Request
+			log(t, "Request: " + requestMethod + " " +  requestURI + ", Request Length: " + requestLength);
+			
+			// HTTP GET Request
+			if (requestMethod.equals("GET")) 
+			{
+				if (requestProcess.equals("")) 
+				{
+					// Supply web content if root resource
+					packItShipIt(t, 200, "HTML Delivered", getHTML("index.txt"), "text/html");
+				} 
+				else if (requestProcess.equals("INIT")) 
+				{
+					// Send the default setting configuration to the GUI
+					packItShipIt(t, 200, "Base Settings Delivered", defaultSettings(), "application/json");
+				} 
+				else if (requestProcess.equals("LOAD")) 
+				{
+					// Load a previously saved setting configuration
+					packItShipIt(t, 404, "Resource not found", getHTML("404.txt"), "text/html"); //temp
+				} 
+				else
+				{
+					// Resource Not Found
+					packItShipIt(t, 404, "Resource not found", getHTML("404.txt"), "text/html");
+				}
+			}
+			
+			// HTTP POST Request
+			else if (requestMethod.equals("POST")) 
+			{
+				if (requestProcess.equals("RUN")) 
+				{
+					// Send the default setting configuration to the GUI
+					packItShipIt(t, 200, "Solution Delivered", solution(requestBody), "application/json");
+				} 
+				else if (requestProcess.equals("SAVE")) 
+				{
+					// Save a submitted setting configuration
+					packItShipIt(t, 404, "Resource not found"); // temp
+				} 
+				else
+				{
+					// Resource Not Found
+					packItShipIt(t, 404, "Resource not found");
+				}
+			}
+			
+			// HTTP OPTIONS Request
+			else if (requestMethod.equals("OPTIONS")) {
 				
 				// OPTIONS request is something browsers ask before 
 				// allowing an external server to provide data
-				if (requestMethod.equals("OPTIONS")) {
-					packItShipIt(t, 200, "Options Delivered");
+				packItShipIt(t, 200, "HTTP Options Delivered");
+			}
+			
+			// HTTP Request (other)
+			else  {
 				
-				// POST request is how settings are submitted to 
-				// FuzzyIO via an external GUI (e.g. openSUI) 
-				} else if (requestMethod.equals("POST")) {
-					if (requestBody.length() > 0) {
-						
-						// Generate FuzzyIO Response Data
-						Configuration config = adapter.parse(requestBody);
-						Development solution = builder.build(config, schema);
-						MultiObjective performance = evaluator.evaluate(solution);
-						
-						// Serialize the Response Data
-						JSONObject dataJSON = solution.serialize();
-						dataJSON.put("performance", performance.serialize());
-						String data = wrapApi(dataJSON);
-						String message = "Solution Delivered";
-						if (solution.error != null) message += " with errors";
-						packItShipIt(t, 200, message, data);
-					} else {
-						packItShipIt(t, 400, "POST request has no body");
-					}
-				
-				// GET request is initially made to retrieve default setting schema
-				} else if (requestMethod.equals("GET")) {
-					String data = baseConfig.serialize().toString(4);
-					packItShipIt(t, 200, "Setting Schema Delivered", data);
-					
-				// No other request methods are allowed
-				} else {
-					packItShipIt(t, 405, "Method Not Allowed");
-				}
-				
-			// URI is not valid
-			} else {
-				packItShipIt(t, 404, "Resource Not Found");
+				// Other methods not allowed
+				packItShipIt(t, 405, "Method Not Allowed");
 			}
 		}
 	}
+	
+	private Map<String, String> parameters(String requestURI) {
+		String[] process_params = requestURI.replace("?", ";").split(";");
+		Map<String, String> parameters = new HashMap<String, String>();
+		if(process_params.length > 1) {
+			String[] params = process_params[1].split("&");
+			for (int i=0; i<params.length; i++) {
+				String[] param = params[i].split("=");
+				if (param.length == 2) {
+					parameters.put(param[0], param[1]);
+				}
+			}
+		} else {
+			parameters.put("user", "guest");
+		}
+		return parameters;
+	}
+	
+	private String process(String requestURI) {
+		String[] process_params = requestURI.replace("?", ";").split(";");
+		return process_params[0].toUpperCase().replace("/", "");
+	}
+	
+	/**
+	 * Get the Default Configuration Schema JSON string
+	 * @return base config as JSON string
+	 */
+	private String defaultSettings() {
+		return baseConfig.serialize().toString(4);
+	}
+	
+	/**
+	 * Get the Solution as json string
+	 * @return solution as JSON string
+	 */
+	private String solution(String requestBody) {
+		
+		// Check for Body
+		if (requestBody.length() == 0) {
+			System.out.println("Warning: requestBody has no data");
+		}
+		
+		// Generate FuzzyIO Response Data
+		Configuration config = adapter.parse(requestBody);
+		Development solution = builder.build(config, schema);
+		MultiObjective performance = evaluator.evaluate(solution);
 
+		// Serialize the Response Data
+		JSONObject dataJSON = solution.serialize();
+		dataJSON.put("performance", performance.serialize());
+		return wrapApi(dataJSON);
+	}
+	
 	/**
 	 * Attach Data and Headers to HttpResponse and send it off to the client
 	 * @param t
@@ -144,14 +223,14 @@ public class Server {
 	 * @param data a string of data, such as a JSON file
 	 * @throws IOException
 	 */
-	public void packItShipIt(HttpExchange t, int responseCode, String responseMessage, String data) throws IOException {
-		makeHeaders(t);
+	private void packItShipIt(HttpExchange t, int responseCode, String responseMessage, String data, String dataType) throws IOException {
+		makeHeaders(t, dataType);
 		int responseLength = data.length();
 		t.sendResponseHeaders(responseCode, responseLength);
 		OutputStream os = t.getResponseBody();
 		os.write(data.getBytes());
 		os.close();
-		log(t, "Response Code: " + responseCode + ", " + responseMessage + ", Response Length: " + responseLength);
+		log(t, "Response: " + responseCode + ", " + responseMessage + ", Response Length: " + responseLength);
 	}
 	
 	/**
@@ -160,11 +239,11 @@ public class Server {
 	 * @param responseCode
 	 * @throws IOException
 	 */
-	public void packItShipIt(HttpExchange t, int responseCode, String responseMessage) throws IOException {
-		makeHeaders(t);
+	private void packItShipIt(HttpExchange t, int responseCode, String responseMessage) throws IOException {
+		makeHeaders(t, "text/html");
 		int responseLength = -1;
 		t.sendResponseHeaders(responseCode, -1);
-		log(t, "Response Code: " + responseCode + ", " + responseMessage + ", Response Length: " + responseLength);
+		log(t, "Response: " + responseCode + ", " + responseMessage + ", Response Length: " + responseLength);
 	}
 	
 	/**
@@ -173,20 +252,29 @@ public class Server {
 	 * @param message
 	 * @return
 	 */
-	public String log(HttpExchange t, String message) {
+	private void log(HttpExchange t, String message) {
 		
-		// Log Response
+		// Create Log
 		String clientIP = t.getRemoteAddress().toString();
-				
-		// Time
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss z");
 		Date date = new Date(System.currentTimeMillis());
 		String timeStamp = formatter.format(date);
-
-		String log = timeStamp + " " + clientIP + " : " + message;
-		System.out.println(log);
-		return log;
+		String log = timeStamp + " " + clientIP + " : " + message + "\n";
+		
+		// Write Log to Console
+		System.out.print(log);
+		
+		// Write Log to File
+		byte data[] = log.getBytes();
+	    Path p = Paths.get("./logs.txt");
+	    try (OutputStream out = new BufferedOutputStream(
+	      Files.newOutputStream(p, StandardOpenOption.CREATE, StandardOpenOption.APPEND))) {
+	      out.write(data, 0, data.length);
+	    } catch (IOException x) {
+	      System.err.println(x);
+	    }
 	}
+    
 
 	/**
 	 * Format Headers for HTTP response
@@ -194,12 +282,11 @@ public class Server {
 	 * @param contentType the type of data attached on this response
 	 * @return header fields for the response
 	 */
-	private void makeHeaders(HttpExchange t) {
+	private void makeHeaders(HttpExchange t, String contentType) {
 
 		Headers headers = t.getResponseHeaders();
 		headers.set("Server", serverID + ", " + SERVER_SYSTEM);
-		headers.set("Content-Type", "application/json");
-		headers.set("Connection", "close");
+		headers.set("Content-Type", contentType);
 		headers.set("Connection", "close");
 		headers.set("Access-Control-Allow-Origin", "*");
 		headers.set("Access-Control-Allow-Headers", "*");
@@ -224,5 +311,19 @@ public class Server {
 		root.put("data", data);
 
 		return root.toString();
+	}
+	
+	private String getHTML(String file) {
+		Path fileName = Path.of("./" + file);
+	    try {
+			return Files.readString(fileName);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return "<!DOCTYPE html><html><body>" + serverID + ": " + serverVersion + "</body></html>";
+		}
+	}
+	
+	private boolean isValidMethod(String method) {
+		return method.equals("GET") || method.equals("POST") || method.equals("OPTIONS");
 	}
 }

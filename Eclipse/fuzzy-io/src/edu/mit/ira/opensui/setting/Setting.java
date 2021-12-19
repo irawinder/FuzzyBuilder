@@ -1,4 +1,4 @@
-package edu.mit.ira.fuzzy.setting;
+package edu.mit.ira.opensui.setting;
 
 import java.util.ArrayList;
 

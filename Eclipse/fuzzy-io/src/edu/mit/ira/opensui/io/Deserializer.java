@@ -1,12 +1,14 @@
-package edu.mit.ira.fuzzy.setting;
+package edu.mit.ira.opensui.io;
 
 import java.util.ArrayList;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import edu.mit.ira.fuzzy.model.Function;
-import edu.mit.ira.fuzzy.setting.Legend.Entry;
+import edu.mit.ira.opensui.setting.Configuration;
+import edu.mit.ira.opensui.setting.Legend;
+import edu.mit.ira.opensui.setting.Setting;
+import edu.mit.ira.opensui.setting.Legend.Entry;
 
 /**
  * A Utility Class to deserialize setting data
@@ -51,6 +53,7 @@ public class Deserializer {
 			return config;
 			
 		} catch (Exception e) {
+			e.printStackTrace();
 			System.out.println("JSON data is not formatted correctly");
 			return null;
 		}

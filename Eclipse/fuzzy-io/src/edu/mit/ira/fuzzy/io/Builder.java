@@ -9,8 +9,8 @@ import edu.mit.ira.fuzzy.model.Point;
 import edu.mit.ira.fuzzy.model.Polygon;
 import edu.mit.ira.fuzzy.model.Function;
 import edu.mit.ira.fuzzy.model.VoxelArray;
-import edu.mit.ira.fuzzy.setting.Configuration;
-import edu.mit.ira.fuzzy.setting.Setting;
+import edu.mit.ira.opensui.setting.Configuration;
+import edu.mit.ira.opensui.setting.Setting;
 
 /**
  * FuzzyBuilder generates a fuzzy massing according to settings that are passed
@@ -179,6 +179,7 @@ public class Builder {
 				fuzzy.hollowed = morph.hollow(fuzzy.allVoxels);
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			fuzzy.error = "Server Error: Settings are not formatted correctly for FuzzyIO";
 		}
 

@@ -1,11 +1,11 @@
 package edu.mit.ira.fuzzy.io;
 
 import edu.mit.ira.fuzzy.model.Function;
-import edu.mit.ira.fuzzy.setting.Configuration;
-import edu.mit.ira.fuzzy.setting.GUI;
-import edu.mit.ira.fuzzy.setting.Legend;
-import edu.mit.ira.fuzzy.setting.Legend.Entry;
-import edu.mit.ira.fuzzy.setting.Setting;
+import edu.mit.ira.opensui.setting.Configuration;
+import edu.mit.ira.opensui.setting.GUI;
+import edu.mit.ira.opensui.setting.Legend;
+import edu.mit.ira.opensui.setting.Setting;
+import edu.mit.ira.opensui.setting.Legend.Entry;
 
 public class Schema {
 	

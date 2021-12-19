@@ -1,7 +1,7 @@
 package edu.mit.ira.fuzzy.test;
 
 import edu.mit.ira.fuzzy.io.Schema;
-import edu.mit.ira.fuzzy.setting.Configuration;
+import edu.mit.ira.opensui.setting.Configuration;
 
 public class TestSchema {
 

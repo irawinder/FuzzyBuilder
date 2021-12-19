@@ -7,8 +7,8 @@ import edu.mit.ira.fuzzy.model.Polygon;
 import edu.mit.ira.fuzzy.model.Function;
 import edu.mit.ira.fuzzy.model.Voxel;
 import edu.mit.ira.fuzzy.model.VoxelArray;
-import edu.mit.ira.fuzzy.objective.MultiObjective;
-import edu.mit.ira.fuzzy.objective.Objective;
+import edu.mit.ira.opensui.objective.MultiObjective;
+import edu.mit.ira.opensui.objective.Objective;
 
 /**
  * Utility class for generating the MultiObjective performance of a Development
