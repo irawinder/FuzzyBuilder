@@ -9,8 +9,8 @@ import edu.mit.ira.fuzzy.model.Point;
 import edu.mit.ira.fuzzy.model.Polygon;
 import edu.mit.ira.fuzzy.model.Function;
 import edu.mit.ira.fuzzy.model.VoxelArray;
-import edu.mit.ira.fuzzy.setting.SettingGroup;
-import edu.mit.ira.fuzzy.setting.SettingValue;
+import edu.mit.ira.opensui.setting.Configuration;
+import edu.mit.ira.opensui.setting.Setting;
 
 /**
  * FuzzyBuilder generates a fuzzy massing according to settings that are passed
@@ -23,9 +23,6 @@ public class Builder {
 
 	private Morph morph;
 
-	final private float DEFAULT_VOXEL_HEIGHT = 10;
-	final private float DEFAULT_CANTILEVER_ALLOWANCE = 0.5f;
-
 	public Builder() {
 		this.morph = new Morph();
 	}
@@ -36,53 +33,53 @@ public class Builder {
 	 *
 	 * @param settings
 	 */
-	public Development build(SettingGroup settings) {
-
+	public Development build(Configuration root, Schema schema) {
 		Development fuzzy = new Development();
-
+		
 		try {
-
-			float voxelHeight, cantileverAllowance;
-			if (settings.settingValues.size() >= 2) {
-				voxelHeight = Float.parseFloat(settings.settingValues.get(0).value);
-				cantileverAllowance = Float.parseFloat(settings.settingValues.get(1).value) / 100f;
-			} else {
-				voxelHeight = DEFAULT_VOXEL_HEIGHT;
-				cantileverAllowance = DEFAULT_CANTILEVER_ALLOWANCE;
-			}
+			Setting height 		= root.find(schema.FLOOR_HEIGHT);
+			Setting cantilever 	= root.find(schema.CANTILEVER);
+			Setting plots 		= root.find(schema.PARCELS);
+			Setting towers 		= root.find(schema.TOWER_VOLUMES);
+			Setting openAreas 	= root.find(schema.AREAS);
 			
-			// Populate Open Area Polygons
+			// Global Settings
+			float voxelHeight 			= height.getFloat();
+			float cantileverAllowance 	= cantilever.getFloat() / 100f;
+			
 			ArrayList<Polygon> openShapes = new ArrayList<Polygon>();
-			SettingGroup openGroup = settings.settingGroups.get(2);
-			for (SettingGroup openSettings : openGroup.settingGroups) {
-				SettingGroup openAreaVertices = openSettings.settingGroups.get(0);
-				Polygon openArea = this.parsePolygon(openAreaVertices);
-				openShapes.add(openArea);
-				fuzzy.allShapes.add(openArea);
+			ArrayList<Polygon> towerShapes = new ArrayList<Polygon>();
+			HashMap<Polygon, Setting> towerSettingsMap = new HashMap<Polygon, Setting>();
+			ArrayList<Polygon> builtPlots = new ArrayList<Polygon>();
+			
+			// Pre-Populate Open Area Polygons
+			for (Setting openArea : openAreas.settings) {
+				Setting vertices = openArea.find(schema.VERTICES);
+				Polygon openShape = this.parsePolygon(vertices);
+				openShapes.add(openShape);
+				fuzzy.allShapes.add(openShape);
 			}
 			
-			// Populate Tower Polygons
-			ArrayList<Polygon> towerShapes = new ArrayList<Polygon>();
-			HashMap<Polygon, SettingGroup> towerSettingsMap = new HashMap<Polygon, SettingGroup>();
-			SettingGroup towerGroup = settings.settingGroups.get(1);
-			for (SettingGroup towerSettings : towerGroup.settingGroups) {
-				Polygon towerShape = this.towerShape(towerSettings);
-				towerSettingsMap.put(towerShape, towerSettings);
+			// Pre-Populate Tower Polygons
+			for (Setting tower : towers.settings) {
+				Polygon towerShape = this.towerShape(tower, schema);
+				towerSettingsMap.put(towerShape, tower);
 				towerShapes.add(towerShape);
 				fuzzy.allShapes.add(towerShape);
 			}
 			
-			// Track plot polygons that have already been built
-			ArrayList<Polygon> builtPlots = new ArrayList<Polygon>();
-
-			// Iterate through plots
-			SettingGroup plots = settings.settingGroups.get(0);
-			for (SettingGroup plotSettings : plots.settingGroups) {
-
+			// Populate Plots and Build
+			for (Setting plot : plots.settings) {
+				
+				// Read from SettingSchema
+				Setting vert = plot.find(schema.VERTICES);
+				Setting gSiz = plot.find(schema.GRID_SIZE);
+				Setting gRot = plot.find(schema.GRID_ROTATION);
+				Setting pods = plot.find(schema.PODIUM_VOLUMES);
+				
 				// Define Plot polygon
-				SettingGroup vectorGroup = plotSettings.settingGroups.get(0);
-				Polygon plotShape = this.parsePolygon(vectorGroup);
-				String plotName = plotSettings.name;
+				Polygon plotShape = this.parsePolygon(vert);
+				String plotName = plot.label;
 				fuzzy.plotShapes.add(plotShape);
 				fuzzy.allShapes.add(plotShape);
 				fuzzy.plotNames.put(plotShape, plotName);
@@ -97,27 +94,29 @@ public class Builder {
 				}
 				if (validPlot) {
 					builtPlots.add(plotShape);
-
-					// Generate Flat Grid
-					float gridSize = Integer.parseInt(plotSettings.settingValues.get(0).value);
-					float gridRotation = (float) (2 * Math.PI
-							* Integer.parseInt(plotSettings.settingValues.get(1).value) / 360f);
+					
+					// Initialize parcel
+					float gridSize = gSiz.getInt();
+					float gridRotation = (float) (2 * Math.PI * gRot.getInt() / 360f);
 					Point gridTranslation = new Point();
-					VoxelArray plot = this.morph.make(plotShape, gridSize, 0, gridRotation, gridTranslation);
-					plot.setVoxelUse(Function.Unspecified);
-					fuzzy.plotSite.put(plotShape, plot);
-					fuzzy.site = this.morph.add(fuzzy.site, plot);
+					VoxelArray plotVoxels = this.morph.make(plotShape, gridSize, 0, gridRotation, gridTranslation);
+					plotVoxels.setVoxelUse(Function.Unspecified);
+					fuzzy.plotSite.put(plotShape, plotVoxels);
+					fuzzy.site = this.morph.add(fuzzy.site, plotVoxels);
 
 					// Initialize massing for this entire plot
 					VoxelArray plotMassing = new VoxelArray();
 
 					// Generate Podiums
-					SettingGroup podiumGroup = plotSettings.settingGroups.get(1);
-					for (SettingGroup podiumSettings : podiumGroup.settingGroups) {
+					for (Setting podium : pods.settings) {
+						
+						// Read from SettingSchema
+						Setting setback = podium.find(schema.SETBACK);
+						Setting zones 	= podium.find(schema.ZONES);
 						
 						// Generate Podium Template
-						float setbackDistance = Float.parseFloat(podiumSettings.settingValues.get(0).value);
-						VoxelArray podiumTemplate = morph.hardCloneVoxelArray(plot);
+						float setbackDistance = setback.getFloat();
+						VoxelArray podiumTemplate = morph.hardCloneVoxelArray(plotVoxels);
 						podiumTemplate = morph.setback(podiumTemplate, setbackDistance);
 						podiumTemplate.setVoxelHeight(voxelHeight);
 
@@ -127,11 +126,15 @@ public class Builder {
 						}
 
 						// Generate Podium Zones
-						SettingGroup zoneGroup = podiumSettings.settingGroups.get(0);
-						for (int i = 0; i < zoneGroup.settingGroups.size(); i++) {
-							SettingGroup zone = zoneGroup.settingGroups.get(i);
-							int levels = Integer.parseInt(zone.settingValues.get(0).value);
-							Function function = this.parseUse(zone.settingValues.get(1).value);
+						for (Setting zone : zones.settings) {
+							
+							// Read from SettingSchema
+							Setting l = zone.find(schema.FLOORS);
+							Setting f = zone.find(schema.FUNCTION);
+							
+							// Podium Zone
+							int levels = l.getInt();
+							Function function = this.parseUse(f.getString());
 							plotMassing = morph.makeAndDrop(podiumTemplate, plotMassing, levels, function,
 									cantileverAllowance);
 						}
@@ -139,19 +142,27 @@ public class Builder {
 					fuzzy.openShapes.put(plotShape, openShapes);
 					
 					for(Polygon towerShape : towerShapes) {
+						
+						// Read from SettingSchema
+						Setting zones = towerSettingsMap.get(towerShape).find(schema.ZONES);
+						
 						if (plotShape.containsPolygon(towerShape) && !towerShape.intersectsPolygon(openShapes)) {
-
+							
 							// Generate Tower Template
-							VoxelArray towerTemplate = morph.hardCloneVoxelArray(plot);
+							VoxelArray towerTemplate = morph.hardCloneVoxelArray(plotVoxels);
 							towerTemplate.setVoxelHeight(voxelHeight);
 							towerTemplate = morph.clip(towerTemplate, towerShape);
 
 							// Generate Tower Zones
-							SettingGroup zoneGroup = towerSettingsMap.get(towerShape).settingGroups.get(0);
-							for (int i = 0; i < zoneGroup.settingGroups.size(); i++) {
-								SettingGroup zone = zoneGroup.settingGroups.get(i);
-								int levels = Integer.parseInt(zone.settingValues.get(0).value);
-								Function function = this.parseUse(zone.settingValues.get(1).value);
+							for (Setting zone : zones.settings) {
+								
+								// Read from SettingSchema
+								Setting l = zone.find(schema.FLOORS);
+								Setting f = zone.find(schema.FUNCTION);
+								
+								// Podium Zone
+								int levels = l.getInt();
+								Function function = this.parseUse(f.getString());
 								plotMassing = morph.makeAndDrop(towerTemplate, plotMassing, levels, function,
 										cantileverAllowance);
 							}
@@ -168,115 +179,62 @@ public class Builder {
 				fuzzy.hollowed = morph.hollow(fuzzy.allVoxels);
 			}
 		} catch (Exception e) {
-			System.out.println("Settings are not formatted correctly for this build of FuzzyIO");
-			return null;
+			e.printStackTrace();
+			fuzzy.error = "Server Error: Settings are not formatted correctly for FuzzyIO";
 		}
 
 		return fuzzy;
 	}
 	
 	/**
-	 * Build a partial model with extrusion polygons but no voxels
-	 *
-	 * @param settings
-	 */
-	public Development basicBuild(SettingGroup settings) {
-		
-		Development fuzzy = new Development();
-
-		try {
-
-			// Iterate through plots
-			SettingGroup plots = settings.settingGroups.get(0);
-			for (SettingGroup plotSettings : plots.settingGroups) {
-
-				// Define Plot polygon
-				SettingGroup vectorGroup = plotSettings.settingGroups.get(0);
-				Polygon plotShape = this.parsePolygon(vectorGroup);
-				fuzzy.plotShapes.add(plotShape);
-				fuzzy.allShapes.add(plotShape);
-				
-				// Generate Podiums
-				ArrayList<Polygon> openShapes = new ArrayList<Polygon>();
-				SettingGroup podiumGroup = plotSettings.settingGroups.get(1);
-				for (SettingGroup podiumSettings : podiumGroup.settingGroups) {
-
-					// Remove Open Area Polygons from Podium Template
-					SettingGroup openGroup = podiumSettings.settingGroups.get(0);
-					for (SettingGroup openSettings : openGroup.settingGroups) {
-						SettingGroup openAreaVertices = openSettings.settingGroups.get(0);
-						Polygon openArea = this.parsePolygon(openAreaVertices);
-						openShapes.add(openArea);
-						fuzzy.allShapes.add(openArea);
-					}
-				}
-				fuzzy.openShapes.put(plotShape, openShapes);
-				
-				// Generate Towers
-				SettingGroup towerGroup = plotSettings.settingGroups.get(2);
-				ArrayList<Polygon> towerShapes = new ArrayList<Polygon>();
-				for (SettingGroup towerSettings : towerGroup.settingGroups) {
-					Polygon towerShape = this.towerShape(towerSettings);
-					towerShapes.add(towerShape);
-					fuzzy.allShapes.add(towerShape);
-				}
-				fuzzy.towerShapes.put(plotShape, towerShapes);
-			}
-		} catch (Exception e) {
-			System.out.println("Settings are not formatted correctly for this build of FuzzyIO");
-			return null;
-		}
-
-		return fuzzy;
-	}
-	
-	/**
-	 * Generate a Tower Polygon from an appropriate SettingGroup
+	 * Generate a Tower Polygon from an appropriate Setting
 	 * @param towerSettings
 	 * @return
 	 */
-	public Polygon towerShape(SettingGroup towerSettings) {
-		Point towerLocation = this.parsePoint(towerSettings.settingValues.get(0));
-		float towerRotation = (float) (2 * Math.PI * Float.parseFloat(towerSettings.settingValues.get(1).value) / 360f);
-		float towerWidth = Float.parseFloat(towerSettings.settingValues.get(2).value);
-		float towerDepth = Float.parseFloat(towerSettings.settingValues.get(3).value);
+	public Polygon towerShape(Setting towerSettings, Schema schema) {
+		
+		// Read from SettingSchema
+		Setting loc = towerSettings.find(schema.LOCATION);
+		Setting rot = towerSettings.find(schema.ROTATION);
+		Setting wid = towerSettings.find(schema.WIDTH);
+		Setting dep = towerSettings.find(schema.DEPTH);
+		
+		Point towerLocation = this.parsePoint(loc);
+		float towerRotation = (float) (2 * Math.PI * rot.getFloat() / 360f);
+		float towerWidth = wid.getFloat();
+		float towerDepth = dep.getFloat();
 		return morph.rectangle(towerLocation, towerWidth, towerDepth, towerRotation);
 	}
 
 	/**
-	 * Parse a SettingGroup of points into a polygon (assumes that y and z are
+	 * Parse a SettingSchema of points into a polygon (assumes that y and z are
 	 * flipped)
 	 *
 	 * @param vertexGroup a list of 2D or 3D vectors
 	 * @return a new polygon made from the vertices in the group
 	 */
-	private Polygon parsePolygon(SettingGroup vertexGroup) {
+	private Polygon parsePolygon(Setting vertexGroup) {
 		Polygon shape = new Polygon();
-		for (int i = 0; i < vertexGroup.settingValues.size(); i++) {
-			SettingValue plotVertex = vertexGroup.settingValues.get(i);
-			shape.addVertex(this.parsePoint(plotVertex));
+		for (Setting vertex : vertexGroup.settings) {
+			shape.addVertex(this.parsePoint(vertex));
 		}
 		return shape;
 	}
 
 	/**
-	 * Parse a string into a Point object (assumes "x,y,z")
+	 * Parse a string list into a Point object
 	 *
 	 * @param a vertex
-	 * @return a new point made from the SettingValue
+	 * @return a new point made from the Setting
 	 */
-	private Point parsePoint(SettingValue vector) {
-		String[] coordString = vector.value.split(",");
-		float[] coord = new float[coordString.length];
-		for (int m = 0; m < coordString.length; m++) {
-			coord[m] = Float.parseFloat(coordString[m]);
-		}
+	private Point parsePoint(Setting vector) {
+		float[] coord = vector.getVector();
 		if (coord.length == 2) {
 			return new Point(coord[0], coord[1]);
 		} else if (coord.length == 3) {
 			return new Point(coord[0], coord[2], coord[1]);
 		} else {
-			System.out.println("SettingValue must formatted as 'x,y' or 'x,y,z'");
+			System.out.println("SettingSchema not formatted correctly");
 			return new Point();
 		}
 	}

@@ -10,12 +10,12 @@ public enum Function {
 	
 	// LBCS Standard (https://www.planning.org/lbcs/standards/)
 	
-	Residential("#FFFF00"),
-	Commercial("#FF0000"),
+	Residential("#CCCC00"),
+	Commercial("#CC0000"),
 	Manufacturing("#A020F0"),
 	Transportation("#BEBEBE"),
 	Entertainment("#90EE90"),
-	Institutional("#0000FF"),
+	Institutional("#0000CC"),
 	Agriculture("#228B22"),
 	Unspecified("#CCCCCC");
 	

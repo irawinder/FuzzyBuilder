@@ -1,182 +1,186 @@
 package edu.mit.ira.fuzzy.io;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import edu.mit.ira.fuzzy.model.Function;
-import edu.mit.ira.fuzzy.setting.schema.SchemaType;
-import edu.mit.ira.fuzzy.setting.schema.SettingGroupSchema;
-import edu.mit.ira.fuzzy.setting.schema.SettingValueSchema;
+import edu.mit.ira.opensui.setting.Configuration;
+import edu.mit.ira.opensui.setting.GUI;
+import edu.mit.ira.opensui.setting.Legend;
+import edu.mit.ira.opensui.setting.Setting;
+import edu.mit.ira.opensui.setting.Legend.Entry;
 
 public class Schema {
-
-	private String apiVersion;
-	private String id;
-	private String author;
-	private String contact;
-	private String sponsor;
-	private String universeName;
-
-	public Schema(String apiVersion, String id, String author, String sponsor, String contact) {
-		this.apiVersion = apiVersion;
-		this.id = id;
-		this.author = author;
-		this.sponsor = sponsor;
-		this.contact = contact;
-		this.universeName = "";
-	}
-
-	public JSONObject serialize() {
-		JSONArray settings = this.settings();
-		JSONObject legend = this.legend();
-		JSONObject schema = new JSONObject();
-		schema.put("apiVersion", apiVersion);
-		schema.put("id", id);
-		schema.put("label", universeName);
-		schema.put("author", author);
-		schema.put("sponsor", sponsor);
-		schema.put("contact", contact);
-		schema.put("settings", settings);
-		schema.put("legend", legend);
-		return schema;
-	}
-
+	
+	public final String UNIVERSE_NAME = "Site";
+	public final String FLOOR_HEIGHT = "Floor Height [ft]";
+	public final String CANTILEVER = "Cantilever Allowance [%]";
+	public final String PARCELS = "Parcels";
+	public final String PARCEL = "Parcel";
+	public final String VERTICES = "Vertices";
+	public final String VERTEX = "Vertex";
+	public final String GRID_SIZE = "Grid Size [ft]";
+	public final String GRID_ROTATION = "Grid Rotation [degrees]";
+	public final String PODIUM_VOLUMES = "Podium Volumes";
+	public final String PODIUM_VOLUME = "Podium Volume";
+	public final String SETBACK = "Setback [ft]";
+	public final String ZONES = "Zones";
+	public final String ZONE = "Zone";
+	public final String FLOORS = "Floors [#]";
+	public final String FUNCTION = "Function";
+	public final String TOWER_VOLUMES = "Tower Volumes";
+	public final String TOWER_VOLUME = "Tower Volume";
+	public final String LOCATION = "Location";
+	public final String ROTATION = "Rotation [degrees]";
+	public final String WIDTH = "Width [ft]";
+	public final String DEPTH = "Depth [ft]";
+	public final String AREAS = "Building Exclusion Areas";
+	public final String AREA = "Area";
+	
 	/**
 	 * make and return the setting schema for this model
 	 * @return
 	 */
-	public JSONArray settings() {
-
-		this.universeName = "Site";
-
-		SettingValueSchema floorHeight = new SettingValueSchema(SchemaType.slider, "Floor Height [ft]", false);
-		floorHeight.values.add("10"); // default
-		floorHeight.values.add("10"); // min
-		floorHeight.values.add("20"); // max
-
-		SettingValueSchema cantilever = new SettingValueSchema(SchemaType.slider, "Cantilever Allowance [%]", false);
-		cantilever.values.add("50"); // default
-		cantilever.values.add("0"); // min
-		cantilever.values.add("100"); // max
+	public Configuration baseConfiguration(String apiVersion, String id, String author, String sponsor, String contact) {
 		
-		SettingGroupSchema plot = new SettingGroupSchema("Parcel", true);
+		Configuration base = new Configuration(UNIVERSE_NAME, apiVersion, id, author, sponsor, contact);
 
-		SettingValueSchema plotVertex = new SettingValueSchema(SchemaType.control_point, "Vertex", true);
-		plotVertex.values.add("0"); // initial x
-		plotVertex.values.add("0"); // initial y
-		plotVertex.values.add("0"); // initial z
-		plot.settings.add(plotVertex);
+		Setting floorHeight = new Setting(GUI.SLIDER, FLOOR_HEIGHT);
+		floorHeight.value.add("10"); // default
+		floorHeight.bounds.add("10"); // min
+		floorHeight.bounds.add("20"); // max
 
-		SettingValueSchema gridSize = new SettingValueSchema(SchemaType.slider, "Grid Size [ft]", false);
-		gridSize.values.add("10"); // default
-		gridSize.values.add("10"); // min
-		gridSize.values.add("50"); // max
+		Setting cantilever = new Setting(GUI.SLIDER, CANTILEVER);
+		cantilever.value.add("50"); // default
+		cantilever.bounds.add("0"); // min
+		cantilever.bounds.add("100"); // max
+		
+		Setting plots = new Setting(GUI.GROUP_EXTENDABLE, PARCELS);
+		Setting plot = new Setting(GUI.GROUP, PARCEL);
+		plots.template = plot;
+		
+		Setting plotVertices = new Setting(GUI.GROUP_EXTENDABLE, VERTICES);
+		Setting plotVertex = new Setting(GUI.CONTROL_POINT, VERTEX);
+		plotVertices.template = plotVertex;
+		plotVertex.value.add("0"); // initial x
+		plotVertex.value.add("0"); // initial y
+		plotVertex.value.add("0"); // initial z
+		plot.settings.add(plotVertices);
+		
+		Setting gridSize = new Setting(GUI.SLIDER, GRID_SIZE);
+		gridSize.value.add("15"); // default
+		gridSize.bounds.add("10"); // min
+		gridSize.bounds.add("50"); // max
 		plot.settings.add(gridSize);
 
-		SettingValueSchema gridRot = new SettingValueSchema(SchemaType.slider, "Grid Rotation [degrees]", false);
-		gridRot.values.add("0"); // default
-		gridRot.values.add("0"); // min
-		gridRot.values.add("90"); // max
+		Setting gridRot = new Setting(GUI.SLIDER, GRID_ROTATION);
+		gridRot.value.add("45"); // default
+		gridRot.bounds.add("0"); // min
+		gridRot.bounds.add("90"); // max
 		plot.settings.add(gridRot);
+		
+		Setting podiums = new Setting(GUI.GROUP_EXTENDABLE, PODIUM_VOLUMES);
+		Setting podium = new Setting(GUI.GROUP, PODIUM_VOLUME);
+		podiums.template = podium;
+		podiums.settings.add(podium); // Add a podium volume by default
+		plot.settings.add(podiums);
 
-		SettingGroupSchema podium = new SettingGroupSchema("Podium Volume", true);
-		plot.settings.add(podium);
-
-		SettingValueSchema setback = new SettingValueSchema(SchemaType.slider, "Setback [ft]", false);
-		setback.values.add("0"); // default
-		setback.values.add("0"); // min
-		setback.values.add("200"); // max
+		Setting setback = new Setting(GUI.SLIDER, SETBACK);
+		setback.value.add("20"); // default
+		setback.bounds.add("0"); // min
+		setback.bounds.add("200"); // max
 		podium.settings.add(setback);
+		
+		Setting pZones = new Setting(GUI.GROUP_EXTENDABLE, ZONES);
+		Setting pZone = new Setting(GUI.GROUP, ZONE);
+		pZones.template = pZone;
+		pZones.settings.add(pZone); // add 1 zone by default
+		podium.settings.add(pZones);
 
-		SettingGroupSchema pZone = new SettingGroupSchema("Zone", true);
-		podium.settings.add(pZone);
-
-		SettingValueSchema pFloors = new SettingValueSchema(SchemaType.slider, "Floors [#]", false);
-		pFloors.values.add("1"); // default
-		pFloors.values.add("1"); // min
-		pFloors.values.add("6"); // max
+		Setting pFloors = new Setting(GUI.SLIDER, FLOORS);
+		pFloors.value.add("1"); // default
+		pFloors.bounds.add("1"); // min
+		pFloors.bounds.add("6"); // max
 		pZone.settings.add(pFloors);
 
-		SettingValueSchema pFunction = new SettingValueSchema(SchemaType.dropdown, "Function", false);
+		Setting pFunction = new Setting(GUI.DROPDOWN, FUNCTION);
+		pFunction.value.add(Function.Commercial.toString());
 		for (Function function : Function.values())
-			pFunction.values.add(function.toString());
+			pFunction.bounds.add(function.toString());
 		pZone.settings.add(pFunction);
 		
-		SettingGroupSchema tower = new SettingGroupSchema("Tower Volume", true);
+		Setting towers = new Setting(GUI.GROUP_EXTENDABLE, TOWER_VOLUMES);
+		Setting tower = new Setting(GUI.GROUP, TOWER_VOLUME);
+		towers.template = tower;
 
-		SettingValueSchema tVertex = new SettingValueSchema(SchemaType.control_point, "Location", false);
-		tVertex.values.add("0"); // initial x
-		tVertex.values.add("0"); // initial y
-		tVertex.values.add("0"); // initial z
+		Setting tVertex = new Setting(GUI.CONTROL_POINT, LOCATION);
+		tVertex.value.add("0"); // initial x
+		tVertex.value.add("0"); // initial y
+		tVertex.value.add("0"); // initial z
 		tower.settings.add(tVertex);
 
-		SettingValueSchema tRot = new SettingValueSchema(SchemaType.slider, "Rotation [degrees]", false);
-		tRot.values.add("0"); // default
-		tRot.values.add("0"); // min
-		tRot.values.add("180"); // max
+		Setting tRot = new Setting(GUI.SLIDER, ROTATION);
+		tRot.value.add("0"); // default
+		tRot.bounds.add("0"); // min
+		tRot.bounds.add("180"); // max
 		tower.settings.add(tRot);
 
-		SettingValueSchema tWidth = new SettingValueSchema(SchemaType.slider, "Width [ft]", false);
-		tWidth.values.add("100"); // default
-		tWidth.values.add("100"); // min
-		tWidth.values.add("1000"); // max
+		Setting tWidth = new Setting(GUI.SLIDER, WIDTH);
+		tWidth.value.add("100"); // default
+		tWidth.bounds.add("100"); // min
+		tWidth.bounds.add("1000"); // max
 		tower.settings.add(tWidth);
 
-		SettingValueSchema tDepth = new SettingValueSchema(SchemaType.slider, "Depth [ft]", false);
-		tDepth.values.add("50"); // default
-		tDepth.values.add("50"); // min
-		tDepth.values.add("200"); // max
+		Setting tDepth = new Setting(GUI.SLIDER, DEPTH);
+		tDepth.value.add("50"); // default
+		tDepth.bounds.add("50"); // min
+		tDepth.bounds.add("200"); // max
 		tower.settings.add(tDepth);
+		
+		Setting tZones = new Setting(GUI.GROUP_EXTENDABLE, ZONES);
+		Setting tZone = new Setting(GUI.GROUP, ZONE);
+		tZones.template = tZone;
+		tZones.settings.add(tZone); // add 1 zone by default
+		tower.settings.add(tZones);
 
-		SettingGroupSchema tZone = new SettingGroupSchema("Zone", true);
-		tower.settings.add(tZone);
-
-		SettingValueSchema tFloors = new SettingValueSchema(SchemaType.slider, "Floors [#]", false);
-		tFloors.values.add("1"); // default
-		tFloors.values.add("1"); // min
-		tFloors.values.add("40"); // max
+		Setting tFloors = new Setting(GUI.SLIDER, FLOORS);
+		tFloors.value.add("3"); // default
+		tFloors.bounds.add("1"); // min
+		tFloors.bounds.add("40"); // max
 		tZone.settings.add(tFloors);
 
-		SettingValueSchema tFunction = new SettingValueSchema(SchemaType.dropdown, "Function", false);
+		Setting tFunction = new Setting(GUI.DROPDOWN, FUNCTION);
+		tFunction.value.add(Function.Residential.toString());
 		for (Function function : Function.values())
-			tFunction.values.add(function.toString());
+			tFunction.bounds.add(function.toString());
 		tZone.settings.add(tFunction);
 		
-		SettingGroupSchema openArea = new SettingGroupSchema("Building Exclusion Area", true);
-		SettingValueSchema openVertex = new SettingValueSchema(SchemaType.control_point, "Vertex", true);
-		openVertex.values.add("0"); // initial x
-		openVertex.values.add("0"); // initial y
-		openVertex.values.add("0"); // initial z
-		openArea.settings.add(openVertex);
+		Setting openAreas = new Setting(GUI.GROUP_EXTENDABLE, AREAS);
+		Setting openArea = new Setting(GUI.GROUP, AREA);
+		openAreas.template = openArea;
 		
-		JSONArray settings = new JSONArray();
-		settings.put(0, floorHeight.serialize());
-		settings.put(1, cantilever.serialize());
-		settings.put(2, plot.serialize());
-		settings.put(3, tower.serialize());
-		settings.put(4, openArea.serialize());
+		Setting openVertices = new Setting(GUI.GROUP_EXTENDABLE, VERTICES);
+		Setting openVertex = new Setting(GUI.CONTROL_POINT, VERTEX);
+		openVertices.template = openVertex;
+		openVertex.value.add("0"); // initial x
+		openVertex.value.add("0"); // initial y
+		openVertex.value.add("0"); // initial z
+		openArea.settings.add(openVertices);
 		
+		base.settings.add(floorHeight);
+		base.settings.add(cantilever);
+		base.settings.add(plots);
+		base.settings.add(towers);
+		base.settings.add(openAreas);
 		
-		return settings;
-	}
-
-	/**
-	 * Return the legend of colors for this model
-	 * @return
-	 */
-	JSONObject legend() {
-		JSONArray functionLegend = new JSONArray();
-		int i = 0;
+		// Create Legend
+		Legend legend = new Legend();
+		legend.label = "Function";
 		for (Function function : Function.values()) {
-			JSONObject entry = new JSONObject();
-			entry.put("label", function.toString());
-			entry.put("color", function.legendColor());
-			functionLegend.put(i, entry);
-			i++;
+			Entry entry = legend.new Entry();
+			entry.label = function.toString();
+			entry.color = function.legendColor();
+			legend.entries.add(entry);
 		}
-		JSONObject legend = new JSONObject();
-		legend.put("label", "Function");
-		legend.put("entries", functionLegend);
-		return legend;
+		base.legend = legend;
+		
+		return base;
 	}
 }

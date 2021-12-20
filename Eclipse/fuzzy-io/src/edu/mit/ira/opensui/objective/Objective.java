@@ -1,4 +1,4 @@
-package edu.mit.ira.fuzzy.objective;
+package edu.mit.ira.opensui.objective;
 
 import org.json.JSONObject;
 
