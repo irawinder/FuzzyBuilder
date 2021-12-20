@@ -2,6 +2,7 @@ package edu.mit.ira.fuzzy.io;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -161,11 +162,24 @@ public class Server {
 				else if (requestProcess.equals("SAVE")) 
 				{
 					// Save a submitted setting configuration
-					String responseBody = solution(requestBody);
+					String userFeedback;
+					String message = "Solution Delivered to " + user;
+					boolean save;
+					if(user.equals("") || user.equals("guest")) {
+						userFeedback = "This user name may not save scenarios.";
+						message += "; Save Denied";
+						save = false;
+					} else {
+						userFeedback = "Scenario saved as \"" + scenario + "\"";
+						message += "; Saved scenario: " + scenario;
+						save = true;
+					}
+					String responseBody = solution(requestBody, userFeedback);
 					String contentType = "application/json";
-					String message = "Solution Delivered to " + user + "; Saved scenario: " + scenario;
-					saveData(user, scenario, "request.json", requestBody);
-					saveData(user, scenario, "response.json", responseBody);
+					if (save) {
+						saveData(user, scenario, "request.json", requestBody);
+						saveData(user, scenario, "response.json", responseBody);
+					}
 					packItShipIt(t, 200, message, responseBody, contentType);
 				} 
 				else
@@ -233,16 +247,37 @@ public class Server {
 	}
 	
 	/**
-	 * Get the Solution as json string
+	 * Get the Solution as json string, appending any feedback
 	 * @return solution as JSON string
 	 */
+	private String solution(String requestBody, String feedback) {
+		JSONObject solutionJSON = solutionJSON(requestBody);
+		solutionJSON.put("feedback", feedback);
+		return wrapApi(solutionJSON);
+	}
+	
+	/**
+	 * Get the Solution as json string
+	 * @param requestBody
+	 * @return
+	 */
 	private String solution(String requestBody) {
+		JSONObject solutionJSON = solutionJSON(requestBody);
+		return wrapApi(solutionJSON);
+	}
+	
+	/**
+	 * Get the solution as a JSON Object
+	 * @param requestBody
+	 * @return
+	 */
+	private JSONObject solutionJSON(String requestBody) {
 		
 		// Check for Body
 		if (requestBody.length() == 0) {
 			System.out.println("Warning: requestBody has no data");
 		}
-		
+
 		// Generate FuzzyIO Response Data
 		Configuration config = adapter.parse(requestBody);
 		Development solution = builder.build(config, schema);
@@ -251,7 +286,7 @@ public class Server {
 		// Serialize the Response Data
 		JSONObject dataJSON = solution.serialize();
 		dataJSON.put("performance", performance.serialize());
-		return wrapApi(dataJSON);
+		return dataJSON;
 	}
 	
 	/**
@@ -262,10 +297,15 @@ public class Server {
 	 * @param dataString
 	 */
 	private void saveData(String user, String scenario, String fileName, String dataString) {
+		
+		String directoryName = "./data/users/" + user + "/scenarios/" + scenario;
+		File directory = new File(directoryName);
+		if (!directory.exists()) {
+			directory.mkdirs();
+		}
 		byte data[] = dataString.getBytes();
-	    Path p = Paths.get("./data/" + user + "/scenarios/" + scenario + "/" + fileName);
-	    try (OutputStream out = new BufferedOutputStream(
-	      Files.newOutputStream(p))) {
+	    Path p = Paths.get(directoryName + "/" + fileName);
+	    try (OutputStream out = new BufferedOutputStream(Files.newOutputStream(p))) {
 	      out.write(data, 0, data.length);
 	    } catch (IOException x) {
 	      System.err.println(x);
