@@ -16,6 +16,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.sun.net.httpserver.Headers;
@@ -52,6 +53,8 @@ public class Server {
 	
 	private String DEFAULT_USER = "guest";
 	private String DEFAULT_SCENARIO = "defacto";
+	private String REQUEST_FILE = "configuration.json";
+	private String RESPONSE_FILE = "solution.json";
 	
 	/**
 	 * Construct a new FuzzyIO Server
@@ -127,16 +130,40 @@ public class Server {
 					String message = "Base Settings Delivered to " + user;
 					packItShipIt(t, 200, message, responseBody, contentType);
 				} 
+				else if (requestProcess.equals("LIST"))
+				{	
+					// Send a list of scenarios saved by this user
+					String responseBody = solutionNames(user);
+					String contentType = "application/json";
+					String message = "Scenario Names Delivers for " + user;
+					packItShipIt(t, 200, message, responseBody, contentType);
+				} 
 				else if (requestProcess.equals("LOAD")) 
 				{	
-					//temp
-					//
-					//
 					// Load a previously saved setting configuration
-					String responseBody = getHTML("404.txt");
-					String contentType = "text/html";
-					String message = "Resource not found";
-					packItShipIt(t, 404, message, responseBody, contentType);
+					if (scenario.equals("default configuration")) {
+						
+						// Send the default setting configuration to the GUI
+						String userFeedback = "Scenario Loaded: " + scenario;
+						String responseBody = defaultSettings(userFeedback);
+						String contentType = "application/json";
+						String message = "Base Settings Delivered to " + user;
+						packItShipIt(t, 200, message, responseBody, contentType);
+					} else if (hasScenario(user, scenario)) {
+						
+						// Send the default setting configuration to the GUI
+						String responseBody = loadData(user, scenario, REQUEST_FILE);
+						String contentType = "application/json";
+						String message = "Scenario " + scenario + " loaded for " + user;
+						packItShipIt(t, 200, message, responseBody, contentType);
+					} else {
+						
+						// Resource Not Found
+						String responseBody = getHTML("404.txt");
+						String contentType = "text/html";
+						String message = "Resource not found";
+						packItShipIt(t, 404, message, responseBody, contentType);
+					}
 				} 
 				else
 				{
@@ -165,8 +192,8 @@ public class Server {
 					String userFeedback;
 					String message = "Solution Delivered to " + user;
 					boolean save;
-					if(user.equals("") || user.equals("guest")) {
-						userFeedback = "This user name may not save scenarios.";
+					if(user.equals("") || user.equals("guest") || scenario.equals("default configuration")) {
+						userFeedback = "You may not save scenario";
 						message += "; Save Denied";
 						save = false;
 					} else {
@@ -177,8 +204,8 @@ public class Server {
 					String responseBody = solution(requestBody, userFeedback);
 					String contentType = "application/json";
 					if (save) {
-						saveData(user, scenario, "request.json", requestBody);
-						saveData(user, scenario, "response.json", responseBody);
+						saveData(user, scenario, REQUEST_FILE, requestBody);
+						saveData(user, scenario, RESPONSE_FILE, responseBody);
 					}
 					packItShipIt(t, 200, message, responseBody, contentType);
 				} 
@@ -222,7 +249,7 @@ public class Server {
 			for (int i=0; i<params.length; i++) {
 				String[] param = params[i].split("=");
 				if (param.length == 2) {
-					parameters.put(param[0], param[1]);
+					parameters.put(param[0], param[1].replace("%20", " "));
 				}
 			}
 		}
@@ -244,6 +271,16 @@ public class Server {
 	 */
 	private String defaultSettings() {
 		return baseConfig.serialize().toString(4);
+	}
+	
+	/**
+	 * Get the Default Configuration Schema JSON string
+	 * @return base config as JSON string
+	 */
+	private String defaultSettings(String feedback) {
+		JSONObject defaultSettings = baseConfig.serialize();
+		defaultSettings.put("feedback", feedback);
+		return defaultSettings.toString(4);
 	}
 	
 	/**
@@ -290,6 +327,45 @@ public class Server {
 	}
 	
 	/**
+	 * Check if a scenario of this names exists for this user
+	 * @param user
+	 * @param scenario
+	 * @return
+	 */
+	private boolean hasScenario(String user, String scenario) {
+		String directoryName = "./data/users/" + user + "/scenarios";
+		File directory = new File(directoryName);
+		if (directory.exists()) {
+			String[] nameList = directory.list();
+			for(int i=0; i<nameList.length; i++) {
+				if(nameList[i].equals(scenario)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * Return a list of scenario names saved by this user
+	 * @return
+	 */
+	public String solutionNames(String user) {
+		JSONArray names = new JSONArray();
+		String directoryName = "./data/users/" + user + "/scenarios";
+		File directory = new File(directoryName);
+		if (directory.exists()) {
+			String[] nameList = directory.list();
+			for(int i=0; i<nameList.length; i++) {
+				names.put(i, nameList[i]);
+			}
+		}
+		JSONObject solutionNames = new JSONObject();
+		solutionNames.put("scenarios", names);
+		return solutionNames.toString(4);
+	}
+	
+	/**
 	 * Save a String of data to file
 	 * @param user
 	 * @param scenario
@@ -310,6 +386,23 @@ public class Server {
 	    } catch (IOException x) {
 	      System.err.println(x);
 	    }
+	}
+	
+	/**
+	 * Load scenario data created by a user
+	 * @param user
+	 * @param scenario
+	 * @param fileName
+	 * @return
+	 */
+	private String loadData(String user, String scenario, String fileName) {
+		Path filePath = Path.of("./data/users/" + user + "/scenarios/" + scenario + "/" + fileName);
+	    try {
+			return Files.readString(filePath);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 	
 	/**
@@ -404,7 +497,6 @@ public class Server {
 		String apiVersion = serverVersion;
 		JSONObject root = new JSONObject();
 		root.put("apiVersion", apiVersion);
-		root.put("method", "FuzzyBuilder.build");
 		root.put("data", data);
 
 		return root.toString();
@@ -418,9 +510,5 @@ public class Server {
 			e.printStackTrace();
 			return "<!DOCTYPE html><html><body>" + serverID + ": " + serverVersion + "</body></html>";
 		}
-	}
-	
-	private boolean isValidMethod(String method) {
-		return method.equals("GET") || method.equals("POST") || method.equals("OPTIONS");
 	}
 }
