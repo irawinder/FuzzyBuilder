@@ -117,7 +117,7 @@ public class Schema {
 		tower.settings.add(tVertex);
 
 		Setting tRot = new Setting(GUI.SLIDER, ROTATION);
-		tRot.value.add("0"); // default
+		tRot.value.add("90"); // default
 		tRot.bounds.add("0"); // min
 		tRot.bounds.add("180"); // max
 		tower.settings.add(tRot);
