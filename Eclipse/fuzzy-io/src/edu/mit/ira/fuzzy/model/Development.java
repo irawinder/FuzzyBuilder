@@ -68,7 +68,7 @@ public class Development {
 		}
 		
 		if(this.site.voxelList.size() == 0) {
-			return "You must draw a parcel before any massing is generated.\nParcels must have at least 3 vertices";
+			return "You must draw a parcel before any massing is generated.\nParcels must have at least 3 vertices.";
 		} else if (this.massing.voxelList.size() == 0) {
 			return "You must add zones to a podium volume or tower volume.\nTower volumes must be placed within a parcel.";
 		}
