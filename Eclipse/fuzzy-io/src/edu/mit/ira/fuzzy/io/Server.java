@@ -48,7 +48,10 @@ public class Server {
 	private Builder builder;
 	private Evaluator evaluator;
 	private Deserializer adapter;
-
+	
+	private String DEFAULT_USER = "guest";
+	private String DEFAULT_SCENARIO = "defacto";
+	
 	/**
 	 * Construct a new FuzzyIO Server
 	 * @param name name of server
@@ -85,6 +88,8 @@ public class Server {
 			String requestURI = t.getRequestURI().toString();
 			String requestProcess = process(requestURI);
 			Map<String, String> requestParameters = parameters(requestURI);
+			String user = requestParameters.get("user");
+			String scenario = requestParameters.get("scenario");
 			
 			// Parse Request Body
 			InputStreamReader isr = new InputStreamReader(t.getRequestBody(), "utf-8");
@@ -108,22 +113,37 @@ public class Server {
 				if (requestProcess.equals("")) 
 				{
 					// Supply web content if root resource
-					packItShipIt(t, 200, "HTML Delivered", getHTML("index.txt"), "text/html");
+					String responseBody = getHTML("index.txt");
+					String contentType = "text/html";
+					String message = "HTML Delivered";
+					packItShipIt(t, 200, message, responseBody, contentType);
 				} 
 				else if (requestProcess.equals("INIT")) 
 				{
 					// Send the default setting configuration to the GUI
-					packItShipIt(t, 200, "Base Settings Delivered", defaultSettings(), "application/json");
+					String responseBody = defaultSettings();
+					String contentType = "application/json";
+					String message = "Base Settings Delivered to " + user;
+					packItShipIt(t, 200, message, responseBody, contentType);
 				} 
 				else if (requestProcess.equals("LOAD")) 
-				{
+				{	
+					//temp
+					//
+					//
 					// Load a previously saved setting configuration
-					packItShipIt(t, 404, "Resource not found", getHTML("404.txt"), "text/html"); //temp
+					String responseBody = getHTML("404.txt");
+					String contentType = "text/html";
+					String message = "Resource not found";
+					packItShipIt(t, 404, message, responseBody, contentType);
 				} 
 				else
 				{
 					// Resource Not Found
-					packItShipIt(t, 404, "Resource not found", getHTML("404.txt"), "text/html");
+					String responseBody = getHTML("404.txt");
+					String contentType = "text/html";
+					String message = "Resource not found";
+					packItShipIt(t, 404, message, responseBody, contentType);
 				}
 			}
 			
@@ -133,17 +153,26 @@ public class Server {
 				if (requestProcess.equals("RUN")) 
 				{
 					// Send the default setting configuration to the GUI
-					packItShipIt(t, 200, "Solution Delivered", solution(requestBody), "application/json");
+					String responseBody = solution(requestBody);
+					String contentType = "application/json";
+					String message = "Solution Delivered to " + user;
+					packItShipIt(t, 200, message, responseBody, contentType);
 				} 
 				else if (requestProcess.equals("SAVE")) 
 				{
 					// Save a submitted setting configuration
-					packItShipIt(t, 404, "Resource not found"); // temp
+					String responseBody = solution(requestBody);
+					String contentType = "application/json";
+					String message = "Solution Delivered to " + user + "; Saved scenario: " + scenario;
+					saveData(user, scenario, "request.json", requestBody);
+					saveData(user, scenario, "response.json", responseBody);
+					packItShipIt(t, 200, message, responseBody, contentType);
 				} 
 				else
 				{
 					// Resource Not Found
-					packItShipIt(t, 404, "Resource not found");
+					String message = "Resource not found";
+					packItShipIt(t, 404, message);
 				}
 			}
 			
@@ -152,20 +181,27 @@ public class Server {
 				
 				// OPTIONS request is something browsers ask before 
 				// allowing an external server to provide data
-				packItShipIt(t, 200, "HTTP Options Delivered");
+				String message = "HTTP Options Delivered";
+				packItShipIt(t, 200, message);
 			}
 			
 			// HTTP Request (other)
 			else  {
 				
 				// Other methods not allowed
-				packItShipIt(t, 405, "Method Not Allowed");
+				String message = "Method Not Allowed";
+				packItShipIt(t, 405, message);
 			}
 		}
 	}
 	
+	/**
+	 * Get parameters from URI
+	 * @param requestURI
+	 * @return
+	 */
 	private Map<String, String> parameters(String requestURI) {
-		String[] process_params = requestURI.replace("?", ";").split(";");
+		String[] process_params = requestURI.replace("?", ";").toLowerCase().split(";");
 		Map<String, String> parameters = new HashMap<String, String>();
 		if(process_params.length > 1) {
 			String[] params = process_params[1].split("&");
@@ -175,9 +211,11 @@ public class Server {
 					parameters.put(param[0], param[1]);
 				}
 			}
-		} else {
-			parameters.put("user", "guest");
 		}
+		if (!parameters.containsKey("user")) 
+			parameters.put("user", DEFAULT_USER);
+		if (!parameters.containsKey("scenario")) 
+			parameters.put("scenario", DEFAULT_SCENARIO);
 		return parameters;
 	}
 	
@@ -217,21 +255,40 @@ public class Server {
 	}
 	
 	/**
+	 * Save a String of data to file
+	 * @param user
+	 * @param scenario
+	 * @param fileName
+	 * @param dataString
+	 */
+	private void saveData(String user, String scenario, String fileName, String dataString) {
+		byte data[] = dataString.getBytes();
+	    Path p = Paths.get("./data/" + user + "/scenarios/" + scenario + "/" + fileName);
+	    try (OutputStream out = new BufferedOutputStream(
+	      Files.newOutputStream(p))) {
+	      out.write(data, 0, data.length);
+	    } catch (IOException x) {
+	      System.err.println(x);
+	    }
+	}
+	
+	/**
 	 * Attach Data and Headers to HttpResponse and send it off to the client
 	 * @param t
 	 * @param responseCode
-	 * @param data a string of data, such as a JSON file
+	 * @param data a string of responseBody, such as a JSON file
 	 * @throws IOException
 	 */
-	private void packItShipIt(HttpExchange t, int responseCode, String responseMessage, String data, String dataType) throws IOException {
-		makeHeaders(t, dataType);
-		int responseLength = data.length();
+	private void packItShipIt(HttpExchange t, int responseCode, String responseMessage, String responseBody, String contentType) throws IOException {
+		makeHeaders(t, contentType);
+		int responseLength = responseBody.length();
 		t.sendResponseHeaders(responseCode, responseLength);
 		OutputStream os = t.getResponseBody();
-		os.write(data.getBytes());
+		os.write(responseBody.getBytes());
 		os.close();
 		log(t, "Response: " + responseCode + ", " + responseMessage + ", Response Length: " + responseLength);
 	}
+	
 	
 	/**
 	 * Attach Headers to HttpResponse and send it off to client
