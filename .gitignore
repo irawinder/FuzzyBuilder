@@ -1,6 +1,7 @@
 *.classpath
 *.project
 *.settings
+*.DS_Store
 
 Eclipse/fuzzybuilder-core/bin/
 Eclipse/fuzzybuilder-core/lib/

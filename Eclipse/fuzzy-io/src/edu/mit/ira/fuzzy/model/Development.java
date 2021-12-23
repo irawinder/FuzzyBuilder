@@ -20,7 +20,7 @@ public class Development {
 	public HashMap<Polygon, ArrayList<Polygon>> towerShapes;
 	public ArrayList<Polygon> allShapes;
 	public HashMap<Polygon, VoxelArray> plotSite, plotMassing, plotMassingHollowed;
-	public VoxelArray site, massing, allVoxels, hollowed;
+	public VoxelArray site, massing, allVoxels, massingHollowed, allVoxelsHollowed;
 	public String error;
 	
 	/**
@@ -38,8 +38,9 @@ public class Development {
 		
 		this.site = new VoxelArray();
 		this.massing = new VoxelArray();
+		this.massingHollowed = new VoxelArray();
 		this.allVoxels = new VoxelArray();
-		this.hollowed = new VoxelArray();
+		this.allVoxelsHollowed = new VoxelArray();
 		this.error = null;
 	}
 
@@ -50,7 +51,7 @@ public class Development {
 	 */
 	public JSONObject serialize() {
 
-		JSONArray voxelsJSON = this.hollowed.serialize();
+		JSONArray voxelsJSON = this.allVoxelsHollowed.serialize();
 		JSONArray shapesJSON = new JSONArray();
 		for (int i = 0; i < this.allShapes.size(); i++) {
 			Polygon shape = this.allShapes.get(i);

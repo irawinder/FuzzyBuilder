@@ -1,0 +1,2754 @@
+{
+    "apiVersion": "v1.2.2",
+    "id": "FuzzyIO",
+    "author": "Ira Winder, Daniel Fink, and Max Walker",
+    "sponsor": "MIT Center for Real Estate",
+    "contact": "fuzzy-io@mit.edu",
+    "type": "group",
+    "label": "Site",
+    "settings": [
+        {
+            "type": "slider",
+            "label": "Floor Height [ft]",
+            "value": [
+                "10"
+            ],
+            "bounds": [
+                "10",
+                "20"
+            ],
+            "settings": [],
+            "template": []
+        },
+        {
+            "type": "slider",
+            "label": "Cantilever Allowance [%]",
+            "value": [
+                "50"
+            ],
+            "bounds": [
+                "0",
+                "100"
+            ],
+            "settings": [],
+            "template": []
+        },
+        {
+            "type": "group_extendable",
+            "label": "Parcels",
+            "value": [],
+            "bounds": [],
+            "settings": [
+                {
+                    "type": "group",
+                    "label": "Parcel_1",
+                    "value": [],
+                    "bounds": [],
+                    "settings": [
+                        {
+                            "type": "group_extendable",
+                            "label": "Vertices",
+                            "value": [],
+                            "bounds": [],
+                            "settings": [
+                                {
+                                    "type": "control_point",
+                                    "label": "Vertex_1",
+                                    "value": [
+                                        "705.723",
+                                        "0",
+                                        "-451.339"
+                                    ],
+                                    "bounds": [],
+                                    "settings": [],
+                                    "template": []
+                                },
+                                {
+                                    "type": "control_point",
+                                    "label": "Vertex_2",
+                                    "value": [
+                                        "196.055",
+                                        "0",
+                                        "-338.519"
+                                    ],
+                                    "bounds": [],
+                                    "settings": [],
+                                    "template": []
+                                },
+                                {
+                                    "type": "control_point",
+                                    "label": "Vertex_3",
+                                    "value": [
+                                        "179.777",
+                                        "0",
+                                        "-304.484"
+                                    ],
+                                    "bounds": [],
+                                    "settings": [],
+                                    "template": []
+                                },
+                                {
+                                    "type": "control_point",
+                                    "label": "Vertex_4",
+                                    "value": [
+                                        "250.818",
+                                        "0",
+                                        "-218.402"
+                                    ],
+                                    "bounds": [],
+                                    "settings": [],
+                                    "template": []
+                                },
+                                {
+                                    "type": "control_point",
+                                    "label": "Vertex_5",
+                                    "value": [
+                                        "352.027",
+                                        "0",
+                                        "-167.869"
+                                    ],
+                                    "bounds": [],
+                                    "settings": [],
+                                    "template": []
+                                },
+                                {
+                                    "type": "control_point",
+                                    "label": "Vertex_6",
+                                    "value": [
+                                        "715.133",
+                                        "0",
+                                        "-166.503"
+                                    ],
+                                    "bounds": [],
+                                    "settings": [],
+                                    "template": []
+                                }
+                            ],
+                            "template": [
+                                {
+                                    "type": "control_point",
+                                    "label": "Vertex",
+                                    "value": [
+                                        "0",
+                                        "0",
+                                        "0"
+                                    ],
+                                    "bounds": [],
+                                    "settings": [],
+                                    "template": []
+                                }
+                            ]
+                        },
+                        {
+                            "type": "slider",
+                            "label": "Grid Size [ft]",
+                            "value": [
+                                "25"
+                            ],
+                            "bounds": [
+                                "10",
+                                "50"
+                            ],
+                            "settings": [],
+                            "template": []
+                        },
+                        {
+                            "type": "slider",
+                            "label": "Grid Rotation [degrees]",
+                            "value": [
+                                "77"
+                            ],
+                            "bounds": [
+                                "0",
+                                "90"
+                            ],
+                            "settings": [],
+                            "template": []
+                        },
+                        {
+                            "type": "group_extendable",
+                            "label": "Podium Volumes",
+                            "value": [],
+                            "bounds": [],
+                            "settings": [
+                                {
+                                    "type": "group",
+                                    "label": "Podium Volume",
+                                    "value": [],
+                                    "bounds": [],
+                                    "settings": [
+                                        {
+                                            "type": "slider",
+                                            "label": "Setback [ft]",
+                                            "value": [
+                                                "20"
+                                            ],
+                                            "bounds": [
+                                                "0",
+                                                "200"
+                                            ],
+                                            "settings": [],
+                                            "template": []
+                                        },
+                                        {
+                                            "type": "group_extendable",
+                                            "label": "Zones",
+                                            "value": [],
+                                            "bounds": [],
+                                            "settings": [
+                                                {
+                                                    "type": "group",
+                                                    "label": "Zone_1",
+                                                    "value": [],
+                                                    "bounds": [],
+                                                    "settings": [
+                                                        {
+                                                            "type": "slider",
+                                                            "label": "Floors [#]",
+                                                            "value": [
+                                                                "4"
+                                                            ],
+                                                            "bounds": [
+                                                                "1",
+                                                                "6"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        },
+                                                        {
+                                                            "type": "dropdown",
+                                                            "label": "Function",
+                                                            "value": [
+                                                                "Commercial"
+                                                            ],
+                                                            "bounds": [
+                                                                "Residential",
+                                                                "Commercial",
+                                                                "Manufacturing",
+                                                                "Transportation",
+                                                                "Entertainment",
+                                                                "Institutional",
+                                                                "Agriculture",
+                                                                "Unspecified"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        }
+                                                    ],
+                                                    "template": []
+                                                }
+                                            ],
+                                            "template": [
+                                                {
+                                                    "type": "group",
+                                                    "label": "Zone",
+                                                    "value": [],
+                                                    "bounds": [],
+                                                    "settings": [
+                                                        {
+                                                            "type": "slider",
+                                                            "label": "Floors [#]",
+                                                            "value": [
+                                                                "1"
+                                                            ],
+                                                            "bounds": [
+                                                                "1",
+                                                                "6"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        },
+                                                        {
+                                                            "type": "dropdown",
+                                                            "label": "Function",
+                                                            "value": [
+                                                                "Commercial"
+                                                            ],
+                                                            "bounds": [
+                                                                "Residential",
+                                                                "Commercial",
+                                                                "Manufacturing",
+                                                                "Transportation",
+                                                                "Entertainment",
+                                                                "Institutional",
+                                                                "Agriculture",
+                                                                "Unspecified"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        }
+                                                    ],
+                                                    "template": []
+                                                }
+                                            ]
+                                        }
+                                    ],
+                                    "template": []
+                                }
+                            ],
+                            "template": [
+                                {
+                                    "type": "group",
+                                    "label": "Podium Volume",
+                                    "value": [],
+                                    "bounds": [],
+                                    "settings": [
+                                        {
+                                            "type": "slider",
+                                            "label": "Setback [ft]",
+                                            "value": [
+                                                "20"
+                                            ],
+                                            "bounds": [
+                                                "0",
+                                                "200"
+                                            ],
+                                            "settings": [],
+                                            "template": []
+                                        },
+                                        {
+                                            "type": "group_extendable",
+                                            "label": "Zones",
+                                            "value": [],
+                                            "bounds": [],
+                                            "settings": [
+                                                {
+                                                    "type": "group",
+                                                    "label": "Zone",
+                                                    "value": [],
+                                                    "bounds": [],
+                                                    "settings": [
+                                                        {
+                                                            "type": "slider",
+                                                            "label": "Floors [#]",
+                                                            "value": [
+                                                                "1"
+                                                            ],
+                                                            "bounds": [
+                                                                "1",
+                                                                "6"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        },
+                                                        {
+                                                            "type": "dropdown",
+                                                            "label": "Function",
+                                                            "value": [
+                                                                "Commercial"
+                                                            ],
+                                                            "bounds": [
+                                                                "Residential",
+                                                                "Commercial",
+                                                                "Manufacturing",
+                                                                "Transportation",
+                                                                "Entertainment",
+                                                                "Institutional",
+                                                                "Agriculture",
+                                                                "Unspecified"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        }
+                                                    ],
+                                                    "template": []
+                                                }
+                                            ],
+                                            "template": [
+                                                {
+                                                    "type": "group",
+                                                    "label": "Zone",
+                                                    "value": [],
+                                                    "bounds": [],
+                                                    "settings": [
+                                                        {
+                                                            "type": "slider",
+                                                            "label": "Floors [#]",
+                                                            "value": [
+                                                                "1"
+                                                            ],
+                                                            "bounds": [
+                                                                "1",
+                                                                "6"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        },
+                                                        {
+                                                            "type": "dropdown",
+                                                            "label": "Function",
+                                                            "value": [
+                                                                "Commercial"
+                                                            ],
+                                                            "bounds": [
+                                                                "Residential",
+                                                                "Commercial",
+                                                                "Manufacturing",
+                                                                "Transportation",
+                                                                "Entertainment",
+                                                                "Institutional",
+                                                                "Agriculture",
+                                                                "Unspecified"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        }
+                                                    ],
+                                                    "template": []
+                                                }
+                                            ]
+                                        }
+                                    ],
+                                    "template": []
+                                }
+                            ]
+                        }
+                    ],
+                    "template": []
+                },
+                {
+                    "type": "group",
+                    "label": "Parcel_2",
+                    "value": [],
+                    "bounds": [],
+                    "settings": [
+                        {
+                            "type": "group_extendable",
+                            "label": "Vertices",
+                            "value": [],
+                            "bounds": [],
+                            "settings": [
+                                {
+                                    "type": "control_point",
+                                    "label": "Vertex_1",
+                                    "value": [
+                                        "282.295",
+                                        "0",
+                                        "-162.337"
+                                    ],
+                                    "bounds": [],
+                                    "settings": [],
+                                    "template": []
+                                },
+                                {
+                                    "type": "control_point",
+                                    "label": "Vertex_2",
+                                    "value": [
+                                        "337.12",
+                                        "0",
+                                        "-141.728"
+                                    ],
+                                    "bounds": [],
+                                    "settings": [],
+                                    "template": []
+                                },
+                                {
+                                    "type": "control_point",
+                                    "label": "Vertex_3",
+                                    "value": [
+                                        "577.375",
+                                        "0",
+                                        "-138.84"
+                                    ],
+                                    "bounds": [],
+                                    "settings": [],
+                                    "template": []
+                                },
+                                {
+                                    "type": "control_point",
+                                    "label": "Vertex_4",
+                                    "value": [
+                                        "600.193",
+                                        "0",
+                                        "113.084"
+                                    ],
+                                    "bounds": [],
+                                    "settings": [],
+                                    "template": []
+                                },
+                                {
+                                    "type": "control_point",
+                                    "label": "Vertex_5",
+                                    "value": [
+                                        "211.621",
+                                        "0",
+                                        "118.068"
+                                    ],
+                                    "bounds": [],
+                                    "settings": [],
+                                    "template": []
+                                },
+                                {
+                                    "type": "control_point",
+                                    "label": "Vertex_6",
+                                    "value": [
+                                        "211.031",
+                                        "0",
+                                        "-206.127"
+                                    ],
+                                    "bounds": [],
+                                    "settings": [],
+                                    "template": []
+                                }
+                            ],
+                            "template": [
+                                {
+                                    "type": "control_point",
+                                    "label": "Vertex",
+                                    "value": [
+                                        "0",
+                                        "0",
+                                        "0"
+                                    ],
+                                    "bounds": [],
+                                    "settings": [],
+                                    "template": []
+                                }
+                            ]
+                        },
+                        {
+                            "type": "slider",
+                            "label": "Grid Size [ft]",
+                            "value": [
+                                "25"
+                            ],
+                            "bounds": [
+                                "10",
+                                "50"
+                            ],
+                            "settings": [],
+                            "template": []
+                        },
+                        {
+                            "type": "slider",
+                            "label": "Grid Rotation [degrees]",
+                            "value": [
+                                "0"
+                            ],
+                            "bounds": [
+                                "0",
+                                "90"
+                            ],
+                            "settings": [],
+                            "template": []
+                        },
+                        {
+                            "type": "group_extendable",
+                            "label": "Podium Volumes",
+                            "value": [],
+                            "bounds": [],
+                            "settings": [
+                                {
+                                    "type": "group",
+                                    "label": "Podium Volume_1",
+                                    "value": [],
+                                    "bounds": [],
+                                    "settings": [
+                                        {
+                                            "type": "slider",
+                                            "label": "Setback [ft]",
+                                            "value": [
+                                                "20"
+                                            ],
+                                            "bounds": [
+                                                "0",
+                                                "200"
+                                            ],
+                                            "settings": [],
+                                            "template": []
+                                        },
+                                        {
+                                            "type": "group_extendable",
+                                            "label": "Zones",
+                                            "value": [],
+                                            "bounds": [],
+                                            "settings": [
+                                                {
+                                                    "type": "group",
+                                                    "label": "Zone",
+                                                    "value": [],
+                                                    "bounds": [],
+                                                    "settings": [
+                                                        {
+                                                            "type": "slider",
+                                                            "label": "Floors [#]",
+                                                            "value": [
+                                                                "2"
+                                                            ],
+                                                            "bounds": [
+                                                                "1",
+                                                                "6"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        },
+                                                        {
+                                                            "type": "dropdown",
+                                                            "label": "Function",
+                                                            "value": [
+                                                                "Commercial"
+                                                            ],
+                                                            "bounds": [
+                                                                "Residential",
+                                                                "Commercial",
+                                                                "Manufacturing",
+                                                                "Transportation",
+                                                                "Entertainment",
+                                                                "Institutional",
+                                                                "Agriculture",
+                                                                "Unspecified"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        }
+                                                    ],
+                                                    "template": []
+                                                }
+                                            ],
+                                            "template": [
+                                                {
+                                                    "type": "group",
+                                                    "label": "Zone",
+                                                    "value": [],
+                                                    "bounds": [],
+                                                    "settings": [
+                                                        {
+                                                            "type": "slider",
+                                                            "label": "Floors [#]",
+                                                            "value": [
+                                                                "1"
+                                                            ],
+                                                            "bounds": [
+                                                                "1",
+                                                                "6"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        },
+                                                        {
+                                                            "type": "dropdown",
+                                                            "label": "Function",
+                                                            "value": [
+                                                                "Commercial"
+                                                            ],
+                                                            "bounds": [
+                                                                "Residential",
+                                                                "Commercial",
+                                                                "Manufacturing",
+                                                                "Transportation",
+                                                                "Entertainment",
+                                                                "Institutional",
+                                                                "Agriculture",
+                                                                "Unspecified"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        }
+                                                    ],
+                                                    "template": []
+                                                }
+                                            ]
+                                        }
+                                    ],
+                                    "template": []
+                                }
+                            ],
+                            "template": [
+                                {
+                                    "type": "group",
+                                    "label": "Podium Volume",
+                                    "value": [],
+                                    "bounds": [],
+                                    "settings": [
+                                        {
+                                            "type": "slider",
+                                            "label": "Setback [ft]",
+                                            "value": [
+                                                "20"
+                                            ],
+                                            "bounds": [
+                                                "0",
+                                                "200"
+                                            ],
+                                            "settings": [],
+                                            "template": []
+                                        },
+                                        {
+                                            "type": "group_extendable",
+                                            "label": "Zones",
+                                            "value": [],
+                                            "bounds": [],
+                                            "settings": [
+                                                {
+                                                    "type": "group",
+                                                    "label": "Zone",
+                                                    "value": [],
+                                                    "bounds": [],
+                                                    "settings": [
+                                                        {
+                                                            "type": "slider",
+                                                            "label": "Floors [#]",
+                                                            "value": [
+                                                                "1"
+                                                            ],
+                                                            "bounds": [
+                                                                "1",
+                                                                "6"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        },
+                                                        {
+                                                            "type": "dropdown",
+                                                            "label": "Function",
+                                                            "value": [
+                                                                "Commercial"
+                                                            ],
+                                                            "bounds": [
+                                                                "Residential",
+                                                                "Commercial",
+                                                                "Manufacturing",
+                                                                "Transportation",
+                                                                "Entertainment",
+                                                                "Institutional",
+                                                                "Agriculture",
+                                                                "Unspecified"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        }
+                                                    ],
+                                                    "template": []
+                                                }
+                                            ],
+                                            "template": [
+                                                {
+                                                    "type": "group",
+                                                    "label": "Zone",
+                                                    "value": [],
+                                                    "bounds": [],
+                                                    "settings": [
+                                                        {
+                                                            "type": "slider",
+                                                            "label": "Floors [#]",
+                                                            "value": [
+                                                                "1"
+                                                            ],
+                                                            "bounds": [
+                                                                "1",
+                                                                "6"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        },
+                                                        {
+                                                            "type": "dropdown",
+                                                            "label": "Function",
+                                                            "value": [
+                                                                "Commercial"
+                                                            ],
+                                                            "bounds": [
+                                                                "Residential",
+                                                                "Commercial",
+                                                                "Manufacturing",
+                                                                "Transportation",
+                                                                "Entertainment",
+                                                                "Institutional",
+                                                                "Agriculture",
+                                                                "Unspecified"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        }
+                                                    ],
+                                                    "template": []
+                                                }
+                                            ]
+                                        }
+                                    ],
+                                    "template": []
+                                }
+                            ]
+                        }
+                    ],
+                    "template": []
+                },
+                {
+                    "type": "group",
+                    "label": "Parcel_3",
+                    "value": [],
+                    "bounds": [],
+                    "settings": [
+                        {
+                            "type": "group_extendable",
+                            "label": "Vertices",
+                            "value": [],
+                            "bounds": [],
+                            "settings": [
+                                {
+                                    "type": "control_point",
+                                    "label": "Vertex_1",
+                                    "value": [
+                                        "113.273",
+                                        "0",
+                                        "559.158"
+                                    ],
+                                    "bounds": [],
+                                    "settings": [],
+                                    "template": []
+                                },
+                                {
+                                    "type": "control_point",
+                                    "label": "Vertex_2",
+                                    "value": [
+                                        "90.579",
+                                        "0",
+                                        "438.465"
+                                    ],
+                                    "bounds": [],
+                                    "settings": [],
+                                    "template": []
+                                },
+                                {
+                                    "type": "control_point",
+                                    "label": "Vertex_3",
+                                    "value": [
+                                        "62.828",
+                                        "0",
+                                        "442.062"
+                                    ],
+                                    "bounds": [],
+                                    "settings": [],
+                                    "template": []
+                                },
+                                {
+                                    "type": "control_point",
+                                    "label": "Vertex_4",
+                                    "value": [
+                                        "60.982",
+                                        "0",
+                                        "152.556"
+                                    ],
+                                    "bounds": [],
+                                    "settings": [],
+                                    "template": []
+                                },
+                                {
+                                    "type": "control_point",
+                                    "label": "Vertex_5",
+                                    "value": [
+                                        "337.233",
+                                        "0",
+                                        "151.142"
+                                    ],
+                                    "bounds": [],
+                                    "settings": [],
+                                    "template": []
+                                },
+                                {
+                                    "type": "control_point",
+                                    "label": "Vertex_6",
+                                    "value": [
+                                        "331.338",
+                                        "0",
+                                        "369.033"
+                                    ],
+                                    "bounds": [],
+                                    "settings": [],
+                                    "template": []
+                                },
+                                {
+                                    "type": "control_point",
+                                    "label": "Vertex_7",
+                                    "value": [
+                                        "362.295",
+                                        "0",
+                                        "558.953"
+                                    ],
+                                    "bounds": [],
+                                    "settings": [],
+                                    "template": []
+                                }
+                            ],
+                            "template": [
+                                {
+                                    "type": "control_point",
+                                    "label": "Vertex",
+                                    "value": [
+                                        "0",
+                                        "0",
+                                        "0"
+                                    ],
+                                    "bounds": [],
+                                    "settings": [],
+                                    "template": []
+                                }
+                            ]
+                        },
+                        {
+                            "type": "slider",
+                            "label": "Grid Size [ft]",
+                            "value": [
+                                "25"
+                            ],
+                            "bounds": [
+                                "10",
+                                "50"
+                            ],
+                            "settings": [],
+                            "template": []
+                        },
+                        {
+                            "type": "slider",
+                            "label": "Grid Rotation [degrees]",
+                            "value": [
+                                "0"
+                            ],
+                            "bounds": [
+                                "0",
+                                "90"
+                            ],
+                            "settings": [],
+                            "template": []
+                        },
+                        {
+                            "type": "group_extendable",
+                            "label": "Podium Volumes",
+                            "value": [],
+                            "bounds": [],
+                            "settings": [
+                                {
+                                    "type": "group",
+                                    "label": "Podium Volume",
+                                    "value": [],
+                                    "bounds": [],
+                                    "settings": [
+                                        {
+                                            "type": "slider",
+                                            "label": "Setback [ft]",
+                                            "value": [
+                                                "20"
+                                            ],
+                                            "bounds": [
+                                                "0",
+                                                "200"
+                                            ],
+                                            "settings": [],
+                                            "template": []
+                                        },
+                                        {
+                                            "type": "group_extendable",
+                                            "label": "Zones",
+                                            "value": [],
+                                            "bounds": [],
+                                            "settings": [
+                                                {
+                                                    "type": "group",
+                                                    "label": "Zone_2",
+                                                    "value": [],
+                                                    "bounds": [],
+                                                    "settings": [
+                                                        {
+                                                            "type": "slider",
+                                                            "label": "Floors [#]",
+                                                            "value": [
+                                                                "1"
+                                                            ],
+                                                            "bounds": [
+                                                                "1",
+                                                                "6"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        },
+                                                        {
+                                                            "type": "dropdown",
+                                                            "label": "Function",
+                                                            "value": [
+                                                                "Commercial"
+                                                            ],
+                                                            "bounds": [
+                                                                "Residential",
+                                                                "Commercial",
+                                                                "Manufacturing",
+                                                                "Transportation",
+                                                                "Entertainment",
+                                                                "Institutional",
+                                                                "Agriculture",
+                                                                "Unspecified"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        }
+                                                    ],
+                                                    "template": []
+                                                }
+                                            ],
+                                            "template": [
+                                                {
+                                                    "type": "group",
+                                                    "label": "Zone",
+                                                    "value": [],
+                                                    "bounds": [],
+                                                    "settings": [
+                                                        {
+                                                            "type": "slider",
+                                                            "label": "Floors [#]",
+                                                            "value": [
+                                                                "1"
+                                                            ],
+                                                            "bounds": [
+                                                                "1",
+                                                                "6"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        },
+                                                        {
+                                                            "type": "dropdown",
+                                                            "label": "Function",
+                                                            "value": [
+                                                                "Commercial"
+                                                            ],
+                                                            "bounds": [
+                                                                "Residential",
+                                                                "Commercial",
+                                                                "Manufacturing",
+                                                                "Transportation",
+                                                                "Entertainment",
+                                                                "Institutional",
+                                                                "Agriculture",
+                                                                "Unspecified"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        }
+                                                    ],
+                                                    "template": []
+                                                }
+                                            ]
+                                        }
+                                    ],
+                                    "template": []
+                                }
+                            ],
+                            "template": [
+                                {
+                                    "type": "group",
+                                    "label": "Podium Volume",
+                                    "value": [],
+                                    "bounds": [],
+                                    "settings": [
+                                        {
+                                            "type": "slider",
+                                            "label": "Setback [ft]",
+                                            "value": [
+                                                "20"
+                                            ],
+                                            "bounds": [
+                                                "0",
+                                                "200"
+                                            ],
+                                            "settings": [],
+                                            "template": []
+                                        },
+                                        {
+                                            "type": "group_extendable",
+                                            "label": "Zones",
+                                            "value": [],
+                                            "bounds": [],
+                                            "settings": [
+                                                {
+                                                    "type": "group",
+                                                    "label": "Zone",
+                                                    "value": [],
+                                                    "bounds": [],
+                                                    "settings": [
+                                                        {
+                                                            "type": "slider",
+                                                            "label": "Floors [#]",
+                                                            "value": [
+                                                                "1"
+                                                            ],
+                                                            "bounds": [
+                                                                "1",
+                                                                "6"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        },
+                                                        {
+                                                            "type": "dropdown",
+                                                            "label": "Function",
+                                                            "value": [
+                                                                "Commercial"
+                                                            ],
+                                                            "bounds": [
+                                                                "Residential",
+                                                                "Commercial",
+                                                                "Manufacturing",
+                                                                "Transportation",
+                                                                "Entertainment",
+                                                                "Institutional",
+                                                                "Agriculture",
+                                                                "Unspecified"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        }
+                                                    ],
+                                                    "template": []
+                                                }
+                                            ],
+                                            "template": [
+                                                {
+                                                    "type": "group",
+                                                    "label": "Zone",
+                                                    "value": [],
+                                                    "bounds": [],
+                                                    "settings": [
+                                                        {
+                                                            "type": "slider",
+                                                            "label": "Floors [#]",
+                                                            "value": [
+                                                                "1"
+                                                            ],
+                                                            "bounds": [
+                                                                "1",
+                                                                "6"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        },
+                                                        {
+                                                            "type": "dropdown",
+                                                            "label": "Function",
+                                                            "value": [
+                                                                "Commercial"
+                                                            ],
+                                                            "bounds": [
+                                                                "Residential",
+                                                                "Commercial",
+                                                                "Manufacturing",
+                                                                "Transportation",
+                                                                "Entertainment",
+                                                                "Institutional",
+                                                                "Agriculture",
+                                                                "Unspecified"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        }
+                                                    ],
+                                                    "template": []
+                                                }
+                                            ]
+                                        }
+                                    ],
+                                    "template": []
+                                }
+                            ]
+                        }
+                    ],
+                    "template": []
+                },
+                {
+                    "type": "group",
+                    "label": "Parcel_4",
+                    "value": [],
+                    "bounds": [],
+                    "settings": [
+                        {
+                            "type": "group_extendable",
+                            "label": "Vertices",
+                            "value": [],
+                            "bounds": [],
+                            "settings": [
+                                {
+                                    "type": "control_point",
+                                    "label": "Vertex_1",
+                                    "value": [
+                                        "-247.586",
+                                        "0",
+                                        "560.686"
+                                    ],
+                                    "bounds": [],
+                                    "settings": [],
+                                    "template": []
+                                },
+                                {
+                                    "type": "control_point",
+                                    "label": "Vertex_2",
+                                    "value": [
+                                        "-210.246",
+                                        "0",
+                                        "162.357"
+                                    ],
+                                    "bounds": [],
+                                    "settings": [],
+                                    "template": []
+                                },
+                                {
+                                    "type": "control_point",
+                                    "label": "Vertex_3",
+                                    "value": [
+                                        "18.634",
+                                        "0",
+                                        "156.957"
+                                    ],
+                                    "bounds": [],
+                                    "settings": [],
+                                    "template": []
+                                },
+                                {
+                                    "type": "control_point",
+                                    "label": "Vertex_4",
+                                    "value": [
+                                        "22.622",
+                                        "0",
+                                        "450.456"
+                                    ],
+                                    "bounds": [],
+                                    "settings": [],
+                                    "template": []
+                                },
+                                {
+                                    "type": "control_point",
+                                    "label": "Vertex_5",
+                                    "value": [
+                                        "-6.704",
+                                        "0",
+                                        "457.633"
+                                    ],
+                                    "bounds": [],
+                                    "settings": [],
+                                    "template": []
+                                },
+                                {
+                                    "type": "control_point",
+                                    "label": "Vertex_6",
+                                    "value": [
+                                        "14.443",
+                                        "0",
+                                        "559.504"
+                                    ],
+                                    "bounds": [],
+                                    "settings": [],
+                                    "template": []
+                                }
+                            ],
+                            "template": [
+                                {
+                                    "type": "control_point",
+                                    "label": "Vertex",
+                                    "value": [
+                                        "0",
+                                        "0",
+                                        "0"
+                                    ],
+                                    "bounds": [],
+                                    "settings": [],
+                                    "template": []
+                                }
+                            ]
+                        },
+                        {
+                            "type": "slider",
+                            "label": "Grid Size [ft]",
+                            "value": [
+                                "25"
+                            ],
+                            "bounds": [
+                                "10",
+                                "50"
+                            ],
+                            "settings": [],
+                            "template": []
+                        },
+                        {
+                            "type": "slider",
+                            "label": "Grid Rotation [degrees]",
+                            "value": [
+                                "89"
+                            ],
+                            "bounds": [
+                                "0",
+                                "90"
+                            ],
+                            "settings": [],
+                            "template": []
+                        },
+                        {
+                            "type": "group_extendable",
+                            "label": "Podium Volumes",
+                            "value": [],
+                            "bounds": [],
+                            "settings": [
+                                {
+                                    "type": "group",
+                                    "label": "Podium Volume",
+                                    "value": [],
+                                    "bounds": [],
+                                    "settings": [
+                                        {
+                                            "type": "slider",
+                                            "label": "Setback [ft]",
+                                            "value": [
+                                                "20"
+                                            ],
+                                            "bounds": [
+                                                "0",
+                                                "200"
+                                            ],
+                                            "settings": [],
+                                            "template": []
+                                        },
+                                        {
+                                            "type": "group_extendable",
+                                            "label": "Zones",
+                                            "value": [],
+                                            "bounds": [],
+                                            "settings": [
+                                                {
+                                                    "type": "group",
+                                                    "label": "Zone_2",
+                                                    "value": [],
+                                                    "bounds": [],
+                                                    "settings": [
+                                                        {
+                                                            "type": "slider",
+                                                            "label": "Floors [#]",
+                                                            "value": [
+                                                                "1"
+                                                            ],
+                                                            "bounds": [
+                                                                "1",
+                                                                "6"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        },
+                                                        {
+                                                            "type": "dropdown",
+                                                            "label": "Function",
+                                                            "value": [
+                                                                "Commercial"
+                                                            ],
+                                                            "bounds": [
+                                                                "Residential",
+                                                                "Commercial",
+                                                                "Manufacturing",
+                                                                "Transportation",
+                                                                "Entertainment",
+                                                                "Institutional",
+                                                                "Agriculture",
+                                                                "Unspecified"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        }
+                                                    ],
+                                                    "template": []
+                                                }
+                                            ],
+                                            "template": [
+                                                {
+                                                    "type": "group",
+                                                    "label": "Zone",
+                                                    "value": [],
+                                                    "bounds": [],
+                                                    "settings": [
+                                                        {
+                                                            "type": "slider",
+                                                            "label": "Floors [#]",
+                                                            "value": [
+                                                                "1"
+                                                            ],
+                                                            "bounds": [
+                                                                "1",
+                                                                "6"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        },
+                                                        {
+                                                            "type": "dropdown",
+                                                            "label": "Function",
+                                                            "value": [
+                                                                "Commercial"
+                                                            ],
+                                                            "bounds": [
+                                                                "Residential",
+                                                                "Commercial",
+                                                                "Manufacturing",
+                                                                "Transportation",
+                                                                "Entertainment",
+                                                                "Institutional",
+                                                                "Agriculture",
+                                                                "Unspecified"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        }
+                                                    ],
+                                                    "template": []
+                                                }
+                                            ]
+                                        }
+                                    ],
+                                    "template": []
+                                }
+                            ],
+                            "template": [
+                                {
+                                    "type": "group",
+                                    "label": "Podium Volume",
+                                    "value": [],
+                                    "bounds": [],
+                                    "settings": [
+                                        {
+                                            "type": "slider",
+                                            "label": "Setback [ft]",
+                                            "value": [
+                                                "20"
+                                            ],
+                                            "bounds": [
+                                                "0",
+                                                "200"
+                                            ],
+                                            "settings": [],
+                                            "template": []
+                                        },
+                                        {
+                                            "type": "group_extendable",
+                                            "label": "Zones",
+                                            "value": [],
+                                            "bounds": [],
+                                            "settings": [
+                                                {
+                                                    "type": "group",
+                                                    "label": "Zone",
+                                                    "value": [],
+                                                    "bounds": [],
+                                                    "settings": [
+                                                        {
+                                                            "type": "slider",
+                                                            "label": "Floors [#]",
+                                                            "value": [
+                                                                "1"
+                                                            ],
+                                                            "bounds": [
+                                                                "1",
+                                                                "6"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        },
+                                                        {
+                                                            "type": "dropdown",
+                                                            "label": "Function",
+                                                            "value": [
+                                                                "Commercial"
+                                                            ],
+                                                            "bounds": [
+                                                                "Residential",
+                                                                "Commercial",
+                                                                "Manufacturing",
+                                                                "Transportation",
+                                                                "Entertainment",
+                                                                "Institutional",
+                                                                "Agriculture",
+                                                                "Unspecified"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        }
+                                                    ],
+                                                    "template": []
+                                                }
+                                            ],
+                                            "template": [
+                                                {
+                                                    "type": "group",
+                                                    "label": "Zone",
+                                                    "value": [],
+                                                    "bounds": [],
+                                                    "settings": [
+                                                        {
+                                                            "type": "slider",
+                                                            "label": "Floors [#]",
+                                                            "value": [
+                                                                "1"
+                                                            ],
+                                                            "bounds": [
+                                                                "1",
+                                                                "6"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        },
+                                                        {
+                                                            "type": "dropdown",
+                                                            "label": "Function",
+                                                            "value": [
+                                                                "Commercial"
+                                                            ],
+                                                            "bounds": [
+                                                                "Residential",
+                                                                "Commercial",
+                                                                "Manufacturing",
+                                                                "Transportation",
+                                                                "Entertainment",
+                                                                "Institutional",
+                                                                "Agriculture",
+                                                                "Unspecified"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        }
+                                                    ],
+                                                    "template": []
+                                                }
+                                            ]
+                                        }
+                                    ],
+                                    "template": []
+                                }
+                            ]
+                        }
+                    ],
+                    "template": []
+                },
+                {
+                    "type": "group",
+                    "label": "Parcel_5",
+                    "value": [],
+                    "bounds": [],
+                    "settings": [
+                        {
+                            "type": "group_extendable",
+                            "label": "Vertices",
+                            "value": [],
+                            "bounds": [],
+                            "settings": [
+                                {
+                                    "type": "control_point",
+                                    "label": "Vertex_1",
+                                    "value": [
+                                        "-594.005",
+                                        "0",
+                                        "-70.993"
+                                    ],
+                                    "bounds": [],
+                                    "settings": [],
+                                    "template": []
+                                },
+                                {
+                                    "type": "control_point",
+                                    "label": "Vertex_2",
+                                    "value": [
+                                        "-607.545",
+                                        "0",
+                                        "-162.552"
+                                    ],
+                                    "bounds": [],
+                                    "settings": [],
+                                    "template": []
+                                },
+                                {
+                                    "type": "control_point",
+                                    "label": "Vertex_3",
+                                    "value": [
+                                        "-180.573",
+                                        "0",
+                                        "-228.834"
+                                    ],
+                                    "bounds": [],
+                                    "settings": [],
+                                    "template": []
+                                },
+                                {
+                                    "type": "control_point",
+                                    "label": "Vertex_4",
+                                    "value": [
+                                        "130.584",
+                                        "0",
+                                        "-312.789"
+                                    ],
+                                    "bounds": [],
+                                    "settings": [],
+                                    "template": []
+                                },
+                                {
+                                    "type": "control_point",
+                                    "label": "Vertex_5",
+                                    "value": [
+                                        "202.147",
+                                        "0",
+                                        "-211.023"
+                                    ],
+                                    "bounds": [],
+                                    "settings": [],
+                                    "template": []
+                                },
+                                {
+                                    "type": "control_point",
+                                    "label": "Vertex_6",
+                                    "value": [
+                                        "205.164",
+                                        "0",
+                                        "-175.425"
+                                    ],
+                                    "bounds": [],
+                                    "settings": [],
+                                    "template": []
+                                },
+                                {
+                                    "type": "control_point",
+                                    "label": "Vertex_7",
+                                    "value": [
+                                        "37.025",
+                                        "0",
+                                        "-204.932"
+                                    ],
+                                    "bounds": [],
+                                    "settings": [],
+                                    "template": []
+                                },
+                                {
+                                    "type": "control_point",
+                                    "label": "Vertex_8",
+                                    "value": [
+                                        "35.25",
+                                        "0",
+                                        "-67.042"
+                                    ],
+                                    "bounds": [],
+                                    "settings": [],
+                                    "template": []
+                                }
+                            ],
+                            "template": [
+                                {
+                                    "type": "control_point",
+                                    "label": "Vertex",
+                                    "value": [
+                                        "0",
+                                        "0",
+                                        "0"
+                                    ],
+                                    "bounds": [],
+                                    "settings": [],
+                                    "template": []
+                                }
+                            ]
+                        },
+                        {
+                            "type": "slider",
+                            "label": "Grid Size [ft]",
+                            "value": [
+                                "25"
+                            ],
+                            "bounds": [
+                                "10",
+                                "50"
+                            ],
+                            "settings": [],
+                            "template": []
+                        },
+                        {
+                            "type": "slider",
+                            "label": "Grid Rotation [degrees]",
+                            "value": [
+                                "81"
+                            ],
+                            "bounds": [
+                                "0",
+                                "90"
+                            ],
+                            "settings": [],
+                            "template": []
+                        },
+                        {
+                            "type": "group_extendable",
+                            "label": "Podium Volumes",
+                            "value": [],
+                            "bounds": [],
+                            "settings": [
+                                {
+                                    "type": "group",
+                                    "label": "Podium Volume",
+                                    "value": [],
+                                    "bounds": [],
+                                    "settings": [
+                                        {
+                                            "type": "slider",
+                                            "label": "Setback [ft]",
+                                            "value": [
+                                                "20"
+                                            ],
+                                            "bounds": [
+                                                "0",
+                                                "200"
+                                            ],
+                                            "settings": [],
+                                            "template": []
+                                        },
+                                        {
+                                            "type": "group_extendable",
+                                            "label": "Zones",
+                                            "value": [],
+                                            "bounds": [],
+                                            "settings": [
+                                                {
+                                                    "type": "group",
+                                                    "label": "Zone_2",
+                                                    "value": [],
+                                                    "bounds": [],
+                                                    "settings": [
+                                                        {
+                                                            "type": "slider",
+                                                            "label": "Floors [#]",
+                                                            "value": [
+                                                                "1"
+                                                            ],
+                                                            "bounds": [
+                                                                "1",
+                                                                "6"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        },
+                                                        {
+                                                            "type": "dropdown",
+                                                            "label": "Function",
+                                                            "value": [
+                                                                "Transportation"
+                                                            ],
+                                                            "bounds": [
+                                                                "Residential",
+                                                                "Commercial",
+                                                                "Manufacturing",
+                                                                "Transportation",
+                                                                "Entertainment",
+                                                                "Institutional",
+                                                                "Agriculture",
+                                                                "Unspecified"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        }
+                                                    ],
+                                                    "template": []
+                                                }
+                                            ],
+                                            "template": [
+                                                {
+                                                    "type": "group",
+                                                    "label": "Zone",
+                                                    "value": [],
+                                                    "bounds": [],
+                                                    "settings": [
+                                                        {
+                                                            "type": "slider",
+                                                            "label": "Floors [#]",
+                                                            "value": [
+                                                                "1"
+                                                            ],
+                                                            "bounds": [
+                                                                "1",
+                                                                "6"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        },
+                                                        {
+                                                            "type": "dropdown",
+                                                            "label": "Function",
+                                                            "value": [
+                                                                "Commercial"
+                                                            ],
+                                                            "bounds": [
+                                                                "Residential",
+                                                                "Commercial",
+                                                                "Manufacturing",
+                                                                "Transportation",
+                                                                "Entertainment",
+                                                                "Institutional",
+                                                                "Agriculture",
+                                                                "Unspecified"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        }
+                                                    ],
+                                                    "template": []
+                                                }
+                                            ]
+                                        }
+                                    ],
+                                    "template": []
+                                }
+                            ],
+                            "template": [
+                                {
+                                    "type": "group",
+                                    "label": "Podium Volume",
+                                    "value": [],
+                                    "bounds": [],
+                                    "settings": [
+                                        {
+                                            "type": "slider",
+                                            "label": "Setback [ft]",
+                                            "value": [
+                                                "20"
+                                            ],
+                                            "bounds": [
+                                                "0",
+                                                "200"
+                                            ],
+                                            "settings": [],
+                                            "template": []
+                                        },
+                                        {
+                                            "type": "group_extendable",
+                                            "label": "Zones",
+                                            "value": [],
+                                            "bounds": [],
+                                            "settings": [
+                                                {
+                                                    "type": "group",
+                                                    "label": "Zone",
+                                                    "value": [],
+                                                    "bounds": [],
+                                                    "settings": [
+                                                        {
+                                                            "type": "slider",
+                                                            "label": "Floors [#]",
+                                                            "value": [
+                                                                "1"
+                                                            ],
+                                                            "bounds": [
+                                                                "1",
+                                                                "6"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        },
+                                                        {
+                                                            "type": "dropdown",
+                                                            "label": "Function",
+                                                            "value": [
+                                                                "Commercial"
+                                                            ],
+                                                            "bounds": [
+                                                                "Residential",
+                                                                "Commercial",
+                                                                "Manufacturing",
+                                                                "Transportation",
+                                                                "Entertainment",
+                                                                "Institutional",
+                                                                "Agriculture",
+                                                                "Unspecified"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        }
+                                                    ],
+                                                    "template": []
+                                                }
+                                            ],
+                                            "template": [
+                                                {
+                                                    "type": "group",
+                                                    "label": "Zone",
+                                                    "value": [],
+                                                    "bounds": [],
+                                                    "settings": [
+                                                        {
+                                                            "type": "slider",
+                                                            "label": "Floors [#]",
+                                                            "value": [
+                                                                "1"
+                                                            ],
+                                                            "bounds": [
+                                                                "1",
+                                                                "6"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        },
+                                                        {
+                                                            "type": "dropdown",
+                                                            "label": "Function",
+                                                            "value": [
+                                                                "Commercial"
+                                                            ],
+                                                            "bounds": [
+                                                                "Residential",
+                                                                "Commercial",
+                                                                "Manufacturing",
+                                                                "Transportation",
+                                                                "Entertainment",
+                                                                "Institutional",
+                                                                "Agriculture",
+                                                                "Unspecified"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        }
+                                                    ],
+                                                    "template": []
+                                                }
+                                            ]
+                                        }
+                                    ],
+                                    "template": []
+                                }
+                            ]
+                        }
+                    ],
+                    "template": []
+                }
+            ],
+            "template": [
+                {
+                    "type": "group",
+                    "label": "Parcel",
+                    "value": [],
+                    "bounds": [],
+                    "settings": [
+                        {
+                            "type": "group_extendable",
+                            "label": "Vertices",
+                            "value": [],
+                            "bounds": [],
+                            "settings": [],
+                            "template": [
+                                {
+                                    "type": "control_point",
+                                    "label": "Vertex",
+                                    "value": [
+                                        "0",
+                                        "0",
+                                        "0"
+                                    ],
+                                    "bounds": [],
+                                    "settings": [],
+                                    "template": []
+                                }
+                            ]
+                        },
+                        {
+                            "type": "slider",
+                            "label": "Grid Size [ft]",
+                            "value": [
+                                "15"
+                            ],
+                            "bounds": [
+                                "10",
+                                "50"
+                            ],
+                            "settings": [],
+                            "template": []
+                        },
+                        {
+                            "type": "slider",
+                            "label": "Grid Rotation [degrees]",
+                            "value": [
+                                "45"
+                            ],
+                            "bounds": [
+                                "0",
+                                "90"
+                            ],
+                            "settings": [],
+                            "template": []
+                        },
+                        {
+                            "type": "group_extendable",
+                            "label": "Podium Volumes",
+                            "value": [],
+                            "bounds": [],
+                            "settings": [
+                                {
+                                    "type": "group",
+                                    "label": "Podium Volume",
+                                    "value": [],
+                                    "bounds": [],
+                                    "settings": [
+                                        {
+                                            "type": "slider",
+                                            "label": "Setback [ft]",
+                                            "value": [
+                                                "20"
+                                            ],
+                                            "bounds": [
+                                                "0",
+                                                "200"
+                                            ],
+                                            "settings": [],
+                                            "template": []
+                                        },
+                                        {
+                                            "type": "group_extendable",
+                                            "label": "Zones",
+                                            "value": [],
+                                            "bounds": [],
+                                            "settings": [
+                                                {
+                                                    "type": "group",
+                                                    "label": "Zone",
+                                                    "value": [],
+                                                    "bounds": [],
+                                                    "settings": [
+                                                        {
+                                                            "type": "slider",
+                                                            "label": "Floors [#]",
+                                                            "value": [
+                                                                "1"
+                                                            ],
+                                                            "bounds": [
+                                                                "1",
+                                                                "6"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        },
+                                                        {
+                                                            "type": "dropdown",
+                                                            "label": "Function",
+                                                            "value": [
+                                                                "Commercial"
+                                                            ],
+                                                            "bounds": [
+                                                                "Residential",
+                                                                "Commercial",
+                                                                "Manufacturing",
+                                                                "Transportation",
+                                                                "Entertainment",
+                                                                "Institutional",
+                                                                "Agriculture",
+                                                                "Unspecified"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        }
+                                                    ],
+                                                    "template": []
+                                                }
+                                            ],
+                                            "template": [
+                                                {
+                                                    "type": "group",
+                                                    "label": "Zone",
+                                                    "value": [],
+                                                    "bounds": [],
+                                                    "settings": [
+                                                        {
+                                                            "type": "slider",
+                                                            "label": "Floors [#]",
+                                                            "value": [
+                                                                "1"
+                                                            ],
+                                                            "bounds": [
+                                                                "1",
+                                                                "6"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        },
+                                                        {
+                                                            "type": "dropdown",
+                                                            "label": "Function",
+                                                            "value": [
+                                                                "Commercial"
+                                                            ],
+                                                            "bounds": [
+                                                                "Residential",
+                                                                "Commercial",
+                                                                "Manufacturing",
+                                                                "Transportation",
+                                                                "Entertainment",
+                                                                "Institutional",
+                                                                "Agriculture",
+                                                                "Unspecified"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        }
+                                                    ],
+                                                    "template": []
+                                                }
+                                            ]
+                                        }
+                                    ],
+                                    "template": []
+                                }
+                            ],
+                            "template": [
+                                {
+                                    "type": "group",
+                                    "label": "Podium Volume",
+                                    "value": [],
+                                    "bounds": [],
+                                    "settings": [
+                                        {
+                                            "type": "slider",
+                                            "label": "Setback [ft]",
+                                            "value": [
+                                                "20"
+                                            ],
+                                            "bounds": [
+                                                "0",
+                                                "200"
+                                            ],
+                                            "settings": [],
+                                            "template": []
+                                        },
+                                        {
+                                            "type": "group_extendable",
+                                            "label": "Zones",
+                                            "value": [],
+                                            "bounds": [],
+                                            "settings": [
+                                                {
+                                                    "type": "group",
+                                                    "label": "Zone",
+                                                    "value": [],
+                                                    "bounds": [],
+                                                    "settings": [
+                                                        {
+                                                            "type": "slider",
+                                                            "label": "Floors [#]",
+                                                            "value": [
+                                                                "1"
+                                                            ],
+                                                            "bounds": [
+                                                                "1",
+                                                                "6"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        },
+                                                        {
+                                                            "type": "dropdown",
+                                                            "label": "Function",
+                                                            "value": [
+                                                                "Commercial"
+                                                            ],
+                                                            "bounds": [
+                                                                "Residential",
+                                                                "Commercial",
+                                                                "Manufacturing",
+                                                                "Transportation",
+                                                                "Entertainment",
+                                                                "Institutional",
+                                                                "Agriculture",
+                                                                "Unspecified"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        }
+                                                    ],
+                                                    "template": []
+                                                }
+                                            ],
+                                            "template": [
+                                                {
+                                                    "type": "group",
+                                                    "label": "Zone",
+                                                    "value": [],
+                                                    "bounds": [],
+                                                    "settings": [
+                                                        {
+                                                            "type": "slider",
+                                                            "label": "Floors [#]",
+                                                            "value": [
+                                                                "1"
+                                                            ],
+                                                            "bounds": [
+                                                                "1",
+                                                                "6"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        },
+                                                        {
+                                                            "type": "dropdown",
+                                                            "label": "Function",
+                                                            "value": [
+                                                                "Commercial"
+                                                            ],
+                                                            "bounds": [
+                                                                "Residential",
+                                                                "Commercial",
+                                                                "Manufacturing",
+                                                                "Transportation",
+                                                                "Entertainment",
+                                                                "Institutional",
+                                                                "Agriculture",
+                                                                "Unspecified"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        }
+                                                    ],
+                                                    "template": []
+                                                }
+                                            ]
+                                        }
+                                    ],
+                                    "template": []
+                                }
+                            ]
+                        }
+                    ],
+                    "template": []
+                }
+            ]
+        },
+        {
+            "type": "group_extendable",
+            "label": "Tower Volumes",
+            "value": [],
+            "bounds": [],
+            "settings": [
+                {
+                    "type": "group",
+                    "label": "Tower Volume_1",
+                    "value": [],
+                    "bounds": [],
+                    "settings": [
+                        {
+                            "type": "control_point",
+                            "label": "Location",
+                            "value": [
+                                "598.244",
+                                "0",
+                                "-311.101"
+                            ],
+                            "bounds": [],
+                            "settings": [],
+                            "template": []
+                        },
+                        {
+                            "type": "slider",
+                            "label": "Rotation [degrees]",
+                            "value": [
+                                "0"
+                            ],
+                            "bounds": [
+                                "0",
+                                "180"
+                            ],
+                            "settings": [],
+                            "template": []
+                        },
+                        {
+                            "type": "slider",
+                            "label": "Width [ft]",
+                            "value": [
+                                "100"
+                            ],
+                            "bounds": [
+                                "100",
+                                "1000"
+                            ],
+                            "settings": [],
+                            "template": []
+                        },
+                        {
+                            "type": "slider",
+                            "label": "Depth [ft]",
+                            "value": [
+                                "50"
+                            ],
+                            "bounds": [
+                                "50",
+                                "200"
+                            ],
+                            "settings": [],
+                            "template": []
+                        },
+                        {
+                            "type": "group_extendable",
+                            "label": "Zones",
+                            "value": [],
+                            "bounds": [],
+                            "settings": [
+                                {
+                                    "type": "group",
+                                    "label": "Zone",
+                                    "value": [],
+                                    "bounds": [],
+                                    "settings": [
+                                        {
+                                            "type": "slider",
+                                            "label": "Floors [#]",
+                                            "value": [
+                                                "22"
+                                            ],
+                                            "bounds": [
+                                                "1",
+                                                "40"
+                                            ],
+                                            "settings": [],
+                                            "template": []
+                                        },
+                                        {
+                                            "type": "dropdown",
+                                            "label": "Function",
+                                            "value": [
+                                                "Residential"
+                                            ],
+                                            "bounds": [
+                                                "Residential",
+                                                "Commercial",
+                                                "Manufacturing",
+                                                "Transportation",
+                                                "Entertainment",
+                                                "Institutional",
+                                                "Agriculture",
+                                                "Unspecified"
+                                            ],
+                                            "settings": [],
+                                            "template": []
+                                        }
+                                    ],
+                                    "template": []
+                                }
+                            ],
+                            "template": [
+                                {
+                                    "type": "group",
+                                    "label": "Zone",
+                                    "value": [],
+                                    "bounds": [],
+                                    "settings": [
+                                        {
+                                            "type": "slider",
+                                            "label": "Floors [#]",
+                                            "value": [
+                                                "3"
+                                            ],
+                                            "bounds": [
+                                                "1",
+                                                "40"
+                                            ],
+                                            "settings": [],
+                                            "template": []
+                                        },
+                                        {
+                                            "type": "dropdown",
+                                            "label": "Function",
+                                            "value": [
+                                                "Residential"
+                                            ],
+                                            "bounds": [
+                                                "Residential",
+                                                "Commercial",
+                                                "Manufacturing",
+                                                "Transportation",
+                                                "Entertainment",
+                                                "Institutional",
+                                                "Agriculture",
+                                                "Unspecified"
+                                            ],
+                                            "settings": [],
+                                            "template": []
+                                        }
+                                    ],
+                                    "template": []
+                                }
+                            ]
+                        }
+                    ],
+                    "template": []
+                },
+                {
+                    "type": "group",
+                    "label": "Tower Volume_2",
+                    "value": [],
+                    "bounds": [],
+                    "settings": [
+                        {
+                            "type": "control_point",
+                            "label": "Location",
+                            "value": [
+                                "503.536",
+                                "0",
+                                "9.93"
+                            ],
+                            "bounds": [],
+                            "settings": [],
+                            "template": []
+                        },
+                        {
+                            "type": "slider",
+                            "label": "Rotation [degrees]",
+                            "value": [
+                                "0"
+                            ],
+                            "bounds": [
+                                "0",
+                                "180"
+                            ],
+                            "settings": [],
+                            "template": []
+                        },
+                        {
+                            "type": "slider",
+                            "label": "Width [ft]",
+                            "value": [
+                                "100"
+                            ],
+                            "bounds": [
+                                "100",
+                                "1000"
+                            ],
+                            "settings": [],
+                            "template": []
+                        },
+                        {
+                            "type": "slider",
+                            "label": "Depth [ft]",
+                            "value": [
+                                "50"
+                            ],
+                            "bounds": [
+                                "50",
+                                "200"
+                            ],
+                            "settings": [],
+                            "template": []
+                        },
+                        {
+                            "type": "group_extendable",
+                            "label": "Zones",
+                            "value": [],
+                            "bounds": [],
+                            "settings": [
+                                {
+                                    "type": "group",
+                                    "label": "Zone",
+                                    "value": [],
+                                    "bounds": [],
+                                    "settings": [
+                                        {
+                                            "type": "slider",
+                                            "label": "Floors [#]",
+                                            "value": [
+                                                "17"
+                                            ],
+                                            "bounds": [
+                                                "1",
+                                                "40"
+                                            ],
+                                            "settings": [],
+                                            "template": []
+                                        },
+                                        {
+                                            "type": "dropdown",
+                                            "label": "Function",
+                                            "value": [
+                                                "Residential"
+                                            ],
+                                            "bounds": [
+                                                "Residential",
+                                                "Commercial",
+                                                "Manufacturing",
+                                                "Transportation",
+                                                "Entertainment",
+                                                "Institutional",
+                                                "Agriculture",
+                                                "Unspecified"
+                                            ],
+                                            "settings": [],
+                                            "template": []
+                                        }
+                                    ],
+                                    "template": []
+                                }
+                            ],
+                            "template": [
+                                {
+                                    "type": "group",
+                                    "label": "Zone",
+                                    "value": [],
+                                    "bounds": [],
+                                    "settings": [
+                                        {
+                                            "type": "slider",
+                                            "label": "Floors [#]",
+                                            "value": [
+                                                "3"
+                                            ],
+                                            "bounds": [
+                                                "1",
+                                                "40"
+                                            ],
+                                            "settings": [],
+                                            "template": []
+                                        },
+                                        {
+                                            "type": "dropdown",
+                                            "label": "Function",
+                                            "value": [
+                                                "Residential"
+                                            ],
+                                            "bounds": [
+                                                "Residential",
+                                                "Commercial",
+                                                "Manufacturing",
+                                                "Transportation",
+                                                "Entertainment",
+                                                "Institutional",
+                                                "Agriculture",
+                                                "Unspecified"
+                                            ],
+                                            "settings": [],
+                                            "template": []
+                                        }
+                                    ],
+                                    "template": []
+                                }
+                            ]
+                        }
+                    ],
+                    "template": []
+                }
+            ],
+            "template": [
+                {
+                    "type": "group",
+                    "label": "Tower Volume",
+                    "value": [],
+                    "bounds": [],
+                    "settings": [
+                        {
+                            "type": "control_point",
+                            "label": "Location",
+                            "value": [
+                                "0",
+                                "0",
+                                "0"
+                            ],
+                            "bounds": [],
+                            "settings": [],
+                            "template": []
+                        },
+                        {
+                            "type": "slider",
+                            "label": "Rotation [degrees]",
+                            "value": [
+                                "0"
+                            ],
+                            "bounds": [
+                                "0",
+                                "180"
+                            ],
+                            "settings": [],
+                            "template": []
+                        },
+                        {
+                            "type": "slider",
+                            "label": "Width [ft]",
+                            "value": [
+                                "100"
+                            ],
+                            "bounds": [
+                                "100",
+                                "1000"
+                            ],
+                            "settings": [],
+                            "template": []
+                        },
+                        {
+                            "type": "slider",
+                            "label": "Depth [ft]",
+                            "value": [
+                                "50"
+                            ],
+                            "bounds": [
+                                "50",
+                                "200"
+                            ],
+                            "settings": [],
+                            "template": []
+                        },
+                        {
+                            "type": "group_extendable",
+                            "label": "Zones",
+                            "value": [],
+                            "bounds": [],
+                            "settings": [
+                                {
+                                    "type": "group",
+                                    "label": "Zone",
+                                    "value": [],
+                                    "bounds": [],
+                                    "settings": [
+                                        {
+                                            "type": "slider",
+                                            "label": "Floors [#]",
+                                            "value": [
+                                                "3"
+                                            ],
+                                            "bounds": [
+                                                "1",
+                                                "40"
+                                            ],
+                                            "settings": [],
+                                            "template": []
+                                        },
+                                        {
+                                            "type": "dropdown",
+                                            "label": "Function",
+                                            "value": [
+                                                "Residential"
+                                            ],
+                                            "bounds": [
+                                                "Residential",
+                                                "Commercial",
+                                                "Manufacturing",
+                                                "Transportation",
+                                                "Entertainment",
+                                                "Institutional",
+                                                "Agriculture",
+                                                "Unspecified"
+                                            ],
+                                            "settings": [],
+                                            "template": []
+                                        }
+                                    ],
+                                    "template": []
+                                }
+                            ],
+                            "template": [
+                                {
+                                    "type": "group",
+                                    "label": "Zone",
+                                    "value": [],
+                                    "bounds": [],
+                                    "settings": [
+                                        {
+                                            "type": "slider",
+                                            "label": "Floors [#]",
+                                            "value": [
+                                                "3"
+                                            ],
+                                            "bounds": [
+                                                "1",
+                                                "40"
+                                            ],
+                                            "settings": [],
+                                            "template": []
+                                        },
+                                        {
+                                            "type": "dropdown",
+                                            "label": "Function",
+                                            "value": [
+                                                "Residential"
+                                            ],
+                                            "bounds": [
+                                                "Residential",
+                                                "Commercial",
+                                                "Manufacturing",
+                                                "Transportation",
+                                                "Entertainment",
+                                                "Institutional",
+                                                "Agriculture",
+                                                "Unspecified"
+                                            ],
+                                            "settings": [],
+                                            "template": []
+                                        }
+                                    ],
+                                    "template": []
+                                }
+                            ]
+                        }
+                    ],
+                    "template": []
+                }
+            ]
+        },
+        {
+            "type": "group_extendable",
+            "label": "Building Exclusion Areas",
+            "value": [],
+            "bounds": [],
+            "settings": [],
+            "template": [
+                {
+                    "type": "group",
+                    "label": "Area",
+                    "value": [],
+                    "bounds": [],
+                    "settings": [
+                        {
+                            "type": "group_extendable",
+                            "label": "Vertices",
+                            "value": [],
+                            "bounds": [],
+                            "settings": [],
+                            "template": [
+                                {
+                                    "type": "control_point",
+                                    "label": "Vertex",
+                                    "value": [
+                                        "0",
+                                        "0",
+                                        "0"
+                                    ],
+                                    "bounds": [],
+                                    "settings": [],
+                                    "template": []
+                                }
+                            ]
+                        }
+                    ],
+                    "template": []
+                }
+            ]
+        }
+    ],
+    "legend": {
+        "label": "Function",
+        "entries": [
+            {
+                "label": "Residential",
+                "color": "#CCCC00"
+            },
+            {
+                "label": "Commercial",
+                "color": "#CC0000"
+            },
+            {
+                "label": "Manufacturing",
+                "color": "#A020F0"
+            },
+            {
+                "label": "Transportation",
+                "color": "#BEBEBE"
+            },
+            {
+                "label": "Entertainment",
+                "color": "#90EE90"
+            },
+            {
+                "label": "Institutional",
+                "color": "#0000CC"
+            },
+            {
+                "label": "Agriculture",
+                "color": "#228B22"
+            },
+            {
+                "label": "Unspecified",
+                "color": "#CCCCCC"
+            }
+        ]
+    }
+}

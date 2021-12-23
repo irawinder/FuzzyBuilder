@@ -95,12 +95,14 @@ public class Evaluator {
 					String useName = "[" + use + "] ";
 					float plotUseArea = voxelArea * plotUseCount.get(use);
 					useArea.put(use, useArea.get(use) + plotUseArea);
+					/*
 					float plotUseRatio;
 					if (plotBuiltArea == 0) {
 						plotUseRatio = 0;
 					} else {
 						plotUseRatio = plotUseArea / plotBuiltArea;
 					}
+					*/
 					
 					// Add plot area objectives itemized by use
 					performance.secondaryObjectives.add(new Objective(
@@ -129,12 +131,14 @@ public class Evaluator {
 		for (Function use : Function.values()) {
 			String useName = "[" + use + "] ";
 			float uArea = useArea.get(use);
+			/*
 			float useRatio;
 			if (builtArea == 0) {
 				useRatio = 0;
 			} else {
 				useRatio = uArea / builtArea;
 			}
+			*/
 			
 			// Add total area objectives itemized by use
 			performance.primaryObjectives.add(new Objective(
