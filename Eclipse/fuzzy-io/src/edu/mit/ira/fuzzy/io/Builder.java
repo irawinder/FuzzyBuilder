@@ -173,10 +173,14 @@ public class Builder {
 					// Add the current plot's massing to the overall result
 					fuzzy.plotMassing.put(plotShape, plotMassing);
 					fuzzy.massing = morph.add(fuzzy.massing, plotMassing);
+					
+					// Add add voxels to a special group that only contains unsurround voxels
+					VoxelArray plotMassingHollowed = morph.hollow(plotMassing);
+					fuzzy.plotMassingHollowed.put(plotShape, plotMassingHollowed);
+					fuzzy.hollowed = morph.add(fuzzy.hollowed, plotMassingHollowed);
 				}
 				// Combine flat site tiles on ground plane with massing
 				fuzzy.allVoxels = morph.add(fuzzy.site, fuzzy.massing);
-				fuzzy.hollowed = morph.hollow(fuzzy.allVoxels);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -19,7 +19,7 @@ public class Development {
 	public HashMap<Polygon, ArrayList<Polygon>> openShapes;
 	public HashMap<Polygon, ArrayList<Polygon>> towerShapes;
 	public ArrayList<Polygon> allShapes;
-	public HashMap<Polygon, VoxelArray> plotSite, plotMassing;
+	public HashMap<Polygon, VoxelArray> plotSite, plotMassing, plotMassingHollowed;
 	public VoxelArray site, massing, allVoxels, hollowed;
 	public String error;
 	
@@ -34,6 +34,8 @@ public class Development {
 		this.allShapes = new ArrayList<Polygon>();
 		this.plotSite = new HashMap<Polygon, VoxelArray>();
 		this.plotMassing = new HashMap<Polygon, VoxelArray>();
+		this.plotMassingHollowed = new HashMap<Polygon, VoxelArray>();
+		
 		this.site = new VoxelArray();
 		this.massing = new VoxelArray();
 		this.allVoxels = new VoxelArray();
