@@ -95,20 +95,19 @@ public class Evaluator {
 					String useName = "[" + use + "] ";
 					float plotUseArea = voxelArea * plotUseCount.get(use);
 					useArea.put(use, useArea.get(use) + plotUseArea);
-					/*
+					
 					float plotUseRatio;
 					if (plotBuiltArea == 0) {
 						plotUseRatio = 0;
 					} else {
 						plotUseRatio = plotUseArea / plotBuiltArea;
 					}
-					*/
 					
 					// Add plot area objectives itemized by use
 					performance.secondaryObjectives.add(new Objective(
-						plotName + useName + "\nBuilt Area", "Total floor area of " + use + " on " + plotName, plotUseArea, "sqft"));
-					//performance.secondaryObjectives.add(new Objective(
-					//	plotName + useName + "Area Ratio", "Portion of total built area on " + plotName, 100 * plotUseRatio, "%"));
+						plotName + useName + "Built Area", "Total floor area of " + use + " on " + plotName, plotUseArea, "sqft"));
+					performance.secondaryObjectives.add(new Objective(
+						plotName + useName + "Area Ratio", "Portion of total built area on " + plotName, 100 * plotUseRatio, "%"));
 				}
 			}
 		}
@@ -131,20 +130,20 @@ public class Evaluator {
 		for (Function use : Function.values()) {
 			String useName = "[" + use + "] ";
 			float uArea = useArea.get(use);
-			/*
+			
 			float useRatio;
 			if (builtArea == 0) {
 				useRatio = 0;
 			} else {
 				useRatio = uArea / builtArea;
 			}
-			*/
+			
 			
 			// Add total area objectives itemized by use
 			performance.primaryObjectives.add(new Objective(
-				useName + "\nBuilt Area", "Total floor area of " + use + " on site", uArea, "sqft"));
-			//performance.primaryObjectives.add(new Objective(
-			//	useName + "Area Ratio", "Portion of total " + use + "built area on site", 100 * useRatio, "%"));
+				useName + "Built Area", "Total floor area of " + use + " on site", uArea, "sqft"));
+			performance.primaryObjectives.add(new Objective(
+				useName + "Area Ratio", "Portion of total " + use + " built area on site", 100 * useRatio, "%"));
 		}
 
 		return performance;
