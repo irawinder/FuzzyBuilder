@@ -56,6 +56,7 @@ public class Builder {
 			for (Setting openArea : openAreas.settings) {
 				Setting vertices = openArea.find(schema.VERTICES);
 				Polygon openShape = this.parsePolygon(vertices);
+				openShape.setType("Open");
 				openShapes.add(openShape);
 				fuzzy.allShapes.add(openShape);
 			}
@@ -63,6 +64,7 @@ public class Builder {
 			// Pre-Populate Tower Polygons
 			for (Setting tower : towers.settings) {
 				Polygon towerShape = this.towerShape(tower, schema);
+				towerShape.setType("Tower");
 				towerSettingsMap.put(towerShape, tower);
 				towerShapes.add(towerShape);
 				fuzzy.allShapes.add(towerShape);
@@ -79,6 +81,7 @@ public class Builder {
 				
 				// Define Plot polygon
 				Polygon plotShape = this.parsePolygon(vert);
+				plotShape.setType("Plot");
 				String plotName = plot.label;
 				fuzzy.plotShapes.add(plotShape);
 				fuzzy.allShapes.add(plotShape);

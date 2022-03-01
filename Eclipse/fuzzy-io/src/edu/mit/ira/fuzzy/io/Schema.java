@@ -65,8 +65,8 @@ public class Schema {
 		plot.settings.add(plotVertices);
 		
 		Setting gridSize = new Setting(GUI.SLIDER, GRID_SIZE);
-		gridSize.value.add("15"); // default
-		gridSize.bounds.add("10"); // min
+		gridSize.value.add("30"); // default
+		gridSize.bounds.add("15"); // min
 		gridSize.bounds.add("50"); // max
 		plot.settings.add(gridSize);
 
@@ -179,6 +179,22 @@ public class Schema {
 			entry.color = function.legendColor();
 			legend.entries.add(entry);
 		}
+		
+		Entry plotEntry = legend.new Entry();
+		plotEntry.label = "Plot";
+		plotEntry.color = "#000000";
+		legend.entries.add(plotEntry);
+		
+		Entry towerEntry = legend.new Entry();
+		towerEntry.label = "Tower";
+		towerEntry.color = "#00FF00";
+		legend.entries.add(towerEntry);
+		
+		Entry openEntry = legend.new Entry();
+		openEntry.label = "Open";
+		openEntry.color = "#FF0000";
+		legend.entries.add(openEntry);
+		
 		base.legend = legend;
 		
 		return base;

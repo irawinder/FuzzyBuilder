@@ -15,6 +15,7 @@ public class Polygon {
 	private ArrayList<Point> vertices;
 	private ArrayList<Line> edges;
 	private float xMin, xMax, yMin, yMax;
+	private String type;
 
 	/**
 	 * Constructs an empty polygon
@@ -22,6 +23,7 @@ public class Polygon {
 	public Polygon() {
 		vertices = new ArrayList<Point>();
 		edges = new ArrayList<Line>();
+		type = "";
 	}
 
 	/**
@@ -45,7 +47,15 @@ public class Polygon {
 		}
 		return clone;
 	}
-
+	
+	public String getType() {
+		return this.type;
+	}
+	
+	public void setType(String type) {
+		this.type = type;
+	}
+	
 	/**
 	 * Retrieve the list of polygon corners
 	 * 
@@ -331,6 +341,7 @@ public class Polygon {
 
 		JSONObject polygonJSON = new JSONObject();
 		polygonJSON.put("vertices", vertexArray);
+		polygonJSON.put("type", getType());
 		return polygonJSON;
 	}
 }
