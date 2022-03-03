@@ -21,8 +21,8 @@ public enum Function {
 	// RED STUDIO 2016 Land & Floor Space Colors
 	
 	Residential("#fdde37"),
-	Water("#d1e7e8"),
-	Open_Space("#4f8554"),
+	//Water("#d1e7e8"),
+	//Open_Space("#4f8554"),
 	Institutional("#db499f"),
 	Industrial("#9646c8"),
 	Retail("#bf1921"),
