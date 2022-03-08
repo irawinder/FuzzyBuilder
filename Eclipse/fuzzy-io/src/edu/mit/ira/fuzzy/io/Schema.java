@@ -10,8 +10,7 @@ import edu.mit.ira.opensui.setting.Legend.Entry;
 public class Schema {
 	
 	public final String UNIVERSE_NAME = "Site";
-	public final String FLOOR_HEIGHT = "Floor Height [ft]";
-	public final String CANTILEVER = "Cantilever Allowance [%]";
+	
 	public final String PARCELS = "Parcels";
 	public final String PARCEL = "Parcel";
 	public final String VERTICES = "Vertices";
@@ -20,11 +19,13 @@ public class Schema {
 	public final String GRID_ROTATION = "Grid Rotation [degrees]";
 	public final String PODIUM_VOLUMES = "Podium Volumes";
 	public final String PODIUM_VOLUME = "Podium Volume";
+	public final String ORIENTATION = "Orientation";
 	public final String SETBACK = "Setback [ft]";
 	public final String ZONES = "Zones";
 	public final String ZONE = "Zone";
-	public final String FLOORS = "Floors [#]";
 	public final String FUNCTION = "Function";
+	public final String FLOORS = "Floors [#]";
+	public final String FLOOR_HEIGHT = "Floor Height [ft]";
 	public final String TOWER_VOLUMES = "Tower Volumes";
 	public final String TOWER_VOLUME = "Tower Volume";
 	public final String LOCATION = "Location";
@@ -33,6 +34,7 @@ public class Schema {
 	public final String DEPTH = "Depth [ft]";
 	public final String AREAS = "Building Exclusion Areas";
 	public final String AREA = "Area";
+	public final String CANTILEVER = "Cantilever Allowance [%]";
 	
 	/**
 	 * make and return the setting schema for this model
@@ -41,16 +43,6 @@ public class Schema {
 	public Configuration baseConfiguration(String apiVersion, String id, String author, String sponsor, String contact) {
 		
 		Configuration base = new Configuration(UNIVERSE_NAME, apiVersion, id, author, sponsor, contact);
-
-		Setting floorHeight = new Setting(GUI.SLIDER, FLOOR_HEIGHT);
-		floorHeight.value.add("10"); // default
-		floorHeight.bounds.add("10"); // min
-		floorHeight.bounds.add("20"); // max
-
-		Setting cantilever = new Setting(GUI.SLIDER, CANTILEVER);
-		cantilever.value.add("50"); // default
-		cantilever.bounds.add("0"); // min
-		cantilever.bounds.add("100"); // max
 		
 		Setting plots = new Setting(GUI.GROUP_EXTENDABLE, PARCELS);
 		Setting plot = new Setting(GUI.GROUP, PARCEL);
@@ -81,7 +73,13 @@ public class Schema {
 		podiums.template = podium;
 		podiums.settings.add(podium); // Add a podium volume by default
 		plot.settings.add(podiums);
-
+		
+		Setting orientation = new Setting(GUI.DROPDOWN, ORIENTATION);
+		orientation.value.add("Above Ground"); // default
+		orientation.bounds.add("Above Ground");
+		orientation.bounds.add("Below Ground");
+		podium.settings.add(orientation);
+		
 		Setting setback = new Setting(GUI.SLIDER, SETBACK);
 		setback.value.add("20"); // default
 		setback.bounds.add("0"); // min
@@ -93,18 +91,24 @@ public class Schema {
 		pZones.template = pZone;
 		pZones.settings.add(pZone); // add 1 zone by default
 		podium.settings.add(pZones);
-
-		Setting pFloors = new Setting(GUI.SLIDER, FLOORS);
-		pFloors.value.add("1"); // default
-		pFloors.bounds.add("1"); // min
-		pFloors.bounds.add("6"); // max
-		pZone.settings.add(pFloors);
-
+		
 		Setting pFunction = new Setting(GUI.DROPDOWN, FUNCTION);
 		pFunction.value.add(Function.Retail.toString());
 		for (Function function : Function.values())
 			pFunction.bounds.add(function.toString());
 		pZone.settings.add(pFunction);
+		
+		Setting pFloors = new Setting(GUI.SLIDER, FLOORS);
+		pFloors.value.add("1"); // default
+		pFloors.bounds.add("1"); // min
+		pFloors.bounds.add("10"); // max
+		pZone.settings.add(pFloors);
+		
+		Setting pFloorHeight = new Setting(GUI.SLIDER, FLOOR_HEIGHT);
+		pFloorHeight.value.add("10"); // default
+		pFloorHeight.bounds.add("1"); // min
+		pFloorHeight.bounds.add("50"); // max
+		pZone.settings.add(pFloorHeight);
 		
 		Setting towers = new Setting(GUI.GROUP_EXTENDABLE, TOWER_VOLUMES);
 		Setting tower = new Setting(GUI.GROUP, TOWER_VOLUME);
@@ -139,18 +143,24 @@ public class Schema {
 		tZones.template = tZone;
 		tZones.settings.add(tZone); // add 1 zone by default
 		tower.settings.add(tZones);
-
-		Setting tFloors = new Setting(GUI.SLIDER, FLOORS);
-		tFloors.value.add("3"); // default
-		tFloors.bounds.add("1"); // min
-		tFloors.bounds.add("40"); // max
-		tZone.settings.add(tFloors);
-
+		
 		Setting tFunction = new Setting(GUI.DROPDOWN, FUNCTION);
 		tFunction.value.add(Function.Residential.toString());
 		for (Function function : Function.values())
 			tFunction.bounds.add(function.toString());
 		tZone.settings.add(tFunction);
+		
+		Setting tFloors = new Setting(GUI.SLIDER, FLOORS);
+		tFloors.value.add("3"); // default
+		tFloors.bounds.add("1"); // min
+		tFloors.bounds.add("40"); // max
+		tZone.settings.add(tFloors);
+		
+		Setting tFloorHeight = new Setting(GUI.SLIDER, FLOOR_HEIGHT);
+		tFloorHeight.value.add("10"); // default
+		tFloorHeight.bounds.add("10"); // min
+		tFloorHeight.bounds.add("20"); // max
+		tZone.settings.add(tFloorHeight);
 		
 		Setting openAreas = new Setting(GUI.GROUP_EXTENDABLE, AREAS);
 		Setting openArea = new Setting(GUI.GROUP, AREA);
@@ -164,11 +174,16 @@ public class Schema {
 		openVertex.value.add("0"); // initial z
 		openArea.settings.add(openVertices);
 		
-		base.settings.add(floorHeight);
-		base.settings.add(cantilever);
+		Setting cantilever = new Setting(GUI.SLIDER, CANTILEVER);
+		cantilever.value.add("50"); // default
+		cantilever.bounds.add("0"); // min
+		cantilever.bounds.add("100"); // max
+		
+		// Add top-level settings to base Configuration
 		base.settings.add(plots);
 		base.settings.add(towers);
 		base.settings.add(openAreas);
+		base.settings.add(cantilever);
 		
 		// Create Legend
 		Legend legend = new Legend();

@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 import edu.mit.ira.fuzzy.model.Development;
 import edu.mit.ira.fuzzy.model.Morph;
+import edu.mit.ira.fuzzy.model.Orientation;
 import edu.mit.ira.fuzzy.model.Point;
 import edu.mit.ira.fuzzy.model.Polygon;
 import edu.mit.ira.fuzzy.model.Function;
@@ -37,14 +38,12 @@ public class Builder {
 		Development fuzzy = new Development();
 		
 		try {
-			Setting height 		= root.find(schema.FLOOR_HEIGHT);
-			Setting cantilever 	= root.find(schema.CANTILEVER);
 			Setting plots 		= root.find(schema.PARCELS);
 			Setting towers 		= root.find(schema.TOWER_VOLUMES);
 			Setting openAreas 	= root.find(schema.AREAS);
+			Setting cantilever 	= root.find(schema.CANTILEVER);
 			
 			// Global Settings
-			float voxelHeight 			= height.getFloat();
 			float cantileverAllowance 	= cantilever.getFloat() / 100f;
 			
 			ArrayList<Polygon> openShapes = new ArrayList<Polygon>();
@@ -114,6 +113,7 @@ public class Builder {
 					for (Setting podium : pods.settings) {
 						
 						// Read from SettingSchema
+						Setting orient  = podium.find(schema.ORIENTATION);
 						Setting setback = podium.find(schema.SETBACK);
 						Setting zones 	= podium.find(schema.ZONES);
 						
@@ -121,7 +121,6 @@ public class Builder {
 						float setbackDistance = setback.getFloat();
 						VoxelArray podiumTemplate = morph.hardCloneVoxelArray(plotVoxels);
 						podiumTemplate = morph.setback(podiumTemplate, setbackDistance);
-						podiumTemplate.setVoxelHeight(voxelHeight);
 
 						// Remove Open Area Polygons from Podium Template
 						for (Polygon openShape : openShapes) {
@@ -132,14 +131,22 @@ public class Builder {
 						for (Setting zone : zones.settings) {
 							
 							// Read from SettingSchema
-							Setting l = zone.find(schema.FLOORS);
 							Setting f = zone.find(schema.FUNCTION);
+							Setting l = zone.find(schema.FLOORS);
+							Setting h = zone.find(schema.FLOOR_HEIGHT);
 							
 							// Podium Zone
 							int levels = l.getInt();
+							float height = h.getFloat();
 							Function function = this.parseUse(f.getString());
-							plotMassing = morph.makeAndDrop(podiumTemplate, plotMassing, levels, function,
-									cantileverAllowance);
+							Orientation orientation = this.parseOrientation(orient.getString());
+							
+							podiumTemplate.setVoxelHeight(height);
+							if (orientation == Orientation.Above_Ground) {
+								plotMassing = morph.makeAndDrop(podiumTemplate, plotMassing, levels, function, cantileverAllowance);
+							} else {
+								plotMassing = morph.makeAndLift(podiumTemplate, plotMassing, levels, function);
+							}
 						}
 					}
 					fuzzy.openShapes.put(plotShape, openShapes);
@@ -153,19 +160,21 @@ public class Builder {
 							
 							// Generate Tower Template
 							VoxelArray towerTemplate = morph.hardCloneVoxelArray(plotVoxels);
-							towerTemplate.setVoxelHeight(voxelHeight);
 							towerTemplate = morph.clip(towerTemplate, towerShape);
 
 							// Generate Tower Zones
 							for (Setting zone : zones.settings) {
 								
 								// Read from SettingSchema
-								Setting l = zone.find(schema.FLOORS);
 								Setting f = zone.find(schema.FUNCTION);
+								Setting l = zone.find(schema.FLOORS);
+								Setting h = zone.find(schema.FLOOR_HEIGHT);
 								
 								// Podium Zone
 								int levels = l.getInt();
+								float height = h.getFloat();
 								Function function = this.parseUse(f.getString());
+								towerTemplate.setVoxelHeight(height);
 								plotMassing = morph.makeAndDrop(towerTemplate, plotMassing, levels, function,
 										cantileverAllowance);
 							}
@@ -259,6 +268,21 @@ public class Builder {
 			return Function.valueOf(function);
 		} catch (Exception e) {
 			return Function.Unspecified;
+		}
+	}
+	
+	/**
+	 * Parse a string of orientation to the enum Use
+	 *
+	 * @param orientation a string of the function
+	 * @return an enum of type Use
+	 */
+	private Orientation parseOrientation(String orientation) {
+		String value = orientation.replace(" ", "_");
+		try	{
+			return Orientation.valueOf(value);
+		} catch (Exception e) {
+			return Orientation.Above_Ground;
 		}
 	}
 }

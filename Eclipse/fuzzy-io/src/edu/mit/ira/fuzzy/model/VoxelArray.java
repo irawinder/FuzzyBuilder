@@ -114,6 +114,32 @@ public class VoxelArray {
 		}
 		return minW;
 	}
+	
+	/**
+	 * Get the maximum height, z, of any Voxel
+	 */
+	public float maxZ() {
+		float maxZ = 0;
+		for (Voxel t : this.voxelList) {
+			if (maxZ < t.location.z) {
+				maxZ = t.location.z;
+			}
+		}
+		return maxZ;
+	}
+
+	/**
+	 * Get the minimum height, z, of any Voxel
+	 */
+	public float minZ() {
+		float minZ = +1000000;
+		for (Voxel t : this.voxelList) {
+			if (minZ > t.location.z) {
+				minZ = t.location.z;
+			}
+		}
+		return minZ;
+	}
 
 	/**
 	 * Get the width of the first voxel. Zero if Empty

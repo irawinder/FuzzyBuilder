@@ -17,7 +17,7 @@ public class Morph {
 	private int GROUND_W = 0;
 
 	/**
-	 * Inherit the Voxels from a input VoxelArray (child voxels are NOT cloned)
+	 * Inherit the Voxels from an input VoxelArray (child voxels are NOT cloned)
 	 * 
 	 * @param input A parent VoxelArray
 	 */
@@ -139,6 +139,25 @@ public class Morph {
 		zone.setVoxelUse(type);
 		return this.add(base, zone);
 	}
+	
+	/**
+	 * Extrude a VoxelArray from a template, Set its use, and lift it from negative infinity 
+	 * until it bumps into the ground or another VoxelArray
+	 *
+	 * @param template New zone will have the same 2D outline as the template
+	 *                 VoxelArray
+	 * @param base     the zone will be lifted into existing mass contained in
+	 *                 base
+	 * @param levels   the zone will have this many levels (floors)
+	 * @param type     the use of the zone
+	 * @return a new Voxel Array with the new zone added to the base massing
+	 */
+	public VoxelArray makeAndLift(VoxelArray template, VoxelArray base, int levels, Function type) {
+		VoxelArray zone = this.extrude(template, levels - 1);
+		zone = this.lift(zone, base);
+		zone.setVoxelUse(type);
+		return this.add(base, zone);
+	}
 
 	/**
 	 * Clip a portion of a VoxelArray contained within a Polygon
@@ -190,21 +209,31 @@ public class Morph {
 		// Determine vertical coordinate at which the input array will land
 		VoxelArray inputBase = this.bottomLayer(input);
 		int inputMinW = inputBase.minW();
+		float inputMinZ = inputBase.minZ();
+		
+		
+		VoxelArray targetTop = this.topLayer(target);
 		int targetLocalMaxW = GROUND_W - 1;
+		float targetLocalMaxZ = GROUND_W;
 		int targetGlobalMaxW = target.maxW();
+		
 		for (Voxel t : inputBase.voxelList) {
-			for (int w = GROUND_W; w <= targetGlobalMaxW; w++) {
+			for (int w = 0; w <= targetGlobalMaxW; w++) {
 				String keyCoord = this.coordKey(t.u, t.v, w);
 				if (target.voxelMap.containsKey(keyCoord)) {
 					if (targetLocalMaxW < w) {
 						targetLocalMaxW = w;
+						targetLocalMaxZ = target.voxelMap.get(keyCoord).location.z;
 					}
 				}
 			}
 		}
 
 		// Drop the input array as a rigid body onto the target array
-		VoxelArray result = this.translate(input, 0, 0, 1 + targetLocalMaxW - inputMinW);
+		int dW = 1 + targetLocalMaxW - inputMinW;
+		float dZ =  targetTop.voxelHeight() + targetLocalMaxZ - inputMinZ;
+		System.out.println(targetTop.voxelHeight() + ", " + targetLocalMaxZ + ", " + inputMinZ + ", " + dZ + ", " + dW); 
+		VoxelArray result = this.translateZ(input, dW, dZ);
 
 		// Check for valid cantilever
 		if (this.cantileverFeasible(result, target, cantileverAllowance)) {
@@ -212,6 +241,44 @@ public class Morph {
 		} else {
 			return new VoxelArray();
 		}
+	}
+	
+	/**
+	 * Lifts an input VoxelArray from the ground so it rests below a VoxelArray (or ground plane)
+	 * without any overlap
+	 * 
+	 * @param input               VoxelArray to lift from ground
+	 * @param target              VoxelArray to lift the input into
+	 * @result the input is vertically shifted so that it rests below either the target
+	 *         or the ground
+	 */
+	public VoxelArray lift(VoxelArray input, VoxelArray target) {
+
+		// Determine vertical coordinate at which the input array will lift
+		VoxelArray inputBase = this.topLayer(input);
+		int inputMaxW = inputBase.maxW();
+		float inputMaxZ = inputBase.maxZ();
+		int targetLocalMinW = GROUND_W;
+		float targetLocalMinZ = GROUND_W;
+		int targetGlobalMinW = target.minW();
+		for (Voxel t : inputBase.voxelList) {
+			for (int w = GROUND_W - 1; w >= targetGlobalMinW; w--) {
+				String keyCoord = this.coordKey(t.u, t.v, w);
+				if (target.voxelMap.containsKey(keyCoord)) {
+					if (targetLocalMinW > w) {
+						targetLocalMinW = w;
+						targetLocalMinZ = target.voxelMap.get(keyCoord).location.z;
+					}
+				}
+			}
+		}
+
+		// Lift the input array as a rigid body into the target array
+		int dW = - 1 + targetLocalMinW - inputMaxW;
+		float dZ = - inputBase.voxelHeight() + targetLocalMinZ - inputMaxZ;
+		VoxelArray result = this.translateZ(input, dW, dZ);
+		
+		return result;
 	}
 
 	/**
@@ -271,6 +338,30 @@ public class Morph {
 				t.v += dV;
 				t.w += dW;
 				t.setLocation(t.location.x + t.width * dU, t.location.y + t.width * dV, t.location.z + t.height * dW);
+				result.addVoxel(t);
+			}
+			return result;
+		} else {
+			return new VoxelArray();
+		}
+	}
+	
+	/**
+	 * Translates an input VoxelArray using discrete coordinate system
+	 * 
+	 * @param input VoxelArray to drop from sky
+	 * @param dU    amount of voxel units to shift in the u direction
+	 * @param dV    amount of voxel units to shift in the v direction
+	 * @param dW    amount of voxel units to shift in the W direction
+	 * @param h		height of w units
+	 * @result the translated VoxelArray
+	 */
+	public VoxelArray translateZ(VoxelArray input, int dW, float dZ) {
+		if (input.voxelList.size() > 0) {
+			VoxelArray result = new VoxelArray();
+			for (Voxel t : input.voxelList) {
+				t.w += dW;
+				t.location.z += dZ;
 				result.addVoxel(t);
 			}
 			return result;
