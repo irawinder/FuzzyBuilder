@@ -216,6 +216,7 @@ public class Morph {
 		int targetLocalMaxW = GROUND_W - 1;
 		float targetLocalMaxZ = GROUND_W;
 		int targetGlobalMaxW = target.maxW();
+		float targetTopHeight = 0;
 		
 		for (Voxel t : inputBase.voxelList) {
 			for (int w = 0; w <= targetGlobalMaxW; w++) {
@@ -223,7 +224,9 @@ public class Morph {
 				if (target.voxelMap.containsKey(keyCoord)) {
 					if (targetLocalMaxW < w) {
 						targetLocalMaxW = w;
-						targetLocalMaxZ = target.voxelMap.get(keyCoord).location.z;
+						Voxel targetTile = target.voxelMap.get(keyCoord);
+						targetLocalMaxZ = targetTile.location.z;
+						targetTopHeight = targetTile.height;
 					}
 				}
 			}
@@ -231,7 +234,7 @@ public class Morph {
 
 		// Drop the input array as a rigid body onto the target array
 		int dW = 1 + targetLocalMaxW - inputMinW;
-		float dZ =  targetTop.voxelHeight() + targetLocalMaxZ - inputMinZ;
+		float dZ =  targetTopHeight + targetLocalMaxZ - inputMinZ;
 		VoxelArray result = this.translateZ(input, dW, dZ);
 
 		// Check for valid cantilever
