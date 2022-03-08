@@ -232,7 +232,6 @@ public class Morph {
 		// Drop the input array as a rigid body onto the target array
 		int dW = 1 + targetLocalMaxW - inputMinW;
 		float dZ =  targetTop.voxelHeight() + targetLocalMaxZ - inputMinZ;
-		System.out.println(targetTop.voxelHeight() + ", " + targetLocalMaxZ + ", " + inputMinZ + ", " + dZ + ", " + dW); 
 		VoxelArray result = this.translateZ(input, dW, dZ);
 
 		// Check for valid cantilever
