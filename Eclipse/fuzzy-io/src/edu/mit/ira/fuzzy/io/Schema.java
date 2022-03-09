@@ -63,9 +63,9 @@ public class Schema {
 		plot.settings.add(gridSize);
 
 		Setting gridRot = new Setting(GUI.SLIDER, GRID_ROTATION);
-		gridRot.value.add("45"); // default
-		gridRot.bounds.add("0"); // min
-		gridRot.bounds.add("90"); // max
+		gridRot.value.add("0"); // default
+		gridRot.bounds.add("-45"); // min
+		gridRot.bounds.add("45"); // max
 		plot.settings.add(gridRot);
 		
 		Setting podiums = new Setting(GUI.GROUP_EXTENDABLE, PODIUM_VOLUMES);
