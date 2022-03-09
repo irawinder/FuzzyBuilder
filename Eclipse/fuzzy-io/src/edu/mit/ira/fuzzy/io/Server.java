@@ -138,6 +138,24 @@ public class Server {
 					String message = "Scenario Names Delivers for " + user;
 					packItShipIt(t, 200, message, responseBody, contentType);
 				} 
+				else if (requestProcess.equals("DELETE"))
+				{
+					// Load a previously saved setting configuration
+					if (hasScenario(user, scenario)) {
+						
+						// Delete the data for this scenario
+						deleteData(user, scenario);
+						String message = "Scenario " + scenario + " deleted for " + user;
+						packItShipIt(t, 200, message);
+					} else {
+						
+						// Resource Not Found
+						String responseBody = getHTML("404.txt");
+						String contentType = "text/html";
+						String message = "Resource not found";
+						packItShipIt(t, 404, message, responseBody, contentType);
+					}
+				}
 				else if (requestProcess.equals("LOAD")) 
 				{	
 					// Load a previously saved setting configuration
@@ -363,6 +381,35 @@ public class Server {
 		JSONObject solutionNames = new JSONObject();
 		solutionNames.put("scenarios", names);
 		return solutionNames.toString(4);
+	}
+	
+	/**
+	 * Delete a scenario
+	 * @param user
+	 * @param scenario
+	 */
+	private void deleteData(String user, String scenario) {
+		String directoryName = "./data/users/" + user + "/scenarios/" + scenario;
+		File directory = new File(directoryName);
+		if (directory.exists()) {
+			deleteDir(directory);
+		}
+	}
+		
+	/**
+	 * Delete a directory and all of its contents	
+	 * @param file
+	 */
+	private void deleteDir(File file) {
+		File[] contents = file.listFiles();
+	    if (contents != null) {
+	        for (File f : contents) {
+	            if (! Files.isSymbolicLink(f.toPath())) {
+	                deleteDir(f);
+	            }
+	        }
+	    }
+	    file.delete();		
 	}
 	
 	/**
