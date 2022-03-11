@@ -41,10 +41,11 @@ public class Builder {
 			Setting plots 		= root.find(schema.PARCELS);
 			Setting towers 		= root.find(schema.TOWER_VOLUMES);
 			Setting openAreas 	= root.find(schema.AREAS);
-			Setting cantilever 	= root.find(schema.CANTILEVER);
+			//Setting cantilever 	= root.find(schema.CANTILEVER);
 			
 			// Global Settings
-			float cantileverAllowance 	= cantilever.getFloat() / 100f;
+			//float cantileverAllowance 	= cantilever.getFloat() / 100f;
+			float cantileverAllowance 	= 1f;
 			
 			ArrayList<Polygon> openShapes = new ArrayList<Polygon>();
 			ArrayList<Polygon> towerShapes = new ArrayList<Polygon>();

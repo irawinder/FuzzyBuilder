@@ -34,7 +34,7 @@ public class Schema {
 	public final String DEPTH = "Depth [ft]";
 	public final String AREAS = "Building Exclusion Areas";
 	public final String AREA = "Area";
-	public final String CANTILEVER = "Cantilever Allowance [%]";
+	//public final String CANTILEVER = "Cantilever Allowance [%]";
 	
 	/**
 	 * make and return the setting schema for this model
@@ -174,16 +174,16 @@ public class Schema {
 		openVertex.value.add("0"); // initial z
 		openArea.settings.add(openVertices);
 		
-		Setting cantilever = new Setting(GUI.SLIDER, CANTILEVER);
-		cantilever.value.add("50"); // default
-		cantilever.bounds.add("0"); // min
-		cantilever.bounds.add("100"); // max
+		//Setting cantilever = new Setting(GUI.SLIDER, CANTILEVER);
+		//cantilever.value.add("50"); // default
+		//cantilever.bounds.add("0"); // min
+		//cantilever.bounds.add("100"); // max
 		
 		// Add top-level settings to base Configuration
 		base.settings.add(plots);
 		base.settings.add(towers);
 		base.settings.add(openAreas);
-		base.settings.add(cantilever);
+		//base.settings.add(cantilever);
 		
 		// Create Legend
 		Legend legend = new Legend();
