@@ -42,6 +42,10 @@ public class Schema {
 	 */
 	public Configuration baseConfiguration(String apiVersion, String id, String author, String sponsor, String contact) {
 		
+		int XExtent = 1500;
+		int YExtent = 0;
+		int ZExtent = 1000;
+		
 		Configuration base = new Configuration(UNIVERSE_NAME, apiVersion, id, author, sponsor, contact);
 		
 		Setting plots = new Setting(GUI.GROUP_EXTENDABLE, PARCELS);
@@ -54,6 +58,12 @@ public class Schema {
 		plotVertex.value.add("0"); // initial x
 		plotVertex.value.add("0"); // initial y
 		plotVertex.value.add("0"); // initial z
+		plotVertex.bounds.add("-" + XExtent); // min x
+		plotVertex.bounds.add("-" + YExtent); // min y
+		plotVertex.bounds.add("-" + ZExtent); // min z
+		plotVertex.bounds.add("" + XExtent); // max x
+		plotVertex.bounds.add("" + YExtent); // max y
+		plotVertex.bounds.add("" + ZExtent); // max z
 		plot.settings.add(plotVertices);
 		
 		Setting gridSize = new Setting(GUI.SLIDER, GRID_SIZE);
@@ -118,6 +128,12 @@ public class Schema {
 		tVertex.value.add("0"); // initial x
 		tVertex.value.add("0"); // initial y
 		tVertex.value.add("0"); // initial z
+		tVertex.bounds.add("-" + XExtent); // min x
+		tVertex.bounds.add("-" + YExtent); // min y
+		tVertex.bounds.add("-" + ZExtent); // min z
+		tVertex.bounds.add("" + XExtent); // max x
+		tVertex.bounds.add("" + YExtent); // max y
+		tVertex.bounds.add("" + ZExtent); // max z
 		tower.settings.add(tVertex);
 
 		Setting tRot = new Setting(GUI.SLIDER, ROTATION);
