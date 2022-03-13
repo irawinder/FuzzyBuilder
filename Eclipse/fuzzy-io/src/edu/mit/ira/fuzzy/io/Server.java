@@ -1,8 +1,12 @@
 package edu.mit.ira.fuzzy.io;
 
+import java.awt.image.BufferedImage;
+import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -15,6 +19,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.imageio.ImageIO;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -53,7 +59,7 @@ public class Server {
 	
 	private String DEFAULT_USER = "guest";
 	private String DEFAULT_SCENARIO = "defacto";
-	private String DEFAULT_BASEMAP = "default";
+	private String DEFAULT_FILENAME = "default";
 	private String REQUEST_FILE = "configuration.json";
 	private String RESPONSE_FILE = "solution.json";
 	
@@ -95,7 +101,7 @@ public class Server {
 			Map<String, String> requestParameters = parameters(requestURI);
 			String user = requestParameters.get("user");
 			String scenario = requestParameters.get("scenario");
-			String basemap = requestParameters.get("basemap");
+			String filename = requestParameters.get("filename");
 			
 			// Parse Request Body
 			InputStreamReader isr = new InputStreamReader(t.getRequestBody(), "utf-8");
@@ -135,7 +141,15 @@ public class Server {
 				else if (requestProcess.equals("LIST"))
 				{	
 					// Send a list of scenarios saved by this user
-					String responseBody = solutionNames(user);
+					String responseBody = fileNames("./data/users/" + user + "/scenarios");
+					String contentType = "application/json";
+					String message = "Scenario Names Delivers for " + user;
+					packItShipIt(t, 200, message, responseBody.getBytes(), contentType);
+				} 
+				else if (requestProcess.equals("BASEMAPS"))
+				{	
+					// Send a list of scenarios saved by this user
+					String responseBody = fileNames("./data/basemaps");
 					String contentType = "application/json";
 					String message = "Scenario Names Delivers for " + user;
 					packItShipIt(t, 200, message, responseBody.getBytes(), contentType);
@@ -187,11 +201,28 @@ public class Server {
 				} 
 				else if (requestProcess.equals("BASEMAP")) 
 				{
-					// Send the default setting configuration to the GUI
-					//String responseBody = defaultSettings();
-					//String contentType = "application/json";
-					//String message = "Base Settings Delivered to " + user;
-					//packItShipIt(t, 200, message, responseBody.getBytes(), contentType);
+					// Load the image as bytes
+					byte[] imageAsBytes = null;
+					String[] splitName = filename.split("\\.");
+					if (splitName.length == 2) {
+						imageAsBytes = loadBasemap(filename, splitName[1]);
+					}
+					
+					// image loaded successfully
+					if (imageAsBytes != null) {
+						
+						// Send the image
+						String contentType = "image/" + splitName[1];
+						String message = "Basemap " + filename + " sent to " + user;
+						packItShipIt(t, 200, message, imageAsBytes, contentType);
+					} else {
+						
+						// Resource Not Found
+						String responseBody = getHTML("404.txt");
+						String contentType = "text/html";
+						String message = "Resource not found";
+						packItShipIt(t, 404, message, responseBody.getBytes(), contentType);
+					}
 				}
 				else
 				{
@@ -285,8 +316,8 @@ public class Server {
 			parameters.put("user", DEFAULT_USER);
 		if (!parameters.containsKey("scenario")) 
 			parameters.put("scenario", DEFAULT_SCENARIO);
-		if (!parameters.containsKey("basemap")) 
-			parameters.put("basemap", DEFAULT_BASEMAP);
+		if (!parameters.containsKey("filename")) 
+			parameters.put("filename", DEFAULT_FILENAME);
 		return parameters;
 	}
 	
@@ -377,12 +408,11 @@ public class Server {
 	}
 	
 	/**
-	 * Return a list of scenario names saved by this user
+	 * Return a list of filenames in a directory
 	 * @return
 	 */
-	public String solutionNames(String user) {
+	public String fileNames(String directoryName) {
 		JSONArray names = new JSONArray();
-		String directoryName = "./data/users/" + user + "/scenarios";
 		File directory = new File(directoryName);
 		if (directory.exists()) {
 			String[] nameList = directory.list();
@@ -390,9 +420,9 @@ public class Server {
 				names.put(i, nameList[i]);
 			}
 		}
-		JSONObject solutionNames = new JSONObject();
-		solutionNames.put("scenarios", names);
-		return solutionNames.toString(4);
+		JSONObject fileNames = new JSONObject();
+		fileNames.put("scenarios", names);
+		return fileNames.toString(4);
 	}
 	
 	/**
@@ -465,6 +495,24 @@ public class Server {
 	}
 	
 	/**
+	 * Load Basemap as byte[]
+	 * @param fileName
+	 * @return
+	 */
+	private byte[] loadBasemap(String fileName, String type) {
+		try {
+			BufferedImage bImage = ImageIO.read(new File("./data/basemaps/" + fileName));
+		    ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		    ImageIO.write(bImage, type, bos );
+		    return bos.toByteArray();
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+		
+	}
+	
+	/**
 	 * Attach Data and Headers to HttpResponse and send it off to the client
 	 * @param t
 	 * @param responseCode
@@ -476,7 +524,7 @@ public class Server {
 		int responseLength = responseBody.length;
 		t.sendResponseHeaders(responseCode, responseLength);
 		OutputStream os = t.getResponseBody();
-		os.write(responseBody);
+		os.write(responseBody, 0, responseBody.length);
 		os.close();
 		log(t, "Response: " + responseCode + ", " + responseMessage + ", Response Length: " + responseLength);
 	}
