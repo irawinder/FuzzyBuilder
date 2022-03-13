@@ -53,6 +53,7 @@ public class Server {
 	
 	private String DEFAULT_USER = "guest";
 	private String DEFAULT_SCENARIO = "defacto";
+	private String DEFAULT_BASEMAP = "default";
 	private String REQUEST_FILE = "configuration.json";
 	private String RESPONSE_FILE = "solution.json";
 	
@@ -94,6 +95,7 @@ public class Server {
 			Map<String, String> requestParameters = parameters(requestURI);
 			String user = requestParameters.get("user");
 			String scenario = requestParameters.get("scenario");
+			String basemap = requestParameters.get("basemap");
 			
 			// Parse Request Body
 			InputStreamReader isr = new InputStreamReader(t.getRequestBody(), "utf-8");
@@ -120,7 +122,7 @@ public class Server {
 					String responseBody = getHTML("index.txt");
 					String contentType = "text/html";
 					String message = "HTML Delivered";
-					packItShipIt(t, 200, message, responseBody, contentType);
+					packItShipIt(t, 200, message, responseBody.getBytes(), contentType);
 				} 
 				else if (requestProcess.equals("INIT")) 
 				{
@@ -128,7 +130,7 @@ public class Server {
 					String responseBody = defaultSettings();
 					String contentType = "application/json";
 					String message = "Base Settings Delivered to " + user;
-					packItShipIt(t, 200, message, responseBody, contentType);
+					packItShipIt(t, 200, message, responseBody.getBytes(), contentType);
 				} 
 				else if (requestProcess.equals("LIST"))
 				{	
@@ -136,7 +138,7 @@ public class Server {
 					String responseBody = solutionNames(user);
 					String contentType = "application/json";
 					String message = "Scenario Names Delivers for " + user;
-					packItShipIt(t, 200, message, responseBody, contentType);
+					packItShipIt(t, 200, message, responseBody.getBytes(), contentType);
 				} 
 				else if (requestProcess.equals("DELETE"))
 				{
@@ -153,7 +155,7 @@ public class Server {
 						String responseBody = getHTML("404.txt");
 						String contentType = "text/html";
 						String message = "Resource not found";
-						packItShipIt(t, 404, message, responseBody, contentType);
+						packItShipIt(t, 404, message, responseBody.getBytes(), contentType);
 					}
 				}
 				else if (requestProcess.equals("LOAD")) 
@@ -166,30 +168,38 @@ public class Server {
 						String responseBody = defaultSettings(userFeedback);
 						String contentType = "application/json";
 						String message = "Base Settings Delivered to " + user;
-						packItShipIt(t, 200, message, responseBody, contentType);
+						packItShipIt(t, 200, message, responseBody.getBytes(), contentType);
 					} else if (hasScenario(user, scenario)) {
 						
 						// Send the default setting configuration to the GUI
 						String responseBody = loadData(user, scenario, REQUEST_FILE);
 						String contentType = "application/json";
 						String message = "Scenario " + scenario + " loaded for " + user;
-						packItShipIt(t, 200, message, responseBody, contentType);
+						packItShipIt(t, 200, message, responseBody.getBytes(), contentType);
 					} else {
 						
 						// Resource Not Found
 						String responseBody = getHTML("404.txt");
 						String contentType = "text/html";
 						String message = "Resource not found";
-						packItShipIt(t, 404, message, responseBody, contentType);
+						packItShipIt(t, 404, message, responseBody.getBytes(), contentType);
 					}
 				} 
+				else if (requestProcess.equals("BASEMAP")) 
+				{
+					// Send the default setting configuration to the GUI
+					//String responseBody = defaultSettings();
+					//String contentType = "application/json";
+					//String message = "Base Settings Delivered to " + user;
+					//packItShipIt(t, 200, message, responseBody.getBytes(), contentType);
+				}
 				else
 				{
 					// Resource Not Found
 					String responseBody = getHTML("404.txt");
 					String contentType = "text/html";
 					String message = "Resource not found";
-					packItShipIt(t, 404, message, responseBody, contentType);
+					packItShipIt(t, 404, message, responseBody.getBytes(), contentType);
 				}
 			}
 			
@@ -202,7 +212,7 @@ public class Server {
 					String responseBody = solution(requestBody);
 					String contentType = "application/json";
 					String message = "Solution Delivered to " + user;
-					packItShipIt(t, 200, message, responseBody, contentType);
+					packItShipIt(t, 200, message, responseBody.getBytes(), contentType);
 				} 
 				else if (requestProcess.equals("SAVE")) 
 				{
@@ -225,7 +235,7 @@ public class Server {
 						saveData(user, scenario, REQUEST_FILE, requestBody);
 						saveData(user, scenario, RESPONSE_FILE, responseBody);
 					}
-					packItShipIt(t, 200, message, responseBody, contentType);
+					packItShipIt(t, 200, message, responseBody.getBytes(), contentType);
 				} 
 				else
 				{
@@ -275,6 +285,8 @@ public class Server {
 			parameters.put("user", DEFAULT_USER);
 		if (!parameters.containsKey("scenario")) 
 			parameters.put("scenario", DEFAULT_SCENARIO);
+		if (!parameters.containsKey("basemap")) 
+			parameters.put("basemap", DEFAULT_BASEMAP);
 		return parameters;
 	}
 	
@@ -456,15 +468,15 @@ public class Server {
 	 * Attach Data and Headers to HttpResponse and send it off to the client
 	 * @param t
 	 * @param responseCode
-	 * @param data a string of responseBody, such as a JSON file
+	 * @param data a byte[] of responseBody, such as a JSON file
 	 * @throws IOException
 	 */
-	private void packItShipIt(HttpExchange t, int responseCode, String responseMessage, String responseBody, String contentType) throws IOException {
+	private void packItShipIt(HttpExchange t, int responseCode, String responseMessage, byte[] responseBody, String contentType) throws IOException {
 		makeHeaders(t, contentType);
-		int responseLength = responseBody.length();
+		int responseLength = responseBody.length;
 		t.sendResponseHeaders(responseCode, responseLength);
 		OutputStream os = t.getResponseBody();
-		os.write(responseBody.getBytes());
+		os.write(responseBody);
 		os.close();
 		log(t, "Response: " + responseCode + ", " + responseMessage + ", Response Length: " + responseLength);
 	}
