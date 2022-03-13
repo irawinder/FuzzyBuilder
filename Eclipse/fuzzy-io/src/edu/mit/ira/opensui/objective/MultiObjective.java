@@ -43,4 +43,21 @@ public class MultiObjective {
 		objectivesJSON.put("secondary", secondaryObjectivesJSON);
 		return objectivesJSON;
 	}
+	
+	/**
+	 * Serialize this object to CSV
+	 * @return
+	 */
+	public String toCSV() {
+		String result = "Name, Description, Value, Units\n";
+		for(int i=0; i<this.primaryObjectives.size(); i++) {
+			Objective objective = this.primaryObjectives.get(i);
+			result += objective.toCSV() + "\n";
+		}
+		for(int i=0; i<this.secondaryObjectives.size(); i++) {
+			Objective objective = this.secondaryObjectives.get(i);
+			result += objective.toCSV() + "\n";
+		}
+		return result;
+	}
 }

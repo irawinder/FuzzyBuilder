@@ -41,4 +41,14 @@ public class Objective {
 		objective.put("units", this.units);
 		return objective;
 	}
+	
+	/**
+	 * Serialize this object to CSV
+	 * @return
+	 */
+	public String toCSV() {
+		double decimals = 100d;
+		double _value = Math.round(decimals * this.value) / decimals;
+		return this.name + "," + this.description + "," + _value + "," + this.units;
+	}
 }

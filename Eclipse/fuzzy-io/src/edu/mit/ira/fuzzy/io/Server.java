@@ -62,6 +62,7 @@ public class Server {
 	private String DEFAULT_FILENAME = "default";
 	private String REQUEST_FILE = "configuration.json";
 	private String RESPONSE_FILE = "solution.json";
+	private String SUMMARY_FILE = "summary.csv";
 	
 	/**
 	 * Construct a new FuzzyIO Server
@@ -160,7 +161,7 @@ public class Server {
 					if (hasScenario(user, scenario)) {
 						
 						// Delete the data for this scenario
-						deleteData(user, scenario);
+						deleteScenario(user, scenario);
 						String message = "Scenario " + scenario + " deleted for " + user;
 						packItShipIt(t, 200, message);
 					} else {
@@ -224,6 +225,25 @@ public class Server {
 						packItShipIt(t, 404, message, responseBody.getBytes(), contentType);
 					}
 				}
+				else if (requestProcess.equals("SUMMARY"))
+				{
+					if (!user.equals(DEFAULT_USER)) {
+						
+						// Send the default setting configuration to the GUI
+						String responseBody = loadSummary(user);
+						String contentType = "application/csv";
+						String message = "Summary Delivered to " + user;
+						packItShipIt(t, 200, message, responseBody.getBytes(), contentType);
+						
+					} else {
+						
+						// Resource Not Found
+						String responseBody = getHTML("404.txt");
+						String contentType = "text/html";
+						String message = "Resource not found";
+						packItShipIt(t, 404, message, responseBody.getBytes(), contentType);
+					}
+				}
 				else
 				{
 					// Resource Not Found
@@ -240,7 +260,7 @@ public class Server {
 				if (requestProcess.equals("RUN")) 
 				{
 					// Send the default setting configuration to the GUI
-					String responseBody = solution(requestBody);
+					String responseBody = solution(requestBody, user);
 					String contentType = "application/json";
 					String message = "Solution Delivered to " + user;
 					packItShipIt(t, 200, message, responseBody.getBytes(), contentType);
@@ -260,11 +280,11 @@ public class Server {
 						message += "; Saved scenario: " + scenario;
 						save = true;
 					}
-					String responseBody = solution(requestBody, userFeedback);
+					String responseBody = solution(requestBody, userFeedback, user);
 					String contentType = "application/json";
 					if (save) {
-						saveData(user, scenario, REQUEST_FILE, requestBody);
-						saveData(user, scenario, RESPONSE_FILE, responseBody);
+						saveScenario(user, scenario, REQUEST_FILE, requestBody);
+						saveScenario(user, scenario, RESPONSE_FILE, responseBody);
 					}
 					packItShipIt(t, 200, message, responseBody.getBytes(), contentType);
 				} 
@@ -348,8 +368,8 @@ public class Server {
 	 * Get the Solution as json string, appending any feedback
 	 * @return solution as JSON string
 	 */
-	private String solution(String requestBody, String feedback) {
-		JSONObject solutionJSON = solutionJSON(requestBody);
+	private String solution(String requestBody, String feedback, String user) {
+		JSONObject solutionJSON = solutionJSON(requestBody, user);
 		solutionJSON.put("feedback", feedback);
 		return wrapApi(solutionJSON);
 	}
@@ -359,8 +379,8 @@ public class Server {
 	 * @param requestBody
 	 * @return
 	 */
-	private String solution(String requestBody) {
-		JSONObject solutionJSON = solutionJSON(requestBody);
+	private String solution(String requestBody, String user) {
+		JSONObject solutionJSON = solutionJSON(requestBody, user);
 		return wrapApi(solutionJSON);
 	}
 	
@@ -369,7 +389,7 @@ public class Server {
 	 * @param requestBody
 	 * @return
 	 */
-	private JSONObject solutionJSON(String requestBody) {
+	private JSONObject solutionJSON(String requestBody, String user) {
 		
 		// Check for Body
 		if (requestBody.length() == 0) {
@@ -380,7 +400,10 @@ public class Server {
 		Configuration config = adapter.parse(requestBody);
 		Development solution = builder.build(config, schema);
 		MultiObjective performance = evaluator.evaluate(solution);
-
+		
+		// Save latest summary to CSV
+		saveSummary(user, performance.toCSV());
+		
 		// Serialize the Response Data
 		JSONObject dataJSON = solution.serialize();
 		dataJSON.put("performance", performance.serialize());
@@ -421,7 +444,7 @@ public class Server {
 			}
 		}
 		JSONObject fileNames = new JSONObject();
-		fileNames.put("scenarios", names);
+		fileNames.put("fileNames", names);
 		return fileNames.toString(4);
 	}
 	
@@ -430,7 +453,7 @@ public class Server {
 	 * @param user
 	 * @param scenario
 	 */
-	private void deleteData(String user, String scenario) {
+	private void deleteScenario(String user, String scenario) {
 		String directoryName = "./data/users/" + user + "/scenarios/" + scenario;
 		File directory = new File(directoryName);
 		if (directory.exists()) {
@@ -461,7 +484,7 @@ public class Server {
 	 * @param fileName
 	 * @param dataString
 	 */
-	private void saveData(String user, String scenario, String fileName, String dataString) {
+	private void saveScenario(String user, String scenario, String fileName, String dataString) {
 		
 		String directoryName = "./data/users/" + user + "/scenarios/" + scenario;
 		File directory = new File(directoryName);
@@ -475,6 +498,42 @@ public class Server {
 	    } catch (IOException x) {
 	      System.err.println(x);
 	    }
+	}
+	
+	/**
+	 * Save Summary to File
+	 * @param user
+	 * @param dataString
+	 */
+	private void saveSummary(String user, String dataString) {
+		
+		String directoryName = "./data/users/" + user;
+		File directory = new File(directoryName);
+		if (!directory.exists()) {
+			directory.mkdirs();
+		}
+		byte data[] = dataString.getBytes();
+	    Path p = Paths.get(directoryName + "/" + SUMMARY_FILE);
+	    try (OutputStream out = new BufferedOutputStream(Files.newOutputStream(p))) {
+	      out.write(data, 0, data.length);
+	    } catch (IOException x) {
+	      System.err.println(x);
+	    }
+	}
+	
+	/**
+	 * Load summary data created by a user
+	 * @param user
+	 * @return
+	 */
+	private String loadSummary(String user) {
+		Path filePath = Path.of("./data/users/" + user + "/" + SUMMARY_FILE);
+	    try {
+			return Files.readString(filePath);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 	
 	/**
@@ -589,6 +648,10 @@ public class Server {
 		headers.set("Access-Control-Allow-Headers", "*");
 		headers.set("Access-Control-Allow-Methods", "*");
 		headers.set("Access-Control-Allow-Credentials", "true");
+		
+		if (contentType.equals("application/csv")) {
+			headers.set("Content-Disposition", "attachment; filename=\"summary.csv\"");
+		}
 	}
 
 	/**

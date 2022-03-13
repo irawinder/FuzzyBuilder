@@ -145,7 +145,7 @@ public class Evaluator {
 			//performance.primaryObjectives.add(new Objective(
 			//	useName + "Area Ratio", "Portion of total " + use + " built area on site", 100 * useRatio, "%"));
 		}
-
+		
 		return performance;
 	}
 }
