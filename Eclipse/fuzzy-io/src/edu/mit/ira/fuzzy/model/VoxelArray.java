@@ -127,6 +127,19 @@ public class VoxelArray {
 		}
 		return maxZ;
 	}
+	
+	/**
+	 * Get the peak height of this voxel array, including the height from the top-most voxel
+	 */
+	public float peakZ() {
+		float peakZ = 0;
+		for (Voxel t : this.voxelList) {
+			if (peakZ < t.location.z + t.height) {
+				peakZ = t.location.z + t.height;
+			}
+		}
+		return peakZ;
+	}
 
 	/**
 	 * Get the minimum height, z, of any Voxel

@@ -30,6 +30,7 @@ public class Evaluator {
 		float siteArea = 0;
 		float coverArea = 0;
 		float builtArea = 0;
+		float sitePeak = 0;
 		HashMap<Function, Float> useArea = new HashMap<Function, Float>();
 		for (Function use : Function.values()) {
 			useArea.put(use, 0f);
@@ -44,13 +45,14 @@ public class Evaluator {
 				VoxelArray pMassing = fuzzy.plotMassing.get(plot);
 				
 				// Calculate total areas for this plot
-				float plotSiteArea, plotCoverArea, plotBuiltArea, plotFAR, plotCoverageRatio;
+				float plotSiteArea, plotCoverArea, plotBuiltArea, plotFAR, plotCoverageRatio, plotPeak;
 				float voxelArea = 0;
 				if (pSite.voxelList.size() > 0) {
 					voxelArea = (float) Math.pow(pSite.voxelList.get(0).width, 2);
 					plotSiteArea = voxelArea * pSite.voxelList.size();
 					plotBuiltArea = voxelArea * pMassing.voxelList.size();
 					plotFAR = plotBuiltArea / plotSiteArea;
+					plotPeak = pMassing.peakZ();
 					
 					// Total ground level build area
 					plotCoverArea = 0;
@@ -66,10 +68,12 @@ public class Evaluator {
 					plotBuiltArea = 0;
 					plotFAR = 0;
 					plotCoverageRatio = 0;
+					plotPeak = 0;
 				}
 				siteArea += plotSiteArea;
 				coverArea += plotCoverArea;
 				builtArea += plotBuiltArea;
+				sitePeak = Math.max(sitePeak, plotPeak);
 				
 				// Add total area objectives for this plot
 				String plotName = "[" + fuzzy.plotNames.get(plot) + "] ";
@@ -81,6 +85,8 @@ public class Evaluator {
 					plotName + "Floor Area Ratio", "Ratio of built area to site area on " + plotName, plotFAR, "sqft/sqft"));
 				performance.secondaryObjectives.add(new Objective(
 					plotName + "Coverage Ratio", "Ratio of plot that is occupied by building on " + plotName, plotCoverageRatio, "sqft/sqft"));
+				performance.secondaryObjectives.add(new Objective(
+					plotName + "Plot Peak", "The tallest building height on " + plotName, plotPeak, "ft"));
 				
 				// Calculate plot areas itemized by Use
 				HashMap<Function, Integer> plotUseCount = new HashMap<Function, Integer>();
@@ -125,6 +131,8 @@ public class Evaluator {
 			"Floor Area Ratio (FAR)", "Ratio of built area to site area", far, "sqft/sqft"));
 		performance.primaryObjectives.add(new Objective(
 			"Site Coverage Ratio", "Ratio of site that is occupied by building", coverage, "sqft/sqft"));
+		performance.primaryObjectives.add(new Objective(
+			"Site Peak", "The tallest building height on the Site", sitePeak, "ft"));
 		
 		// Calculate total areas itemized by use
 		for (Function use : Function.values()) {
