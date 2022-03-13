@@ -143,13 +143,13 @@ public class Schema {
 		tower.settings.add(tRot);
 
 		Setting tWidth = new Setting(GUI.SLIDER, WIDTH);
-		tWidth.value.add("100"); // default
+		tWidth.value.add("125"); // default
 		tWidth.bounds.add("100"); // min
 		tWidth.bounds.add("1000"); // max
 		tower.settings.add(tWidth);
 
 		Setting tDepth = new Setting(GUI.SLIDER, DEPTH);
-		tDepth.value.add("50"); // default
+		tDepth.value.add("90"); // default
 		tDepth.bounds.add("50"); // min
 		tDepth.bounds.add("200"); // max
 		tower.settings.add(tDepth);
