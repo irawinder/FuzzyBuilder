@@ -44,7 +44,7 @@ public class Schema {
 		
 		int XExtent = 1500;
 		int YExtent = 0;
-		int ZExtent = 1000;
+		int ZExtent = 1500;
 		
 		Configuration base = new Configuration(UNIVERSE_NAME, apiVersion, id, author, sponsor, contact);
 		
