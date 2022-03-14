@@ -32,7 +32,7 @@ public class Schema {
 	public final String ROTATION = "Rotation [degrees]";
 	public final String WIDTH = "Width [ft]";
 	public final String DEPTH = "Depth [ft]";
-	public final String AREAS = "Building Exclusion Areas";
+	public final String AREAS = "Podium Exclusion Areas";
 	public final String AREA = "Area";
 	//public final String CANTILEVER = "Cantilever Allowance [%]";
 	

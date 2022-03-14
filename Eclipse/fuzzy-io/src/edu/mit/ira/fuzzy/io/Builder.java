@@ -157,7 +157,7 @@ public class Builder {
 						// Read from SettingSchema
 						Setting zones = towerSettingsMap.get(towerShape).find(schema.ZONES);
 						
-						if (plotShape.containsPolygon(towerShape) && !towerShape.intersectsPolygon(openShapes)) {
+						if (plotShape.containsPolygon(towerShape)) {
 							
 							// Generate Tower Template
 							VoxelArray towerTemplate = morph.hardCloneVoxelArray(plotVoxels);
