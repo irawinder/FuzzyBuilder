@@ -13,6 +13,7 @@ h1{text-align:left;text-indent:20px;font-family:Helvetica, sans-serif;color:#696
 h2{text-align:left;text-indent:20px;font-family:Helvetica, sans-serif;color:#696969;}
 h3{text-align:left;text-indent:20px;font-family:Helvetica, sans-serif;color:#696969;}
 p {text-align:left;text-indent:20px;font-family:Helvetica, sans-serif;font-size:14px;font-style:normal;font-weight:normal;color:#525252;}
+li{text-align:left;text-indent:20px;font-family:Helvetica, sans-serif;font-size:14px;font-style:normal;font-weight:normal;color:#525252;}
 </style>
 </head>
 <body>
@@ -31,6 +32,13 @@ p {text-align:left;text-indent:20px;font-family:Helvetica, sans-serif;font-size:
 <p>A <b>Tower Volume</b> is a special <b>Volume</b> with a rectangular footprint. It must be placed within a <b>Parcel</b>.</p>
 <p>A <b>Parcel</b> is the set of flat, grid-based <b>Voxels</b> that fit within the boundaries of a defined polygon. Parcels cannot overlap each other.</p>
 <p>A <b>Scenario</b> is a specific configuration of <b>Voxels</b> specified by <b>Parcels</b>, <b>Volumes</b>, and <b>Zones</b>.</p>
+
+<h2>Resources</h2>
+<ul>
+  <li>Launch <a href="http://teasquare.ddns.net">openSUI</a> (to use FuzzyIO)</li>
+  <li><a href="https://youtu.be/cNoS-bhRPEw">FuzzyIO Tutorial</a> on Youtube</li>
+  <li><a href="https://youtu.be/z7514vh02u0">FuzzyIO Usage</a> (Timelapse) on Youtube</li>
+</ul>
 
 <h2>Contact</h2>
 <p>fuzzy-io <i>[at]</i> mit <i>[dot]</i> edu</p>
