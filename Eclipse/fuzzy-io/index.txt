@@ -20,7 +20,7 @@ li{text-align:left;text-indent:20px;font-family:Helvetica, sans-serif;font-size:
 
 <h1>FuzzyIO</h1>
 <p>FuzzyIO is a server for generating "fuzzy" resolution real estate development scenarios. </p>
-<p>This is just the "back end". If you want to use fuzzy builder,  you need to use a "front end" user interface like <a href="http://teasquare.ddns.net">openSUI</a>.</p>
+<p>This is just the "back end". If you want to use fuzzy builder,  you need to use a "front end" user interface like <a href="http://opensui.org/">openSUI</a>.</p>
 
 <h2>Model Components</h2>
 <p>A <b>Function</b> describes the principal activity within a volume of enclosed space. (e.g. "Residential" or "Retail")</p>
@@ -35,7 +35,7 @@ li{text-align:left;text-indent:20px;font-family:Helvetica, sans-serif;font-size:
 
 <h2>Resources</h2>
 <ul>
-  <li>Launch <a href="http://teasquare.ddns.net">openSUI</a> (to use FuzzyIO)</li>
+  <li>Launch <a href="http://opensui.org/">openSUI</a> (to use FuzzyIO)</li>
   <li><a href="https://youtu.be/cNoS-bhRPEw">FuzzyIO Tutorial</a> on Youtube</li>
   <li><a href="https://youtu.be/z7514vh02u0">FuzzyIO Usage</a> (Timelapse) on Youtube</li>
 </ul>
