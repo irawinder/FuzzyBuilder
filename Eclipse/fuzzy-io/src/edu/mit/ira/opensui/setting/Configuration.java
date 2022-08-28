@@ -6,10 +6,10 @@ import org.json.JSONObject;
 public class Configuration extends Setting {
 	private String apiVersion, id, author, sponsor, contact;
 	public Legend legend;
-	private boolean allowSaves, allowLoads, allowConfig;
+	private boolean allowSave, allowDelete, allowLoad, allowConfig;
 	
 	public Configuration(String label, String apiVersion, String id, String author, String sponsor, String contact) {
-		this(label, apiVersion, id, author, sponsor, contact, true, true, true);
+		this(label, apiVersion, id, author, sponsor, contact, true, true, true, true);
 	}
 	
 	/**
@@ -21,7 +21,7 @@ public class Configuration extends Setting {
 	 * @param sponsor
 	 * @param contact
 	 */
-	public Configuration(String label, String apiVersion, String id, String author, String sponsor, String contact, boolean allowSaves, boolean allowLoads, boolean allowConfig) {
+	public Configuration(String label, String apiVersion, String id, String author, String sponsor, String contact, boolean allowSave, boolean allowDelete, boolean allowLoad, boolean allowConfig) {
 		super(GUI.GROUP, label);
 		this.apiVersion = apiVersion;
 		this.id = id;
@@ -29,8 +29,9 @@ public class Configuration extends Setting {
 		this.sponsor = sponsor;
 		this.contact = contact;
 		this.legend = new Legend();
-		this.allowSaves = allowSaves;
-		this.allowLoads = allowLoads;
+		this.allowSave = allowSave;
+		this.allowSave = allowDelete;
+		this.allowLoad = allowLoad;
 		this.allowConfig = allowConfig;
 	}
 
@@ -49,8 +50,8 @@ public class Configuration extends Setting {
 		configJSON.put("contact", contact);
 		configJSON.put("label", label);
 		configJSON.put("type", type);
-		configJSON.put("save", this.allowSaves);
-		configJSON.put("load", this.allowLoads);
+		configJSON.put("save", this.allowSave);
+		configJSON.put("load", this.allowLoad);
 		configJSON.put("config", this.allowConfig);
 		configJSON.put("settings", settingsJSON);
 		configJSON.put("legend", legend.serialize());

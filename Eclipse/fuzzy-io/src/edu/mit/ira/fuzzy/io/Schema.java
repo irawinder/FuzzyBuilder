@@ -40,13 +40,13 @@ public class Schema {
 	 * make and return the setting schema for this model
 	 * @return
 	 */
-	public static Configuration get(String apiVersion, String id, String author, String sponsor, String contact, boolean allowSaves, boolean allowLoads, boolean allowConfig) {
+	public static Configuration get(String apiVersion, String id, String author, String sponsor, String contact, boolean allowSave, boolean allowDelete, boolean allowLoad, boolean allowConfig) {
 		
 		int XExtent = 1500;
 		int YExtent = 0;
 		int ZExtent = 1500;
 		
-		Configuration base = new Configuration(UNIVERSE_NAME, apiVersion, id, author, sponsor, contact, allowSaves, allowLoads, allowConfig);
+		Configuration base = new Configuration(UNIVERSE_NAME, apiVersion, id, author, sponsor, contact, allowSave, allowDelete, allowLoad, allowConfig);
 		
 		Setting plots = new Setting(GUI.GROUP_EXTENDABLE, PARCELS);
 		Setting plot = new Setting(GUI.GROUP, PARCEL);

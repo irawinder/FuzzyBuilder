@@ -49,7 +49,7 @@ public class Server {
 	private String info;
 	
 	// Fuzzy Objects
-	private Configuration guestConfig, readOnlyConfig, fullConfig;
+	private Configuration guestConfig, readOnlyConfig, fullConfig, adminConfig;
 	private Builder builder;
 	private Evaluator evaluator;
 	private Deserializer adapter;
@@ -64,7 +64,7 @@ public class Server {
 	// e.g. zebra123
 	int VALID_PREFIX_LENGTH = 5;
 	int VALID_USERNAME_LENGTH = 8;
-	String[] VALID_USER_PREFIXES = {"zebra", "cobra", "panda"};
+	String[] VALID_USER_PREFIXES = {"zebra", "cobra", "panda", "squid"};
 	
 	/**
 	 * Construct a new FuzzyIO Server
@@ -81,9 +81,10 @@ public class Server {
 		server.setExecutor(null); // creates a default executor
 		server.start();
 		
-		fullConfig = Schema.get(version, name, author, sponsor, contact, true, true, true); // save, load, and config
-		guestConfig = Schema.get(version, name, author, sponsor, contact, false, true, true); // !save, load, config
-		readOnlyConfig = Schema.get(version, name, author, sponsor, contact, false, true, false); // !save, load, !config
+		adminConfig = Schema.get(version, name, author, sponsor, contact, true, false, true, true); // save, delete, load, and config
+		fullConfig = Schema.get(version, name, author, sponsor, contact, true, false, true, true); // save, delete, load, and config
+		guestConfig = Schema.get(version, name, author, sponsor, contact, false, false, true, true); // !save, !delete, load, config
+		readOnlyConfig = Schema.get(version, name, author, sponsor, contact, false, false, true, false); // !save, !delete load, !config
 		
 		builder = new Builder();
 		evaluator = new Evaluator();
@@ -354,6 +355,10 @@ public class Server {
 		{
 			return fullSettings();
 		} 
+		else if (user.substring(0, VALID_PREFIX_LENGTH).equals(VALID_USER_PREFIXES[3])) 
+		{
+			return adminSettings();
+		} 
 		else 
 		{
 			return fullSettings();
@@ -372,6 +377,10 @@ public class Server {
 		else if (user.substring(0, VALID_PREFIX_LENGTH).equals(VALID_USER_PREFIXES[2])) 
 		{
 			return fullSettings(userFeedback);
+		} 
+		else if (user.substring(0, VALID_PREFIX_LENGTH).equals(VALID_USER_PREFIXES[3])) 
+		{
+			return adminSettings(userFeedback);
 		} 
 		else 
 		{
@@ -444,6 +453,24 @@ public class Server {
 	 */
 	private String fullSettings(String feedback) {
 		JSONObject settings = fullConfig.serialize();
+		settings.put("feedback", feedback);
+		return settings.toString(4);
+	}
+	
+	/**
+	 * Get the Default Configuration Schema JSON string
+	 * @return base config as JSON string
+	 */
+	private String adminSettings() {
+		return adminConfig.serialize().toString(4);
+	}
+	
+	/**
+	 * Get the Default Configuration Schema JSON string
+	 * @return base config as JSON string
+	 */
+	private String adminSettings(String feedback) {
+		JSONObject settings = adminConfig.serialize();
 		settings.put("feedback", feedback);
 		return settings.toString(4);
 	}
