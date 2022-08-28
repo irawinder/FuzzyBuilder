@@ -860,10 +860,12 @@ public class Server {
 						if (!destFolder.exists()) destFolder.mkdirs();
 						File destFile = new File(userPath + File.separator + userFilePath);
 						
-						try {
-							Files.copy(srcFile.toPath(), destFile.toPath(), StandardCopyOption.COPY_ATTRIBUTES);
-						} catch (IOException e) {
-							e.printStackTrace();
+						if (!destFile.exists()) {
+							try {
+								Files.copy(srcFile.toPath(), destFile.toPath(), StandardCopyOption.COPY_ATTRIBUTES);
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
 						}
 					}
 				}
