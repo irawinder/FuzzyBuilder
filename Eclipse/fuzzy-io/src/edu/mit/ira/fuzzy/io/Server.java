@@ -12,6 +12,7 @@ import java.net.InetSocketAddress;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -64,7 +65,7 @@ public class Server {
 	// e.g. zebra123
 	int VALID_PREFIX_LENGTH = 5;
 	int VALID_USERNAME_LENGTH = 8;
-	String[] VALID_USER_PREFIXES = {"zebra", "cobra", "panda", "squid"};
+	String[] VALID_USER_PREFIXES = {"zebra", "cobra", "panda", "koala", "squid"};
 	
 	/**
 	 * Construct a new FuzzyIO Server
@@ -81,10 +82,17 @@ public class Server {
 		server.setExecutor(null); // creates a default executor
 		server.start();
 		
-		adminConfig = Schema.get(version, name, author, sponsor, contact, true, false, true, true); // save, delete, load, and config
-		fullConfig = Schema.get(version, name, author, sponsor, contact, true, false, true, true); // save, delete, load, and config
-		guestConfig = Schema.get(version, name, author, sponsor, contact, false, false, true, true); // !save, !delete, load, config
+		// zebra
 		readOnlyConfig = Schema.get(version, name, author, sponsor, contact, false, false, true, false); // !save, !delete load, !config
+		
+		// cobra
+		guestConfig = Schema.get(version, name, author, sponsor, contact, false, false, true, true); // !save, !delete, load, config
+		
+		// panda, koala
+		fullConfig = Schema.get(version, name, author, sponsor, contact, true, false, true, true); // save, !delete, load, and config
+		
+		// squid
+		adminConfig = Schema.get(version, name, author, sponsor, contact, true, true, true, true); // save, delete, load, and config
 		
 		builder = new Builder();
 		evaluator = new Evaluator();
@@ -125,16 +133,7 @@ public class Server {
 			// Log Request
 			log(t, "Request: " + requestMethod + " " +  requestURI + ", Request Length: " + requestLength);
 			
-			// check for valid user name;
-			boolean valid = false;
-			for (String prefix : VALID_USER_PREFIXES) {
-				if (user.length() == VALID_USERNAME_LENGTH) {
-					if (user.substring(0, VALID_PREFIX_LENGTH).equals(prefix)) 
-						valid = true;
-				}
-			}
-			
-			if (!valid) 
+			if (!isValidUser(user)) 
 			{
 				packItShipIt(t, 403, "Forbidden");
 			} 
@@ -151,6 +150,9 @@ public class Server {
 				} 
 				else if (requestProcess.equals("INIT")) 
 				{
+					// Add global files to new user's scenarios
+					if (!isValidUserType(user, VALID_USER_PREFIXES[2])) addGlobalScenarios(user);
+				
 					// Send the setting configuration to the GUI
 					String responseBody = getSchemaAsString(user);
 					String contentType = "application/json";
@@ -343,51 +345,77 @@ public class Server {
 	}
 	
 	private String getSchemaAsString(String user) {
-		if (user.substring(0, VALID_PREFIX_LENGTH).equals(VALID_USER_PREFIXES[0])) 
-		{
-			return guestSettings();
-		} 
-		else if (user.substring(0, VALID_PREFIX_LENGTH).equals(VALID_USER_PREFIXES[1])) 
+		if (user.substring(0, VALID_PREFIX_LENGTH).equals(VALID_USER_PREFIXES[0])) // zebra
 		{
 			return readOnlySettings();
 		} 
-		else if (user.substring(0, VALID_PREFIX_LENGTH).equals(VALID_USER_PREFIXES[2])) 
+		else if (user.substring(0, VALID_PREFIX_LENGTH).equals(VALID_USER_PREFIXES[1])) // cobra
+		{
+			return guestSettings();
+		} 
+		else if (user.substring(0, VALID_PREFIX_LENGTH).equals(VALID_USER_PREFIXES[2])) // panda
 		{
 			return fullSettings();
 		} 
-		else if (user.substring(0, VALID_PREFIX_LENGTH).equals(VALID_USER_PREFIXES[3])) 
+		else if (user.substring(0, VALID_PREFIX_LENGTH).equals(VALID_USER_PREFIXES[3])) // koala
+		{
+			return fullSettings();
+		} 
+		else if (user.substring(0, VALID_PREFIX_LENGTH).equals(VALID_USER_PREFIXES[4])) // squid
 		{
 			return adminSettings();
 		} 
 		else 
 		{
-			return fullSettings();
+			return adminSettings();
 		}
 	}
 	
 	private String getSchemaAsString(String user, String userFeedback) {
-		if (user.substring(0, VALID_PREFIX_LENGTH).equals(VALID_USER_PREFIXES[0])) 
+		if (user.substring(0, VALID_PREFIX_LENGTH).equals(VALID_USER_PREFIXES[0])) // zebra
 		{
 			return guestSettings(userFeedback);
 		} 
-		else if (user.substring(0, VALID_PREFIX_LENGTH).equals(VALID_USER_PREFIXES[1])) 
+		else if (user.substring(0, VALID_PREFIX_LENGTH).equals(VALID_USER_PREFIXES[1])) // cobra
 		{
 			return readOnlySettings(userFeedback);
 		} 
-		else if (user.substring(0, VALID_PREFIX_LENGTH).equals(VALID_USER_PREFIXES[2])) 
+		else if (user.substring(0, VALID_PREFIX_LENGTH).equals(VALID_USER_PREFIXES[2])) // panda
 		{
 			return fullSettings(userFeedback);
 		} 
-		else if (user.substring(0, VALID_PREFIX_LENGTH).equals(VALID_USER_PREFIXES[3])) 
+		else if (user.substring(0, VALID_PREFIX_LENGTH).equals(VALID_USER_PREFIXES[3])) // koala
+		{
+			return fullSettings(userFeedback);
+		} 
+		else if (user.substring(0, VALID_PREFIX_LENGTH).equals(VALID_USER_PREFIXES[4])) // squid
 		{
 			return adminSettings(userFeedback);
 		} 
 		else 
 		{
-			return fullSettings(userFeedback);
+			return adminSettings(userFeedback);
 		}
 	}
-	
+
+	boolean isValidUser(String user) {
+		for (String prefix : VALID_USER_PREFIXES) {
+			if (user.length() == VALID_USERNAME_LENGTH) {
+				if (user.substring(0, VALID_PREFIX_LENGTH).equals(prefix)) 
+					return true;
+			}
+		}
+		return false;
+	}
+
+	boolean isValidUserType(String user, String prefix) {
+		if (user.length() == VALID_USERNAME_LENGTH) {
+			if (user.substring(0, VALID_PREFIX_LENGTH).equals(prefix)) 
+				return true;
+		}
+		return false;
+	}
+
 	/**
 	 * Get parameters from URI
 	 * @param requestURI
@@ -808,6 +836,38 @@ public class Server {
 		} catch (IOException e) {
 			e.printStackTrace();
 			return "<!DOCTYPE html><html><body>" + serverID + ": " + serverVersion + "</body></html>";
+		}
+	}
+	
+	private void addGlobalScenarios(String user) {
+		
+		String globalPath = "data" + File.separator + "global" + File.separator + "scenarios";
+		File globalDir = new File(globalPath);
+		if(!globalDir.exists()) globalDir.mkdirs();
+		
+		String userPath = "data" + File.separator + "users" + File.separator + user + File.separator + "scenarios";
+		File userDir = new File(userPath);
+		if(!userDir.exists()) userDir.mkdirs();
+		
+		for (String folderName : globalDir.list()) {
+			File scenarioFolder = new File(globalDir.getPath() + File.separator + folderName);
+			if (scenarioFolder.isDirectory()) {
+				for (String fileName : scenarioFolder.list()) {
+					File srcFile = new File(scenarioFolder.getPath() + File.separator + fileName);
+						if (srcFile.isFile()) {
+						String userFilePath = folderName + File.separator + fileName;
+						File destFolder = new File(userPath + File.separator + folderName);
+						if (!destFolder.exists()) destFolder.mkdirs();
+						File destFile = new File(userPath + File.separator + userFilePath);
+						
+						try {
+							Files.copy(srcFile.toPath(), destFile.toPath(), StandardCopyOption.COPY_ATTRIBUTES);
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+					}
+				}
+			}
 		}
 	}
 }
