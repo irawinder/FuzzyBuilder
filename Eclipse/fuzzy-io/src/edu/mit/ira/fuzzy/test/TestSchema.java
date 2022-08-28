@@ -8,7 +8,7 @@ public class TestSchema {
 	public static void main(String[] args) throws Exception {
 
 		Schema testSchema = new Schema();
-		Configuration base = testSchema.baseConfiguration("0.1", "Test", "Ira", "Mom", "no@email");
+		Configuration base = Schema.get("0.1", "Test", "Ira", "Mom", "no@email", true, true, true);
 		System.out.println(base.serialize().toString(4));
 	}
 }

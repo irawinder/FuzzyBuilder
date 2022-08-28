@@ -34,13 +34,13 @@ public class Builder {
 	 *
 	 * @param settings
 	 */
-	public Development build(Configuration root, Schema schema) {
+	public Development build(Configuration root) {
 		Development fuzzy = new Development();
 		
 		try {
-			Setting plots 		= root.find(schema.PARCELS);
-			Setting towers 		= root.find(schema.TOWER_VOLUMES);
-			Setting openAreas 	= root.find(schema.AREAS);
+			Setting plots 		= root.find(Schema.PARCELS);
+			Setting towers 		= root.find(Schema.TOWER_VOLUMES);
+			Setting openAreas 	= root.find(Schema.AREAS);
 			//Setting cantilever 	= root.find(schema.CANTILEVER);
 			
 			// Global Settings
@@ -54,7 +54,7 @@ public class Builder {
 			
 			// Pre-Populate Open Area Polygons
 			for (Setting openArea : openAreas.settings) {
-				Setting vertices = openArea.find(schema.VERTICES);
+				Setting vertices = openArea.find(Schema.VERTICES);
 				Polygon openShape = this.parsePolygon(vertices);
 				openShape.setType("Open");
 				openShapes.add(openShape);
@@ -63,7 +63,7 @@ public class Builder {
 			
 			// Pre-Populate Tower Polygons
 			for (Setting tower : towers.settings) {
-				Polygon towerShape = this.towerShape(tower, schema);
+				Polygon towerShape = this.towerShape(tower);
 				towerShape.setType("Tower");
 				towerSettingsMap.put(towerShape, tower);
 				towerShapes.add(towerShape);
@@ -74,10 +74,10 @@ public class Builder {
 			for (Setting plot : plots.settings) {
 				
 				// Read from SettingSchema
-				Setting vert = plot.find(schema.VERTICES);
-				Setting gSiz = plot.find(schema.GRID_SIZE);
-				Setting gRot = plot.find(schema.GRID_ROTATION);
-				Setting pods = plot.find(schema.PODIUM_VOLUMES);
+				Setting vert = plot.find(Schema.VERTICES);
+				Setting gSiz = plot.find(Schema.GRID_SIZE);
+				Setting gRot = plot.find(Schema.GRID_ROTATION);
+				Setting pods = plot.find(Schema.PODIUM_VOLUMES);
 				
 				// Define Plot polygon
 				Polygon plotShape = this.parsePolygon(vert);
@@ -114,9 +114,9 @@ public class Builder {
 					for (Setting podium : pods.settings) {
 						
 						// Read from SettingSchema
-						Setting orient  = podium.find(schema.ORIENTATION);
-						Setting setback = podium.find(schema.SETBACK);
-						Setting zones 	= podium.find(schema.ZONES);
+						Setting orient  = podium.find(Schema.ORIENTATION);
+						Setting setback = podium.find(Schema.SETBACK);
+						Setting zones 	= podium.find(Schema.ZONES);
 						
 						// Generate Podium Template
 						float setbackDistance = setback.getFloat();
@@ -132,9 +132,9 @@ public class Builder {
 						for (Setting zone : zones.settings) {
 							
 							// Read from SettingSchema
-							Setting f = zone.find(schema.FUNCTION);
-							Setting l = zone.find(schema.FLOORS);
-							Setting h = zone.find(schema.FLOOR_HEIGHT);
+							Setting f = zone.find(Schema.FUNCTION);
+							Setting l = zone.find(Schema.FLOORS);
+							Setting h = zone.find(Schema.FLOOR_HEIGHT);
 							
 							// Podium Zone
 							int levels = l.getInt();
@@ -155,7 +155,7 @@ public class Builder {
 					for(Polygon towerShape : towerShapes) {
 						
 						// Read from SettingSchema
-						Setting zones = towerSettingsMap.get(towerShape).find(schema.ZONES);
+						Setting zones = towerSettingsMap.get(towerShape).find(Schema.ZONES);
 						
 						if (plotShape.containsPolygon(towerShape)) {
 							
@@ -167,9 +167,9 @@ public class Builder {
 							for (Setting zone : zones.settings) {
 								
 								// Read from SettingSchema
-								Setting f = zone.find(schema.FUNCTION);
-								Setting l = zone.find(schema.FLOORS);
-								Setting h = zone.find(schema.FLOOR_HEIGHT);
+								Setting f = zone.find(Schema.FUNCTION);
+								Setting l = zone.find(Schema.FLOORS);
+								Setting h = zone.find(Schema.FLOOR_HEIGHT);
 								
 								// Podium Zone
 								int levels = l.getInt();
@@ -210,13 +210,13 @@ public class Builder {
 	 * @param towerSettings
 	 * @return
 	 */
-	public Polygon towerShape(Setting towerSettings, Schema schema) {
+	public Polygon towerShape(Setting towerSettings) {
 		
 		// Read from SettingSchema
-		Setting loc = towerSettings.find(schema.LOCATION);
-		Setting rot = towerSettings.find(schema.ROTATION);
-		Setting wid = towerSettings.find(schema.WIDTH);
-		Setting dep = towerSettings.find(schema.DEPTH);
+		Setting loc = towerSettings.find(Schema.LOCATION);
+		Setting rot = towerSettings.find(Schema.ROTATION);
+		Setting wid = towerSettings.find(Schema.WIDTH);
+		Setting dep = towerSettings.find(Schema.DEPTH);
 		
 		Point towerLocation = this.parsePoint(loc);
 		float towerRotation = (float) (2 * Math.PI * rot.getFloat() / 360f);

@@ -6,6 +6,11 @@ import org.json.JSONObject;
 public class Configuration extends Setting {
 	private String apiVersion, id, author, sponsor, contact;
 	public Legend legend;
+	private boolean allowSaves, allowLoads, allowConfig;
+	
+	public Configuration(String label, String apiVersion, String id, String author, String sponsor, String contact) {
+		this(label, apiVersion, id, author, sponsor, contact, true, true, true);
+	}
 	
 	/**
 	 * An object that contains all settings and schema for a Scenario
@@ -16,7 +21,7 @@ public class Configuration extends Setting {
 	 * @param sponsor
 	 * @param contact
 	 */
-	public Configuration(String label, String apiVersion, String id, String author, String sponsor, String contact) {
+	public Configuration(String label, String apiVersion, String id, String author, String sponsor, String contact, boolean allowSaves, boolean allowLoads, boolean allowConfig) {
 		super(GUI.GROUP, label);
 		this.apiVersion = apiVersion;
 		this.id = id;
@@ -24,6 +29,9 @@ public class Configuration extends Setting {
 		this.sponsor = sponsor;
 		this.contact = contact;
 		this.legend = new Legend();
+		this.allowSaves = allowSaves;
+		this.allowLoads = allowLoads;
+		this.allowConfig = allowConfig;
 	}
 
 	public JSONObject serialize() {
@@ -41,6 +49,9 @@ public class Configuration extends Setting {
 		configJSON.put("contact", contact);
 		configJSON.put("label", label);
 		configJSON.put("type", type);
+		configJSON.put("save", this.allowSaves);
+		configJSON.put("load", this.allowLoads);
+		configJSON.put("config", this.allowConfig);
 		configJSON.put("settings", settingsJSON);
 		configJSON.put("legend", legend.serialize());
 		return configJSON;

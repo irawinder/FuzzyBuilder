@@ -9,44 +9,44 @@ import edu.mit.ira.opensui.setting.Legend.Entry;
 
 public class Schema {
 	
-	public final String UNIVERSE_NAME = "Site";
+	public final static String UNIVERSE_NAME = "Site";
 	
-	public final String PARCELS = "Parcels";
-	public final String PARCEL = "Parcel";
-	public final String VERTICES = "Vertices";
-	public final String VERTEX = "Vertex";
-	public final String GRID_SIZE = "Grid Size [ft]";
-	public final String GRID_ROTATION = "Grid Rotation [degrees]";
-	public final String PODIUM_VOLUMES = "Podium Volumes";
-	public final String PODIUM_VOLUME = "Podium Volume";
-	public final String ORIENTATION = "Orientation";
-	public final String SETBACK = "Setback [ft]";
-	public final String ZONES = "Zones";
-	public final String ZONE = "Zone";
-	public final String FUNCTION = "Function";
-	public final String FLOORS = "Floors [#]";
-	public final String FLOOR_HEIGHT = "Floor Height [ft]";
-	public final String TOWER_VOLUMES = "Tower Volumes";
-	public final String TOWER_VOLUME = "Tower Volume";
-	public final String LOCATION = "Location";
-	public final String ROTATION = "Rotation [degrees]";
-	public final String WIDTH = "Width [ft]";
-	public final String DEPTH = "Depth [ft]";
-	public final String AREAS = "Podium Exclusion Areas";
-	public final String AREA = "Area";
+	public final static String PARCELS = "Parcels";
+	public final static String PARCEL = "Parcel";
+	public final static String VERTICES = "Vertices";
+	public final static String VERTEX = "Vertex";
+	public final static String GRID_SIZE = "Grid Size [ft]";
+	public final static String GRID_ROTATION = "Grid Rotation [degrees]";
+	public final static String PODIUM_VOLUMES = "Podium Volumes";
+	public final static String PODIUM_VOLUME = "Podium Volume";
+	public final static String ORIENTATION = "Orientation";
+	public final static String SETBACK = "Setback [ft]";
+	public final static String ZONES = "Zones";
+	public final static String ZONE = "Zone";
+	public final static String FUNCTION = "Function";
+	public final static String FLOORS = "Floors [#]";
+	public final static String FLOOR_HEIGHT = "Floor Height [ft]";
+	public final static String TOWER_VOLUMES = "Tower Volumes";
+	public final static String TOWER_VOLUME = "Tower Volume";
+	public final static String LOCATION = "Location";
+	public final static String ROTATION = "Rotation [degrees]";
+	public final static String WIDTH = "Width [ft]";
+	public final static String DEPTH = "Depth [ft]";
+	public final static String AREAS = "Podium Exclusion Areas";
+	public final static String AREA = "Area";
 	//public final String CANTILEVER = "Cantilever Allowance [%]";
 	
 	/**
 	 * make and return the setting schema for this model
 	 * @return
 	 */
-	public Configuration baseConfiguration(String apiVersion, String id, String author, String sponsor, String contact) {
+	public static Configuration get(String apiVersion, String id, String author, String sponsor, String contact, boolean allowSaves, boolean allowLoads, boolean allowConfig) {
 		
 		int XExtent = 1500;
 		int YExtent = 0;
 		int ZExtent = 1500;
 		
-		Configuration base = new Configuration(UNIVERSE_NAME, apiVersion, id, author, sponsor, contact);
+		Configuration base = new Configuration(UNIVERSE_NAME, apiVersion, id, author, sponsor, contact, allowSaves, allowLoads, allowConfig);
 		
 		Setting plots = new Setting(GUI.GROUP_EXTENDABLE, PARCELS);
 		Setting plot = new Setting(GUI.GROUP, PARCEL);

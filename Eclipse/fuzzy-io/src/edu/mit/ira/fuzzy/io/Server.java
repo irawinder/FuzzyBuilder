@@ -1,12 +1,10 @@
 package edu.mit.ira.fuzzy.io;
 
 import java.awt.image.BufferedImage;
-import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -51,8 +49,7 @@ public class Server {
 	private String info;
 	
 	// Fuzzy Objects
-	private Schema schema;
-	private Configuration baseConfig;
+	private Configuration guestConfig, readOnlyConfig, fullConfig;
 	private Builder builder;
 	private Evaluator evaluator;
 	private Deserializer adapter;
@@ -63,6 +60,11 @@ public class Server {
 	private String REQUEST_FILE = "configuration.json";
 	private String RESPONSE_FILE = "solution.json";
 	private String SUMMARY_FILE = "summary.csv";
+	
+	// e.g. zebra123
+	int VALID_PREFIX_LENGTH = 5;
+	int VALID_USERNAME_LENGTH = 8;
+	String[] VALID_USER_PREFIXES = {"zebra", "cobra", "panda"};
 	
 	/**
 	 * Construct a new FuzzyIO Server
@@ -79,8 +81,10 @@ public class Server {
 		server.setExecutor(null); // creates a default executor
 		server.start();
 		
-		schema = new Schema();
-		baseConfig = schema.baseConfiguration(version, name, author, sponsor, contact);
+		fullConfig = Schema.get(version, name, author, sponsor, contact, true, true, true); // save, load, and config
+		guestConfig = Schema.get(version, name, author, sponsor, contact, false, true, true); // !save, load, config
+		readOnlyConfig = Schema.get(version, name, author, sponsor, contact, false, true, false); // !save, load, !config
+		
 		builder = new Builder();
 		evaluator = new Evaluator();
 		adapter = new Deserializer();
@@ -120,8 +124,21 @@ public class Server {
 			// Log Request
 			log(t, "Request: " + requestMethod + " " +  requestURI + ", Request Length: " + requestLength);
 			
+			// check for valid user name;
+			boolean valid = false;
+			for (String prefix : VALID_USER_PREFIXES) {
+				if (user.length() == VALID_USERNAME_LENGTH) {
+					if (user.substring(0, VALID_PREFIX_LENGTH).equals(prefix)) 
+						valid = true;
+				}
+			}
+			
+			if (!valid) 
+			{
+				packItShipIt(t, 403, "Forbidden");
+			} 
 			// HTTP GET Request
-			if (requestMethod.equals("GET")) 
+			else if (requestMethod.equals("GET")) 
 			{
 				if (requestProcess.equals("")) 
 				{
@@ -133,10 +150,10 @@ public class Server {
 				} 
 				else if (requestProcess.equals("INIT")) 
 				{
-					// Send the default setting configuration to the GUI
-					String responseBody = defaultSettings();
+					// Send the setting configuration to the GUI
+					String responseBody = getSchemaAsString(user);
 					String contentType = "application/json";
-					String message = "Base Settings Delivered to " + user;
+					String message = "Settings Delivered to " + user;
 					packItShipIt(t, 200, message, responseBody.getBytes(), contentType);
 				} 
 				else if (requestProcess.equals("LIST"))
@@ -180,9 +197,9 @@ public class Server {
 						
 						// Send the default setting configuration to the GUI
 						String userFeedback = "Scenario Loaded: " + scenario;
-						String responseBody = defaultSettings(userFeedback);
+						String responseBody = getSchemaAsString(user, userFeedback);
 						String contentType = "application/json";
-						String message = "Base Settings Delivered to " + user;
+						String message = "Settings Delivered to " + user;
 						packItShipIt(t, 200, message, responseBody.getBytes(), contentType);
 					} else if (hasScenario(user, scenario)) {
 						
@@ -256,7 +273,7 @@ public class Server {
 			
 			// HTTP POST Request
 			else if (requestMethod.equals("POST")) 
-			{
+			{	
 				if (requestProcess.equals("RUN")) 
 				{
 					// Send the default setting configuration to the GUI
@@ -271,11 +288,20 @@ public class Server {
 					String userFeedback;
 					String message = "Solution Delivered to " + user;
 					boolean save;
-					if(user.equals("") || user.equals("guest") || scenario.equals("default configuration")) {
+					if(scenario.equals(""))
+					{
+						userFeedback = "You must give your scenario a name";
+						message += "; Save Denied";
+						save = false;
+					}
+					else if (user.equals("guest") || scenario.equals("default configuration")) 
+					{
 						userFeedback = "You may not save scenario";
 						message += "; Save Denied";
 						save = false;
-					} else {
+					} 
+					else 
+					{
 						userFeedback = "Scenario saved as \"" + scenario + "\"";
 						message += "; Saved scenario: " + scenario;
 						save = true;
@@ -315,6 +341,44 @@ public class Server {
 		}
 	}
 	
+	private String getSchemaAsString(String user) {
+		if (user.substring(0, VALID_PREFIX_LENGTH).equals(VALID_USER_PREFIXES[0])) 
+		{
+			return guestSettings();
+		} 
+		else if (user.substring(0, VALID_PREFIX_LENGTH).equals(VALID_USER_PREFIXES[1])) 
+		{
+			return readOnlySettings();
+		} 
+		else if (user.substring(0, VALID_PREFIX_LENGTH).equals(VALID_USER_PREFIXES[2])) 
+		{
+			return fullSettings();
+		} 
+		else 
+		{
+			return fullSettings();
+		}
+	}
+	
+	private String getSchemaAsString(String user, String userFeedback) {
+		if (user.substring(0, VALID_PREFIX_LENGTH).equals(VALID_USER_PREFIXES[0])) 
+		{
+			return guestSettings(userFeedback);
+		} 
+		else if (user.substring(0, VALID_PREFIX_LENGTH).equals(VALID_USER_PREFIXES[1])) 
+		{
+			return readOnlySettings(userFeedback);
+		} 
+		else if (user.substring(0, VALID_PREFIX_LENGTH).equals(VALID_USER_PREFIXES[2])) 
+		{
+			return fullSettings(userFeedback);
+		} 
+		else 
+		{
+			return fullSettings(userFeedback);
+		}
+	}
+	
 	/**
 	 * Get parameters from URI
 	 * @param requestURI
@@ -329,6 +393,8 @@ public class Server {
 				String[] param = params[i].split("=");
 				if (param.length == 2) {
 					parameters.put(param[0], param[1].replace("%20", " "));
+				} else {
+					parameters.put(param[0], "");
 				}
 			}
 		}
@@ -350,18 +416,54 @@ public class Server {
 	 * Get the Default Configuration Schema JSON string
 	 * @return base config as JSON string
 	 */
-	private String defaultSettings() {
-		return baseConfig.serialize().toString(4);
+	private String guestSettings() {
+		return guestConfig.serialize().toString(4);
 	}
 	
 	/**
 	 * Get the Default Configuration Schema JSON string
 	 * @return base config as JSON string
 	 */
-	private String defaultSettings(String feedback) {
-		JSONObject defaultSettings = baseConfig.serialize();
-		defaultSettings.put("feedback", feedback);
-		return defaultSettings.toString(4);
+	private String guestSettings(String feedback) {
+		JSONObject settings = guestConfig.serialize();
+		settings.put("feedback", feedback);
+		return settings.toString(4);
+	}
+	
+	/**
+	 * Get the Default Configuration Schema JSON string
+	 * @return base config as JSON string
+	 */
+	private String fullSettings() {
+		return fullConfig.serialize().toString(4);
+	}
+	
+	/**
+	 * Get the Default Configuration Schema JSON string
+	 * @return base config as JSON string
+	 */
+	private String fullSettings(String feedback) {
+		JSONObject settings = fullConfig.serialize();
+		settings.put("feedback", feedback);
+		return settings.toString(4);
+	}
+	
+	/**
+	 * Get the Default Configuration Schema JSON string
+	 * @return base config as JSON string
+	 */
+	private String readOnlySettings() {
+		return readOnlyConfig.serialize().toString(4);
+	}
+	
+	/**
+	 * Get the Default Configuration Schema JSON string
+	 * @return base config as JSON string
+	 */
+	private String readOnlySettings(String feedback) {
+		JSONObject settings = readOnlyConfig.serialize();
+		settings.put("feedback", feedback);
+		return settings.toString(4);
 	}
 	
 	/**
@@ -398,7 +500,7 @@ public class Server {
 
 		// Generate FuzzyIO Response Data
 		Configuration config = adapter.parse(requestBody);
-		Development solution = builder.build(config, schema);
+		Development solution = builder.build(config);
 		MultiObjective performance = evaluator.evaluate(solution);
 		
 		// Save latest summary to CSV
