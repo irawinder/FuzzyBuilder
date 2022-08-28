@@ -30,7 +30,7 @@ public class Configuration extends Setting {
 		this.contact = contact;
 		this.legend = new Legend();
 		this.allowSave = allowSave;
-		this.allowSave = allowDelete;
+		this.allowDelete = allowDelete;
 		this.allowLoad = allowLoad;
 		this.allowConfig = allowConfig;
 	}
@@ -51,6 +51,7 @@ public class Configuration extends Setting {
 		configJSON.put("label", label);
 		configJSON.put("type", type);
 		configJSON.put("save", this.allowSave);
+		configJSON.put("delete", this.allowDelete);
 		configJSON.put("load", this.allowLoad);
 		configJSON.put("config", this.allowConfig);
 		configJSON.put("settings", settingsJSON);
