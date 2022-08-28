@@ -133,7 +133,7 @@ public class Server {
 			// Log Request
 			log(t, "Request: " + requestMethod + " " +  requestURI + ", Request Length: " + requestLength);
 			
-			if (!isValidUser(user)) 
+			if (!isValidUser(user) && !requestProcess.equals("")) 
 			{
 				packItShipIt(t, 403, "Forbidden");
 			} 
