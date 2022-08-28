@@ -75,6 +75,7 @@ public class Evaluator {
 				builtArea += plotBuiltArea;
 				sitePeak = Math.max(sitePeak, plotPeak);
 				
+				/*
 				// Add total area objectives for this plot
 				String plotName = "[" + fuzzy.plotNames.get(plot) + "] ";
 				performance.secondaryObjectives.add(new Objective(
@@ -88,6 +89,7 @@ public class Evaluator {
 				performance.secondaryObjectives.add(new Objective(
 					plotName + "Plot Peak", "The tallest building height on " + plotName, plotPeak, "ft"));
 				
+				*/
 				// Calculate plot areas itemized by Use
 				HashMap<Function, Integer> plotUseCount = new HashMap<Function, Integer>();
 				for (Function use : Function.values()) {
@@ -110,8 +112,8 @@ public class Evaluator {
 					//}
 					
 					// Add plot area objectives itemized by use
-					performance.secondaryObjectives.add(new Objective(
-						plotName + useName + "Built Area", "Total floor area of " + use + " on " + plotName, plotUseArea, "sqft"));
+					//performance.secondaryObjectives.add(new Objective(
+					//	plotName + useName + "Built Area", "Total floor area of " + use + " on " + plotName, plotUseArea, "sqft"));
 					//performance.secondaryObjectives.add(new Objective(
 					///	plotName + useName + "Area Ratio", "Portion of total built area on " + plotName, 100 * plotUseRatio, "%"));
 				}
@@ -124,15 +126,15 @@ public class Evaluator {
 
 		// Add total area objectives
 		performance.primaryObjectives.add(new Objective(
-			"Total Site Area", "Total area enclosed by site", siteArea, "sqft"));
+			"Total Site Area", "Total area of site polygons", siteArea, "sqft"));
 		performance.primaryObjectives.add(new Objective(
-			"Total Built Area", "Total floor area of massing on site", builtArea, "sqft"));
+			"Total Built Area", "Total floor area of buildings", builtArea, "sqft"));
 		performance.primaryObjectives.add(new Objective(
-			"Floor Area Ratio (FAR)", "Ratio of built area to site area", far, "sqft/sqft"));
-		performance.primaryObjectives.add(new Objective(
-			"Site Coverage Ratio", "Ratio of site that is occupied by building", coverage, "sqft/sqft"));
-		performance.primaryObjectives.add(new Objective(
-			"Site Peak", "The tallest building height on the Site", sitePeak, "ft"));
+			"Floor Area Ratio (FAR)", "Ratio of Total Built Area to Total Site Area", far, "sqft/sqft"));
+		//performance.primaryObjectives.add(new Objective(
+		//	"Site Coverage Ratio", "Ratio of site polygons that is occupied by building", coverage, "sqft/sqft"));
+		//performance.primaryObjectives.add(new Objective(
+		//	"Site Peak", "The tallest building height on the Site", sitePeak, "ft"));
 		
 		// Calculate total areas itemized by use
 		for (Function use : Function.values()) {
