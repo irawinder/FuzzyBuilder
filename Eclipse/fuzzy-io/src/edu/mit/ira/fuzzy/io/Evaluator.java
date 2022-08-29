@@ -138,7 +138,7 @@ public class Evaluator {
 		
 		// Calculate total areas itemized by use
 		for (Function use : Function.values()) {
-			String useName = "[" + use + "] ";
+			String useName = use.toString();
 			float uArea = useArea.get(use);
 			
 			//float useRatio;
@@ -151,9 +151,9 @@ public class Evaluator {
 			
 			// Add total area objectives itemized by use
 			performance.primaryObjectives.add(new Objective(
-				useName + "Built Area", "Total floor area of " + use + " on site", uArea, "sqft"));
+				"Floor Area [" + useName + "]", "Total floor area of " + use + " use on site", uArea, "sqft"));
 			//performance.primaryObjectives.add(new Objective(
-			//	useName + "Area Ratio", "Portion of total " + use + " built area on site", 100 * useRatio, "%"));
+			//	"Area Ratio [" + useName + "]", "Portion of total " + use + " use floor area on site", 100 * useRatio, "%"));
 		}
 		
 		return performance;
