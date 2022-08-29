@@ -126,13 +126,13 @@ public class Evaluator {
 
 		// Add total area objectives
 		performance.primaryObjectives.add(new Objective(
-			"Total Site Area", "Total area of site polygons", siteArea, "sqft"));
+			"Gross Land Area (GLA)", "Total area of land defined by all parcels", siteArea, "sqft"));
 		performance.primaryObjectives.add(new Objective(
-			"Total Built Area", "Total floor area of buildings", builtArea, "sqft"));
+			"Gross Floor Area (GFA)", "Total floor area of all buildings", builtArea, "sqft"));
 		performance.primaryObjectives.add(new Objective(
-			"Floor Area Ratio (FAR)", "Ratio of Total Built Area to Total Site Area", far, "sqft/sqft"));
-		//performance.primaryObjectives.add(new Objective(
-		//	"Site Coverage Ratio", "Ratio of site polygons that is occupied by building", coverage, "sqft/sqft"));
+			"Floor Area Ratio (FAR)", "Ratio of Gross Floor Area (GFA) to Gross Land Area (GLA)", far, "sqft/sqft"));
+		performance.primaryObjectives.add(new Objective(
+			"Building Coverage Ratio (BCR)", "Ratio of Gross Building Footprint Area (when viewed from above) to Gross Land Area (GLA)", coverage, "sqft/sqft"));
 		//performance.primaryObjectives.add(new Objective(
 		//	"Site Peak", "The tallest building height on the Site", sitePeak, "ft"));
 		
