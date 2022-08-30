@@ -29,6 +29,7 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
+import edu.mit.ira.fuzzy.io.log.UserLog;
 import edu.mit.ira.fuzzy.model.Development;
 import edu.mit.ira.opensui.io.Deserializer;
 import edu.mit.ira.opensui.objective.MultiObjective;
@@ -111,6 +112,7 @@ public class Server {
 			// Parse Request Header
 			String requestMethod = t.getRequestMethod();
 			String requestURI = t.getRequestURI().toString();
+			String clientIP = t.getRemoteAddress().toString();
 			String requestProcess = process(requestURI);
 			Map<String, String> requestParameters = parameters(requestURI);
 			String user = requestParameters.get("user");
@@ -147,6 +149,7 @@ public class Server {
 					String contentType = "text/html";
 					String message = "HTML Delivered";
 					packItShipIt(t, 200, message, responseBody.getBytes(), contentType);
+					UserLog.add(user, clientIP, "HOME", "Visited FuzzyIO Home Page");
 				} 
 				else if (requestProcess.equals("INIT")) 
 				{
@@ -158,6 +161,7 @@ public class Server {
 					String contentType = "application/json";
 					String message = "Settings Delivered to " + user;
 					packItShipIt(t, 200, message, responseBody.getBytes(), contentType);
+					UserLog.add(user, clientIP, "LOGIN", "Initialize New Session");
 				} 
 				else if (requestProcess.equals("LIST"))
 				{	
@@ -169,7 +173,7 @@ public class Server {
 				} 
 				else if (requestProcess.equals("BASEMAPS"))
 				{	
-					// Send a list of scenarios saved by this user
+					// Send a list of basemaps saved by this user
 					String responseBody = fileNames("./data/basemaps");
 					String contentType = "application/json";
 					String message = "Scenario Names Delivers for " + user;
@@ -184,6 +188,7 @@ public class Server {
 						deleteScenario(user, scenario);
 						String message = "Scenario " + scenario + " deleted for " + user;
 						packItShipIt(t, 200, message);
+						UserLog.add(user, clientIP, "DELETE SCENARIO", scenario);
 					} else {
 						
 						// Resource Not Found
@@ -204,13 +209,15 @@ public class Server {
 						String contentType = "application/json";
 						String message = "Settings Delivered to " + user;
 						packItShipIt(t, 200, message, responseBody.getBytes(), contentType);
+						UserLog.add(user, clientIP, "LOAD SCENARIO", scenario);
 					} else if (hasScenario(user, scenario)) {
 						
-						// Send the default setting configuration to the GUI
+						// Send the scenario to the GUI
 						String responseBody = loadData(user, scenario, REQUEST_FILE);
 						String contentType = "application/json";
 						String message = "Scenario " + scenario + " loaded for " + user;
 						packItShipIt(t, 200, message, responseBody.getBytes(), contentType);
+						UserLog.add(user, clientIP, "LOAD SCENARIO", scenario);
 					} else {
 						
 						// Resource Not Found
@@ -236,6 +243,7 @@ public class Server {
 						String contentType = "image/" + splitName[1];
 						String message = "Basemap " + filename + " sent to " + user;
 						packItShipIt(t, 200, message, imageAsBytes, contentType);
+						UserLog.add(user, clientIP, "LOAD BASEMAP", filename);
 					} else {
 						
 						// Resource Not Found
@@ -254,6 +262,7 @@ public class Server {
 						String contentType = "application/csv";
 						String message = "Summary Delivered to " + user;
 						packItShipIt(t, 200, message, responseBody.getBytes(), contentType);
+						UserLog.add(user, clientIP, "EXPORT CSV", "user exported CSV of model");
 						
 					} else {
 						
@@ -284,6 +293,7 @@ public class Server {
 					String contentType = "application/json";
 					String message = "Solution Delivered to " + user;
 					packItShipIt(t, 200, message, responseBody.getBytes(), contentType);
+					UserLog.add(user, clientIP, "RUN", "Model Changed");
 				} 
 				else if (requestProcess.equals("SAVE")) 
 				{
@@ -308,6 +318,7 @@ public class Server {
 						userFeedback = "Scenario saved as \"" + scenario + "\"";
 						message += "; Saved scenario: " + scenario;
 						save = true;
+						UserLog.add(user, clientIP, "SAVE SCENARIO", scenario);
 					}
 					String responseBody = solution(requestBody, userFeedback, user);
 					String contentType = "application/json";
@@ -766,28 +777,28 @@ public class Server {
 	 * @return
 	 */
 	private void log(HttpExchange t, String message) {
-		
+
 		// Create Log
 		String clientIP = t.getRemoteAddress().toString();
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss z");
 		Date date = new Date(System.currentTimeMillis());
 		String timeStamp = formatter.format(date);
 		String log = timeStamp + " " + clientIP + " : " + message + "\n";
-		
+
 		// Write Log to Console
 		System.out.print(log);
-		
+
 		// Write Log to File
 		byte data[] = log.getBytes();
-	    Path p = Paths.get("./logs.txt");
-	    try (OutputStream out = new BufferedOutputStream(
-	      Files.newOutputStream(p, StandardOpenOption.CREATE, StandardOpenOption.APPEND))) {
-	      out.write(data, 0, data.length);
-	    } catch (IOException x) {
-	      System.err.println(x);
-	    }
+		Path p = Paths.get("./logs.txt");
+		try (OutputStream out = new BufferedOutputStream(
+				Files.newOutputStream(p, StandardOpenOption.CREATE, StandardOpenOption.APPEND))) {
+			out.write(data, 0, data.length);
+		} catch (IOException x) {
+			System.err.println(x);
+		}
 	}
-    
+
 
 	/**
 	 * Format Headers for HTTP response
