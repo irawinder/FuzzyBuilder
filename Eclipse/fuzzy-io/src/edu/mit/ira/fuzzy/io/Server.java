@@ -116,7 +116,7 @@ public class Server {
 			String clientIP = t.getRemoteAddress().toString();
 			String requestProcess = process(requestURI);
 			Map<String, String> requestParameters = parameters(requestURI);
-			String user = requestParameters.get("user");
+			String user = requestParameters.get("user").toLowerCase();
 			String scenario = requestParameters.get("scenario");
 			String filename = requestParameters.get("filename");
 			
