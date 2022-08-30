@@ -65,7 +65,7 @@ public class Server {
 	
 	// e.g. zebra123
 	int VALID_PREFIX_LENGTH = 5;
-	int VALID_USERNAME_LENGTH = 8;
+	int VALID_USERNAME_LENGTH = VALID_PREFIX_LENGTH + 6;
 	String[] VALID_USER_PREFIXES = {"zebra", "cobra", "panda", "koala", "squid"};
 	
 	/**
