@@ -31,6 +31,7 @@ import com.sun.net.httpserver.HttpServer;
 
 import edu.mit.ira.fuzzy.io.log.UserLog;
 import edu.mit.ira.fuzzy.model.Development;
+import edu.mit.ira.fuzzy.pages.Pages;
 import edu.mit.ira.opensui.io.Deserializer;
 import edu.mit.ira.opensui.objective.MultiObjective;
 import edu.mit.ira.opensui.setting.Configuration;
@@ -144,18 +145,37 @@ public class Server {
 			else if (requestMethod.equals("GET")) 
 			{
 				if (requestProcess.equals("")) 
-				{
-					// Supply web content if root resource
-					String responseBody = getHTML("index.txt");
+				{	
+					System.out.println(user);
+					String responseBody = "null";
+					if (isValidUser(user, VALID_USER_PREFIXES[0])) 
+					{
+						//htmlFile = VALID_USER_PREFIXES[0];
+						//responseBody = getHTML(htmlFile);
+						UserLog.add(user, clientIP, "HOME", "Visited FuzzyIO Home Page");
+					}
+					else if (isValidUser(user, VALID_USER_PREFIXES[2])) 
+					{
+						//htmlFile = VALID_USER_PREFIXES[2];
+						//responseBody = getHTML(htmlFile);
+						UserLog.add(user, clientIP, "HOME", "Visited FuzzyIO Home Page");
+					}
+					else if (isValidUser(user, VALID_USER_PREFIXES[3]))
+					{
+						//htmlFile = VALID_USER_PREFIXES[3];
+						//responseBody = getHTML(htmlFile);
+						UserLog.add(user, clientIP, "HOME", "Visited FuzzyIO Home Page");
+					} else {
+						responseBody = Pages.nullSite();
+					}
 					String contentType = "text/html";
 					String message = "HTML Delivered";
 					packItShipIt(t, 200, message, responseBody.getBytes(), contentType);
-					UserLog.add(user, clientIP, "HOME", "Visited FuzzyIO Home Page");
 				} 
 				else if (requestProcess.equals("INIT")) 
 				{
 					// Add global files to new user's scenarios
-					if (!isValidUserType(user, VALID_USER_PREFIXES[2])) addGlobalScenarios(user);
+					if (!isValidUser(user, VALID_USER_PREFIXES[2])) addGlobalScenarios(user);
 				
 					// Send the setting configuration to the GUI
 					String responseBody = getSchemaAsString(user);
@@ -193,7 +213,7 @@ public class Server {
 					} else {
 						
 						// Resource Not Found
-						String responseBody = getHTML("404.txt");
+						String responseBody = Pages.nullSite();
 						String contentType = "text/html";
 						String message = "Resource not found";
 						packItShipIt(t, 404, message, responseBody.getBytes(), contentType);
@@ -222,7 +242,7 @@ public class Server {
 					} else {
 						
 						// Resource Not Found
-						String responseBody = getHTML("404.txt");
+						String responseBody = Pages.nullSite();
 						String contentType = "text/html";
 						String message = "Resource not found";
 						packItShipIt(t, 404, message, responseBody.getBytes(), contentType);
@@ -248,7 +268,7 @@ public class Server {
 					} else {
 						
 						// Resource Not Found
-						String responseBody = getHTML("404.txt");
+						String responseBody = Pages.nullSite();
 						String contentType = "text/html";
 						String message = "Resource not found";
 						packItShipIt(t, 404, message, responseBody.getBytes(), contentType);
@@ -268,7 +288,7 @@ public class Server {
 					} else {
 						
 						// Resource Not Found
-						String responseBody = getHTML("404.txt");
+						String responseBody = Pages.nullSite();
 						String contentType = "text/html";
 						String message = "Resource not found";
 						packItShipIt(t, 404, message, responseBody.getBytes(), contentType);
@@ -277,7 +297,7 @@ public class Server {
 				else
 				{
 					// Resource Not Found
-					String responseBody = getHTML("404.txt");
+					String responseBody = Pages.nullSite();
 					String contentType = "text/html";
 					String message = "Resource not found";
 					packItShipIt(t, 404, message, responseBody.getBytes(), contentType);
@@ -420,7 +440,7 @@ public class Server {
 		return false;
 	}
 
-	boolean isValidUserType(String user, String prefix) {
+	boolean isValidUser(String user, String prefix) {
 		if (user.length() == VALID_USERNAME_LENGTH) {
 			if (user.substring(0, VALID_PREFIX_LENGTH).equals(prefix)) 
 				return true;
@@ -784,7 +804,7 @@ public class Server {
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss z");
 		Date date = new Date(System.currentTimeMillis());
 		String timeStamp = formatter.format(date);
-		String log = timeStamp + " " + clientIP + " : " + message + "\n";
+		String log = timeStamp + " " + clientIP + " " + t.getRequestURI() + " " + message + "\n";
 
 		// Write Log to Console
 		System.out.print(log);
@@ -841,16 +861,6 @@ public class Server {
 		return root.toString();
 	}
 	
-	private String getHTML(String file) {
-		Path fileName = Path.of("./" + file);
-	    try {
-			return Files.readString(fileName);
-		} catch (IOException e) {
-			e.printStackTrace();
-			return "<!DOCTYPE html><html><body>" + serverID + ": " + serverVersion + "</body></html>";
-		}
-	}
-	
 	private void addGlobalScenarios(String user) {
 		
 		String globalPath = "data" + File.separator + "global" + File.separator + "scenarios";
@@ -879,6 +889,35 @@ public class Server {
 								e.printStackTrace();
 							}
 						}
+					}
+				}
+			}
+		}
+	}
+
+	private void addGlobalHTML(String user) {
+
+		String htmlPath = "data" + File.separator + "global" + File.separator + "html";
+		File htmlDir = new File(htmlPath);
+		if(!htmlDir.exists()) htmlDir.mkdirs();
+
+		String userPath = "data" + File.separator + "users" + File.separator + user + File.separator + "scenarios";
+		File userDir = new File(userPath);
+		if(!userDir.exists()) userDir.mkdirs();
+
+		for (String fileName : htmlDir.list()) {
+			File srcFile = new File(htmlDir.getPath() + File.separator + fileName);
+			if (srcFile.isFile()) {
+				String userFilePath = htmlDir + File.separator + fileName;
+				File destFolder = new File(userPath + File.separator + fileName);
+				if (!destFolder.exists()) destFolder.mkdirs();
+				File destFile = new File(userPath + File.separator + userFilePath);
+
+				if (!destFile.exists()) {
+					try {
+						Files.copy(srcFile.toPath(), destFile.toPath(), StandardCopyOption.COPY_ATTRIBUTES);
+					} catch (IOException e) {
+						e.printStackTrace();
 					}
 				}
 			}

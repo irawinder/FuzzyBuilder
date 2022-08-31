@@ -1,7 +1,4 @@
-<!DOCTYPE html>
-<html>
 <head>
-<!-- HTML Codes by Quackit.com -->
 <title>
 FuzzyIO</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -10,11 +7,9 @@ FuzzyIO</title>
 <style>
 body {background-color:#ffffff;background-image:url(https://github.com/irawinder/FuzzyBuilder/blob/master/screenshots/massing.png?raw=true);background-repeat:no-repeat;background-position:center center;background-attachment:fixed;}
 h1{text-align:left;text-indent:20px;font-family:Helvetica, sans-serif;color:#696969;}
+h2{text-align:left;text-indent:20px;font-family:Helvetica, sans-serif;color:#696969;}
+h3{text-align:left;text-indent:20px;font-family:Helvetica, sans-serif;color:#696969;}
 p {text-align:left;text-indent:20px;font-family:Helvetica, sans-serif;font-size:14px;font-style:normal;font-weight:normal;color:#525252;}
+li{text-align:left;text-indent:20px;font-family:Helvetica, sans-serif;font-size:14px;font-style:normal;font-weight:normal;color:#525252;}
 </style>
 </head>
-<body>
-<h1>404</h1>
-<p>Resource Not Found</p>
-</body>
-</html>
