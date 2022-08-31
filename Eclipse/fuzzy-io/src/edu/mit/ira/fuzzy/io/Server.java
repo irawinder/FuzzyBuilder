@@ -58,6 +58,7 @@ public class Server {
 	private Deserializer adapter;
 	
 	private String DEFAULT_USER = "guest";
+	private String DEFAULT_PAGE = "1";
 	private String DEFAULT_SCENARIO = "defacto";
 	private String DEFAULT_FILENAME = "default";
 	private String REQUEST_FILE = "configuration.json";
@@ -65,10 +66,10 @@ public class Server {
 	private String SUMMARY_FILE = "summary.csv";
 	
 	// e.g. zebra123
-	int VALID_PREFIX_LENGTH = 5;
-	int VALID_CODE_LENGTH = 6;
-	int VALID_USERNAME_LENGTH = VALID_PREFIX_LENGTH + VALID_CODE_LENGTH;
-	String[] VALID_USER_PREFIXES = {"zebra", "cobra", "panda", "koala", "squid"};
+	public static int VALID_PREFIX_LENGTH = 5;
+	private static int VALID_CODE_LENGTH = 6;
+	private static int VALID_USERNAME_LENGTH = VALID_PREFIX_LENGTH + VALID_CODE_LENGTH;
+	public static String[] VALID_USER_PREFIXES = {"zebra", "cobra", "panda", "squid"};
 	
 	/**
 	 * Construct a new FuzzyIO Server
@@ -87,9 +88,6 @@ public class Server {
 		
 		// zebra
 		readOnlyConfig = Schema.get(version, name, author, sponsor, contact, false, false, true, false); // !save, !delete load, !config
-		
-		// cobra
-		guestConfig = Schema.get(version, name, author, sponsor, contact, false, false, true, true); // !save, !delete, load, config
 		
 		// panda, koala
 		fullConfig = Schema.get(version, name, author, sponsor, contact, true, false, true, true); // save, !delete, load, and config
@@ -118,6 +116,7 @@ public class Server {
 			String requestProcess = process(requestURI);
 			Map<String, String> requestParameters = parameters(requestURI);
 			String user = requestParameters.get("user").toLowerCase();
+			String page = requestParameters.get("page").toLowerCase();
 			String scenario = requestParameters.get("scenario");
 			String filename = requestParameters.get("filename");
 			
@@ -146,25 +145,11 @@ public class Server {
 			{
 				if (requestProcess.equals("")) 
 				{	
-					System.out.println(user);
-					String responseBody = "null";
-					if (isValidUser(user, VALID_USER_PREFIXES[0])) 
+					String responseBody;
+					if (isValidUser(user))
 					{
-						//htmlFile = VALID_USER_PREFIXES[0];
-						//responseBody = getHTML(htmlFile);
-						UserLog.add(user, clientIP, "HOME", "Visited FuzzyIO Home Page");
-					}
-					else if (isValidUser(user, VALID_USER_PREFIXES[2])) 
-					{
-						//htmlFile = VALID_USER_PREFIXES[2];
-						//responseBody = getHTML(htmlFile);
-						UserLog.add(user, clientIP, "HOME", "Visited FuzzyIO Home Page");
-					}
-					else if (isValidUser(user, VALID_USER_PREFIXES[3]))
-					{
-						//htmlFile = VALID_USER_PREFIXES[3];
-						//responseBody = getHTML(htmlFile);
-						UserLog.add(user, clientIP, "HOME", "Visited FuzzyIO Home Page");
+						responseBody = Pages.studySite(user, page);
+						UserLog.add(user, clientIP, "HOME", "Visited FuzzyIO Home Page " + page);
 					} else {
 						responseBody = Pages.nullSite();
 					}
@@ -440,7 +425,7 @@ public class Server {
 		return false;
 	}
 
-	boolean isValidUser(String user, String prefix) {
+	public static boolean isValidUser(String user, String prefix) {
 		if (user.length() == VALID_USERNAME_LENGTH) {
 			if (user.substring(0, VALID_PREFIX_LENGTH).equals(prefix)) 
 				return true;
@@ -469,6 +454,8 @@ public class Server {
 		}
 		if (!parameters.containsKey("user")) 
 			parameters.put("user", DEFAULT_USER);
+		if (!parameters.containsKey("page")) 
+			parameters.put("page", DEFAULT_PAGE);
 		if (!parameters.containsKey("scenario")) 
 			parameters.put("scenario", DEFAULT_SCENARIO);
 		if (!parameters.containsKey("filename")) 
