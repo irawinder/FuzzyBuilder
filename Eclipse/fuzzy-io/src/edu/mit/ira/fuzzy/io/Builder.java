@@ -105,7 +105,7 @@ public class Builder {
 					float gridRotation = (float) (2 * Math.PI * gRot.getInt() / 360f);
 					float gridOffsetX = gridSize * gDx.getInt()/100f;
 					float gridOffsetY = gridSize * gDy.getInt()/100f;
-					Point gridTranslation = new Point();
+					Point gridTranslation = new Point(gridOffsetX, gridOffsetY);
 					VoxelArray plotVoxels = this.morph.make(plotShape, gridSize, 0, gridRotation, gridTranslation);
 					plotVoxels.setVoxelUse(Function.Unspecified);
 					fuzzy.plotSite.put(plotShape, plotVoxels);

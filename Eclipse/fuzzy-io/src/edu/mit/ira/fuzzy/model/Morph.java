@@ -69,7 +69,7 @@ public class Morph {
 	 * @param rotation    Rotation of Voxel Grid
 	 * @param translation Translation Vector of Entire Grid
 	 */
-	public VoxelArray make(Polygon boundary, float voxelWidth, float voxelOffsetX, float voxelOffsetY, float voxelHeight, float rotation, Point translation) {
+	public VoxelArray make(Polygon boundary, float voxelWidth, float voxelHeight, float rotation, Point translation) {
 
 		VoxelArray result = new VoxelArray();
 
@@ -79,8 +79,8 @@ public class Morph {
 		// Polygon origin and rectangular bounding box extents
 		float origin_x = (float) (0.5 * (boundary.xMax() + boundary.xMin()));
 		float origin_y = (float) (0.5 * (boundary.yMax() + boundary.yMin()));
-		origin_x = origin_x - origin_x % voxelWidth + voxelOffsetX;
-		origin_y = origin_y - origin_y % voxelWidth + voxelOffsetY;
+		origin_x = origin_x - origin_x % voxelWidth;
+		origin_y = origin_y - origin_y % voxelWidth;
 		float boundary_w = boundary.xMax() - boundary.xMin();
 		float boundary_h = boundary.yMax() - boundary.yMin();
 		float bounds = (boundary_w > boundary_h) ? boundary_w : boundary_h;
@@ -91,8 +91,6 @@ public class Morph {
 
 		int U = (int) ((bounds / voxelWidth) + 1);
 		int V = U;
-		float t_x = translation.x % voxelWidth;
-		float t_y = translation.y % voxelWidth;
 
 		for (int u = 0; u < U; u++) {
 			for (int v = 0; v < V; v++) {
@@ -102,9 +100,12 @@ public class Morph {
 				float y_0 = (float) (origin_y - 0.5 * bounds + v * voxelWidth);
 
 				// rotate, then translate
-				Point location = rotateXY(new Point(x_0, y_0), new Point(origin_x, origin_y), rotation);
-				location.x += t_x;
-				location.y += t_y;
+				Point baseLocation = new Point(x_0, y_0);
+				Point origin = new Point(origin_x, origin_y);
+				Point offset = rotateXY(translation, origin, rotation);
+				Point location = rotateXY(baseLocation, origin, rotation);
+				location.x += offset.x;
+				location.y += offset.y;
 
 				// Test which points are in the polygon boundary
 				// and add them to voxel set

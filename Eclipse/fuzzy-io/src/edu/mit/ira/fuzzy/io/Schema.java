@@ -84,13 +84,13 @@ public class Schema {
 		gridXOffset.value.add("0"); // default
 		gridXOffset.bounds.add("-50"); // min
 		gridXOffset.bounds.add("+50"); // max
-		gridXOffset.settings.add(gridXOffset);
+		plot.settings.add(gridXOffset);
 		
 		Setting gridYOffset = new Setting(GUI.SLIDER, GRID_Y_OFFSET);
 		gridYOffset.value.add("0"); // default
 		gridYOffset.bounds.add("-50"); // min
 		gridYOffset.bounds.add("+50"); // max
-		gridYOffset.settings.add(gridYOffset);
+		plot.settings.add(gridYOffset);
 		
 		Setting podiums = new Setting(GUI.GROUP_EXTENDABLE, PODIUM_VOLUMES);
 		Setting podium = new Setting(GUI.GROUP, PODIUM_VOLUME);

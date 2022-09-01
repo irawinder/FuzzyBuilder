@@ -30,6 +30,7 @@ public class Evaluator {
 		float siteArea = 0;
 		float coverArea = 0;
 		float builtArea = 0;
+		float undergroundArea = 0;
 		float sitePeak = 0;
 		HashMap<Function, Float> useArea = new HashMap<Function, Float>();
 		for (Function use : Function.values()) {
@@ -45,14 +46,15 @@ public class Evaluator {
 				VoxelArray pMassing = fuzzy.plotMassing.get(plot);
 				
 				// Calculate total areas for this plot
-				float plotSiteArea, plotCoverArea, plotBuiltArea, plotFAR, plotCoverageRatio, plotPeak;
+				float plotSiteArea, plotCoverArea, plotBuiltArea, plotUndergroundArea, plotFAR, plotCoverageRatio, plotPeak;
 				float voxelArea = 0;
 				if (pSite.voxelList.size() > 0) {
 					voxelArea = (float) Math.pow(pSite.voxelList.get(0).width, 2);
 					plotSiteArea = voxelArea * pSite.voxelList.size();
 					plotBuiltArea = voxelArea * pMassing.voxelList.size();
-					float adjustedBuiltArea = Math.max(0f, plotBuiltArea - pMassing.belowGroundVoxelCount()); // Exlude below-ground use from FAR Calc
-					plotFAR = adjustedBuiltArea / plotSiteArea;
+					plotUndergroundArea = voxelArea * pMassing.belowGroundVoxelCount();
+					float adjustedPlotBuiltArea = Math.max(0f, plotBuiltArea - plotUndergroundArea); // Exlude below-ground use from FAR Calc
+					plotFAR = adjustedPlotBuiltArea / plotSiteArea;
 					plotPeak = pMassing.peakZ();
 					
 					// Total ground level build area
@@ -67,6 +69,7 @@ public class Evaluator {
 					plotSiteArea = 0;
 					plotCoverArea = 0;
 					plotBuiltArea = 0;
+					plotUndergroundArea = 0;
 					plotFAR = 0;
 					plotCoverageRatio = 0;
 					plotPeak = 0;
@@ -74,6 +77,7 @@ public class Evaluator {
 				siteArea += plotSiteArea;
 				coverArea += plotCoverArea;
 				builtArea += plotBuiltArea;
+				undergroundArea += plotUndergroundArea;
 				sitePeak = Math.max(sitePeak, plotPeak);
 				
 				/*
@@ -122,7 +126,8 @@ public class Evaluator {
 		}
 		
 		// Calculate Primary Objectives
-		float far = builtArea / siteArea;
+		float adjustedBuiltArea = Math.max(0f, builtArea - undergroundArea); // Exclude below-ground use from FAR Calc
+		float far = adjustedBuiltArea / siteArea;
 		float coverage = coverArea / siteArea;
 
 		// Add total area objectives
@@ -131,9 +136,9 @@ public class Evaluator {
 		performance.primaryObjectives.add(new Objective(
 			"Gross Floor Area (GFA)", "Total floor area of all buildings", builtArea, "sqft"));
 		performance.primaryObjectives.add(new Objective(
-			"Floor Area Ratio (FAR)", "Ratio of Gross Floor Area (GFA) to Gross Land Area (GLA)", far, "sqft/sqft"));
-		performance.primaryObjectives.add(new Objective(
-			"Building Coverage Ratio (BCR)", "Ratio of Gross Building Footprint Area (when viewed from above) to Gross Land Area (GLA)", coverage, "sqft/sqft"));
+			"Floor Area Ratio (FAR)", "Ratio of Gross Above-ground Floor Area to Gross Land Area", far, "sqft/sqft"));
+		//performance.primaryObjectives.add(new Objective(
+		//	"Building Coverage Ratio (BCR)", "Ratio of Gross Building Footprint Area (when viewed from above) to Gross Land Area", coverage, "sqft/sqft"));
 		//performance.primaryObjectives.add(new Objective(
 		//	"Site Peak", "The tallest building height on the Site", sitePeak, "ft"));
 		

@@ -249,7 +249,7 @@ public class Pages {
 
 			body += wrapText("li", "<b>Gross Floor Area</b> (GFA) - Total floor area of all buildings [sqft]");
 
-			body += wrapText("li", "<b>Floor Area Ratio</b> (FAR) - Ratio of Gross Floor Area (GFA) to Gross Land Area (GLA) [sqft/sqft]");
+			body += wrapText("li", "<b>Floor Area Ratio</b> (FAR) - Ratio of Gross Above-ground Floor Area to Gross Land Area [sqft/sqft]");
 
 			body += wrapText("li", "A <b>Scenario</b> is a specific configuration of Voxels specified by Parcels, Volumes, and Zones.");
 
