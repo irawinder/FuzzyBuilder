@@ -316,7 +316,7 @@ public class Morph {
 	public VoxelArray hollow(VoxelArray input) {
 		VoxelArray hollowed = new VoxelArray();
 		for (Voxel t : input.voxelList) {
-			boolean hasTop = this.getNeighborTop(t, input) != null;
+			boolean hasTop = this.getNeighborsTop(t, input).size() == 9;
 			boolean hasBot = this.getNeighborBottom(t, input) != null;
 			boolean surrounded = this.getNeighborsUV(t, input).size() == 8;
 			if(!hasTop || !hasBot || !surrounded) {
@@ -535,11 +535,11 @@ public class Morph {
 	}
 
 	/**
-	 * Get the Voxel directly above a specific Voxel; null if none
+	 * Get the Voxel directly above a specific Voxel; empty if none
 	 * 
 	 * @param t      Voxel we wish to know the Neighbor of
 	 * @param tArray that encapsulates t
-	 * @return Voxel directly above a specific Voxel; null if none
+	 * @return Voxel directly above a specific Voxel; empty if none
 	 */
 	public Voxel getNeighborTop(Voxel t, VoxelArray tArray) {
 		String coordKey = this.coordKey(t.u, t.v, t.w + 1);
@@ -548,6 +548,26 @@ public class Morph {
 		} else {
 			return null;
 		}
+	}
+	
+	/**
+	 * Get the Voxels directly above an diagonally above a specific Voxel; empty if none; max is 9
+	 * 
+	 * @param t Voxel we wish to know the Neighbors of
+	 * @param t	Array that encapsulates t
+	 * @return Voxels directly above a specific Voxel; empty if none; max is 9
+	 */
+	public ArrayList<Voxel> getNeighborsTop(Voxel t, VoxelArray tArray) {
+		ArrayList<Voxel> neighbors = new ArrayList<Voxel>();
+		for (int u=-1; u<2; u++) {
+			for (int v=-1; v<2; v++) {
+				String coordKey = this.coordKey(t.u + u, t.v + v, t.w + 1);
+				if (tArray.voxelMap.containsKey(coordKey)) {
+					neighbors.add(tArray.voxelMap.get(coordKey));
+				}
+			}
+		}
+		return neighbors;
 	}
 
 	/**

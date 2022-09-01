@@ -5,7 +5,7 @@ import edu.mit.ira.fuzzy.io.Server;
 public class FuzzyIO {
 	
 	private static final String NAME = "FuzzyIO";
-	private static final String VERSION = "v1.3.11";
+	private static final String VERSION = "v1.3.12";
 	private static final String AUTHOR = "Ira Winder, Daniel Fink, and Max Walker";
 	private static final String SPONSOR = "MIT Center for Real Estate";
 	private static final String CONTACT = "fuzzy-io@mit.edu";
