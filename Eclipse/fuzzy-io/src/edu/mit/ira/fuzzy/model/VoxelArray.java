@@ -175,7 +175,21 @@ public class VoxelArray {
 			return 0;
 		}
 	}
-
+	
+	/**
+	 * how many voxels are below ground? (i.e. w < 0)
+	 * @return number of voxels
+	 */
+	public int belowGroundVoxelCount() {
+		int count = 0;
+		for (Voxel v : this.voxelList) {
+			if (v.w < 0) {
+				count++;
+			}
+		}
+		return count;
+	}
+	
 	@Override
 	public String toString() {
 		return "Voxel Array [" + voxelMap.size() + "]";

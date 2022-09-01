@@ -17,6 +17,8 @@ public class Schema {
 	public final static String VERTEX = "Vertex";
 	public final static String GRID_SIZE = "Grid Size [ft]";
 	public final static String GRID_ROTATION = "Grid Rotation [degrees]";
+	public final static String GRID_X_OFFSET = "Grid X Offset [%]";
+	public final static String GRID_Y_OFFSET = "Grid Y Offset [%]";
 	public final static String PODIUM_VOLUMES = "Podium Volumes";
 	public final static String PODIUM_VOLUME = "Podium Volume";
 	public final static String ORIENTATION = "Orientation";
@@ -77,6 +79,18 @@ public class Schema {
 		gridRot.bounds.add("-45"); // min
 		gridRot.bounds.add("45"); // max
 		plot.settings.add(gridRot);
+		
+		Setting gridXOffset = new Setting(GUI.SLIDER, GRID_X_OFFSET);
+		gridXOffset.value.add("0"); // default
+		gridXOffset.bounds.add("-50"); // min
+		gridXOffset.bounds.add("+50"); // max
+		gridXOffset.settings.add(gridXOffset);
+		
+		Setting gridYOffset = new Setting(GUI.SLIDER, GRID_Y_OFFSET);
+		gridYOffset.value.add("0"); // default
+		gridYOffset.bounds.add("-50"); // min
+		gridYOffset.bounds.add("+50"); // max
+		gridYOffset.settings.add(gridYOffset);
 		
 		Setting podiums = new Setting(GUI.GROUP_EXTENDABLE, PODIUM_VOLUMES);
 		Setting podium = new Setting(GUI.GROUP, PODIUM_VOLUME);

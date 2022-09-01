@@ -77,6 +77,8 @@ public class Builder {
 				Setting vert = plot.find(Schema.VERTICES);
 				Setting gSiz = plot.find(Schema.GRID_SIZE);
 				Setting gRot = plot.find(Schema.GRID_ROTATION);
+				Setting gDx = plot.find(Schema.GRID_X_OFFSET);
+				Setting gDy = plot.find(Schema.GRID_Y_OFFSET);
 				Setting pods = plot.find(Schema.PODIUM_VOLUMES);
 				
 				// Define Plot polygon
@@ -101,6 +103,8 @@ public class Builder {
 					// Initialize parcel
 					float gridSize = gSiz.getInt();
 					float gridRotation = (float) (2 * Math.PI * gRot.getInt() / 360f);
+					float gridOffsetX = gridSize * gDx.getInt()/100f;
+					float gridOffsetY = gridSize * gDy.getInt()/100f;
 					Point gridTranslation = new Point();
 					VoxelArray plotVoxels = this.morph.make(plotShape, gridSize, 0, gridRotation, gridTranslation);
 					plotVoxels.setVoxelUse(Function.Unspecified);

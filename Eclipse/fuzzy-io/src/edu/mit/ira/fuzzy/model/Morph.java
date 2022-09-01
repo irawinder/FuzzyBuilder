@@ -69,7 +69,7 @@ public class Morph {
 	 * @param rotation    Rotation of Voxel Grid
 	 * @param translation Translation Vector of Entire Grid
 	 */
-	public VoxelArray make(Polygon boundary, float voxelWidth, float voxelHeight, float rotation, Point translation) {
+	public VoxelArray make(Polygon boundary, float voxelWidth, float voxelOffsetX, float voxelOffsetY, float voxelHeight, float rotation, Point translation) {
 
 		VoxelArray result = new VoxelArray();
 
@@ -79,6 +79,8 @@ public class Morph {
 		// Polygon origin and rectangular bounding box extents
 		float origin_x = (float) (0.5 * (boundary.xMax() + boundary.xMin()));
 		float origin_y = (float) (0.5 * (boundary.yMax() + boundary.yMin()));
+		origin_x = origin_x - origin_x % voxelWidth + voxelOffsetX;
+		origin_y = origin_y - origin_y % voxelWidth + voxelOffsetY;
 		float boundary_w = boundary.xMax() - boundary.xMin();
 		float boundary_h = boundary.yMax() - boundary.yMin();
 		float bounds = (boundary_w > boundary_h) ? boundary_w : boundary_h;

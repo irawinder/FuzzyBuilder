@@ -51,7 +51,8 @@ public class Evaluator {
 					voxelArea = (float) Math.pow(pSite.voxelList.get(0).width, 2);
 					plotSiteArea = voxelArea * pSite.voxelList.size();
 					plotBuiltArea = voxelArea * pMassing.voxelList.size();
-					plotFAR = plotBuiltArea / plotSiteArea;
+					float adjustedBuiltArea = Math.max(0f, plotBuiltArea - pMassing.belowGroundVoxelCount()); // Exlude below-ground use from FAR Calc
+					plotFAR = adjustedBuiltArea / plotSiteArea;
 					plotPeak = pMassing.peakZ();
 					
 					// Total ground level build area
