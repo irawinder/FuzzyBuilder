@@ -70,7 +70,7 @@ public class Schema {
 		
 		Setting gridSize = new Setting(GUI.SLIDER, GRID_SIZE);
 		gridSize.value.add("30"); // default
-		gridSize.bounds.add("15"); // min
+		gridSize.bounds.add("10"); // min
 		gridSize.bounds.add("50"); // max
 		plot.settings.add(gridSize);
 
