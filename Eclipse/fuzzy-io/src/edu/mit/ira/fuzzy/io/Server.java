@@ -160,7 +160,7 @@ public class Server {
 				else if (requestProcess.equals("INIT")) 
 				{
 					// Add global files to new user's scenarios
-					if (!isValidUser(user, VALID_USER_PREFIXES[2])) addGlobalScenarios(user);
+					if (!isValidUser(user, VALID_USER_PREFIXES[1])) addGlobalScenarios(user);
 				
 					// Send the setting configuration to the GUI
 					String responseBody = getSchemaAsString(user);
@@ -368,17 +368,13 @@ public class Server {
 		} 
 		else if (user.substring(0, VALID_PREFIX_LENGTH).equals(VALID_USER_PREFIXES[1])) // cobra
 		{
-			return guestSettings();
+			return fullSettings();
 		} 
 		else if (user.substring(0, VALID_PREFIX_LENGTH).equals(VALID_USER_PREFIXES[2])) // panda
 		{
 			return fullSettings();
 		} 
-		else if (user.substring(0, VALID_PREFIX_LENGTH).equals(VALID_USER_PREFIXES[3])) // koala
-		{
-			return fullSettings();
-		} 
-		else if (user.substring(0, VALID_PREFIX_LENGTH).equals(VALID_USER_PREFIXES[4])) // squid
+		else if (user.substring(0, VALID_PREFIX_LENGTH).equals(VALID_USER_PREFIXES[3])) // squid
 		{
 			return adminSettings();
 		} 
@@ -391,21 +387,17 @@ public class Server {
 	private String getSchemaAsString(String user, String userFeedback) {
 		if (user.substring(0, VALID_PREFIX_LENGTH).equals(VALID_USER_PREFIXES[0])) // zebra
 		{
-			return guestSettings(userFeedback);
+			return readOnlySettings(userFeedback);
 		} 
 		else if (user.substring(0, VALID_PREFIX_LENGTH).equals(VALID_USER_PREFIXES[1])) // cobra
 		{
-			return readOnlySettings(userFeedback);
+			return fullSettings(userFeedback);
 		} 
 		else if (user.substring(0, VALID_PREFIX_LENGTH).equals(VALID_USER_PREFIXES[2])) // panda
 		{
 			return fullSettings(userFeedback);
 		} 
-		else if (user.substring(0, VALID_PREFIX_LENGTH).equals(VALID_USER_PREFIXES[3])) // koala
-		{
-			return fullSettings(userFeedback);
-		} 
-		else if (user.substring(0, VALID_PREFIX_LENGTH).equals(VALID_USER_PREFIXES[4])) // squid
+		else if (user.substring(0, VALID_PREFIX_LENGTH).equals(VALID_USER_PREFIXES[3])) // squid
 		{
 			return adminSettings(userFeedback);
 		} 
