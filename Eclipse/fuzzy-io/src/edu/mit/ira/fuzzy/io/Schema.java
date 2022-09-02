@@ -107,7 +107,7 @@ public class Schema {
 		Setting setback = new Setting(GUI.SLIDER, SETBACK);
 		setback.value.add("20"); // default
 		setback.bounds.add("0"); // min
-		setback.bounds.add("200"); // max
+		setback.bounds.add("80"); // max
 		podium.settings.add(setback);
 		
 		Setting pZones = new Setting(GUI.GROUP_EXTENDABLE, ZONES);

@@ -441,11 +441,11 @@ public class Morph {
 	 * @param input voxel array to apply setback to
 	 * @return new VoxelArray with outer ring of voxels removed removed
 	 */
-	private VoxelArray setback(VoxelArray input) {
+	private VoxelArray setback(VoxelArray input, int sensitivity) {
 		VoxelArray result = new VoxelArray();
 		for (Voxel t : input.voxelList) {
 			// Tile surrounded on all sides has 8 neighbors
-			if (this.getNeighborsUV(t, input).size() >= 7) {
+			if (this.getNeighborsUV(t, input).size() >= sensitivity) {
 				result.addVoxel(t);
 			}
 		}
@@ -467,13 +467,17 @@ public class Morph {
 		if (voxelWidth == 0) {
 			return new VoxelArray();
 		}
+		
+		int numSetbacks = (int)(setbackDistance / voxelWidth);
+		float remainder = (setbackDistance % voxelWidth) / voxelWidth;
 
 		// repeat offset as necessary to achieve desired distance
 		VoxelArray result = input;
-		int numSetbacks = (int) (0.5f + setbackDistance / voxelWidth);
 		for (int i = 0; i < numSetbacks; i++) {
-			result = this.setback(result);
+			result = this.setback(result, 7);
 		}
+		int sensitivity = (int)(7 * remainder);
+		result = this.setback(result,  sensitivity);
 		return result;
 	}
 
