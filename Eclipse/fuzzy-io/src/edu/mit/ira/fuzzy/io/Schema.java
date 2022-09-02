@@ -69,9 +69,9 @@ public class Schema {
 		plot.settings.add(plotVertices);
 		
 		Setting gridSize = new Setting(GUI.SLIDER, GRID_SIZE);
-		gridSize.value.add("30"); // default
+		gridSize.value.add("20"); // default
 		gridSize.bounds.add("10"); // min
-		gridSize.bounds.add("50"); // max
+		gridSize.bounds.add("30"); // max
 		plot.settings.add(gridSize);
 
 		Setting gridRot = new Setting(GUI.SLIDER, GRID_ROTATION);
