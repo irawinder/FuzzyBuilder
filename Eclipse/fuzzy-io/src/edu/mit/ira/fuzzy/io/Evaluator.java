@@ -132,11 +132,11 @@ public class Evaluator {
 
 		// Add total area objectives
 		performance.primaryObjectives.add(new Objective(
+				"Floor Area Ratio (FAR)", "Ratio of Gross Above-ground Floor Area to Gross Land Area", far, ""));
+		performance.primaryObjectives.add(new Objective(
 			"Gross Land Area (GLA)", "Total area of land defined by all parcels", siteArea, "sqft"));
 		performance.primaryObjectives.add(new Objective(
 			"Gross Floor Area (GFA)", "Total floor area of all buildings", builtArea, "sqft"));
-		performance.primaryObjectives.add(new Objective(
-			"Floor Area Ratio (FAR)", "Ratio of Gross Above-ground Floor Area to Gross Land Area", far, "sqft/sqft"));
 		//performance.primaryObjectives.add(new Objective(
 		//	"Building Coverage Ratio (BCR)", "Ratio of Gross Building Footprint Area (when viewed from above) to Gross Land Area", coverage, "sqft/sqft"));
 		//performance.primaryObjectives.add(new Objective(
