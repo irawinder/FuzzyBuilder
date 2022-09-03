@@ -2,7 +2,7 @@ package edu.mit.ira.fuzzy.io.log;
 
 import java.io.File;
 
-import edu.mit.ira.fuzzy.FuzzyIO;
+import edu.mit.ira.fuzzy.io.Server;
 
 /** A class for saving user phrases to text file
  * @author Ira Winder
@@ -10,7 +10,7 @@ import edu.mit.ira.fuzzy.FuzzyIO;
 public class UserLog {
 	
 	private static String LOG_FILE_NAME = "log.tsv";
-	private static String USERS_PATH = FuzzyIO.RELATIVE_DATA_PATH + File.separator + "users";
+	private static String USERS_PATH = Server.RELATIVE_DATA_PATH + File.separator + "users";
 	private static String[] TABLE_COLUMNS = {"user", "timestamp", "clientIP", "action", "description"};
 
 	public static void add(String user, String clientIP, String action, String description) {

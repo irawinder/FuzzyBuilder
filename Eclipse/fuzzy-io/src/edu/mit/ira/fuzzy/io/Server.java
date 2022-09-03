@@ -13,23 +13,18 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.nio.file.StandardOpenOption;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.imageio.ImageIO;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
-import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
 import edu.mit.ira.fuzzy.io.log.UserLog;
+import edu.mit.ira.fuzzy.io.user.Register;
 import edu.mit.ira.fuzzy.model.Development;
 import edu.mit.ira.fuzzy.pages.Pages;
 import edu.mit.ira.opensui.io.Deserializer;
@@ -44,32 +39,27 @@ import edu.mit.ira.opensui.setting.Configuration;
  */
 public class Server {
 	
+	public static final String NAME = "FuzzyIO";
+	public static final String VERSION = "v1.3.17";
+	public static final String AUTHOR = "Ira Winder, Daniel Fink, and Max Walker";
+	public static final String SPONSOR = "MIT Center for Real Estate";
+	public static final String CONTACT = "fuzzy-io@mit.edu";
+	public static final String SYSTEM = "Java " + System.getProperty("java.version");
+	
+	public static final String RELATIVE_DATA_PATH = "data";
+	private static final String REQUEST_FILE = "configuration.json";
+	private static final String RESPONSE_FILE = "solution.json";
+	private static final String SUMMARY_FILE = "summary.csv";
+	
 	// Server Objects
-	private static final String SERVER_SYSTEM = "Java " + System.getProperty("java.version");
-	private String serverID;
-	private String serverVersion;
 	private HttpServer server;
 	private String info;
 	
 	// Fuzzy Objects
-	private Configuration guestConfig, readOnlyConfig, fullConfig, adminConfig;
+	private Configuration readOnlyConfig, fullConfig, adminConfig;
 	private Builder builder;
 	private Evaluator evaluator;
 	private Deserializer adapter;
-	
-	private String DEFAULT_USER = "guest";
-	private String DEFAULT_PAGE = "1";
-	private String DEFAULT_SCENARIO = "defacto";
-	private String DEFAULT_FILENAME = "default";
-	private String REQUEST_FILE = "configuration.json";
-	private String RESPONSE_FILE = "solution.json";
-	private String SUMMARY_FILE = "summary.csv";
-	
-	// e.g. zebra123
-	public static int VALID_PREFIX_LENGTH = 5;
-	private static int VALID_CODE_LENGTH = 6;
-	private static int VALID_USERNAME_LENGTH = VALID_PREFIX_LENGTH + VALID_CODE_LENGTH;
-	public static String[] VALID_USER_PREFIXES = {"zebra", "cobra", "panda", "squid"};
 	
 	/**
 	 * Construct a new FuzzyIO Server
@@ -78,27 +68,20 @@ public class Server {
 	 * @param port port to open for HTTP Requests
 	 * @throws IOException
 	 */
-	public Server(String name, String version, String author, String sponsor, String contact, int port) throws IOException {
-		this.serverID = name;
-		this.serverVersion = version;
+	public Server(int port) throws IOException {
 		server = HttpServer.create(new InetSocketAddress(port), 0);
 		server.createContext("/", new MyHandler());
 		server.setExecutor(null); // creates a default executor
 		server.start();
 		
-		// zebra
-		readOnlyConfig = Schema.get(version, name, author, sponsor, contact, false, false, true, false); // !save, !delete load, !config
-		
-		// panda, koala
-		fullConfig = Schema.get(version, name, author, sponsor, contact, true, false, true, true); // save, !delete, load, and config
-		
-		// squid
-		adminConfig = Schema.get(version, name, author, sponsor, contact, true, true, true, true); // save, delete, load, and config
+		readOnlyConfig = Schema.get(false, false, true, false); // !save, !delete load, !config
+		fullConfig = Schema.get(true, false, true, true); // save, !delete, load, and config
+		adminConfig = Schema.get(true, true, true, true); // save, delete, load, and config
 		
 		builder = new Builder();
 		evaluator = new Evaluator();
 		adapter = new Deserializer();
-		info = "--- FuzzyIO " + serverVersion + " ---\nActive on port: " + port;
+		info = "--- " + NAME + " " + VERSION + " ---\nActive on port: " + port;
 		System.out.println(info);
 	}
 
@@ -113,12 +96,12 @@ public class Server {
 			String requestMethod = t.getRequestMethod();
 			String requestURI = t.getRequestURI().toString();
 			String clientIP = t.getRemoteAddress().toString();
-			String requestProcess = process(requestURI);
-			Map<String, String> requestParameters = parameters(requestURI);
+			String requestResource = ServerUtil.resource(requestURI);
+			Map<String, String> requestParameters = ServerUtil.parameters(requestURI);
 			String user = requestParameters.get("user").toLowerCase();
 			String page = requestParameters.get("page").toLowerCase();
 			String scenario = requestParameters.get("scenario");
-			String filename = requestParameters.get("filename");
+			String basemap = requestParameters.get("filename");
 			
 			// Parse Request Body
 			InputStreamReader isr = new InputStreamReader(t.getRequestBody(), "utf-8");
@@ -134,19 +117,19 @@ public class Server {
 			int requestLength = requestBody.length();
 			
 			// Log Request
-			log(t, "Request: " + requestMethod + " " +  requestURI + ", Request Length: " + requestLength);
+			ServerUtil.log(t, "Request: " + requestMethod + " " +  requestURI + ", Request Length: " + requestLength);
 			
-			if (!isValidUser(user) && !requestProcess.equals("")) 
+			if (!ServerUtil.valid(user) && !requestResource.equals("")) 
 			{
-				packItShipIt(t, 403, "Forbidden");
+				ServerUtil.packItShipIt(t, 403, "Forbidden");
 			} 
 			// HTTP GET Request
 			else if (requestMethod.equals("GET")) 
 			{
-				if (requestProcess.equals("")) 
+				if (requestResource.equals("")) 
 				{	
 					String responseBody;
-					if (isValidUser(user))
+					if (ServerUtil.valid(user))
 					{
 						responseBody = Pages.studySite(user, page);
 						UserLog.add(user, clientIP, "HOME", "Visited FuzzyIO Home Page " + page);
@@ -155,37 +138,37 @@ public class Server {
 					}
 					String contentType = "text/html";
 					String message = "HTML Delivered";
-					packItShipIt(t, 200, message, responseBody.getBytes(), contentType);
+					ServerUtil.packItShipIt(t, 200, message, responseBody.getBytes(), contentType);
 				} 
-				else if (requestProcess.equals("INIT")) 
+				else if (requestResource.equals("INIT")) 
 				{
 					// Add global files to new user's scenarios
-					if (!isValidUser(user, VALID_USER_PREFIXES[1])) addGlobalScenarios(user);
+					if (!ServerUtil.valid(user, Register.USER_PREFIXES[1])) addGlobalScenarios(user);
 				
 					// Send the setting configuration to the GUI
-					String responseBody = getSchemaAsString(user);
+					String responseBody = schemaData(user);
 					String contentType = "application/json";
 					String message = "Settings Delivered to " + user;
-					packItShipIt(t, 200, message, responseBody.getBytes(), contentType);
+					ServerUtil.packItShipIt(t, 200, message, responseBody.getBytes(), contentType);
 					UserLog.add(user, clientIP, "LOGIN", "Initialize New Session");
 				} 
-				else if (requestProcess.equals("LIST"))
+				else if (requestResource.equals("LIST"))
 				{	
 					// Send a list of scenarios saved by this user
-					String responseBody = fileNames("./data/users/" + user + "/scenarios");
+					String responseBody = ServerUtil.fileNames("./data/users/" + user + "/scenarios");
 					String contentType = "application/json";
 					String message = "Scenario Names Delivers for " + user;
-					packItShipIt(t, 200, message, responseBody.getBytes(), contentType);
+					ServerUtil.packItShipIt(t, 200, message, responseBody.getBytes(), contentType);
 				} 
-				else if (requestProcess.equals("BASEMAPS"))
+				else if (requestResource.equals("BASEMAPS"))
 				{	
 					// Send a list of basemaps saved by this user
-					String responseBody = fileNames("./data/basemaps");
+					String responseBody = ServerUtil.fileNames("./data/basemaps");
 					String contentType = "application/json";
 					String message = "Scenario Names Delivers for " + user;
-					packItShipIt(t, 200, message, responseBody.getBytes(), contentType);
+					ServerUtil.packItShipIt(t, 200, message, responseBody.getBytes(), contentType);
 				} 
-				else if (requestProcess.equals("DELETE"))
+				else if (requestResource.equals("DELETE"))
 				{
 					// Load a previously saved setting configuration
 					if (hasScenario(user, scenario)) {
@@ -193,7 +176,7 @@ public class Server {
 						// Delete the data for this scenario
 						deleteScenario(user, scenario);
 						String message = "Scenario " + scenario + " deleted for " + user;
-						packItShipIt(t, 200, message);
+						ServerUtil.packItShipIt(t, 200, message);
 						UserLog.add(user, clientIP, "DELETE SCENARIO", scenario);
 					} else {
 						
@@ -201,28 +184,28 @@ public class Server {
 						String responseBody = Pages.nullSite();
 						String contentType = "text/html";
 						String message = "Resource not found";
-						packItShipIt(t, 404, message, responseBody.getBytes(), contentType);
+						ServerUtil.packItShipIt(t, 404, message, responseBody.getBytes(), contentType);
 					}
 				}
-				else if (requestProcess.equals("LOAD")) 
+				else if (requestResource.equals("LOAD")) 
 				{	
 					// Load a previously saved setting configuration
 					if (scenario.equals("default configuration")) {
 						
 						// Send the default setting configuration to the GUI
 						String userFeedback = "Scenario Loaded: " + scenario;
-						String responseBody = getSchemaAsString(user, userFeedback);
+						String responseBody = schemaData(user, userFeedback);
 						String contentType = "application/json";
 						String message = "Settings Delivered to " + user;
-						packItShipIt(t, 200, message, responseBody.getBytes(), contentType);
+						ServerUtil.packItShipIt(t, 200, message, responseBody.getBytes(), contentType);
 						UserLog.add(user, clientIP, "LOAD SCENARIO", scenario);
 					} else if (hasScenario(user, scenario)) {
 						
 						// Send the scenario to the GUI
-						String responseBody = loadData(user, scenario, REQUEST_FILE);
+						String responseBody = scenarioData(user, scenario, REQUEST_FILE);
 						String contentType = "application/json";
 						String message = "Scenario " + scenario + " loaded for " + user;
-						packItShipIt(t, 200, message, responseBody.getBytes(), contentType);
+						ServerUtil.packItShipIt(t, 200, message, responseBody.getBytes(), contentType);
 						UserLog.add(user, clientIP, "LOAD SCENARIO", scenario);
 					} else {
 						
@@ -230,16 +213,16 @@ public class Server {
 						String responseBody = Pages.nullSite();
 						String contentType = "text/html";
 						String message = "Resource not found";
-						packItShipIt(t, 404, message, responseBody.getBytes(), contentType);
+						ServerUtil.packItShipIt(t, 404, message, responseBody.getBytes(), contentType);
 					}
 				} 
-				else if (requestProcess.equals("BASEMAP")) 
+				else if (requestResource.equals("BASEMAP")) 
 				{
 					// Load the image as bytes
 					byte[] imageAsBytes = null;
-					String[] splitName = filename.split("\\.");
+					String[] splitName = basemap.split("\\.");
 					if (splitName.length == 2) {
-						imageAsBytes = loadBasemap(filename, splitName[1]);
+						imageAsBytes = basemapData(basemap, splitName[1]);
 					}
 					
 					// image loaded successfully
@@ -247,37 +230,26 @@ public class Server {
 						
 						// Send the image
 						String contentType = "image/" + splitName[1];
-						String message = "Basemap " + filename + " sent to " + user;
-						packItShipIt(t, 200, message, imageAsBytes, contentType);
-						UserLog.add(user, clientIP, "LOAD BASEMAP", filename);
+						String message = "Basemap " + basemap + " sent to " + user;
+						ServerUtil.packItShipIt(t, 200, message, imageAsBytes, contentType);
+						UserLog.add(user, clientIP, "LOAD BASEMAP", basemap);
 					} else {
 						
 						// Resource Not Found
 						String responseBody = Pages.nullSite();
 						String contentType = "text/html";
 						String message = "Resource not found";
-						packItShipIt(t, 404, message, responseBody.getBytes(), contentType);
+						ServerUtil.packItShipIt(t, 404, message, responseBody.getBytes(), contentType);
 					}
 				}
-				else if (requestProcess.equals("SUMMARY"))
+				else if (requestResource.equals("SUMMARY"))
 				{
-					if (!user.equals(DEFAULT_USER)) {
-						
-						// Send the default setting configuration to the GUI
-						String responseBody = loadSummary(user);
-						String contentType = "application/csv";
-						String message = "Summary Delivered to " + user;
-						packItShipIt(t, 200, message, responseBody.getBytes(), contentType);
-						UserLog.add(user, clientIP, "EXPORT CSV", "user exported CSV of model");
-						
-					} else {
-						
-						// Resource Not Found
-						String responseBody = Pages.nullSite();
-						String contentType = "text/html";
-						String message = "Resource not found";
-						packItShipIt(t, 404, message, responseBody.getBytes(), contentType);
-					}
+					// Send the default setting configuration to the GUI
+					String responseBody = summaryData(user);
+					String contentType = "application/csv";
+					String message = "Summary Delivered to " + user;
+					ServerUtil.packItShipIt(t, 200, message, responseBody.getBytes(), contentType);
+					UserLog.add(user, clientIP, "EXPORT CSV", "user exported CSV of model");
 				}
 				else
 				{
@@ -285,23 +257,24 @@ public class Server {
 					String responseBody = Pages.nullSite();
 					String contentType = "text/html";
 					String message = "Resource not found";
-					packItShipIt(t, 404, message, responseBody.getBytes(), contentType);
+					ServerUtil.packItShipIt(t, 404, message, responseBody.getBytes(), contentType);
 				}
 			}
 			
 			// HTTP POST Request
 			else if (requestMethod.equals("POST")) 
 			{	
-				if (requestProcess.equals("RUN")) 
+				if (requestResource.equals("RUN")) 
 				{
 					// Send the default setting configuration to the GUI
-					String responseBody = solution(requestBody, user);
+					String feedback = null;
+					String responseBody = solutionData(requestBody, feedback, user);
 					String contentType = "application/json";
 					String message = "Solution Delivered to " + user;
-					packItShipIt(t, 200, message, responseBody.getBytes(), contentType);
+					ServerUtil.packItShipIt(t, 200, message, responseBody.getBytes(), contentType);
 					UserLog.add(user, clientIP, "RUN", "Model Changed");
 				} 
-				else if (requestProcess.equals("SAVE")) 
+				else if (requestResource.equals("SAVE")) 
 				{
 					// Save a submitted setting configuration
 					String userFeedback;
@@ -326,19 +299,19 @@ public class Server {
 						save = true;
 						UserLog.add(user, clientIP, "SAVE SCENARIO", scenario);
 					}
-					String responseBody = solution(requestBody, userFeedback, user);
+					String responseBody = solutionData(requestBody, userFeedback, user);
 					String contentType = "application/json";
 					if (save) {
 						saveScenario(user, scenario, REQUEST_FILE, requestBody);
 						saveScenario(user, scenario, RESPONSE_FILE, responseBody);
 					}
-					packItShipIt(t, 200, message, responseBody.getBytes(), contentType);
+					ServerUtil.packItShipIt(t, 200, message, responseBody.getBytes(), contentType);
 				} 
 				else
 				{
 					// Resource Not Found
 					String message = "Resource not found";
-					packItShipIt(t, 404, message);
+					ServerUtil.packItShipIt(t, 404, message);
 				}
 			}
 			
@@ -348,7 +321,7 @@ public class Server {
 				// OPTIONS request is something browsers ask before 
 				// allowing an external server to provide data
 				String message = "HTTP Options Delivered";
-				packItShipIt(t, 200, message);
+				ServerUtil.packItShipIt(t, 200, message);
 			}
 			
 			// HTTP Request (other)
@@ -356,179 +329,45 @@ public class Server {
 				
 				// Other methods not allowed
 				String message = "Method Not Allowed";
-				packItShipIt(t, 405, message);
+				ServerUtil.packItShipIt(t, 405, message);
 			}
 		}
 	}
 	
-	private String getSchemaAsString(String user) {
-		if (user.substring(0, VALID_PREFIX_LENGTH).equals(VALID_USER_PREFIXES[0])) // zebra
+	private String schemaData(String user) {
+		return schemaData(user, null);
+	}
+	
+	private String schemaData(String user, String userFeedback) {
+		if (ServerUtil.valid(user, Register.USER_PREFIXES[0])) // zebra
 		{
-			return readOnlySettings();
+			return schemaData(readOnlyConfig, userFeedback);
 		} 
-		else if (user.substring(0, VALID_PREFIX_LENGTH).equals(VALID_USER_PREFIXES[1])) // cobra
+		else if (ServerUtil.valid(user, Register.USER_PREFIXES[1])) // cobra
 		{
-			return fullSettings();
+			return schemaData(fullConfig, userFeedback);
 		} 
-		else if (user.substring(0, VALID_PREFIX_LENGTH).equals(VALID_USER_PREFIXES[2])) // panda
+		else if (ServerUtil.valid(user, Register.USER_PREFIXES[2])) // panda
 		{
-			return fullSettings();
+			return schemaData(fullConfig, userFeedback);
 		} 
-		else if (user.substring(0, VALID_PREFIX_LENGTH).equals(VALID_USER_PREFIXES[3])) // squid
+		else if (ServerUtil.valid(user, Register.USER_PREFIXES[3])) // squid
 		{
-			return adminSettings();
+			return schemaData(adminConfig, userFeedback);
 		} 
 		else 
 		{
-			return adminSettings();
+			return schemaData(adminConfig, userFeedback);
 		}
 	}
 	
-	private String getSchemaAsString(String user, String userFeedback) {
-		if (user.substring(0, VALID_PREFIX_LENGTH).equals(VALID_USER_PREFIXES[0])) // zebra
-		{
-			return readOnlySettings(userFeedback);
-		} 
-		else if (user.substring(0, VALID_PREFIX_LENGTH).equals(VALID_USER_PREFIXES[1])) // cobra
-		{
-			return fullSettings(userFeedback);
-		} 
-		else if (user.substring(0, VALID_PREFIX_LENGTH).equals(VALID_USER_PREFIXES[2])) // panda
-		{
-			return fullSettings(userFeedback);
-		} 
-		else if (user.substring(0, VALID_PREFIX_LENGTH).equals(VALID_USER_PREFIXES[3])) // squid
-		{
-			return adminSettings(userFeedback);
-		} 
-		else 
-		{
-			return adminSettings(userFeedback);
-		}
-	}
-
-	boolean isValidUser(String user) {
-		for (String prefix : VALID_USER_PREFIXES) {
-			if (user.length() == VALID_USERNAME_LENGTH) {
-				if (user.substring(0, VALID_PREFIX_LENGTH).equals(prefix)) 
-					return true;
-			}
-		}
-		return false;
-	}
-
-	public static boolean isValidUser(String user, String prefix) {
-		if (user.length() == VALID_USERNAME_LENGTH) {
-			if (user.substring(0, VALID_PREFIX_LENGTH).equals(prefix)) 
-				return true;
-		}
-		return false;
-	}
-
-	/**
-	 * Get parameters from URI
-	 * @param requestURI
-	 * @return
-	 */
-	private Map<String, String> parameters(String requestURI) {
-		String[] process_params = requestURI.replace("?", ";").toLowerCase().split(";");
-		Map<String, String> parameters = new HashMap<String, String>();
-		if(process_params.length > 1) {
-			String[] params = process_params[1].split("&");
-			for (int i=0; i<params.length; i++) {
-				String[] param = params[i].split("=");
-				if (param.length == 2) {
-					parameters.put(param[0], param[1].replace("%20", " "));
-				} else {
-					parameters.put(param[0], "");
-				}
-			}
-		}
-		if (!parameters.containsKey("user")) 
-			parameters.put("user", DEFAULT_USER);
-		if (!parameters.containsKey("page")) 
-			parameters.put("page", DEFAULT_PAGE);
-		if (!parameters.containsKey("scenario")) 
-			parameters.put("scenario", DEFAULT_SCENARIO);
-		if (!parameters.containsKey("filename")) 
-			parameters.put("filename", DEFAULT_FILENAME);
-		return parameters;
-	}
-	
-	private String process(String requestURI) {
-		String[] process_params = requestURI.replace("?", ";").split(";");
-		return process_params[0].toUpperCase().replace("/", "");
-	}
-	
 	/**
 	 * Get the Default Configuration Schema JSON string
 	 * @return base config as JSON string
 	 */
-	private String guestSettings() {
-		return guestConfig.serialize().toString(4);
-	}
-	
-	/**
-	 * Get the Default Configuration Schema JSON string
-	 * @return base config as JSON string
-	 */
-	private String guestSettings(String feedback) {
-		JSONObject settings = guestConfig.serialize();
-		settings.put("feedback", feedback);
-		return settings.toString(4);
-	}
-	
-	/**
-	 * Get the Default Configuration Schema JSON string
-	 * @return base config as JSON string
-	 */
-	private String fullSettings() {
-		return fullConfig.serialize().toString(4);
-	}
-	
-	/**
-	 * Get the Default Configuration Schema JSON string
-	 * @return base config as JSON string
-	 */
-	private String fullSettings(String feedback) {
-		JSONObject settings = fullConfig.serialize();
-		settings.put("feedback", feedback);
-		return settings.toString(4);
-	}
-	
-	/**
-	 * Get the Default Configuration Schema JSON string
-	 * @return base config as JSON string
-	 */
-	private String adminSettings() {
-		return adminConfig.serialize().toString(4);
-	}
-	
-	/**
-	 * Get the Default Configuration Schema JSON string
-	 * @return base config as JSON string
-	 */
-	private String adminSettings(String feedback) {
-		JSONObject settings = adminConfig.serialize();
-		settings.put("feedback", feedback);
-		return settings.toString(4);
-	}
-	
-	/**
-	 * Get the Default Configuration Schema JSON string
-	 * @return base config as JSON string
-	 */
-	private String readOnlySettings() {
-		return readOnlyConfig.serialize().toString(4);
-	}
-	
-	/**
-	 * Get the Default Configuration Schema JSON string
-	 * @return base config as JSON string
-	 */
-	private String readOnlySettings(String feedback) {
-		JSONObject settings = readOnlyConfig.serialize();
-		settings.put("feedback", feedback);
+	private String schemaData(Configuration config, String feedback) {
+		JSONObject settings = config.serialize();
+		if (feedback != null) settings.put("feedback", feedback);
 		return settings.toString(4);
 	}
 	
@@ -536,20 +375,10 @@ public class Server {
 	 * Get the Solution as json string, appending any feedback
 	 * @return solution as JSON string
 	 */
-	private String solution(String requestBody, String feedback, String user) {
+	private String solutionData(String requestBody, String feedback, String user) {
 		JSONObject solutionJSON = solutionJSON(requestBody, user);
-		solutionJSON.put("feedback", feedback);
-		return wrapApi(solutionJSON);
-	}
-	
-	/**
-	 * Get the Solution as json string
-	 * @param requestBody
-	 * @return
-	 */
-	private String solution(String requestBody, String user) {
-		JSONObject solutionJSON = solutionJSON(requestBody, user);
-		return wrapApi(solutionJSON);
+		if (feedback != null) solutionJSON.put("feedback", feedback);
+		return ServerUtil.wrapData(solutionJSON).toString();
 	}
 	
 	/**
@@ -599,24 +428,6 @@ public class Server {
 	}
 	
 	/**
-	 * Return a list of filenames in a directory
-	 * @return
-	 */
-	public String fileNames(String directoryName) {
-		JSONArray names = new JSONArray();
-		File directory = new File(directoryName);
-		if (directory.exists()) {
-			String[] nameList = directory.list();
-			for(int i=0; i<nameList.length; i++) {
-				names.put(i, nameList[i]);
-			}
-		}
-		JSONObject fileNames = new JSONObject();
-		fileNames.put("fileNames", names);
-		return fileNames.toString(4);
-	}
-	
-	/**
 	 * Delete a scenario
 	 * @param user
 	 * @param scenario
@@ -625,24 +436,8 @@ public class Server {
 		String directoryName = "./data/users/" + user + "/scenarios/" + scenario;
 		File directory = new File(directoryName);
 		if (directory.exists()) {
-			deleteDir(directory);
+			ServerUtil.deleteDir(directory);
 		}
-	}
-		
-	/**
-	 * Delete a directory and all of its contents	
-	 * @param file
-	 */
-	private void deleteDir(File file) {
-		File[] contents = file.listFiles();
-	    if (contents != null) {
-	        for (File f : contents) {
-	            if (! Files.isSymbolicLink(f.toPath())) {
-	                deleteDir(f);
-	            }
-	        }
-	    }
-	    file.delete();		
 	}
 	
 	/**
@@ -666,6 +461,44 @@ public class Server {
 	    } catch (IOException x) {
 	      System.err.println(x);
 	    }
+	}
+	
+	/**
+	 * Adds all scenarios from the global folder to a given user's folder
+	 * @param user
+	 */
+	private void addGlobalScenarios(String user) {
+
+		String globalPath = "data" + File.separator + "global" + File.separator + "scenarios";
+		File globalDir = new File(globalPath);
+		if(!globalDir.exists()) globalDir.mkdirs();
+
+		String userPath = "data" + File.separator + "users" + File.separator + user + File.separator + "scenarios";
+		File userDir = new File(userPath);
+		if(!userDir.exists()) userDir.mkdirs();
+
+		for (String folderName : globalDir.list()) {
+			File scenarioFolder = new File(globalDir.getPath() + File.separator + folderName);
+			if (scenarioFolder.isDirectory()) {
+				for (String fileName : scenarioFolder.list()) {
+					File srcFile = new File(scenarioFolder.getPath() + File.separator + fileName);
+					if (srcFile.isFile()) {
+						String userFilePath = folderName + File.separator + fileName;
+						File destFolder = new File(userPath + File.separator + folderName);
+						if (!destFolder.exists()) destFolder.mkdirs();
+						File destFile = new File(userPath + File.separator + userFilePath);
+
+						if (!destFile.exists()) {
+							try {
+								Files.copy(srcFile.toPath(), destFile.toPath(), StandardCopyOption.COPY_ATTRIBUTES);
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+						}
+					}
+				}
+			}
+		}
 	}
 	
 	/**
@@ -694,7 +527,7 @@ public class Server {
 	 * @param user
 	 * @return
 	 */
-	private String loadSummary(String user) {
+	private String summaryData(String user) {
 		Path filePath = Path.of("./data/users/" + user + "/" + SUMMARY_FILE);
 	    try {
 			return Files.readString(filePath);
@@ -711,7 +544,7 @@ public class Server {
 	 * @param fileName
 	 * @return
 	 */
-	private String loadData(String user, String scenario, String fileName) {
+	private String scenarioData(String user, String scenario, String fileName) {
 		Path filePath = Path.of("./data/users/" + user + "/scenarios/" + scenario + "/" + fileName);
 	    try {
 			return Files.readString(filePath);
@@ -726,7 +559,7 @@ public class Server {
 	 * @param fileName
 	 * @return
 	 */
-	private byte[] loadBasemap(String fileName, String type) {
+	private byte[] basemapData(String fileName, String type) {
 		try {
 			BufferedImage bImage = ImageIO.read(new File("./data/basemaps/" + fileName));
 		    ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -737,169 +570,5 @@ public class Server {
 			return null;
 		}
 		
-	}
-	
-	/**
-	 * Attach Data and Headers to HttpResponse and send it off to the client
-	 * @param t
-	 * @param responseCode
-	 * @param data a byte[] of responseBody, such as a JSON file
-	 * @throws IOException
-	 */
-	private void packItShipIt(HttpExchange t, int responseCode, String responseMessage, byte[] responseBody, String contentType) throws IOException {
-		makeHeaders(t, contentType);
-		int responseLength = responseBody.length;
-		t.sendResponseHeaders(responseCode, responseLength);
-		OutputStream os = t.getResponseBody();
-		os.write(responseBody, 0, responseBody.length);
-		os.close();
-		log(t, "Response: " + responseCode + ", " + responseMessage + ", Response Length: " + responseLength);
-	}
-	
-	
-	/**
-	 * Attach Headers to HttpResponse and send it off to client
-	 * @param t
-	 * @param responseCode
-	 * @throws IOException
-	 */
-	private void packItShipIt(HttpExchange t, int responseCode, String responseMessage) throws IOException {
-		makeHeaders(t, "text/html");
-		int responseLength = -1;
-		t.sendResponseHeaders(responseCode, -1);
-		log(t, "Response: " + responseCode + ", " + responseMessage + ", Response Length: " + responseLength);
-	}
-	
-	/**
-	 * Prints a log to console. Also returns the log as a string
-	 * @param clientIP
-	 * @param message
-	 * @return
-	 */
-	private void log(HttpExchange t, String message) {
-
-		// Create Log
-		String clientIP = t.getRemoteAddress().toString();
-		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss z");
-		Date date = new Date(System.currentTimeMillis());
-		String timeStamp = formatter.format(date);
-		String log = timeStamp + " " + clientIP + " " + t.getRequestURI() + " " + message + "\n";
-
-		// Write Log to Console
-		System.out.print(log);
-
-		// Write Log to File
-		byte data[] = log.getBytes();
-		Path p = Paths.get("./logs.txt");
-		try (OutputStream out = new BufferedOutputStream(
-				Files.newOutputStream(p, StandardOpenOption.CREATE, StandardOpenOption.APPEND))) {
-			out.write(data, 0, data.length);
-		} catch (IOException x) {
-			System.err.println(x);
-		}
-	}
-
-
-	/**
-	 * Format Headers for HTTP response
-	 * 
-	 * @param contentType the type of data attached on this response
-	 * @return header fields for the response
-	 */
-	private void makeHeaders(HttpExchange t, String contentType) {
-
-		Headers headers = t.getResponseHeaders();
-		headers.set("Server", serverID + ", " + SERVER_SYSTEM);
-		headers.set("Content-Type", contentType);
-		headers.set("Connection", "close");
-		headers.set("Access-Control-Allow-Origin", "*");
-		headers.set("Access-Control-Allow-Headers", "*");
-		headers.set("Access-Control-Allow-Methods", "*");
-		headers.set("Access-Control-Allow-Credentials", "true");
-		
-		if (contentType.equals("application/csv")) {
-			headers.set("Content-Disposition", "attachment; filename=\"summary.csv\"");
-		}
-	}
-
-	/**
-	 * Wrap JSON data with a standard JSON header and return as string
-	 *
-	 * @param data serialization of fuzzybuilder voxels, etc
-	 * @return original data wrapped by a json header with information about the
-	 *         data (api version, etc)
-	 */
-	private String wrapApi(JSONObject data) {
-
-		// Compile Root JSON Object
-		String apiVersion = serverVersion;
-		JSONObject root = new JSONObject();
-		root.put("apiVersion", apiVersion);
-		root.put("data", data);
-
-		return root.toString();
-	}
-	
-	private void addGlobalScenarios(String user) {
-		
-		String globalPath = "data" + File.separator + "global" + File.separator + "scenarios";
-		File globalDir = new File(globalPath);
-		if(!globalDir.exists()) globalDir.mkdirs();
-		
-		String userPath = "data" + File.separator + "users" + File.separator + user + File.separator + "scenarios";
-		File userDir = new File(userPath);
-		if(!userDir.exists()) userDir.mkdirs();
-		
-		for (String folderName : globalDir.list()) {
-			File scenarioFolder = new File(globalDir.getPath() + File.separator + folderName);
-			if (scenarioFolder.isDirectory()) {
-				for (String fileName : scenarioFolder.list()) {
-					File srcFile = new File(scenarioFolder.getPath() + File.separator + fileName);
-						if (srcFile.isFile()) {
-						String userFilePath = folderName + File.separator + fileName;
-						File destFolder = new File(userPath + File.separator + folderName);
-						if (!destFolder.exists()) destFolder.mkdirs();
-						File destFile = new File(userPath + File.separator + userFilePath);
-						
-						if (!destFile.exists()) {
-							try {
-								Files.copy(srcFile.toPath(), destFile.toPath(), StandardCopyOption.COPY_ATTRIBUTES);
-							} catch (IOException e) {
-								e.printStackTrace();
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-
-	private void addGlobalHTML(String user) {
-
-		String htmlPath = "data" + File.separator + "global" + File.separator + "html";
-		File htmlDir = new File(htmlPath);
-		if(!htmlDir.exists()) htmlDir.mkdirs();
-
-		String userPath = "data" + File.separator + "users" + File.separator + user + File.separator + "scenarios";
-		File userDir = new File(userPath);
-		if(!userDir.exists()) userDir.mkdirs();
-
-		for (String fileName : htmlDir.list()) {
-			File srcFile = new File(htmlDir.getPath() + File.separator + fileName);
-			if (srcFile.isFile()) {
-				String userFilePath = htmlDir + File.separator + fileName;
-				File destFolder = new File(userPath + File.separator + fileName);
-				if (!destFolder.exists()) destFolder.mkdirs();
-				File destFile = new File(userPath + File.separator + userFilePath);
-
-				if (!destFile.exists()) {
-					try {
-						Files.copy(srcFile.toPath(), destFile.toPath(), StandardCopyOption.COPY_ATTRIBUTES);
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				}
-			}
-		}
 	}
 }

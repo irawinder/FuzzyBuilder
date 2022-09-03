@@ -214,8 +214,6 @@ public class Morph {
 		int inputMinW = inputBase.minW();
 		float inputMinZ = inputBase.minZ();
 		
-		
-		VoxelArray targetTop = this.topLayer(target);
 		int targetLocalMaxW = GROUND_W - 1;
 		float targetLocalMaxZ = GROUND_W;
 		int targetGlobalMaxW = target.maxW();

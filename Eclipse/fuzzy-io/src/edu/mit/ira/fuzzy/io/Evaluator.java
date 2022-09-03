@@ -28,7 +28,7 @@ public class Evaluator {
 		
 		// Initialize global counters
 		float siteArea = 0;
-		float coverArea = 0;
+		//float coverArea = 0;
 		float builtArea = 0;
 		float undergroundArea = 0;
 		float sitePeak = 0;
@@ -46,36 +46,37 @@ public class Evaluator {
 				VoxelArray pMassing = fuzzy.plotMassing.get(plot);
 				
 				// Calculate total areas for this plot
-				float plotSiteArea, plotCoverArea, plotBuiltArea, plotUndergroundArea, plotFAR, plotCoverageRatio, plotPeak;
+				float plotSiteArea, plotBuiltArea, plotUndergroundArea, plotPeak;
+				//float plotCoverArea, plotFAR, plotCoverageRatio;
 				float voxelArea = 0;
 				if (pSite.voxelList.size() > 0) {
 					voxelArea = (float) Math.pow(pSite.voxelList.get(0).width, 2);
 					plotSiteArea = voxelArea * pSite.voxelList.size();
 					plotBuiltArea = voxelArea * pMassing.voxelList.size();
 					plotUndergroundArea = voxelArea * pMassing.belowGroundVoxelCount();
-					float adjustedPlotBuiltArea = Math.max(0f, plotBuiltArea - plotUndergroundArea); // Exlude below-ground use from FAR Calc
-					plotFAR = adjustedPlotBuiltArea / plotSiteArea;
+					//float adjustedPlotBuiltArea = Math.max(0f, plotBuiltArea - plotUndergroundArea); // Exlude below-ground use from FAR Calc
+					//plotFAR = adjustedPlotBuiltArea / plotSiteArea;
 					plotPeak = pMassing.peakZ();
 					
 					// Total ground level build area
-					plotCoverArea = 0;
-					for(Voxel t : pMassing.voxelList) {
-						if (t.w == 0) {
-							plotCoverArea += voxelArea;
-						}
-					}
-					plotCoverageRatio = plotCoverArea / plotSiteArea;
+					//plotCoverArea = 0;
+					//for(Voxel t : pMassing.voxelList) {
+					//	if (t.w == 0) {
+					//		plotCoverArea += voxelArea;
+					//	}
+					//}
+					//plotCoverageRatio = plotCoverArea / plotSiteArea;
 				} else {
 					plotSiteArea = 0;
-					plotCoverArea = 0;
+					//plotCoverArea = 0;
 					plotBuiltArea = 0;
 					plotUndergroundArea = 0;
-					plotFAR = 0;
-					plotCoverageRatio = 0;
+					//plotFAR = 0;
+					//plotCoverageRatio = 0;
 					plotPeak = 0;
 				}
 				siteArea += plotSiteArea;
-				coverArea += plotCoverArea;
+				//coverArea += plotCoverArea;
 				builtArea += plotBuiltArea;
 				undergroundArea += plotUndergroundArea;
 				sitePeak = Math.max(sitePeak, plotPeak);
@@ -105,7 +106,7 @@ public class Evaluator {
 					plotUseCount.put(t.type, count + 1);
 				}
 				for (Function use : Function.values()) {
-					String useName = "[" + use + "] ";
+					//String useName = "[" + use + "] ";
 					float plotUseArea = voxelArea * plotUseCount.get(use);
 					useArea.put(use, useArea.get(use) + plotUseArea);
 					
@@ -128,7 +129,7 @@ public class Evaluator {
 		// Calculate Primary Objectives
 		float adjustedBuiltArea = Math.max(0f, builtArea - undergroundArea); // Exclude below-ground use from FAR Calc
 		float far = adjustedBuiltArea / siteArea;
-		float coverage = coverArea / siteArea;
+		//float coverage = coverArea / siteArea;
 
 		// Add total area objectives
 		performance.primaryObjectives.add(new Objective(
