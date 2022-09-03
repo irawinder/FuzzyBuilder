@@ -19,11 +19,9 @@ import org.json.JSONObject;
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 
-import edu.mit.ira.fuzzy.io.user.Register;
-
 public class ServerUtil {
 
-	private static String DEFAULT_USER = "guest";
+	public static String DEFAULT_USER = "guest";
 	private static String DEFAULT_PAGE = "1";
 	private static String DEFAULT_SCENARIO = "defacto";
 	private static String DEFAULT_BASEMAP = "default";

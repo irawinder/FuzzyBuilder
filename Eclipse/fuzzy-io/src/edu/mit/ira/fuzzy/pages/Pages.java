@@ -5,10 +5,18 @@ import edu.mit.ira.fuzzy.io.user.Register;
 public class Pages {
 
 	private static int NUM_STUDY_PAGES = 6;
-
+	
+	/*
 	public static String generalSite() {
 		String head = makeHead();
 		String body = makeGeneralBody();
+		return assemblePage(head, body);
+	}
+	*/
+	
+	public static String registrationSite() {
+		String head = makeHead();
+		String body = makeRegistrationBody();
 		return assemblePage(head, body);
 	}
 
@@ -56,7 +64,8 @@ public class Pages {
 
 		return head;
 	}
-
+	
+	/*
 	private static String makeGeneralBody() {
 
 		String body = "<body>";
@@ -92,7 +101,20 @@ public class Pages {
 
 		return body;
 	}
+	*/
+	
+	private static String makeRegistrationBody() {
 
+		String body = "<body>";
+
+		body += wrapText("h1", "User Registration");
+		body += wrapText("p", "Placeholder Text");
+
+		body += "</body>";
+
+		return body;
+	}
+	
 	private static String makeStudyBody(String user, String page) {
 
 		String userPrefix;

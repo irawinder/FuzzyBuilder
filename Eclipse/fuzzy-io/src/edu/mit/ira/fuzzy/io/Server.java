@@ -119,7 +119,7 @@ public class Server {
 			// Log Request
 			ServerUtil.log(t, "Request: " + requestMethod + " " +  requestURI + ", Request Length: " + requestLength);
 			
-			if (!Register.userExists(user) && !requestResource.equals("")) 
+			if (!Register.userExists(user) && !user.equals(ServerUtil.DEFAULT_USER)) 
 			{
 				ServerUtil.packItShipIt(t, 403, "Forbidden");
 			}
@@ -134,7 +134,7 @@ public class Server {
 						responseBody = Pages.studySite(user, page);
 						UserLog.add(user, clientIP, "HOME", "Visited FuzzyIO Home Page " + page);
 					} else {
-						responseBody = Pages.nullSite();
+						responseBody = Pages.registrationSite();
 					}
 					String contentType = "text/html";
 					String message = "HTML Delivered";
