@@ -1,9 +1,6 @@
 package edu.mit.ira.fuzzy.pages;
 
-import java.io.File;
-
-import edu.mit.ira.fuzzy.FuzzyIO;
-import edu.mit.ira.fuzzy.io.Server;
+import edu.mit.ira.fuzzy.io.user.Register;
 
 public class Pages {
 
@@ -98,10 +95,10 @@ public class Pages {
 
 	private static String makeStudyBody(String user, String page) {
 
-		String userPrefix = user.substring(0, Server.VALID_PREFIX_LENGTH);
+		String userPrefix = user.substring(0, Register.PREFIX_LENGTH);
 		
 		int minutes;
-		if (userPrefix.equals(Server.VALID_USER_PREFIXES[0])) {
+		if (userPrefix.equals(Register.USER_PREFIXES[0])) {
 			minutes = 30;
 		} else {
 			minutes = 50;
@@ -184,17 +181,17 @@ public class Pages {
 
 			String tutorialUrl;
 			
-			if (userPrefix.equals(Server.VALID_USER_PREFIXES[0])) {
+			if (userPrefix.equals(Register.USER_PREFIXES[0])) {
 				
 				// Needs to be updated
 				tutorialUrl = "https://youtu.be/cNoS-bhRPEw";
 				
-			} else if (userPrefix.equals(Server.VALID_USER_PREFIXES[0])) {
+			} else if (userPrefix.equals(Register.USER_PREFIXES[0])) {
 				
 				// Needs to be updated
 				tutorialUrl = "https://youtu.be/cNoS-bhRPEw";
 				
-			} else if (userPrefix.equals(Server.VALID_USER_PREFIXES[0])) {
+			} else if (userPrefix.equals(Register.USER_PREFIXES[0])) {
 				
 				// Needs to be updated
 				tutorialUrl = "https://youtu.be/cNoS-bhRPEw";
@@ -277,7 +274,7 @@ public class Pages {
 
 			body += "<ol>";
 			
-			if (!userPrefix.equals(Server.VALID_USER_PREFIXES[1])) {
+			if (!userPrefix.equals(Register.USER_PREFIXES[1])) {
 			
 				body += wrapText("li", "Use FuzzyIO to load and analyze 3 pre-designed scenarios for the area marked \"SITE\"");
 	
@@ -293,19 +290,19 @@ public class Pages {
 			
 			}
 			
-			if (userPrefix.equals(Server.VALID_USER_PREFIXES[2]) || userPrefix.equals(Server.VALID_USER_PREFIXES[3])) {
+			if (userPrefix.equals(Register.USER_PREFIXES[2]) || userPrefix.equals(Register.USER_PREFIXES[3])) {
 
 				body += wrapText("li", "Use FuzzyIO to edit predesigned scenarios (A, B, or C) and save them as a new scenarios with a differnt name of your choosing.");
 			
 			}
 			
-			if (!userPrefix.equals(Server.VALID_USER_PREFIXES[0])) {
+			if (!userPrefix.equals(Register.USER_PREFIXES[0])) {
 
 				body += wrapText("li", "Use FuzzyIO to design scenarios from scratch, saving them with names of your choosing.");
 			
 			}
 			
-			if (!userPrefix.equals(Server.VALID_USER_PREFIXES[0])) {
+			if (!userPrefix.equals(Register.USER_PREFIXES[0])) {
 
 				body += wrapText("li", "Use the \"Save Scenario\" toolbox often to name and save variations. You may make as many new scenarios as you like, so don't hold back!");
 				
@@ -332,11 +329,11 @@ public class Pages {
 			
 			body += wrapText("p", "At the end of " + minutes + " minutes (or sooner, if you wish), you need to choose a single scenario.");
 			
-			if (userPrefix.equals(Server.VALID_USER_PREFIXES[0])) {
+			if (userPrefix.equals(Register.USER_PREFIXES[0])) {
 			
 				body += wrapText("p", "You may choose <b>one</b> of the pre-designed scenarios (Option A, Option B, or Option C).");
 			
-			} else if (userPrefix.equals(Server.VALID_USER_PREFIXES[1])) {
+			} else if (userPrefix.equals(Register.USER_PREFIXES[1])) {
 				
 				body += wrapText("p", "You may choose the scenario currently on your screen, or any <b>one</b> of the saved scenarios you have created.");
 				
@@ -346,7 +343,7 @@ public class Pages {
 				
 			}
 			
-			if (!userPrefix.equals(Server.VALID_USER_PREFIXES[0])) {
+			if (!userPrefix.equals(Register.USER_PREFIXES[0])) {
 				
 				body += wrapText("p", "To submit your final decision, make sure the scenario of your choosing is loaded and visible."
 						+ " Then, save the scenario with the name <b>final</b>");
@@ -371,15 +368,15 @@ public class Pages {
 
 			String postsurveyUrl;
 
-			if (userPrefix.equals(Server.VALID_USER_PREFIXES[0])) {
+			if (userPrefix.equals(Register.USER_PREFIXES[0])) {
 
 				postsurveyUrl = "https://forms.gle/JkDfk8sqxWxtg8kw6";
 
-			} else if (userPrefix.equals(Server.VALID_USER_PREFIXES[1])) {
+			} else if (userPrefix.equals(Register.USER_PREFIXES[1])) {
 
 				postsurveyUrl = "https://forms.gle/rkLnBX2TgAiPHi8b7";
 
-			} else if (userPrefix.equals(Server.VALID_USER_PREFIXES[2])) {
+			} else if (userPrefix.equals(Register.USER_PREFIXES[2])) {
 
 				postsurveyUrl = "https://forms.gle/EY1ntPzmbRZrtC159";
 
