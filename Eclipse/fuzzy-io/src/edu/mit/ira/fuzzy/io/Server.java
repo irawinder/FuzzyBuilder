@@ -98,10 +98,11 @@ public class Server {
 			String clientIP = t.getRemoteAddress().toString();
 			String requestResource = ServerUtil.resource(requestURI);
 			Map<String, String> requestParameters = ServerUtil.parameters(requestURI);
-			String user = requestParameters.get("user").toLowerCase();
-			String page = requestParameters.get("page").toLowerCase();
-			String scenario = requestParameters.get("scenario");
-			String basemap = requestParameters.get("filename");
+			String user = requestParameters.get("user");
+			String email = requestParameters.get("email").toLowerCase();
+			String page = requestParameters.get("page");
+			String scenario = requestParameters.get("scenario").toLowerCase();
+			String basemap = requestParameters.get("filename").toLowerCase();
 			
 			// Parse Request Body
 			InputStreamReader isr = new InputStreamReader(t.getRequestBody(), "utf-8");
@@ -119,7 +120,7 @@ public class Server {
 			// Log Request
 			ServerUtil.log(t, "Request: " + requestMethod + " " +  requestURI + ", Request Length: " + requestLength);
 			
-			if (!Register.userExists(user) && !user.equals(ServerUtil.DEFAULT_USER)) 
+			if (!Register.userExists(user) && !user.equals(ServerUtil.DEFAULT_USER) && !requestResource.equals("REGISTER")) 
 			{
 				ServerUtil.packItShipIt(t, 403, "Forbidden");
 			}
@@ -134,8 +135,30 @@ public class Server {
 						responseBody = Pages.studySite(user, page);
 						UserLog.add(user, clientIP, "HOME", "Visited FuzzyIO Home Page " + page);
 					} else {
-						responseBody = Pages.registrationSite();
+						responseBody = Pages.studyIntroSite();
 					}
+					String contentType = "text/html";
+					String message = "HTML Delivered";
+					ServerUtil.packItShipIt(t, 200, message, responseBody.getBytes(), contentType);
+				} 
+				if (requestResource.equals("REGISTER")) 
+				{	
+					String responseBody;
+					if (email.equals(ServerUtil.DEFAULT_EMAIL)) {
+						responseBody = Pages.registrationSite("");
+					} else {
+						String userID = Register.makeUser(email, "study");
+						if (userID != null) {
+							responseBody = Pages.registrationCompleteSite(userID, email);
+						} else {
+							if (Register.emailExists(email)) {
+								responseBody = Pages.registrationSite("This email has already been used.");
+							} else {
+								responseBody = Pages.registrationSite("Something went wrong and we can't register this email address. Please contact ira@mit.edu for help.");
+							}
+						}
+					}
+					
 					String contentType = "text/html";
 					String message = "HTML Delivered";
 					ServerUtil.packItShipIt(t, 200, message, responseBody.getBytes(), contentType);

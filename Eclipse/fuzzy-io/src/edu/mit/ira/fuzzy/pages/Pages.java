@@ -4,7 +4,7 @@ import edu.mit.ira.fuzzy.io.user.Register;
 
 public class Pages {
 
-	private static int NUM_STUDY_PAGES = 6;
+	private static int NUM_STUDY_PAGES = 5;
 	
 	/*
 	public static String generalSite() {
@@ -14,9 +14,21 @@ public class Pages {
 	}
 	*/
 	
-	public static String registrationSite() {
+	public static String studyIntroSite() {
 		String head = makeHead();
-		String body = makeRegistrationBody();
+		String body = makeStudyIntroBody();
+		return assemblePage(head, body);
+	}
+	
+	public static String registrationSite(String feedback) {
+		String head = makeHead();
+		String body = makeRegistrationBody(feedback);
+		return assemblePage(head, body);
+	}
+	
+	public static String registrationCompleteSite(String userID, String email) {
+		String head = makeHead();
+		String body = makeRegistrationCompleteBody(userID, email);
 		return assemblePage(head, body);
 	}
 
@@ -80,6 +92,7 @@ public class Pages {
 		head += "li {" + generalCSS + bodyTextCSS + "}";
 		head += "ul li { margin-bottom: 10px; }";
 		head += "ol li { margin-bottom: 10px; }";
+		head += "img { margin-left: 40px; }";
 
 		head += "</style>";
 
@@ -126,7 +139,64 @@ public class Pages {
 	}
 	*/
 	
-	private static String makeRegistrationBody() {
+	private static String studyBodyHeader() {
+		String bodyText = "";
+		bodyText += wrapText("h1", "Beaverton");
+		bodyText += wrapText("p", "A Research Study by Ira Winder<br>MIT and Univeristy of Tokyo<br>ira [at] mit [dot] edu");
+		bodyText += "<hr>";
+		return bodyText;
+	}
+	
+	private static String makeStudyIntroBody() {
+		
+		String body = "<body>";
+		
+		body += "<script> function register() { location.replace(\"/register\"); } </script>";
+		
+		body += studyBodyHeader();
+		
+		body += wrapText("h2", "Introduction");
+		
+		body += wrapText("p", "Welcome to Beaverton, a research study! We deeply appreciate your participation.");
+
+		body += wrapText("p", "The University of Tokyo and MIT are investigating how people make decisions using interactive models.");
+
+		body += wrapText("p", "In this exercise, we will ask you to help design a building in the hypothetical city of Beaverton.");
+		
+		body += wrapText("p", "As you work, we'll be collecting data as you interact with a digital model.");
+		
+		body += "<img style=\"width: 400px; height: 250px;\" src=\"https://github.com/irawinder/FuzzyBuilder/blob/master/screenshots/v1.0-invert_sm.png?raw=true\" alt=\"Screenshot of Digital Model, FuzzyIO\">";
+		
+		body += wrapText("h2", "Requirements");
+
+		body += "<ul>";
+
+		body += wrapText("li", "PC or laptop with speakers or earphones" +
+				"<br><i>(Do not try this exercise on a tablet or smart phone)</i>");
+
+		body += wrapText("li", "Reliable internet connection");
+
+		body += wrapText("li", "Web browser (Chrome, Safari, Firefox, etc)" +
+				"<br><i>(The browser you are using to read this text is probably fine)</i>");
+
+		body += wrapText("li", "Keyboard and mouse" +
+				"<br><i>(Track pad is fine, but you may have better experience using a two-button mouse)</i>");
+		
+		body += wrapText("li", "You must complete the exercise in <u>one sitting</u>" +
+				"<br><i>(There is no time limit, but this exercise may take 30 - 90 minutes)</i>");
+
+		body += "</ul>";
+
+		body += wrapText("h2", "Get Started!");
+		
+		body += "<button onclick=\"register()\">Continue to Registration</button>";
+		
+		body += "</body>";
+		
+		return body;
+	}
+	
+	private static String makeRegistrationBody(String feedback) {
 
 		String body = "<body>";
 		
@@ -188,7 +258,9 @@ public class Pages {
 		
 		body += "</script>";
 		
-		body += wrapText("h1", "User Registration");
+		body += studyBodyHeader();
+		
+		body += wrapText("h2", "User Registration");
 		
 		body += "<label for=\"email1\">Please enter your email address:</label><br>";
 		
@@ -196,14 +268,43 @@ public class Pages {
 		
 		body += "<label for=\"email2\">Please enter your email address again:</label><br>";
 		
-		body += "<input type=\"text\" id=\"email2\" style=\"width: 300px;\"><p style=\"color: red;\" id=\"email2_feedback\"></p><br><br>";
+		body += "<input onSubmit=\"register()\" type=\"text\" id=\"email2\" style=\"width: 300px;\"><p style=\"color: red;\" id=\"email2_feedback\"></p><br><br>";
 		
 		body += "<button onclick=\"register()\">Register</button>";
 		
-		body += "<p style=\"color: red;\" id=\"feedback\"></p>";
-
+		body += "<p style=\"color: red;\" id=\"feedback\">" + feedback + "</p>";
+		
+		body += wrapText("p", "<i>Your personal information will not be shared.<br>Email addresses are only used for authentication,<br>or in the rare case that we need to contact you. </i>");
+		
 		body += "</body>";
 
+		return body;
+	}
+	
+	private static String makeRegistrationCompleteBody(String userID, String email) {
+
+		String body = "<body>";
+		
+		body += studyBodyHeader();
+		
+		body += wrapText("h2", "Registration Complete!");
+		
+		body += wrapText("p", "Email: " + email);
+		
+		body += wrapText("p", "(You will not be able to register with this email address again!)");
+		
+		body += wrapText("h2", "Personal Access Link");
+		
+		body += wrapText("p", "We have generated a unique personal access link, just for you.");
+		
+		body += wrapText("p", "Please save this link in a safe place, you will not be able to navigate back to this page again.");
+		
+		body += wrapText("p", "If you would like to begin right away, click below!");
+		
+		body += wrapText("p", "<a href=\"/?user=" + userID + "\">http://fuzzy.glassmatrix.org/?user=" + userID + "</a>");
+		
+		body += "</body>";
+		
 		return body;
 	}
 	
@@ -225,64 +326,24 @@ public class Pages {
 		
 		String body = "<body>";
 
-		body += wrapText("h1", "Beaverton");
+		body += studyBodyHeader();
 		body += wrapText("p", "User ID: <b>" + user + "</b>");
 		body += wrapText("p", "page: " + page + " of " + NUM_STUDY_PAGES);
 		body += "<hr>";
 
 		if (page.equals("1")) {
 
-			body += wrapText("h2", "Introduction");
-			
-			body += wrapText("p", "Welcome to Beaverton, a research study!");
-
-			body += wrapText("p", "We deeply appreciate your participation.");
-
-			body += wrapText("p", "The University of Tokyo and MIT are investigating how people make decisions using interactive models.");
-
-			body += wrapText("p", "In this exercise, we will ask you to help design a building in the hypothetical city of Beaverton.");
-
-			body += wrapText("h2", "Requirements");
-
-			body += "<ul>";
-
-			body += wrapText("li", "PC or laptop with speakers or earphones" +
-					"<br><i>(Do not try this exercise on a tablet or smart phone)</i>");
-
-			body += wrapText("li", "Reliable internet connection");
-
-			body += wrapText("li", "Web browser (Chrome, Safari, Firefox, etc)" +
-					"<br><i>(The browser you are using to read this text is probably fine)</i>");
-
-			body += wrapText("li", "Keyboard and mouse" +
-					"<br><i>(Track pad is fine, but you may have better experience using a two-button mouse)</i>");
-
-			body += "</ul>";
-
-			body += wrapText("p", "This exercise may take about " + minutes + "-" + (minutes+20) + " minutes.");
-
-			body += wrapText("p", "Once you start, please continue to the end without pausing.");
-
-			body += wrapText("p", "Please do not close this browser window for the duration of the exercise. ");
-
-			body += wrapText("h2", "Get Started!");
-
-			body += wrapText("p", "When you are ready, click \"CONTINUE\" to get started!");
-
-
-		} else if (page.equals("2")) {
-
 			body += wrapText("h2", "User ID");
 			
 			body += wrapText("p", "First, we need to get some housekeeping out of the way.");
 
-			body += wrapText("p", "You have been assigned an exclusive User ID <i>(You can see it at the top of this web page -- it should be an animal followed by 6 characters)</i>.");
+			body += wrapText("p", "You have been assigned an exclusive User ID.<br><i>(You can see it at the top of this web page -- it should be an animal followed by " + Register.CODE_LENGTH + " characters)</i>.");
 
-			body += wrapText("p", "Please use this ID throughout the exercise, and don't share it with anyone. It will be at the top of every page for reference.");
+			body += wrapText("p", "Please use this ID throughout the exercise, and don't share it with anyone.<br>The User ID will remain at the top of every page for reference.");
 
 			body += wrapText("h2", "Pre-Survey");
 
-			body += wrapText("p", "Next, please complete this pre-survey.");
+			body += wrapText("p", "Now, please complete this pre-survey.");
 
 			String presurveyUrl = "https://forms.gle/cK3dQozbQyt1S2zn7";
 
@@ -290,7 +351,7 @@ public class Pages {
 
 			body += wrapText("p", "(The survey will open in a new tab. Come back here and click \"CONTINUE\" when you are done.)");
 
-		} else if (page.equals("3")) {
+		} else if (page.equals("2")) {
 
 			body += wrapText("h2", "FuzzyIO Tutorial");
 
@@ -325,7 +386,7 @@ public class Pages {
 
 			body += wrapText("p", "(The video will open in a new tab. Come back here and click \"CONTINUE\" when you are done.)");
 
-		} else if (page.equals("4")) {
+		} else if (page.equals("3")) {
 
 			body += wrapText("h2", "Mission Background");
 
@@ -477,7 +538,7 @@ public class Pages {
 			
 			body += wrapText("p", "When you've made your final decision, click \"CONTINUE\".");
 
-		} else if (page.equals("5")) {
+		} else if (page.equals("4")) {
 
 			body += wrapText("h2", "Post-Survey");
 			
@@ -509,7 +570,7 @@ public class Pages {
 
 			body += wrapText("p", "(The survey will open in a new tab. Come back here and click \"CONTINUE\" when you are done.)");
 
-		} else if (page.equals("6")) {
+		} else if (page.equals("5")) {
 
 			body += wrapText("h2", "Congratualtions and Thank you!");
 
@@ -534,9 +595,9 @@ public class Pages {
 		int nextPage = pageInt + 1;
 		int prevPage = pageInt - 1;
 		String navigation = "";
-		if (pageInt > 1 && pageInt <= 6) navigation += "< <a href=\"/?user=" + user + "&page=" + prevPage + "\">Go Back</a>";
-		if (pageInt > 1 && pageInt < 6)navigation += "\t|\t";
-		if (pageInt >= 1 && pageInt < 6) navigation += "<a href=\"/?user=" + user + "&page=" + nextPage + "\">CONTINUE</a> >";
+		if (pageInt > 1 && pageInt <= NUM_STUDY_PAGES) navigation += "< <a href=\"/?user=" + user + "&page=" + prevPage + "\">Go Back</a>";
+		if (pageInt > 1 && pageInt < NUM_STUDY_PAGES)navigation += "\t|\t";
+		if (pageInt >= 1 && pageInt < NUM_STUDY_PAGES) navigation += "<a href=\"/?user=" + user + "&page=" + nextPage + "\">CONTINUE</a> >";
 		body += wrapText("p", navigation);
 
 		body += "</body>";

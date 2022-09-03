@@ -22,6 +22,7 @@ import com.sun.net.httpserver.HttpExchange;
 public class ServerUtil {
 
 	public static String DEFAULT_USER = "guest";
+	public static String DEFAULT_EMAIL = "foo@bar.com";
 	private static String DEFAULT_PAGE = "1";
 	private static String DEFAULT_SCENARIO = "defacto";
 	private static String DEFAULT_BASEMAP = "default";
@@ -71,14 +72,14 @@ public class ServerUtil {
 	 * @return
 	 */
 	public static Map<String, String> parameters(String requestURI) {
-		String[] process_params = requestURI.replace("?", ";").toLowerCase().split(";");
+		String[] process_params = requestURI.replace("?", ";").split(";");
 		Map<String, String> parameters = new HashMap<String, String>();
 		if(process_params.length > 1) {
 			String[] params = process_params[1].split("&");
 			for (int i=0; i<params.length; i++) {
 				String[] param = params[i].split("=");
 				if (param.length == 2) {
-					parameters.put(param[0], param[1].replace("%20", " "));
+					parameters.put(param[0], param[1].replace("%20", " ").replace("%40", "@").replace("%2e", "."));
 				} else {
 					parameters.put(param[0], "");
 				}
@@ -86,6 +87,8 @@ public class ServerUtil {
 		}
 		if (!parameters.containsKey("user")) 
 			parameters.put("user", DEFAULT_USER);
+		if (!parameters.containsKey("email")) 
+			parameters.put("email", DEFAULT_EMAIL);
 		if (!parameters.containsKey("page")) 
 			parameters.put("page", DEFAULT_PAGE);
 		if (!parameters.containsKey("scenario")) 

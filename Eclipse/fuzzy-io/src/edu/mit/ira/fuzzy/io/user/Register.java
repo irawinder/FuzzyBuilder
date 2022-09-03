@@ -34,7 +34,7 @@ public class Register {
 		'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '2', 
 		'3', '4', '5', '6', '7', '8', '9'
 	};
-
+	
 	/**
 	 * Check if a user ID is already registered
 	 * @param userID
@@ -72,13 +72,18 @@ public class Register {
 	 * Add email address to the registry and assigns them a new user id. If email address is already registered, prior registration is not overridden
 	 * @param userID
 	 * @param email
-	 * @return true if new userID assigned to this email; otherwise false
+	 * @return userID assigned to this email; otherwise null
 	 */
-	public static boolean makeUser(String email, String userType) {
-				
+	public static String makeUser(String email, String userType) {
+
+		// Check for duplicate email address
+		if (!isValidEmail(email)) {
+			return null;
+		}
+
 		// Check for duplicate email address
 		if (!isUniqueEmail(email)) {
-			return false;
+			return null;
 		}
 		
 		Random r = new Random();
@@ -90,7 +95,7 @@ public class Register {
 			
 			if(attempts++ > 10) {
 				System.out.println("Failed to find unique User ID after 10 tries");
-				return false;
+				return null;
 			}
 			
 			// Find the prefix
@@ -109,7 +114,7 @@ public class Register {
 			} else {
 				
 				System.out.println(userType + " is not a valid user type");
-				return false;
+				return null;
 			}
 			
 			String code = makeCode();
@@ -118,7 +123,7 @@ public class Register {
 		}
 		
 		addEntry(userID, email);
-		return true;
+		return userID;
 	}
 	
 	/**
@@ -161,6 +166,23 @@ public class Register {
 			}
 		}
 		return true;
+	}
+	
+	/**
+	 * Checks if email is of format "email@domain.name"
+	 * @param email
+	 * @return true if valid
+	 */
+	private static boolean isValidEmail(String email) {
+		String temp = email.replace(".", ":");
+		String[] array = temp.split("@");
+		if (array.length == 2) {
+			if (array[1].split(":").length == 2) {
+				return true;
+			}
+		}
+		System.out.println(email + " is not a valid email address");
+		return false;
 	}
 	
 	/**
