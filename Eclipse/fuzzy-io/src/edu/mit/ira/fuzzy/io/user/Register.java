@@ -19,10 +19,7 @@ import edu.mit.ira.fuzzy.io.Server;
  */
 public class Register {
 	
-	private static String USERS_PATH = Server.RELATIVE_DATA_PATH + File.separator + "users";
-	private static String REGISTER_PATH = USERS_PATH + File.separator + "register.tsv";
-	
-	private static File USERS_DIR = new File(USERS_PATH);
+	private static String REGISTER_PATH = Server.RELATIVE_DATA_PATH + File.separator + "users" + File.separator + "register.tsv";
 	private static File REGISTER_FILE = new File(REGISTER_PATH);
 	
 	public static String[] USER_TYPES = {"admin", "study"};
@@ -48,6 +45,21 @@ public class Register {
 	}
 	
 	/**
+	 * Checks if user has a prefix associated with the given index
+	 * @param userID
+	 * @param index
+	 * @return true if match
+	 */
+	public static boolean hasPrefix(String userID, int index) {
+		String prefix = USER_PREFIXES[index];
+		if (userID.length() > prefix.length()) {
+			return userID.substring(prefix.length()).equals(prefix);
+		} else {
+			return false;
+		}
+	}
+	
+	/**
 	 * Check if a email is already registered
 	 * @param userID
 	 * @return true if registered
@@ -63,11 +75,6 @@ public class Register {
 	 * @return true if new userID assigned to this email; otherwise false
 	 */
 	public static boolean makeUser(String email, String userType) {
-		
-		// Assertively check that registration file exists
-		if (create()) {
-			System.out.println("New registration file created");
-		};
 				
 		// Check for duplicate email address
 		if (!isUniqueEmail(email)) {
@@ -211,33 +218,7 @@ public class Register {
 				return new String[0];
 			}
 		} else {
-			System.out.println("The user registration file does not exist");
 			return new String[0];
 		}
-	}
-	
-	/**
-	 * Create Registration File, if it does not already exist
-	 * @return returns true if created; returns false if already exists
-	 */
-	private static boolean create() {
-		
-		// Assert User Directory Exists
-		if (!USERS_DIR.exists()) {
-			USERS_DIR.mkdirs();
-		}
-
-		// Assert Register File Exists
-		if (!REGISTER_FILE.exists()) {
-			try {
-				if (REGISTER_FILE.createNewFile()) {
-					return true;
-				}
-			} catch (IOException e) {
-				System.out.println("Error: could not create new registration file");
-				e.printStackTrace();
-			}
-		}
-		return false;
 	}
 }

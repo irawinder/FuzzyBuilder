@@ -119,17 +119,17 @@ public class Server {
 			// Log Request
 			ServerUtil.log(t, "Request: " + requestMethod + " " +  requestURI + ", Request Length: " + requestLength);
 			
-			if (!ServerUtil.valid(user) && !requestResource.equals("")) 
+			if (!Register.userExists(user) && !requestResource.equals("")) 
 			{
 				ServerUtil.packItShipIt(t, 403, "Forbidden");
-			} 
+			}
 			// HTTP GET Request
 			else if (requestMethod.equals("GET")) 
 			{
 				if (requestResource.equals("")) 
 				{	
 					String responseBody;
-					if (ServerUtil.valid(user))
+					if (Register.userExists(user))
 					{
 						responseBody = Pages.studySite(user, page);
 						UserLog.add(user, clientIP, "HOME", "Visited FuzzyIO Home Page " + page);
@@ -143,7 +143,7 @@ public class Server {
 				else if (requestResource.equals("INIT")) 
 				{
 					// Add global files to new user's scenarios
-					if (!ServerUtil.valid(user, Register.USER_PREFIXES[1])) addGlobalScenarios(user);
+					if (!Register.hasPrefix(user, 1)) addGlobalScenarios(user);
 				
 					// Send the setting configuration to the GUI
 					String responseBody = schemaData(user);
@@ -339,19 +339,19 @@ public class Server {
 	}
 	
 	private String schemaData(String user, String userFeedback) {
-		if (ServerUtil.valid(user, Register.USER_PREFIXES[0])) // zebra
+		if (Register.hasPrefix(user, 0)) // zebra
 		{
 			return schemaData(readOnlyConfig, userFeedback);
 		} 
-		else if (ServerUtil.valid(user, Register.USER_PREFIXES[1])) // cobra
+		else if (Register.hasPrefix(user, 1)) // cobra
 		{
 			return schemaData(fullConfig, userFeedback);
 		} 
-		else if (ServerUtil.valid(user, Register.USER_PREFIXES[2])) // panda
+		else if (Register.hasPrefix(user, 2)) // panda
 		{
 			return schemaData(fullConfig, userFeedback);
 		} 
-		else if (ServerUtil.valid(user, Register.USER_PREFIXES[3])) // squid
+		else if (Register.hasPrefix(user, 3)) // squid
 		{
 			return schemaData(adminConfig, userFeedback);
 		} 

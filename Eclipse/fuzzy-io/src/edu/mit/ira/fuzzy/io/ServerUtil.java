@@ -166,35 +166,36 @@ public class ServerUtil {
 		ServerUtil.log(t, "Response: " + responseCode + ", " + responseMessage + ", Response Length: " + responseLength);
 	}
 	
-	/**
-	 * Check if username is valid and uses a given prefix
-	 * @param user
-	 * @param prefix
-	 * @return
-	 */
-	public static boolean valid(String user, String prefix) {
-		if (user.length() >= prefix.length()) {
-			boolean validPrefix = user.substring(0, prefix.length()).equals(prefix);
-			boolean validCode = user.length() - prefix.length() == Register.CODE_LENGTH;
-			return validPrefix && validCode;
-		} else {
-			return false;
-		}
-	}
-
-	/**
-	 * check if username is valid
-	 * @param user
-	 * @return
-	 */
-	public static boolean valid(String user) {
-		for (String prefix : Register.USER_PREFIXES) {
-			if (valid(user, prefix)) {
-				return true;
-			}
-		}
-		return false;
-	}
+//	/**
+//	 * Check if username is valid and uses a given prefix
+//	 * @param user
+//	 * @param prefix
+//	 * @return
+//	 */
+//	public static boolean valid(String user, String prefix) {
+//		if (user.length() >= prefix.length()) {
+//			boolean validPrefix = user.substring(0, prefix.length()).equals(prefix);
+//			boolean validCode = user.length() - prefix.length() == Register.CODE_LENGTH;
+//			return validPrefix && validCode;
+//		} else {
+//			return false;
+//		}
+//	}
+//
+//	/**
+//	 * check if username is valid
+//	 * @param user
+//	 * @return
+//	 */
+//	public static boolean valid(String user) {
+//		for (String prefix : Register.USER_PREFIXES) {
+//			if (valid(user, prefix)) {
+//				return true;
+//			}
+//		}
+//		return false;
+//	}
+	
 	
 	/**
 	 * Return a list of filenames in a directory
