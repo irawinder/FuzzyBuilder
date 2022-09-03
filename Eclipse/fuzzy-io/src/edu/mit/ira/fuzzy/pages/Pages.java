@@ -95,7 +95,12 @@ public class Pages {
 
 	private static String makeStudyBody(String user, String page) {
 
-		String userPrefix = user.substring(0, Register.PREFIX_LENGTH);
+		String userPrefix;
+		if (user.length() > Register.CODE_LENGTH) {
+			userPrefix = user.substring(0, user.length() - Register.CODE_LENGTH);
+		} else {
+			userPrefix = "";
+		}
 		
 		int minutes;
 		if (userPrefix.equals(Register.USER_PREFIXES[0])) {
