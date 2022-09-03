@@ -83,6 +83,7 @@ public class Register {
 
 		// Check for duplicate email address
 		if (!isUniqueEmail(email)) {
+			System.out.println(email + " is already in use");
 			return null;
 		}
 		
@@ -139,7 +140,6 @@ public class Register {
 			String existingUserID_lc = entry[0].toLowerCase();
 			String userID_lc = userID.toLowerCase();
 			if (existingUserID_lc.equals(userID_lc)) {
-				System.out.println(userID + " is already in use");
 				return false;
 			}
 		}
@@ -160,7 +160,6 @@ public class Register {
 				String existingEmail_lc = entry[1].toLowerCase();
 				String email_lc = email.toLowerCase();
 				if (existingEmail_lc.equals(email_lc)) {
-					System.out.println(email + " is already in use");
 					return false;
 				}
 			}

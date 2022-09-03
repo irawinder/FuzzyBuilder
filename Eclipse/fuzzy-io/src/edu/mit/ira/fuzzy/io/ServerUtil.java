@@ -40,7 +40,7 @@ public class ServerUtil {
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss z");
 		Date date = new Date(System.currentTimeMillis());
 		String timeStamp = formatter.format(date);
-		String log = timeStamp + " " + clientIP + " " + t.getRequestURI() + " " + message + "\n";
+		String log = timeStamp + " " + clientIP + " " + message + "\n";
 
 		// Write Log to Console
 		System.out.print(log);
@@ -79,7 +79,7 @@ public class ServerUtil {
 			for (int i=0; i<params.length; i++) {
 				String[] param = params[i].split("=");
 				if (param.length == 2) {
-					parameters.put(param[0], param[1].replace("%20", " ").replace("%40", "@").replace("%2e", "."));
+					parameters.put(param[0], param[1].replace("%20", " ").replace("%40", "@").replace("%2E", ".").replace("%2e", "."));
 				} else {
 					parameters.put(param[0], "");
 				}
@@ -150,9 +150,8 @@ public class ServerUtil {
 		OutputStream os = t.getResponseBody();
 		os.write(responseBody, 0, responseBody.length);
 		os.close();
-		ServerUtil.log(t, "Response: " + responseCode + ", " + responseMessage + ", Response Length: " + responseLength);
+		ServerUtil.log(t, "Response: " + responseCode + " " + responseMessage + "; Response Length: " + responseLength);
 	}
-	
 	
 	/**
 	 * Attach Headers to HttpResponse and send it off to client
@@ -164,38 +163,8 @@ public class ServerUtil {
 		ServerUtil.setHeaders(t, "text/html");
 		int responseLength = -1;
 		t.sendResponseHeaders(responseCode, -1);
-		ServerUtil.log(t, "Response: " + responseCode + ", " + responseMessage + ", Response Length: " + responseLength);
+		ServerUtil.log(t, "Response: " + responseCode + " " + responseMessage + "; Response Length: " + responseLength);
 	}
-	
-//	/**
-//	 * Check if username is valid and uses a given prefix
-//	 * @param user
-//	 * @param prefix
-//	 * @return
-//	 */
-//	public static boolean valid(String user, String prefix) {
-//		if (user.length() >= prefix.length()) {
-//			boolean validPrefix = user.substring(0, prefix.length()).equals(prefix);
-//			boolean validCode = user.length() - prefix.length() == Register.CODE_LENGTH;
-//			return validPrefix && validCode;
-//		} else {
-//			return false;
-//		}
-//	}
-//
-//	/**
-//	 * check if username is valid
-//	 * @param user
-//	 * @return
-//	 */
-//	public static boolean valid(String user) {
-//		for (String prefix : Register.USER_PREFIXES) {
-//			if (valid(user, prefix)) {
-//				return true;
-//			}
-//		}
-//		return false;
-//	}
 	
 	
 	/**

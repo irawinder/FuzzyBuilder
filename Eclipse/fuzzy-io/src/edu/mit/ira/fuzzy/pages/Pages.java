@@ -157,15 +157,16 @@ public class Pages {
 		
 		body += wrapText("h2", "Introduction");
 		
+		String imgUrl = "https://github.com/irawinder/FuzzyBuilder/blob/master/screenshots/v1.0-invert_sm.png?raw=true";
+		body += "<img style=\"width: 600px; height: 375px;\" src=\"" + imgUrl + "\" alt=\"Screenshot of Digital Model, FuzzyIO\">";
+		
 		body += wrapText("p", "Welcome to Beaverton, a research study! We deeply appreciate your participation.");
 
 		body += wrapText("p", "The University of Tokyo and MIT are investigating how people make decisions using interactive models.");
-
+		
 		body += wrapText("p", "In this exercise, we will ask you to help design a building in the hypothetical city of Beaverton.");
 		
 		body += wrapText("p", "As you work, we'll be collecting data as you interact with a digital model.");
-		
-		body += "<img style=\"width: 400px; height: 250px;\" src=\"https://github.com/irawinder/FuzzyBuilder/blob/master/screenshots/v1.0-invert_sm.png?raw=true\" alt=\"Screenshot of Digital Model, FuzzyIO\">";
 		
 		body += wrapText("h2", "Requirements");
 
@@ -299,7 +300,7 @@ public class Pages {
 		
 		body += wrapText("p", "Please save this link in a safe place, you will not be able to navigate back to this page again.");
 		
-		body += wrapText("p", "If you would like to begin right away, click below!");
+		body += wrapText("p", "To begin right away, click below.");
 		
 		body += wrapText("p", "<a href=\"/?user=" + userID + "\">http://fuzzy.glassmatrix.org/?user=" + userID + "</a>");
 		
@@ -317,19 +318,15 @@ public class Pages {
 			userPrefix = "";
 		}
 		
-		int minutes;
-		if (userPrefix.equals(Register.USER_PREFIXES[0])) {
-			minutes = 30;
-		} else {
-			minutes = 50;
-		}
-		
 		String body = "<body>";
 
 		body += studyBodyHeader();
-		body += wrapText("p", "User ID: <b>" + user + "</b>");
-		body += wrapText("p", "page: " + page + " of " + NUM_STUDY_PAGES);
-		body += "<hr>";
+		
+		if (!page.equals("" + NUM_STUDY_PAGES)) {
+			body += wrapText("p", "User ID: <b>" + user + "</b>");
+			body += wrapText("p", "page: " + page + " of " + NUM_STUDY_PAGES);
+			body += "<hr>";
+		}
 
 		if (page.equals("1")) {
 
@@ -460,11 +457,11 @@ public class Pages {
 	
 				body += "<ul>";
 	
-				body += wrapText("li", "Option_A");
+				body += wrapText("li", "option1");
 	
-				body += wrapText("li", "Option_B");
+				body += wrapText("li", "option2");
 	
-				body += wrapText("li", "Option_C");
+				body += wrapText("li", "option3");
 	
 				body += "</ul>";
 			
@@ -484,8 +481,10 @@ public class Pages {
 			
 			if (!userPrefix.equals(Register.USER_PREFIXES[0])) {
 
-				body += wrapText("li", "Use the \"Save Scenario\" toolbox often to name and save variations. You may make as many new scenarios as you like, so don't hold back!");
+				body += wrapText("li", "Use the \"Save Scenario\" toolbox to name and save variations.");
 				
+				body += wrapText("li", "You may make as many new scenarios as you like, so don't hold back!");
+					
 			}
 			
 			body += "</ol>";
@@ -494,8 +493,7 @@ public class Pages {
 
 			body += wrapText("h2", "Using FuzzyIO");
 			
-			body += wrapText("p", "<b>Set a timer for <u>" + minutes + " minutes</u></b>."
-					+ "<br><i>It's okay if you finish sooner than that, or even take a little longer. Just be sure to finish everything in one session.</i>");
+			body += wrapText("p", "Take as long as you like, just be sure to finish everything in <u>one sitting</u>.</i>");
 			
 			body += wrapText("p", "Go ahead and login to FuzzyIO with the <b>User ID</b> at the top of this page.");
 			
@@ -507,11 +505,11 @@ public class Pages {
 			
 			body += wrapText("h2", "Submitting your Final Design");
 			
-			body += wrapText("p", "At the end of " + minutes + " minutes (or sooner, if you wish), you need to choose a single scenario.");
+			body += wrapText("p", "When you have identified your favorite scenario, you need to submit it.");
 			
 			if (userPrefix.equals(Register.USER_PREFIXES[0])) {
 			
-				body += wrapText("p", "You may choose <b>one</b> of the pre-designed scenarios (Option A, Option B, or Option C).");
+				body += wrapText("p", "You may choose <b>one</b> of the pre-designed scenarios (Option 1, Option 2, or Option 3).");
 			
 			} else if (userPrefix.equals(Register.USER_PREFIXES[1])) {
 				
@@ -519,7 +517,7 @@ public class Pages {
 				
 			} else {
 				
-				body += wrapText("p", "You may choose <b>one</b> of the pre-designed scenarios (Option A, Option B, or Option C), or a scenario of your own editing or making.");
+				body += wrapText("p", "You may choose <b>one</b> of the pre-designed scenarios (Option 1, Option 2, or Option 3), or a scenario of your own editing or making.");
 				
 			}
 			
@@ -532,11 +530,11 @@ public class Pages {
 			
 			} else {
 				
-				body += wrapText("p", "Make a note to yourself or write down which option that you choose. You'll need to remember this a little later.");
+				body += wrapText("p", "Make a note of the option you chose.");
 				
 			}
 			
-			body += wrapText("p", "When you've made your final decision, click \"CONTINUE\".");
+			body += wrapText("p", "When you've finished making your decision, click \"CONTINUE\".");
 
 		} else if (page.equals("4")) {
 
@@ -572,14 +570,22 @@ public class Pages {
 
 		} else if (page.equals("5")) {
 
-			body += wrapText("h2", "Congratualtions and Thank you!");
+			body += wrapText("h2", "Congratulations!");
 
 			body += wrapText("p", "We hope you had a good time, and we are incredibly grateful for your help with this research.");
-
-			body += wrapText("p", "If you have any questions or concerns about your participation, you may contact Ira Winder at the following address:");
-
-			body += wrapText("p", "ira [at] mit [dot] edu");
-
+			
+			/*
+			body += wrapText("p", "If you would like to keep playing with FuzzyIO, please do!"
+					+ "<br>For this purpose, we've generated a new User ID that you can use indefinitely."
+					+ "<br>(The User ID you used during the experiment will no longer be available)");
+			
+			String adminUserID = Register.makeUser(email, "admin");
+			body += wrapText("p", "User ID: " + adminUserID);
+			
+			*/
+			
+			body += wrapText("p", "If you have any questions or concerns about your participation, please contact Ira.");
+			
 			body += wrapText("p", "You may now close all browser windows related to this experiment.");
 
 		} else {
