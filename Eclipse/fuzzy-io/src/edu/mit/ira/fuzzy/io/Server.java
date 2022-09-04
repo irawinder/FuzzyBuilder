@@ -123,7 +123,18 @@ public class Server {
 			// Log Request
 			ServerUtil.log(t, "Request: " + requestMethod + " " +  requestURI + ", Request Length: " + requestLength);
 			
-			if (!Register.isActive(user) && !user.equals(ServerUtil.DEFAULT_USER) && !requestResource.equals("REGISTER")) 
+			boolean permit = Register.active(user) || user.equals(ServerUtil.DEFAULT_USER) || requestResource.equals("REGISTER");
+			boolean deactivated = Register.deactivated(user);
+			
+			if (deactivated) {
+				String responseBody = Pages.studySite(user, page, deactivated);
+				String contentType = "text/html";
+				String message = "HTML Delivered";
+				ServerUtil.packItShipIt(t, 200, message, responseBody.getBytes(), contentType);
+				UserLog.add(user, clientIP, "HOME", "Visited FuzzyIO Home Page " + Pages.NUM_STUDY_PAGES);
+				System.out.println(user + " is deactivated");
+			} 
+			else if (!permit) 
 			{
 				ServerUtil.packItShipIt(t, 403, "Forbidden");
 			}
@@ -133,9 +144,9 @@ public class Server {
 				if (requestResource.equals("")) 
 				{	
 					String responseBody;
-					if (Register.isActive(user))
+					if (Register.active(user))
 					{
-						responseBody = Pages.studySite(user, page);
+						responseBody = Pages.studySite(user, page, false);
 						UserLog.add(user, clientIP, "HOME", "Visited FuzzyIO Home Page " + page);
 					} else {
 						responseBody = Pages.studyIntroSite();
@@ -160,7 +171,7 @@ public class Server {
 							if (Register.emailExists(email)) {
 								responseBody = Pages.registrationSite("This email has already been used.");
 							} else {
-								responseBody = Pages.registrationSite("Something went wrong and we can't register this email address. Please contact ira@mit.edu for help.");
+								responseBody = Pages.registrationSite("Something went wrong and we can't register this email address. Please contact ira [at] mit [dot] edu for help.");
 							}
 						}
 					}

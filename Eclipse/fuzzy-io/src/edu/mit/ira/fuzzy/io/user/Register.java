@@ -22,8 +22,11 @@ public class Register {
 	// Registry Entry row is of form:
 	// userID	email	type	status
 	
+	private static int REGISTER_COLUMNS = 2;
 	private static String REGISTER_PATH = Server.RELATIVE_DATA_PATH + File.separator + "users" + File.separator + "register.tsv";
+	private static String DEACTIVATED_PATH = Server.RELATIVE_DATA_PATH + File.separator + "users" + File.separator + "deactivated.tsv";
 	private static File REGISTER_FILE = new File(REGISTER_PATH);
+	private static File DEACTIVATED_FILE = new File(DEACTIVATED_PATH);
 	
 	public static int CODE_LENGTH = 6;
 	
@@ -37,25 +40,65 @@ public class Register {
 	};
 	
 	/**
+	 * Get email associated with this user; returns null if not found
+	 * @param userID
+	 * @return email as string; null if not found
+	 */
+	public static String email(String userID) {
+		return entryBy(userID, 0)[1];
+	}
+	
+	/**
+	 * Get active user associated with this email; returns null if not found
+	 * @param userID
+	 * @return email as string; null if not found
+	 */
+	public static String user(String email) {
+		return entryBy(email, 1)[0];
+	}
+	
+	/**
 	 * Check if a user ID is already registered
 	 * @param userID
 	 * @return true if registered
 	 */
-	public static boolean isActive(String userID) {
-		String[] entries = entries();
-		for (String row : entries) {
-			String[] entry = row.split("\t");
-			String existingUserID_lc = entry[0].toLowerCase();
-			String userID_lc = userID.toLowerCase();
-			if (existingUserID_lc.equals(userID_lc)) {
-				if (entry.length == 4) {
-					String status = entry[3].toUpperCase();
-					if (UserStatus.valueOf(status) == UserStatus.ACTIVE) {
-						return true;
-					}
-				}
-			}
+	public static boolean active(String userID) {
+		if (entryBy(userID, 0) != null) {
+			return true;
 		}
+		
+		return false;
+	}
+	
+	/**
+	 * Write user to register of deactivated users
+	 * @param userID
+	 * @return true if successful
+	 */
+	public static boolean deactivate(String userID) {
+		
+		// Can't deactivate the user if it's already deactivated
+		if (!deactivated(userID)) {
+			
+			// Make new Entry
+			String row = "";
+			if (deactivated().length > 0) row += "\n";
+			row += userID;
+	
+			// Write user to register of deactivated users
+			byte data[] = row.getBytes();
+			Path p = Paths.get(DEACTIVATED_PATH);
+			try (OutputStream out = new BufferedOutputStream(
+					Files.newOutputStream(p, StandardOpenOption.CREATE, StandardOpenOption.APPEND))) {
+				out.write(data, 0, data.length);
+			} catch (IOException x) {
+				System.out.println("Error: Could not write to inactive file");
+				System.err.println(x);
+			}
+	
+			return true;
+		}
+			
 		return false;
 	}
 	
@@ -154,8 +197,8 @@ public class Register {
 			valid = isUniqueUser(userID);
 		}
 		
-		// Add new user, initially set as active
-		addEntry(userID, email, type, UserStatus.ACTIVE);
+		// Add new user
+		addEntry(userID, email);
 		return userID;
 	}
 	
@@ -165,15 +208,8 @@ public class Register {
 	 * @return true if unique (no duplicates found)
 	 */
 	private static boolean isUniqueUser(String userID) {
-		
-		String[] entries = entries();
-		for (String row : entries) {
-			String[] entry = row.split("\t");
-			String existingUserID_lc = entry[0].toLowerCase();
-			String userID_lc = userID.toLowerCase();
-			if (existingUserID_lc.equals(userID_lc)) {
-				return false;
-			}
+		if(entryBy(userID, 0) != null) {
+			return false;
 		}
 		return true;
 	}
@@ -185,16 +221,8 @@ public class Register {
 	 */
 	private static boolean isUniqueEmail(String email) {
 		
-		String[] entries = entries();
-		for (String row : entries) {
-			String[] entry = row.split("\t");
-			if (entry.length > 1) {
-				String existingEmail_lc = entry[1].toLowerCase();
-				String email_lc = email.toLowerCase();
-				if (existingEmail_lc.equals(email_lc)) {
-					return false;
-				}
-			}
+		if(entryBy(email, 1) != null) {
+			return false;
 		}
 		return true;
 	}
@@ -234,12 +262,12 @@ public class Register {
 	 * Add a new user-email pair to the register, checking for duplicates
 	 * @return true if successful; false if failure
 	 */
-	private static boolean addEntry(String userID, String email, UserType type, UserStatus status) {
+	private static boolean addEntry(String userID, String email) {
 		
 		// Make new Entry
 		String row = "";
 		if (entries().length > 0) row += "\n";
-		row += userID + "\t" + email + "\t" + type.lc() + "\t" + status.lc();
+		row += userID + "\t" + email;
 
 		// Write user-email pair to registration
 		byte data[] = row.getBytes();
@@ -273,5 +301,78 @@ public class Register {
 		} else {
 			return new String[0];
 		}
+	}
+	
+	/**
+	 * Get first Register Entry  associate with a particular column and value
+	 * @param value
+	 * @param index
+	 * @return entry if found, null if not found
+	 */
+	private static String[] entryBy(String value, int index) {
+		String[] entries = entries();
+		for (String row : entries) {
+			String[] entry = row.split("\t");
+			if (entry.length == REGISTER_COLUMNS && index < REGISTER_COLUMNS) {
+				if (ignoreCaseEquals(entry[index], value)) {
+					// don't match emails with deactivated accounts
+					if (index == 1) {
+						if (!deactivated(entry[0])) {
+							return entry;
+						}
+					} else {
+						return entry;
+					}
+				}
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * Check if a given User ID has been deactivated (ignores case)
+	 * @param userID
+	 * @return true if inactive
+	 */
+	public static boolean deactivated(String userID) {
+		String[] deactivated = deactivated();
+		for (String deactivatedUserID : deactivated) {
+			if (ignoreCaseEquals(deactivatedUserID, userID)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * Return a list of registered entities
+	 * @return empty list if there was an error creating/reading registration file
+	 */
+	private static String[] deactivated() {
+		
+		// Check that register exists
+		if (DEACTIVATED_FILE.exists() && DEACTIVATED_FILE.isFile()) {
+			try {
+				return Files.readString(Path.of(DEACTIVATED_PATH)).split("\n");
+			} catch (IOException e) {
+				System.out.println("The inactive user file is currupted");
+				e.printStackTrace();
+				return new String[0];
+			}
+		} else {
+			return new String[0];
+		}
+	}
+	
+	/**
+	 * Check if two strings are equal, ignoring case
+	 * @param str1
+	 * @param str2
+	 * @return true if equal, ignoring case
+	 */
+	private static boolean ignoreCaseEquals(String str1, String str2) {
+		String str1_lc = str1.toLowerCase();
+		String str2_lc = str2.toLowerCase();
+		return str1_lc.equals(str2_lc);
 	}
 }

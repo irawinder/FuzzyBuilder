@@ -15,9 +15,9 @@ public class TestRegister {
 		Register.makeUser("ztest2@email.com", UserType.STUDY);
 		Register.makeUser("ztest3@email.com", UserType.STUDY);
 		
-		Register.isActive("squidejqmnk");
-		Register.isActive("squidEJQMnK");
-		Register.isActive("squidejqmnr");
+		Register.active("squidejqmnk");
+		Register.active("squidEJQMnK");
+		Register.active("squidejqmnr");
 		Register.emailExists("jiw@email.com");
 	}
 }

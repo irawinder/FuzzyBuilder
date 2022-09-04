@@ -2,10 +2,11 @@ package edu.mit.ira.fuzzy.pages;
 
 import edu.mit.ira.fuzzy.io.user.Register;
 import edu.mit.ira.fuzzy.io.user.UserPrefixStudy;
+import edu.mit.ira.fuzzy.io.user.UserType;
 
 public class Pages {
 
-	private static int NUM_STUDY_PAGES = 5;
+	public static int NUM_STUDY_PAGES = 5;
 	
 	/*
 	public static String generalSite() {
@@ -33,9 +34,14 @@ public class Pages {
 		return assemblePage(head, body);
 	}
 
-	public static String studySite(String user, String page) {
+	public static String studySite(String user, String page, boolean deactivated) {
 		String head = makeHead();
-		String body = makeStudyBody(user, page);
+		String body;
+		if (deactivated) {
+			body = makeStudyBody(user, "" + NUM_STUDY_PAGES, deactivated);
+		} else {
+			body = makeStudyBody(user, page, deactivated);
+		}
 		return assemblePage(head, body);
 	}
 
@@ -284,11 +290,11 @@ public class Pages {
 		
 		body += wrapText("h2", "User Registration");
 		
-		body += "<label for=\"email1\">Please enter your email address:</label><br>";
+		body += "<label for=\"email1\">Email:</label><br>";
 		
 		body += "<input type=\"text\" id=\"email1\" style=\"width: 300px;\"><p style=\"color: red;\" id=\"email1_feedback\"></p><br><br>";
 		
-		body += "<label for=\"email2\">Please enter your email address again:</label><br>";
+		body += "<label for=\"email2\">Confirm Email:</label><br>";
 		
 		body += "<input onSubmit=\"register()\" type=\"text\" id=\"email2\" style=\"width: 300px;\"><p style=\"color: red;\" id=\"email2_feedback\"></p><br><br>";
 		
@@ -330,7 +336,7 @@ public class Pages {
 		return body;
 	}
 	
-	private static String makeStudyBody(String user, String page) {
+	private static String makeStudyBody(String user, String page, boolean deactivated) {
 
 		UserPrefixStudy ups;
 		if (user.length() > Register.CODE_LENGTH) {
@@ -587,22 +593,44 @@ public class Pages {
 			body += wrapText("p", "(The survey will open in a new tab. Come back here and click \"CONTINUE\" when you are done.)");
 
 		} else if (page.equals("5")) {
-
+			
+			String adminUserID = "";
+			String email = Register.email(user);
+			if (deactivated) {
+				adminUserID = Register.user(email);
+			} else {
+				Register.deactivate(user);
+				if (email != null) {
+					adminUserID = Register.makeUser(email, UserType.ADMIN);
+				} else {
+					adminUserID = "There was an error generating this ID";
+				}
+			}
+			
 			body += wrapText("h2", "Congratulations!");
 
 			body += wrapText("p", "We hope you had a good time, and we are incredibly grateful for your help with this research.");
 			
-			/*
-			body += wrapText("p", "If you would like to keep playing with FuzzyIO, please do!"
-					+ "<br>For this purpose, we've generated a new User ID that you can use indefinitely."
-					+ "<br>(The User ID you used during the experiment will no longer be available)");
+			body += wrapText("p", "You will not be able to return to this page, so please print it for your personal record.");
 			
-			String adminUserID = Register.makeUser(email, "admin");
-			body += wrapText("p", "User ID: " + adminUserID);
+			body += wrapText("h2", "After the Experiment");
 			
-			*/
+			body += wrapText("p", "If you would like to keep playing with FuzzyIO, please do!");
 			
-			body += wrapText("p", "If you have any questions or concerns about your participation, please contact Ira.");
+			body += wrapText("p", "For this purpose, we've generated a <i>New</i> User ID that you can use indefinitely."
+					+ "<br><i>(The Old User ID you used during the experiment is <u>no longer be usable</u>)</i>");
+			
+			body += wrapText("p", "<b>Email</b>:<br>" + email);
+			
+			body += wrapText("p", "<b>Old User ID </b>:<br>" + user);
+			
+			body += wrapText("p", "<b>New User ID</b>:<br>" + adminUserID);
+			
+			body += wrapText("p", "<b>Fuzzy IO</b>:<br><a href=\"http://opensui.org\" target=\"_blank\">http://opensui.org</a>");
+			
+			body += wrapText("p", "If you have any questions or concerns about your participation, or have trouble using your new User ID, please contact Ira.");
+			
+			body += "<hr>";
 			
 			body += wrapText("p", "You may now close all browser windows related to this experiment.");
 
@@ -619,7 +647,7 @@ public class Pages {
 		int nextPage = pageInt + 1;
 		int prevPage = pageInt - 1;
 		String navigation = "";
-		if (pageInt > 1 && pageInt <= NUM_STUDY_PAGES) navigation += "< <a href=\"/?user=" + user + "&page=" + prevPage + "\">Go Back</a>";
+		if (pageInt > 1 && pageInt < NUM_STUDY_PAGES) navigation += "< <a href=\"/?user=" + user + "&page=" + prevPage + "\">Go Back</a>";
 		if (pageInt > 1 && pageInt < NUM_STUDY_PAGES)navigation += "\t|\t";
 		if (pageInt >= 1 && pageInt < NUM_STUDY_PAGES) navigation += "<a href=\"/?user=" + user + "&page=" + nextPage + "\">CONTINUE</a> >";
 		body += wrapText("p", navigation);
