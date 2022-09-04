@@ -111,7 +111,8 @@ public class Register {
 	public static boolean hasPrefix(String userID, UserPrefixStudy p) {
 		String prefix = p.lc();
 		if (userID.length() > prefix.length()) {
-			return userID.substring(prefix.length()).equals(prefix);
+			String prefixUser = userID.substring(0, prefix.length());
+			return ignoreCaseEquals(prefix, prefixUser);
 		} else {
 			return false;
 		}
@@ -126,7 +127,8 @@ public class Register {
 	public static boolean hasPrefix(String userID, UserPrefixAdmin p) {
 		String prefix = p.lc();
 		if (userID.length() > prefix.length()) {
-			return userID.substring(prefix.length()).equals(prefix);
+			String prefixUser = userID.substring(0, prefix.length());
+			return ignoreCaseEquals(prefix, prefixUser);
 		} else {
 			return false;
 		}

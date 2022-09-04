@@ -123,17 +123,19 @@ public class Server {
 			// Log Request
 			ServerUtil.log(t, "Request: " + requestMethod + " " +  requestURI + ", Request Length: " + requestLength);
 			
-			boolean permit = Register.active(user) || user.equals(ServerUtil.DEFAULT_USER) || requestResource.equals("REGISTER");
 			boolean deactivated = Register.deactivated(user);
+			boolean permit = Register.active(user) || user.equals(ServerUtil.DEFAULT_USER) || requestResource.equals("REGISTER");
 			
+			// Run if a deactivated user is trying to view the site
 			if (deactivated) {
-				String responseBody = Pages.studySite(user, page, deactivated);
+				String responseBody = Pages.studySite(user, "finish", deactivated);
 				String contentType = "text/html";
 				String message = "HTML Delivered";
 				ServerUtil.packItShipIt(t, 200, message, responseBody.getBytes(), contentType);
-				UserLog.add(user, clientIP, "HOME", "Visited FuzzyIO Home Page " + Pages.NUM_STUDY_PAGES);
+				UserLog.add(user, clientIP, "HOME", "Visited FuzzyIO Study Page : FINISH");
 				System.out.println(user + " is deactivated");
 			} 
+			// User is not permitted to access any of the requested resources
 			else if (!permit) 
 			{
 				ServerUtil.packItShipIt(t, 403, "Forbidden");
@@ -141,11 +143,13 @@ public class Server {
 			// HTTP GET Request
 			else if (requestMethod.equals("GET")) 
 			{
+				// Homepage for serving public introduction and and study pages
 				if (requestResource.equals("")) 
 				{	
-					String responseBody;
-					if (Register.active(user))
-					{
+					String responseBody = "boochy";
+					if (Register.hasPrefix(user, UserPrefixAdmin.SQUID)) {
+						responseBody = Pages.generalSite();
+					} else if (Register.active(user)) {
 						responseBody = Pages.studySite(user, page, false);
 						UserLog.add(user, clientIP, "HOME", "Visited FuzzyIO Home Page " + page);
 					} else {

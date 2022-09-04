@@ -5,16 +5,12 @@ import edu.mit.ira.fuzzy.io.user.UserPrefixStudy;
 import edu.mit.ira.fuzzy.io.user.UserType;
 
 public class Pages {
-
-	public static int NUM_STUDY_PAGES = 5;
 	
-	/*
 	public static String generalSite() {
 		String head = makeHead();
 		String body = makeGeneralBody();
 		return assemblePage(head, body);
 	}
-	*/
 	
 	public static String studyIntroSite() {
 		String head = makeHead();
@@ -38,7 +34,7 @@ public class Pages {
 		String head = makeHead();
 		String body;
 		if (deactivated) {
-			body = makeStudyBody(user, "" + NUM_STUDY_PAGES, deactivated);
+			body = makeStudyBody(user, page, deactivated);
 		} else {
 			body = makeStudyBody(user, page, deactivated);
 		}
@@ -108,7 +104,6 @@ public class Pages {
 		return head;
 	}
 	
-	/*
 	private static String makeGeneralBody() {
 
 		String body = "<body>";
@@ -144,12 +139,11 @@ public class Pages {
 
 		return body;
 	}
-	*/
 	
 	private static String studyBodyHeader() {
 		String bodyText = "";
 		bodyText += wrapText("h1", "Beaverton");
-		bodyText += wrapText("p", "A Research Study by Ira Winder<br>MIT and Univeristy of Tokyo<br>ira [at] mit [dot] edu");
+		bodyText += wrapText("p", "A Research Study<br>MIT and Univeristy of Tokyo<br><br>Contact: Ira Winder<br><i>ira [at] mit [dot] edu</i>");
 		bodyText += "<hr>";
 		return bodyText;
 	}
@@ -162,10 +156,10 @@ public class Pages {
 		
 		body += studyBodyHeader();
 		
-		body += wrapText("h2", "Introduction");
-		
 		String imgUrl = "https://github.com/irawinder/FuzzyBuilder/blob/master/screenshots/v1.0-invert_sm.png?raw=true";
 		body += "<img style=\"width: 600px; max-width: 90%;\" src=\"" + imgUrl + "\" alt=\"Screenshot of Digital Model, FuzzyIO\">";
+		
+		body += wrapText("h2", "Introduction");
 		
 		body += wrapText("p", "Welcome to Beaverton, a research study!");
 
@@ -216,6 +210,8 @@ public class Pages {
 		body += "</ul>";
 
 		body += wrapText("h2", "Get Started!");
+		
+		body += wrapText("p", "Click \"Continue to Registration\" to proceed.");
 		
 		body += "<button onclick=\"register()\">Continue to Registration</button>";
 		
@@ -317,24 +313,31 @@ public class Pages {
 		
 		body += wrapText("h2", "Registration Complete!");
 		
-		body += wrapText("p", "Email: " + email);
+		body += "<p style=\"color: red;\">Please save or print a copy of this page for your records.</p>";
 		
-		body += wrapText("p", "(You will not be able to register with this email address again!)");
+		body += wrapText("p", "<b>Email</b>:<br>" + email);
+		
+		body += wrapText("p", "<i>(You will not be able to register with this email address again)</i>");
 		
 		body += wrapText("h2", "Personal Access Link");
 		
-		body += wrapText("p", "We have generated a unique personal access link, just for you.");
+		body += wrapText("p", "We have generated a unique personal access link, made just for you.");
 		
-		body += wrapText("p", "Please save this link in a safe place, you will not be able to navigate back to this page again.");
+		body += wrapText("p", "The begin the exercise, click the link to continue.");
 		
-		body += wrapText("p", "To begin right away, click below.");
+		body += wrapText("p", "Remember, we would like you to complete the exercise in one sitting, so please make sure that you are ready.");
 		
-		body += wrapText("p", "<a href=\"/?user=" + userID + "\">http://fuzzy.glassmatrix.org/?user=" + userID + "</a>");
+		body += wrapText("p", "<b>Personal Access Link</b>:<br>"
+				+ "<a href=\"/?user=" + userID + "\">http://fuzzy.glassmatrix.org/?user=" + userID + "</a>");
+		
+		
 		
 		body += "</body>";
 		
 		return body;
 	}
+	
+	private static int NUM_STUDY_PAGES = 5;
 	
 	private static String makeStudyBody(String user, String page, boolean deactivated) {
 
@@ -350,31 +353,35 @@ public class Pages {
 
 		body += studyBodyHeader();
 		
-		if (!page.equals("" + NUM_STUDY_PAGES)) {
-			body += wrapText("p", "User ID: <b>" + user + "</b>");
-			body += wrapText("p", "page: " + page + " of " + NUM_STUDY_PAGES);
+		if (!page.equals("finish")) {
+			body += wrapText("p", "Your User ID: <b>" + user + "</b>");
+			body += wrapText("p", "Page: " + page + " of " + NUM_STUDY_PAGES);
 			body += "<hr>";
 		}
-
+		
 		if (page.equals("1")) {
 
-			body += wrapText("h2", "User ID");
+			body += wrapText("p", "Welcome!");
 			
-			body += wrapText("p", "First, we need to get some housekeeping out of the way.");
+			body += wrapText("p", "Now that you've begun, please continue to the end until you are finished.");
+			
+			body += wrapText("h2", "User ID");
 
-			body += wrapText("p", "You have been assigned an exclusive User ID.<br><i>(You can see it at the top of this web page -- it should be an animal followed by " + Register.CODE_LENGTH + " characters)</i>.");
+			body += wrapText("p", "You have been assigned an exclusive User ID.");
 
-			body += wrapText("p", "Please use this ID throughout the exercise, and don't share it with anyone.<br>The User ID will remain at the top of every page for reference.");
+			body += wrapText("p", "The User ID will remain at the top of every page for reference.");
 
-			body += wrapText("h2", "Pre-Survey");
+			body += wrapText("h2", "Entry Survey");
 
-			body += wrapText("p", "Now, please complete this pre-survey.");
+			body += wrapText("p", "Now, please complete a short entry survey using <i>Google Forms</i>.");
+			
+			body += wrapText("p", "When you click \"Take Entry Survey\", the survey will open in a new tab.");
 
 			String presurveyUrl = "https://forms.gle/cK3dQozbQyt1S2zn7";
 
-			body += wrapText("p", "--> <a href=\"" + presurveyUrl + "\" target=\"_blank\">Pre-Survey</a>");
+			body += "<input type=\"button\" value=\"Take Entry Survey\" onclick=\"window.open('" + presurveyUrl + "', '_blank');\">";
 
-			body += wrapText("p", "(The survey will open in a new tab. Come back here and click \"CONTINUE\" when you are done.)");
+			body += wrapText("p", "Once you've submitted the survey, come back here and click \"CONTINUE\".");
 
 		} else if (page.equals("2")) {
 
@@ -472,7 +479,9 @@ public class Pages {
 			body += wrapText("li", "A <b>Parcel</b> is the set of flat, grid-based Voxels that fit within the boundaries of a defined polygon. Parcels cannot overlap each other.");
 
 			body += "</ul>";
-
+			
+			body += "<hr>";
+			
 			body += wrapText("h2", "Get Started!");
 
 			body += wrapText("p", "You may now do any or all of the following with FuzzyIO:");
@@ -523,7 +532,7 @@ public class Pages {
 			
 			String fuzzyUrl = "http://opensui.org";
 
-			body += wrapText("p", "--> <a href=\"" + fuzzyUrl + "\" target=\"_blank\">FuzzyIO</a>");
+			body += wrapText("p", "<b>Fuzzy IO</b>:<br><a href=\"http://opensui.org\" target=\"_blank\">" + fuzzyUrl + "</a>");
 
 			body += wrapText("p", "(FuzzyIO will open in a new tab, but feel free to view this page while you work)");
 			
@@ -562,13 +571,13 @@ public class Pages {
 
 		} else if (page.equals("4")) {
 
-			body += wrapText("h2", "Post-Survey");
+			body += wrapText("h2", "Exit Survey");
 			
 			body += wrapText("p", "Thank you for helping the community of Beaverton!");
 
 			body += wrapText("p", "Now that you've finished the exercise, we need you to complete one more short survey. We promise this is the last thing!");
 
-			String postsurveyUrl;
+			String postsurveyUrl = "";
 
 			if (ups == UserPrefixStudy.ZEBRA) {
 
@@ -582,17 +591,27 @@ public class Pages {
 
 				postsurveyUrl = "https://forms.gle/EY1ntPzmbRZrtC159";
 
-			} else {
-
-				postsurveyUrl = "https://ira.mit.edu";
-
 			}
+			
+			body += wrapText("p", "When you click \"Take Exit Survey\", the survey will open in a new tab.");
+			
+			body += "<input type=\"button\" value=\"Take Exit Survey\" onclick=\"window.open('" + postsurveyUrl + "', '_blank');\">";
 
-			body += wrapText("p", "--> <a href=\"" + postsurveyUrl + "\" target=\"_blank\">Post-Survey</a>");
-
-			body += wrapText("p", "(The survey will open in a new tab. Come back here and click \"CONTINUE\" when you are done.)");
+			body += wrapText("p", "Once you've submitted the survey, come back here and click \"CONTINUE\".");
 
 		} else if (page.equals("5")) {
+			
+			body += wrapText("h2", "Finishing Up");
+
+			body += wrapText("p", "Have you completed everything in the exerise? If so, click \"I'm Finished\".");
+			
+			body += "<p style=\"color: red;\">WARNING: You will not be able to return to the experiment.</p>";
+			
+			String finishedUrl = "/?user=" + user + "&page=finish";
+			
+			body += "<input type=\"button\" value=\"I'm Finished!\" onclick=\"location.replace('" + finishedUrl + "');\">";
+			
+		} else if (page.equals("finish")) {
 			
 			String adminUserID = "";
 			String email = Register.email(user);
@@ -607,50 +626,57 @@ public class Pages {
 				}
 			}
 			
+			body += "<p style=\"color: red;\">Please save or print a copy of this page for your records.</p>";
+			
 			body += wrapText("h2", "Congratulations!");
 
 			body += wrapText("p", "We hope you had a good time, and we are incredibly grateful for your help with this research.");
-			
-			body += wrapText("p", "You will not be able to return to this page, so please print it for your personal record.");
 			
 			body += wrapText("h2", "After the Experiment");
 			
 			body += wrapText("p", "If you would like to keep playing with FuzzyIO, please do!");
 			
-			body += wrapText("p", "For this purpose, we've generated a <i>New</i> User ID that you can use indefinitely."
-					+ "<br><i>(The Old User ID you used during the experiment is <u>no longer be usable</u>)</i>");
+			body += wrapText("p", "For this purpose, we've generated a <i>New</i> User ID that you can use indefinitely.");
 			
-			body += wrapText("p", "<b>Email</b>:<br>" + email);
+			body += wrapText("p", "Please note that the <i>Old</i> User ID is no longer usable.</i>");
 			
-			body += wrapText("p", "<b>Old User ID </b>:<br>" + user);
+			body += wrapText("p", "<b>Fuzzy IO</b>:<br><a href=\"http://opensui.org\" target=\"_blank\">http://opensui.org</a>");
 			
 			body += wrapText("p", "<b>New User ID</b>:<br>" + adminUserID);
 			
-			body += wrapText("p", "<b>Fuzzy IO</b>:<br><a href=\"http://opensui.org\" target=\"_blank\">http://opensui.org</a>");
+			body += wrapText("p", "<b>Old User ID </b>:<br>" + user);
+			
+			body += wrapText("p", "<b>Email</b>:<br>" + email);
 			
 			body += wrapText("p", "If you have any questions or concerns about your participation, or have trouble using your new User ID, please contact Ira.");
 			
 			body += "<hr>";
 			
 			body += wrapText("p", "You may now close all browser windows related to this experiment.");
-
+			
 		} else {
 
 			return makeNullBody();
 
 		}
-
+		
 		body += "<hr>";
-
+		
 		// Add Next Page Button
-		int pageInt = Integer.valueOf(page);
-		int nextPage = pageInt + 1;
-		int prevPage = pageInt - 1;
-		String navigation = "";
-		if (pageInt > 1 && pageInt < NUM_STUDY_PAGES) navigation += "< <a href=\"/?user=" + user + "&page=" + prevPage + "\">Go Back</a>";
-		if (pageInt > 1 && pageInt < NUM_STUDY_PAGES)navigation += "\t|\t";
-		if (pageInt >= 1 && pageInt < NUM_STUDY_PAGES) navigation += "<a href=\"/?user=" + user + "&page=" + nextPage + "\">CONTINUE</a> >";
-		body += wrapText("p", navigation);
+		if (!page.equals("finish")) {
+			int pageInt = Integer.valueOf(page);
+			int nextPage = pageInt + 1;
+			int prevPage = pageInt - 1;
+			String navigation = "";
+				
+			if (pageInt > 1 && pageInt <= NUM_STUDY_PAGES) 
+				navigation += "< <a href=\"/?user=" + user + "&page=" + prevPage + "\">Go Back</a>";
+			if (pageInt > 1 && pageInt < NUM_STUDY_PAGES) 
+				navigation += "\t|\t";
+			if (pageInt >= 1 && pageInt < NUM_STUDY_PAGES) 
+				navigation += "<a href=\"/?user=" + user + "&page=" + nextPage + "\">CONTINUE</a> >";
+			body += wrapText("p", navigation);
+		}
 
 		body += "</body>";
 
