@@ -1,6 +1,7 @@
 package edu.mit.ira.fuzzy.pages;
 
 import edu.mit.ira.fuzzy.io.user.Register;
+import edu.mit.ira.fuzzy.io.user.UserPrefixStudy;
 
 public class Pages {
 
@@ -311,11 +312,12 @@ public class Pages {
 	
 	private static String makeStudyBody(String user, String page) {
 
-		String userPrefix;
+		UserPrefixStudy ups;
 		if (user.length() > Register.CODE_LENGTH) {
-			userPrefix = user.substring(0, user.length() - Register.CODE_LENGTH);
+			String prefix = user.substring(0, user.length() - Register.CODE_LENGTH).toUpperCase();
+			ups = UserPrefixStudy.valueOf(prefix);
 		} else {
-			userPrefix = "";
+			ups = null;
 		}
 		
 		String body = "<body>";
@@ -358,17 +360,17 @@ public class Pages {
 
 			String tutorialUrl;
 			
-			if (userPrefix.equals(Register.USER_PREFIXES[0])) {
+			if (ups == UserPrefixStudy.ZEBRA) {
 				
 				// Needs to be updated
 				tutorialUrl = "https://youtu.be/cNoS-bhRPEw";
 				
-			} else if (userPrefix.equals(Register.USER_PREFIXES[0])) {
+			} else if (ups == UserPrefixStudy.COBRA) {
 				
 				// Needs to be updated
 				tutorialUrl = "https://youtu.be/cNoS-bhRPEw";
 				
-			} else if (userPrefix.equals(Register.USER_PREFIXES[0])) {
+			} else if (ups == UserPrefixStudy.PANDA) {
 				
 				// Needs to be updated
 				tutorialUrl = "https://youtu.be/cNoS-bhRPEw";
@@ -451,7 +453,7 @@ public class Pages {
 
 			body += "<ol>";
 			
-			if (!userPrefix.equals(Register.USER_PREFIXES[1])) {
+			if (ups != UserPrefixStudy.COBRA) {
 			
 				body += wrapText("li", "Use FuzzyIO to load and analyze 3 pre-designed scenarios for the area marked \"SITE\"");
 	
@@ -467,19 +469,15 @@ public class Pages {
 			
 			}
 			
-			if (userPrefix.equals(Register.USER_PREFIXES[2]) || userPrefix.equals(Register.USER_PREFIXES[3])) {
+			if (ups == UserPrefixStudy.PANDA) {
 
 				body += wrapText("li", "Use FuzzyIO to edit predesigned scenarios (A, B, or C) and save them as a new scenarios with a differnt name of your choosing.");
 			
 			}
 			
-			if (!userPrefix.equals(Register.USER_PREFIXES[0])) {
+			if (ups != UserPrefixStudy.ZEBRA) {
 
 				body += wrapText("li", "Use FuzzyIO to design scenarios from scratch, saving them with names of your choosing.");
-			
-			}
-			
-			if (!userPrefix.equals(Register.USER_PREFIXES[0])) {
 
 				body += wrapText("li", "Use the \"Save Scenario\" toolbox to name and save variations.");
 				
@@ -507,21 +505,21 @@ public class Pages {
 			
 			body += wrapText("p", "When you have identified your favorite scenario, you need to submit it.");
 			
-			if (userPrefix.equals(Register.USER_PREFIXES[0])) {
+			if (ups == UserPrefixStudy.ZEBRA) {
 			
 				body += wrapText("p", "You may choose <b>one</b> of the pre-designed scenarios (Option 1, Option 2, or Option 3).");
 			
-			} else if (userPrefix.equals(Register.USER_PREFIXES[1])) {
+			} else if (ups == UserPrefixStudy.COBRA) {
 				
 				body += wrapText("p", "You may choose the scenario currently on your screen, or any <b>one</b> of the saved scenarios you have created.");
 				
-			} else {
+			} else if (ups == UserPrefixStudy.PANDA) {
 				
 				body += wrapText("p", "You may choose <b>one</b> of the pre-designed scenarios (Option 1, Option 2, or Option 3), or a scenario of your own editing or making.");
 				
 			}
 			
-			if (!userPrefix.equals(Register.USER_PREFIXES[0])) {
+			if (ups != UserPrefixStudy.ZEBRA) {
 				
 				body += wrapText("p", "To submit your final decision, make sure the scenario of your choosing is loaded and visible."
 						+ " Then, save the scenario with the name <b>final</b>");
@@ -546,15 +544,15 @@ public class Pages {
 
 			String postsurveyUrl;
 
-			if (userPrefix.equals(Register.USER_PREFIXES[0])) {
+			if (ups == UserPrefixStudy.ZEBRA) {
 
 				postsurveyUrl = "https://forms.gle/JkDfk8sqxWxtg8kw6";
 
-			} else if (userPrefix.equals(Register.USER_PREFIXES[1])) {
+			} else if (ups == UserPrefixStudy.COBRA) {
 
 				postsurveyUrl = "https://forms.gle/rkLnBX2TgAiPHi8b7";
 
-			} else if (userPrefix.equals(Register.USER_PREFIXES[2])) {
+			} else if (ups == UserPrefixStudy.PANDA) {
 
 				postsurveyUrl = "https://forms.gle/EY1ntPzmbRZrtC159";
 

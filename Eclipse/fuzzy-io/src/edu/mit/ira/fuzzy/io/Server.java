@@ -25,6 +25,9 @@ import com.sun.net.httpserver.HttpServer;
 
 import edu.mit.ira.fuzzy.io.log.UserLog;
 import edu.mit.ira.fuzzy.io.user.Register;
+import edu.mit.ira.fuzzy.io.user.UserPrefixAdmin;
+import edu.mit.ira.fuzzy.io.user.UserPrefixStudy;
+import edu.mit.ira.fuzzy.io.user.UserType;
 import edu.mit.ira.fuzzy.model.Development;
 import edu.mit.ira.fuzzy.pages.Pages;
 import edu.mit.ira.opensui.io.Deserializer;
@@ -147,7 +150,10 @@ public class Server {
 					if (email.equals(ServerUtil.DEFAULT_EMAIL)) {
 						responseBody = Pages.registrationSite("");
 					} else {
-						String userID = Register.makeUser(email, "study");
+						
+						// Register new "study" user in system
+						String userID = Register.makeUser(email, UserType.STUDY);
+						
 						if (userID != null) {
 							responseBody = Pages.registrationCompleteSite(userID, email);
 						} else {
@@ -166,7 +172,7 @@ public class Server {
 				else if (requestResource.equals("INIT")) 
 				{
 					// Add global files to new user's scenarios
-					if (!Register.hasPrefix(user, 1)) addGlobalScenarios(user);
+					if (!Register.hasPrefix(user, UserPrefixStudy.COBRA)) addGlobalScenarios(user);
 				
 					// Send the setting configuration to the GUI
 					String responseBody = schemaData(user);
@@ -362,19 +368,19 @@ public class Server {
 	}
 	
 	private String schemaData(String user, String userFeedback) {
-		if (Register.hasPrefix(user, 0)) // zebra
+		if (Register.hasPrefix(user, UserPrefixStudy.ZEBRA))
 		{
 			return schemaData(readOnlyConfig, userFeedback);
 		} 
-		else if (Register.hasPrefix(user, 1)) // cobra
+		else if (Register.hasPrefix(user, UserPrefixStudy.COBRA))
 		{
 			return schemaData(fullConfig, userFeedback);
 		} 
-		else if (Register.hasPrefix(user, 2)) // panda
+		else if (Register.hasPrefix(user, UserPrefixStudy.PANDA))
 		{
 			return schemaData(fullConfig, userFeedback);
 		} 
-		else if (Register.hasPrefix(user, 3)) // squid
+		else if (Register.hasPrefix(user, UserPrefixAdmin.SQUID))
 		{
 			return schemaData(adminConfig, userFeedback);
 		} 
