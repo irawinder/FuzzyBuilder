@@ -75,7 +75,7 @@ public class Pages {
 		head += "body {"
 				+ "margin-bottom: 60px;"
 				+ "margin-top: 40px;"
-				+ "max-width: 800px;"
+				+ "max-width: 600px;"
 				+ "background-color:#ffffff;"
 				+ "background-image:url(" + imgUrl + ");"
 				+ "background-repeat:no-repeat;"
@@ -159,18 +159,38 @@ public class Pages {
 		body += wrapText("h2", "Introduction");
 		
 		String imgUrl = "https://github.com/irawinder/FuzzyBuilder/blob/master/screenshots/v1.0-invert_sm.png?raw=true";
-		body += "<img style=\"width: 600px; height: 375px;\" src=\"" + imgUrl + "\" alt=\"Screenshot of Digital Model, FuzzyIO\">";
+		body += "<img style=\"width: 600px; max-width: 90%;\" src=\"" + imgUrl + "\" alt=\"Screenshot of Digital Model, FuzzyIO\">";
 		
-		body += wrapText("p", "Welcome to Beaverton, a research study! We deeply appreciate your participation.");
+		body += wrapText("p", "Welcome to Beaverton, a research study!");
 
 		body += wrapText("p", "The University of Tokyo and MIT are investigating how people make decisions using interactive models.");
 		
+		body += wrapText("p", "We deeply appreciate your participation.");
+		
+		body += wrapText("h2", "During the Experiment");
+		
 		body += wrapText("p", "In this exercise, we will ask you to help design a building in the hypothetical city of Beaverton.");
 		
-		body += wrapText("p", "As you work, we'll be collecting data as you interact with a digital model.");
+		body += "<ol>";
+		
+		body += wrapText("li", "First, we'll ask you to consent to the terms of the study, along with a short survey.");
+		
+		body += wrapText("li", "Then, we'll guide you through a series of steps to complete the exercise. "
+				+ "As you work, we'll be collecting data as you interact with a digital model.");
+		
+		body += wrapText("li", "At the end, you will be asked to complete a short post-survey.");
+		
+		body += "</ol>";
+		
+		body += wrapText("h2", "After the Experiment");
+		
+		body += wrapText("p", "At the end of the experiment, we want to reward you for your hard work.");
+		
+		body += wrapText("p", "As a special thank you, we will provide you with your own personal "
+				+ "credentials to access an unlocked version of the real estate modeling software used in this study.");
 		
 		body += wrapText("h2", "Requirements");
-
+		
 		body += "<ul>";
 
 		body += wrapText("li", "PC or laptop with speakers or earphones" +

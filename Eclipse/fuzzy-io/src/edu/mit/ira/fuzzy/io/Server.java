@@ -43,7 +43,7 @@ import edu.mit.ira.opensui.setting.Configuration;
 public class Server {
 	
 	public static final String NAME = "FuzzyIO";
-	public static final String VERSION = "v1.3.17";
+	public static final String VERSION = "v1.3.18";
 	public static final String AUTHOR = "Ira Winder, Daniel Fink, and Max Walker";
 	public static final String SPONSOR = "MIT Center for Real Estate";
 	public static final String CONTACT = "fuzzy-io@mit.edu";
@@ -123,7 +123,7 @@ public class Server {
 			// Log Request
 			ServerUtil.log(t, "Request: " + requestMethod + " " +  requestURI + ", Request Length: " + requestLength);
 			
-			if (!Register.userExists(user) && !user.equals(ServerUtil.DEFAULT_USER) && !requestResource.equals("REGISTER")) 
+			if (!Register.isActive(user) && !user.equals(ServerUtil.DEFAULT_USER) && !requestResource.equals("REGISTER")) 
 			{
 				ServerUtil.packItShipIt(t, 403, "Forbidden");
 			}
@@ -133,7 +133,7 @@ public class Server {
 				if (requestResource.equals("")) 
 				{	
 					String responseBody;
-					if (Register.userExists(user))
+					if (Register.isActive(user))
 					{
 						responseBody = Pages.studySite(user, page);
 						UserLog.add(user, clientIP, "HOME", "Visited FuzzyIO Home Page " + page);

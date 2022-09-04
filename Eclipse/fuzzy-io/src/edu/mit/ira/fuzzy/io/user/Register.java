@@ -19,12 +19,12 @@ import edu.mit.ira.fuzzy.io.Server;
  */
 public class Register {
 	
+	// Registry Entry row is of form:
+	// userID	email	type	status
+	
 	private static String REGISTER_PATH = Server.RELATIVE_DATA_PATH + File.separator + "users" + File.separator + "register.tsv";
 	private static File REGISTER_FILE = new File(REGISTER_PATH);
 	
-//	public static String[] USER_STATUS = {"active", "inactive"};
-//	public static String[] USER_TYPE = {"admin", "study"};
-//	public static String[] USER_PREFIX = {"zebra", "cobra", "panda", "squid"};
 	public static int CODE_LENGTH = 6;
 	
 	// Purposely excluded the following, since they can be confused with each other:
@@ -41,8 +41,22 @@ public class Register {
 	 * @param userID
 	 * @return true if registered
 	 */
-	public static boolean userExists(String userID) {
-		return !isUniqueUser(userID);
+	public static boolean isActive(String userID) {
+		String[] entries = entries();
+		for (String row : entries) {
+			String[] entry = row.split("\t");
+			String existingUserID_lc = entry[0].toLowerCase();
+			String userID_lc = userID.toLowerCase();
+			if (existingUserID_lc.equals(userID_lc)) {
+				if (entry.length == 4) {
+					String status = entry[3].toUpperCase();
+					if (UserStatus.valueOf(status) == UserStatus.ACTIVE) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
 	}
 	
 	/**
