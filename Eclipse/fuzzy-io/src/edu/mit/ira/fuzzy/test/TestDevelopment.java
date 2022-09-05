@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import edu.mit.ira.fuzzy.model.Development;
-import edu.mit.ira.fuzzy.model.Morph;
 import edu.mit.ira.fuzzy.model.Point;
 import edu.mit.ira.fuzzy.model.Polygon;
 import edu.mit.ira.fuzzy.model.Function;
 import edu.mit.ira.fuzzy.model.VoxelArray;
+import edu.mit.ira.fuzzy.model.build.Morph;
 
 /**
  * FuzzyRandom is class for generating random fuzzy geometry

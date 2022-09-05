@@ -1,4 +1,4 @@
-package edu.mit.ira.fuzzy.io;
+package edu.mit.ira.fuzzy.server;
 
 import java.awt.image.BufferedImage;
 import java.io.BufferedOutputStream;
@@ -23,16 +23,19 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
-import edu.mit.ira.fuzzy.io.log.ServerLog;
-import edu.mit.ira.fuzzy.io.log.UserLog;
-import edu.mit.ira.fuzzy.io.user.Register;
-import edu.mit.ira.fuzzy.io.user.RegisterUtil;
-import edu.mit.ira.fuzzy.io.user.UserPrefixAdmin;
-import edu.mit.ira.fuzzy.io.user.UserPrefixStudy;
-import edu.mit.ira.fuzzy.io.user.UserType;
 import edu.mit.ira.fuzzy.model.Development;
+import edu.mit.ira.fuzzy.model.build.Build;
+import edu.mit.ira.fuzzy.model.evaluate.Evaluate;
+import edu.mit.ira.fuzzy.model.schema.Schema;
 import edu.mit.ira.fuzzy.pages.Pages;
-import edu.mit.ira.opensui.io.Deserializer;
+import edu.mit.ira.fuzzy.server.log.ServerLog;
+import edu.mit.ira.fuzzy.server.log.UserLog;
+import edu.mit.ira.fuzzy.server.user.Register;
+import edu.mit.ira.fuzzy.server.user.RegisterUtil;
+import edu.mit.ira.fuzzy.server.user.UserPrefixAdmin;
+import edu.mit.ira.fuzzy.server.user.UserPrefixStudy;
+import edu.mit.ira.fuzzy.server.user.UserType;
+import edu.mit.ira.opensui.data.ParseConfiguration;
 import edu.mit.ira.opensui.objective.MultiObjective;
 import edu.mit.ira.opensui.setting.Configuration;
 
@@ -62,9 +65,6 @@ public class Server {
 	
 	// Fuzzy Objects
 	private Configuration adminConfig, fullConfig, readOnlyConfig, guestConfig;
-	private Builder builder;
-	private Evaluator evaluator;
-	private Deserializer adapter;
 	
 	/**
 	 * Construct a new FuzzyIO Server
@@ -86,9 +86,6 @@ public class Server {
 		fullConfig = Schema.get(true, false, true, true, true);
 		adminConfig = Schema.get(true, true, true, true, false);
 		
-		builder = new Builder();
-		evaluator = new Evaluator();
-		adapter = new Deserializer();
 		info = "--- " + NAME + " " + VERSION + " ---\nActive on port: " + port;
 		System.out.println(info);
 	}
@@ -478,9 +475,9 @@ public class Server {
 		}
 
 		// Generate FuzzyIO Response Data
-		Configuration config = adapter.parse(requestBody);
-		Development solution = builder.build(config);
-		MultiObjective performance = evaluator.evaluate(solution);
+		Configuration config = ParseConfiguration.fromJson(requestBody);
+		Development solution = Build.development(config);
+		MultiObjective performance = Evaluate.development(solution);
 		
 		// Save latest summary to CSV
 		saveSummary(user, performance.toCSV());

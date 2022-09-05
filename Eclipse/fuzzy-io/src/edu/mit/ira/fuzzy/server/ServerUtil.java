@@ -1,4 +1,4 @@
-package edu.mit.ira.fuzzy.io;
+package edu.mit.ira.fuzzy.server;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,7 +13,7 @@ import org.json.JSONObject;
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 
-import edu.mit.ira.fuzzy.io.log.ServerLog;
+import edu.mit.ira.fuzzy.server.log.ServerLog;
 
 public class ServerUtil {
 

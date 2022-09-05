@@ -1,4 +1,4 @@
-package edu.mit.ira.fuzzy.io.user;
+package edu.mit.ira.fuzzy.server.user;
 
 import java.io.File;
 import java.io.IOException;

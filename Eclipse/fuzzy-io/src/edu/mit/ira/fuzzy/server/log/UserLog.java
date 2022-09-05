@@ -1,8 +1,8 @@
-package edu.mit.ira.fuzzy.io.log;
+package edu.mit.ira.fuzzy.server.log;
 
 import java.io.File;
 
-import edu.mit.ira.fuzzy.io.Server;
+import edu.mit.ira.fuzzy.server.Server;
 
 /** A class for saving user phrases to text file
  * @author Ira Winder

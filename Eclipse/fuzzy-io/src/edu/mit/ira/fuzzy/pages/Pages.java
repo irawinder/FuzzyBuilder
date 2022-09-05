@@ -1,9 +1,9 @@
 package edu.mit.ira.fuzzy.pages;
 
-import edu.mit.ira.fuzzy.io.user.Register;
-import edu.mit.ira.fuzzy.io.user.RegisterUtil;
-import edu.mit.ira.fuzzy.io.user.UserPrefixStudy;
-import edu.mit.ira.fuzzy.io.user.UserType;
+import edu.mit.ira.fuzzy.server.user.Register;
+import edu.mit.ira.fuzzy.server.user.RegisterUtil;
+import edu.mit.ira.fuzzy.server.user.UserPrefixStudy;
+import edu.mit.ira.fuzzy.server.user.UserType;
 
 public class Pages {
 	

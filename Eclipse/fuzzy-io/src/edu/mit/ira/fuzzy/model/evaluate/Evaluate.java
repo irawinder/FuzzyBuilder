@@ -1,4 +1,4 @@
-package edu.mit.ira.fuzzy.io;
+package edu.mit.ira.fuzzy.model.evaluate;
 
 import java.util.HashMap;
 
@@ -16,14 +16,14 @@ import edu.mit.ira.opensui.objective.Objective;
  * @author Ira Winder
  *
  */
-public class Evaluator {
+public class Evaluate {
 
 	/**
 	 * Calculate the Multi-Objective Performance Metrics for a Development Model
 	 * @param fuzzy
 	 * @return a list of primary and secondary performance metrics
 	 */
-	public MultiObjective evaluate(Development fuzzy) {
+	public static MultiObjective development(Development fuzzy) {
 		MultiObjective performance = new MultiObjective();
 		
 		// Initialize global counters

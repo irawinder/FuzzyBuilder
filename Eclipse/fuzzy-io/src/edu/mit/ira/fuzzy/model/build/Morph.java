@@ -1,6 +1,12 @@
-package edu.mit.ira.fuzzy.model;
+package edu.mit.ira.fuzzy.model.build;
 
 import java.util.ArrayList;
+
+import edu.mit.ira.fuzzy.model.Function;
+import edu.mit.ira.fuzzy.model.Point;
+import edu.mit.ira.fuzzy.model.Polygon;
+import edu.mit.ira.fuzzy.model.Voxel;
+import edu.mit.ira.fuzzy.model.VoxelArray;
 
 /**
  * FuzzyMorph is a class dedicated to functional transformations of geometry
@@ -11,17 +17,17 @@ import java.util.ArrayList;
 public class Morph {
 
 	// geographic height of ground
-	private float GROUND_Z = 0;
+	private static float GROUND_Z = 0;
 
 	// local w (vertical) coordinate of ground
-	private int GROUND_W = 0;
+	private static int GROUND_W = 0;
 
 	/**
 	 * Inherit the Voxels from an input VoxelArray (child voxels are NOT cloned)
 	 * 
 	 * @param input A parent VoxelArray
 	 */
-	public VoxelArray cloneVoxelArray(VoxelArray input) {
+	public static VoxelArray cloneVoxelArray(VoxelArray input) {
 		VoxelArray arrayCopy = new VoxelArray();
 		for (Voxel t : input.voxelList) {
 			arrayCopy.addVoxel(t);
@@ -34,10 +40,10 @@ public class Morph {
 	 * 
 	 * @param input A parent VoxelArray
 	 */
-	public VoxelArray hardCloneVoxelArray(VoxelArray input) {
+	public static VoxelArray hardCloneVoxelArray(VoxelArray input) {
 		VoxelArray arrayCopy = new VoxelArray();
 		for (Voxel t : input.voxelList) {
-			Voxel clone = this.cloneVoxel(t);
+			Voxel clone = cloneVoxel(t);
 			arrayCopy.addVoxel(clone);
 		}
 		return arrayCopy;
@@ -48,7 +54,7 @@ public class Morph {
 	 * 
 	 * @param input A parent Voxel
 	 */
-	public Voxel cloneVoxel(Voxel input) {
+	public static Voxel cloneVoxel(Voxel input) {
 		Voxel copy = new Voxel();
 		copy.setLocation(input.location.x, input.location.y, input.location.z);
 		copy.setCoordinates(input.u, input.v, input.w);
@@ -69,7 +75,7 @@ public class Morph {
 	 * @param rotation    Rotation of Voxel Grid
 	 * @param translation Translation Vector of Entire Grid
 	 */
-	public VoxelArray make(Polygon boundary, float voxelWidth, float voxelHeight, float rotation, Point translation) {
+	public static VoxelArray make(Polygon boundary, float voxelWidth, float voxelHeight, float rotation, Point translation) {
 
 		VoxelArray result = new VoxelArray();
 
@@ -136,11 +142,11 @@ public class Morph {
 	 * @param type     the use of the zone
 	 * @return a new Voxel Array with the new zone added to the base massing
 	 */
-	public VoxelArray makeAndDrop(VoxelArray template, VoxelArray base, int levels, Function type, float cantileverAllowance) {
-		VoxelArray zone = this.extrude(template, levels - 1);
-		zone = this.drop(zone, base, cantileverAllowance);
+	public static VoxelArray makeAndDrop(VoxelArray template, VoxelArray base, int levels, Function type, float cantileverAllowance) {
+		VoxelArray zone = extrude(template, levels - 1);
+		zone = drop(zone, base, cantileverAllowance);
 		zone.setVoxelUse(type);
-		return this.add(base, zone);
+		return add(base, zone);
 	}
 	
 	/**
@@ -155,11 +161,11 @@ public class Morph {
 	 * @param type     the use of the zone
 	 * @return a new Voxel Array with the new zone added to the base massing
 	 */
-	public VoxelArray makeAndLift(VoxelArray template, VoxelArray base, int levels, Function type) {
-		VoxelArray zone = this.extrude(template, levels - 1);
-		zone = this.lift(zone, base);
+	public static VoxelArray makeAndLift(VoxelArray template, VoxelArray base, int levels, Function type) {
+		VoxelArray zone = extrude(template, levels - 1);
+		zone = lift(zone, base);
 		zone.setVoxelUse(type);
-		return this.add(base, zone);
+		return add(base, zone);
 	}
 
 	/**
@@ -169,7 +175,7 @@ public class Morph {
 	 * @param boundary Polygon that defines boundary of area to clip
 	 * @result subset of ipput VoxelArray bounded by polygon
 	 */
-	public VoxelArray clip(VoxelArray input, Polygon boundary) {
+	public static VoxelArray clip(VoxelArray input, Polygon boundary) {
 		VoxelArray result = new VoxelArray();
 		for (Voxel t : input.voxelList) {
 			if (boundary.containsPoint(t.location)) {
@@ -186,7 +192,7 @@ public class Morph {
 	 * @param boundary Polygon that defines boundary of area to cut
 	 * @result subset of input VoxelArray not bounded by boundary Polygon
 	 */
-	public VoxelArray cut(VoxelArray input, Polygon boundary) {
+	public static VoxelArray cut(VoxelArray input, Polygon boundary) {
 		VoxelArray result = new VoxelArray();
 		for (Voxel t : input.voxelList) {
 			if (!boundary.containsPoint(t.location)) {
@@ -207,10 +213,10 @@ public class Morph {
 	 * @result the input is vertically shifted so that it rests on either the target
 	 *         or the ground
 	 */
-	public VoxelArray drop(VoxelArray input, VoxelArray target, float cantileverAllowance) {
+	public static VoxelArray drop(VoxelArray input, VoxelArray target, float cantileverAllowance) {
 
 		// Determine vertical coordinate at which the input array will land
-		VoxelArray inputBase = this.bottomLayer(input);
+		VoxelArray inputBase = bottomLayer(input);
 		int inputMinW = inputBase.minW();
 		float inputMinZ = inputBase.minZ();
 		
@@ -221,7 +227,7 @@ public class Morph {
 		
 		for (Voxel t : inputBase.voxelList) {
 			for (int w = 0; w <= targetGlobalMaxW; w++) {
-				String keyCoord = this.coordKey(t.u, t.v, w);
+				String keyCoord = coordKey(t.u, t.v, w);
 				if (target.voxelMap.containsKey(keyCoord)) {
 					if (targetLocalMaxW < w) {
 						targetLocalMaxW = w;
@@ -236,10 +242,10 @@ public class Morph {
 		// Drop the input array as a rigid body onto the target array
 		int dW = 1 + targetLocalMaxW - inputMinW;
 		float dZ =  targetTopHeight + targetLocalMaxZ - inputMinZ;
-		VoxelArray result = this.translateZ(input, dW, dZ);
+		VoxelArray result = translateZ(input, dW, dZ);
 
 		// Check for valid cantilever
-		if (this.cantileverFeasible(result, target, cantileverAllowance)) {
+		if (cantileverFeasible(result, target, cantileverAllowance)) {
 			return result;
 		} else {
 			return new VoxelArray();
@@ -255,10 +261,10 @@ public class Morph {
 	 * @result the input is vertically shifted so that it rests below either the target
 	 *         or the ground
 	 */
-	public VoxelArray lift(VoxelArray input, VoxelArray target) {
+	public static VoxelArray lift(VoxelArray input, VoxelArray target) {
 
 		// Determine vertical coordinate at which the input array will lift
-		VoxelArray inputBase = this.topLayer(input);
+		VoxelArray inputBase = topLayer(input);
 		int inputMaxW = inputBase.maxW();
 		float inputMaxZ = inputBase.maxZ();
 		int targetLocalMinW = GROUND_W;
@@ -266,7 +272,7 @@ public class Morph {
 		int targetGlobalMinW = target.minW();
 		for (Voxel t : inputBase.voxelList) {
 			for (int w = GROUND_W - 1; w >= targetGlobalMinW; w--) {
-				String keyCoord = this.coordKey(t.u, t.v, w);
+				String keyCoord = coordKey(t.u, t.v, w);
 				if (target.voxelMap.containsKey(keyCoord)) {
 					if (targetLocalMinW > w) {
 						targetLocalMinW = w;
@@ -279,7 +285,7 @@ public class Morph {
 		// Lift the input array as a rigid body into the target array
 		int dW = - 1 + targetLocalMinW - inputMaxW;
 		float dZ = - inputBase.voxelHeight() + targetLocalMinZ - inputMaxZ;
-		VoxelArray result = this.translateZ(input, dW, dZ);
+		VoxelArray result = translateZ(input, dW, dZ);
 		
 		return result;
 	}
@@ -294,12 +300,12 @@ public class Morph {
 	 *                            allowed to hover in mid air)
 	 * @return true if feasible
 	 */
-	public boolean cantileverFeasible(VoxelArray input, VoxelArray base, float cantileverAllowance) {
-		VoxelArray inputBase = this.bottomLayer(input);
+	public static boolean cantileverFeasible(VoxelArray input, VoxelArray base, float cantileverAllowance) {
+		VoxelArray inputBase = bottomLayer(input);
 		int inputBaseCount = inputBase.voxelList.size();
 		float cantileverCount = 0;
 		for (Voxel t : inputBase.voxelList) {
-			if (this.getNeighborBottom(t, base) == null && t.w != 0) {
+			if (getNeighborBottom(t, base) == null && t.w != 0) {
 				cantileverCount++;
 			}
 		}
@@ -311,12 +317,12 @@ public class Morph {
 	 * @param input the VoxelArray that you wish to hollow out
 	 * @return a voxel array with no voxels completely surrounded
 	 */
-	public VoxelArray hollow(VoxelArray input) {
+	public static VoxelArray hollow(VoxelArray input) {
 		VoxelArray hollowed = new VoxelArray();
 		for (Voxel t : input.voxelList) {
-			boolean hasTop = this.getNeighborsTop(t, input).size() == 9;
-			boolean hasBot = this.getNeighborBottom(t, input) != null;
-			boolean surrounded = this.getNeighborsUV(t, input).size() == 8;
+			boolean hasTop = getNeighborsTop(t, input).size() == 9;
+			boolean hasBot = getNeighborBottom(t, input) != null;
+			boolean surrounded = getNeighborsUV(t, input).size() == 8;
 			if(!hasTop || !hasBot || !surrounded) {
 				hollowed.addVoxel(t);
 			}
@@ -333,7 +339,7 @@ public class Morph {
 	 * @param dW    amount of voxel units to shift in the W direction
 	 * @result the translated VoxelArray
 	 */
-	public VoxelArray translate(VoxelArray input, int dU, int dV, int dW) {
+	public static VoxelArray translate(VoxelArray input, int dU, int dV, int dW) {
 		if (input.voxelList.size() > 0) {
 			VoxelArray result = new VoxelArray();
 			for (Voxel t : input.voxelList) {
@@ -359,7 +365,7 @@ public class Morph {
 	 * @param h		height of w units
 	 * @result the translated VoxelArray
 	 */
-	public VoxelArray translateZ(VoxelArray input, int dW, float dZ) {
+	public static VoxelArray translateZ(VoxelArray input, int dW, float dZ) {
 		if (input.voxelList.size() > 0) {
 			VoxelArray result = new VoxelArray();
 			for (Voxel t : input.voxelList) {
@@ -381,15 +387,15 @@ public class Morph {
 	 * @return extruded VoxelArray
 	 * 
 	 */
-	public VoxelArray extrude(VoxelArray input, int levels) {
-		VoxelArray inputClone = this.hardCloneVoxelArray(input);
-		VoxelArray topLayer = this.topLayer(input);
+	public static VoxelArray extrude(VoxelArray input, int levels) {
+		VoxelArray inputClone = hardCloneVoxelArray(input);
+		VoxelArray topLayer = topLayer(input);
 
 		// Create the extruded voxels
 		VoxelArray extruded = new VoxelArray();
 		for (int i = 1; i <= levels; i++) {
 			for (Voxel t : topLayer.voxelList) {
-				Voxel verticalCopy = this.cloneVoxel(t);
+				Voxel verticalCopy = cloneVoxel(t);
 				verticalCopy.setCoordinates(t.u, t.v, t.w + i);
 				verticalCopy.setLocation(t.location.x, t.location.y, t.location.z + i * t.height);
 				extruded.addVoxel(verticalCopy);
@@ -397,7 +403,7 @@ public class Morph {
 		}
 
 		// Add extruded voxels to input and return
-		return this.add(inputClone, extruded);
+		return add(inputClone, extruded);
 	}
 
 	/**
@@ -406,10 +412,10 @@ public class Morph {
 	 * @param input voxels to scrape the top off of
 	 * @return top of the muffin, TO YOU!
 	 */
-	public VoxelArray topLayer(VoxelArray input) {
+	public static VoxelArray topLayer(VoxelArray input) {
 		VoxelArray result = new VoxelArray();
 		for (Voxel t : input.voxelList) {
-			if (this.getNeighborTop(t, input) == null) {
+			if (getNeighborTop(t, input) == null) {
 				result.addVoxel(t);
 			}
 		}
@@ -422,10 +428,10 @@ public class Morph {
 	 * @param input voxels to scrape the bottom off of
 	 * @return muffin stump
 	 */
-	public VoxelArray bottomLayer(VoxelArray input) {
+	public static VoxelArray bottomLayer(VoxelArray input) {
 		VoxelArray result = new VoxelArray();
 		for (Voxel t : input.voxelList) {
-			if (this.getNeighborBottom(t, input) == null) {
+			if (getNeighborBottom(t, input) == null) {
 				result.addVoxel(t);
 			}
 		}
@@ -439,11 +445,11 @@ public class Morph {
 	 * @param input voxel array to apply setback to
 	 * @return new VoxelArray with outer ring of voxels removed removed
 	 */
-	private VoxelArray setback(VoxelArray input, int sensitivity) {
+	private static VoxelArray setback(VoxelArray input, int sensitivity) {
 		VoxelArray result = new VoxelArray();
 		for (Voxel t : input.voxelList) {
 			// Tile surrounded on all sides has 8 neighbors
-			if (this.getNeighborsUV(t, input).size() >= sensitivity) {
+			if (getNeighborsUV(t, input).size() >= sensitivity) {
 				result.addVoxel(t);
 			}
 		}
@@ -458,7 +464,7 @@ public class Morph {
 	 * @param setbackDistance distance to apply setback from edge
 	 * @return new VoxelArray with outer ring of voxels removed
 	 */
-	public VoxelArray setback(VoxelArray input, float setbackDistance) {
+	public static VoxelArray setback(VoxelArray input, float setbackDistance) {
 
 		// Get the width of the first voxel in the array
 		float voxelWidth = input.voxelWidth();
@@ -472,10 +478,10 @@ public class Morph {
 		// repeat offset as necessary to achieve desired distance
 		VoxelArray result = input;
 		for (int i = 0; i < numSetbacks; i++) {
-			result = this.setback(result, 7);
+			result = setback(result, 7);
 		}
 		int sensitivity = (int)(7 * remainder);
-		result = this.setback(result,  sensitivity);
+		result = setback(result,  sensitivity);
 		return result;
 	}
 
@@ -486,7 +492,7 @@ public class Morph {
 	 * @param child VoxelArray to subtract from input
 	 * @return New VoxelArray with child subtracted from this VoxelArray
 	 */
-	public VoxelArray sub(VoxelArray input, VoxelArray child) {
+	public static VoxelArray sub(VoxelArray input, VoxelArray child) {
 		VoxelArray result = new VoxelArray();
 		for (Voxel t : input.voxelList) {
 			if (!child.voxelList.contains(t)) {
@@ -503,8 +509,8 @@ public class Morph {
 	 * @param child VoxelArray to add to input
 	 * @return New VoxelArray with child subtracted from this VoxelArray
 	 */
-	public VoxelArray add(VoxelArray input, VoxelArray toAdd) {
-		VoxelArray result = this.cloneVoxelArray(input);
+	public static VoxelArray add(VoxelArray input, VoxelArray toAdd) {
+		VoxelArray result = cloneVoxelArray(input);
 		for (Voxel t : toAdd.voxelList) {
 			if (!input.voxelList.contains(t)) {
 				result.addVoxel(t);
@@ -520,12 +526,12 @@ public class Morph {
 	 * @param tArray that encapsulates t
 	 * @return Adjacent Voxels that Exist within a VoxelArray
 	 */
-	public ArrayList<Voxel> getNeighborsUV(Voxel t, VoxelArray tArray) {
+	public static ArrayList<Voxel> getNeighborsUV(Voxel t, VoxelArray tArray) {
 		ArrayList<Voxel> neighbors = new ArrayList<Voxel>();
 		for (int dU = -1; dU <= +1; dU++) {
 			for (int dV = -1; dV <= +1; dV++) {
 				if (!(dU == 0 && dV == 0)) { // tile skips itself
-					String coordKey = this.coordKey(t.u + dU, t.v + dV, t.w);
+					String coordKey = coordKey(t.u + dU, t.v + dV, t.w);
 					if (tArray.voxelMap.containsKey(coordKey)) {
 						Voxel adj = tArray.voxelMap.get(coordKey);
 						neighbors.add(adj);
@@ -543,8 +549,8 @@ public class Morph {
 	 * @param tArray that encapsulates t
 	 * @return Voxel directly above a specific Voxel; empty if none
 	 */
-	public Voxel getNeighborTop(Voxel t, VoxelArray tArray) {
-		String coordKey = this.coordKey(t.u, t.v, t.w + 1);
+	public static Voxel getNeighborTop(Voxel t, VoxelArray tArray) {
+		String coordKey = coordKey(t.u, t.v, t.w + 1);
 		if (tArray.voxelMap.containsKey(coordKey)) {
 			return tArray.voxelMap.get(coordKey);
 		} else {
@@ -559,11 +565,11 @@ public class Morph {
 	 * @param t	Array that encapsulates t
 	 * @return Voxels directly above a specific Voxel; empty if none; max is 9
 	 */
-	public ArrayList<Voxel> getNeighborsTop(Voxel t, VoxelArray tArray) {
+	public static ArrayList<Voxel> getNeighborsTop(Voxel t, VoxelArray tArray) {
 		ArrayList<Voxel> neighbors = new ArrayList<Voxel>();
 		for (int u=-1; u<2; u++) {
 			for (int v=-1; v<2; v++) {
-				String coordKey = this.coordKey(t.u + u, t.v + v, t.w + 1);
+				String coordKey = coordKey(t.u + u, t.v + v, t.w + 1);
 				if (tArray.voxelMap.containsKey(coordKey)) {
 					neighbors.add(tArray.voxelMap.get(coordKey));
 				}
@@ -579,8 +585,8 @@ public class Morph {
 	 * @param tArray that encapsulates t
 	 * @return Voxel directly below a specific Voxel; null if none
 	 */
-	public Voxel getNeighborBottom(Voxel t, VoxelArray tArray) {
-		String coordKey = this.coordKey(t.u, t.v, t.w - 1);
+	public static Voxel getNeighborBottom(Voxel t, VoxelArray tArray) {
+		String coordKey = coordKey(t.u, t.v, t.w - 1);
 		if (tArray.voxelMap.containsKey(coordKey)) {
 			return tArray.voxelMap.get(coordKey);
 		} else {
@@ -588,7 +594,7 @@ public class Morph {
 		}
 	}
 
-	public String coordKey(int u, int v, int w) {
+	public static String coordKey(int u, int v, int w) {
 		return u + "," + v + "," + w;
 	}
 
@@ -601,7 +607,7 @@ public class Morph {
 	 * @param rotation
 	 * @return resulting rectangle
 	 */
-	public Polygon rectangle(Point origin, float width, float height, float rotation) {
+	public static Polygon rectangle(Point origin, float width, float height, float rotation) {
 		ArrayList<Point> corners = new ArrayList<Point>();
 		corners.add(new Point(-0.5f, -0.5f));
 		corners.add(new Point(+0.5f, -0.5f));
@@ -612,7 +618,7 @@ public class Morph {
 		for (Point corner : corners) {
 			corner.x = origin.x + corner.x * width;
 			corner.y = origin.y + corner.y * height;
-			corner = this.rotateXY(corner, origin, rotation);
+			corner = rotateXY(corner, origin, rotation);
 			rectangle.addVertex(corner);
 		}
 		return rectangle;
@@ -626,7 +632,7 @@ public class Morph {
 	 * @param amount to rotate in radians
 	 * @return rotated point
 	 */
-	private Point rotateXY(Point input, Point origin, float rotation) {
+	private static Point rotateXY(Point input, Point origin, float rotation) {
 		float sin = (float) Math.sin(rotation);
 		float cos = (float) Math.cos(rotation);
 		float x_f = +(input.x - origin.x) * cos - (input.y - origin.y) * sin + origin.x;

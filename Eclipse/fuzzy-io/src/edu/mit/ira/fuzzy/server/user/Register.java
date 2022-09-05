@@ -1,4 +1,4 @@
-package edu.mit.ira.fuzzy.io.user;
+package edu.mit.ira.fuzzy.server.user;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -10,7 +10,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.Random;
 
-import edu.mit.ira.fuzzy.io.Server;
+import edu.mit.ira.fuzzy.server.Server;
 
 /**
  * Utility class for registering Users

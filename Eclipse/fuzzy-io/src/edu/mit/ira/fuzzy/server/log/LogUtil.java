@@ -1,4 +1,4 @@
-package edu.mit.ira.fuzzy.io.log;
+package edu.mit.ira.fuzzy.server.log;
 
 import java.io.BufferedOutputStream;
 import java.io.IOException;

@@ -1,4 +1,4 @@
-package edu.mit.ira.opensui.io;
+package edu.mit.ira.opensui.data;
 
 import java.util.ArrayList;
 
@@ -16,7 +16,7 @@ import edu.mit.ira.opensui.setting.Legend.Entry;
  * @author Ira
  *
  */
-public class Deserializer {
+public class ParseConfiguration {
 
 	/**
 	 * Convert a JSON string of model settings to the SettingGroup class
@@ -24,7 +24,7 @@ public class Deserializer {
 	 * @param data settings formatted as json string
 	 * @return settings formatted as java object
 	 */
-	public Configuration parse(String data) {
+	public static Configuration fromJson(String data) {
 		JSONObject configJSON = new JSONObject(data);
 		try {
 			
@@ -65,7 +65,7 @@ public class Deserializer {
 	 * @param config data formatted as JSON
 	 * @return data formatted as SettingGroup class
 	 */
-	private Setting parseSetting(JSONObject settingJSON) {
+	private static Setting parseSetting(JSONObject settingJSON) {
 		String settingLabel = settingJSON.getString("label");
 		String settingType = settingJSON.getString("type");
 		Setting setting = new Setting(settingType, settingLabel);
@@ -105,7 +105,7 @@ public class Deserializer {
 		return setting;
 	}
 	
-	private Legend parseLegend(JSONObject legendJSON) {
+	private static Legend parseLegend(JSONObject legendJSON) {
 		Legend legend = new Legend();
 		legend.label = legendJSON.getString("label");
 		JSONArray entriesJSON = legendJSON.getJSONArray("entries");

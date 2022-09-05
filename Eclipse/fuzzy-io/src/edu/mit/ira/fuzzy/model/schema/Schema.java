@@ -1,6 +1,7 @@
-package edu.mit.ira.fuzzy.io;
+package edu.mit.ira.fuzzy.model.schema;
 
 import edu.mit.ira.fuzzy.model.Function;
+import edu.mit.ira.fuzzy.server.Server;
 import edu.mit.ira.opensui.setting.Configuration;
 import edu.mit.ira.opensui.setting.GUI;
 import edu.mit.ira.opensui.setting.Legend;

@@ -1,15 +1,15 @@
-package edu.mit.ira.fuzzy.io;
+package edu.mit.ira.fuzzy.model.build;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import edu.mit.ira.fuzzy.model.Development;
-import edu.mit.ira.fuzzy.model.Morph;
 import edu.mit.ira.fuzzy.model.Orientation;
 import edu.mit.ira.fuzzy.model.Point;
 import edu.mit.ira.fuzzy.model.Polygon;
 import edu.mit.ira.fuzzy.model.Function;
 import edu.mit.ira.fuzzy.model.VoxelArray;
+import edu.mit.ira.fuzzy.model.schema.Schema;
 import edu.mit.ira.opensui.setting.Configuration;
 import edu.mit.ira.opensui.setting.Setting;
 
@@ -20,13 +20,7 @@ import edu.mit.ira.opensui.setting.Setting;
  * @author Ira Winder
  *
  */
-public class Builder {
-
-	private Morph morph;
-
-	public Builder() {
-		this.morph = new Morph();
-	}
+public class Build {
 	
 	/**
 	 * Build a mass of fuzzy voxels according to a fairly specific configuration of
@@ -34,7 +28,7 @@ public class Builder {
 	 *
 	 * @param settings
 	 */
-	public Development build(Configuration root) {
+	public static Development development(Configuration root) {
 		Development fuzzy = new Development();
 		
 		try {
@@ -55,7 +49,7 @@ public class Builder {
 			// Pre-Populate Open Area Polygons
 			for (Setting openArea : openAreas.settings) {
 				Setting vertices = openArea.find(Schema.VERTICES);
-				Polygon openShape = this.parsePolygon(vertices);
+				Polygon openShape = parsePolygon(vertices);
 				openShape.setType("Open");
 				openShapes.add(openShape);
 				fuzzy.allShapes.add(openShape);
@@ -63,7 +57,7 @@ public class Builder {
 			
 			// Pre-Populate Tower Polygons
 			for (Setting tower : towers.settings) {
-				Polygon towerShape = this.towerShape(tower);
+				Polygon towerShape = towerShape(tower);
 				towerShape.setType("Tower");
 				towerSettingsMap.put(towerShape, tower);
 				towerShapes.add(towerShape);
@@ -82,7 +76,7 @@ public class Builder {
 				Setting pods = plot.find(Schema.PODIUM_VOLUMES);
 				
 				// Define Plot polygon
-				Polygon plotShape = this.parsePolygon(vert);
+				Polygon plotShape = parsePolygon(vert);
 				plotShape.setType("Plot");
 				String plotName = plot.label;
 				fuzzy.plotShapes.add(plotShape);
@@ -106,10 +100,10 @@ public class Builder {
 					float gridOffsetX = gridSize * gDx.getInt()/100f;
 					float gridOffsetY = gridSize * gDy.getInt()/100f;
 					Point gridTranslation = new Point(gridOffsetX, gridOffsetY);
-					VoxelArray plotVoxels = this.morph.make(plotShape, gridSize, 0, gridRotation, gridTranslation);
+					VoxelArray plotVoxels = Morph.make(plotShape, gridSize, 0, gridRotation, gridTranslation);
 					plotVoxels.setVoxelUse(Function.Unspecified);
 					fuzzy.plotSite.put(plotShape, plotVoxels);
-					fuzzy.site = this.morph.add(fuzzy.site, plotVoxels);
+					fuzzy.site = Morph.add(fuzzy.site, plotVoxels);
 
 					// Initialize massing for this entire plot
 					VoxelArray plotMassing = new VoxelArray();
@@ -124,12 +118,12 @@ public class Builder {
 						
 						// Generate Podium Template
 						float setbackDistance = setback.getFloat();
-						VoxelArray podiumTemplate = morph.hardCloneVoxelArray(plotVoxels);
-						podiumTemplate = morph.setback(podiumTemplate, setbackDistance);
+						VoxelArray podiumTemplate = Morph.hardCloneVoxelArray(plotVoxels);
+						podiumTemplate = Morph.setback(podiumTemplate, setbackDistance);
 
 						// Remove Open Area Polygons from Podium Template
 						for (Polygon openShape : openShapes) {
-							podiumTemplate = morph.cut(podiumTemplate, openShape);
+							podiumTemplate = Morph.cut(podiumTemplate, openShape);
 						}
 
 						// Generate Podium Zones
@@ -143,14 +137,14 @@ public class Builder {
 							// Podium Zone
 							int levels = l.getInt();
 							float height = h.getFloat();
-							Function function = this.parseUse(f.getString());
-							Orientation orientation = this.parseOrientation(orient.getString());
+							Function function = parseUse(f.getString());
+							Orientation orientation = parseOrientation(orient.getString());
 							
 							podiumTemplate.setVoxelHeight(height);
 							if (orientation == Orientation.Above_Ground) {
-								plotMassing = morph.makeAndDrop(podiumTemplate, plotMassing, levels, function, cantileverAllowance);
+								plotMassing = Morph.makeAndDrop(podiumTemplate, plotMassing, levels, function, cantileverAllowance);
 							} else {
-								plotMassing = morph.makeAndLift(podiumTemplate, plotMassing, levels, function);
+								plotMassing = Morph.makeAndLift(podiumTemplate, plotMassing, levels, function);
 							}
 						}
 					}
@@ -164,8 +158,8 @@ public class Builder {
 						if (plotShape.containsPolygon(towerShape)) {
 							
 							// Generate Tower Template
-							VoxelArray towerTemplate = morph.hardCloneVoxelArray(plotVoxels);
-							towerTemplate = morph.clip(towerTemplate, towerShape);
+							VoxelArray towerTemplate = Morph.hardCloneVoxelArray(plotVoxels);
+							towerTemplate = Morph.clip(towerTemplate, towerShape);
 
 							// Generate Tower Zones
 							for (Setting zone : zones.settings) {
@@ -178,9 +172,9 @@ public class Builder {
 								// Podium Zone
 								int levels = l.getInt();
 								float height = h.getFloat();
-								Function function = this.parseUse(f.getString());
+								Function function = parseUse(f.getString());
 								towerTemplate.setVoxelHeight(height);
-								plotMassing = morph.makeAndDrop(towerTemplate, plotMassing, levels, function,
+								plotMassing = Morph.makeAndDrop(towerTemplate, plotMassing, levels, function,
 										cantileverAllowance);
 							}
 						}
@@ -189,17 +183,17 @@ public class Builder {
 
 					// Add the current plot's massing to the overall result
 					fuzzy.plotMassing.put(plotShape, plotMassing);
-					fuzzy.massing = morph.add(fuzzy.massing, plotMassing);
+					fuzzy.massing = Morph.add(fuzzy.massing, plotMassing);
 					
 					// Add add voxels to a special group that only contains unsurround voxels
-					VoxelArray plotMassingHollowed = morph.hollow(plotMassing);
+					VoxelArray plotMassingHollowed = Morph.hollow(plotMassing);
 					fuzzy.plotMassingHollowed.put(plotShape, plotMassingHollowed);
-					fuzzy.massingHollowed = morph.add(fuzzy.massingHollowed, plotMassingHollowed);
+					fuzzy.massingHollowed = Morph.add(fuzzy.massingHollowed, plotMassingHollowed);
 					
 				}
 				// Combine flat site tiles on ground plane with massing
-				fuzzy.allVoxels = morph.add(fuzzy.site, fuzzy.massing);
-				fuzzy.allVoxelsHollowed = morph.add(fuzzy.site, fuzzy.massingHollowed);
+				fuzzy.allVoxels = Morph.add(fuzzy.site, fuzzy.massing);
+				fuzzy.allVoxelsHollowed = Morph.add(fuzzy.site, fuzzy.massingHollowed);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -214,7 +208,7 @@ public class Builder {
 	 * @param towerSettings
 	 * @return
 	 */
-	public Polygon towerShape(Setting towerSettings) {
+	private static Polygon towerShape(Setting towerSettings) {
 		
 		// Read from SettingSchema
 		Setting loc = towerSettings.find(Schema.LOCATION);
@@ -222,11 +216,11 @@ public class Builder {
 		Setting wid = towerSettings.find(Schema.WIDTH);
 		Setting dep = towerSettings.find(Schema.DEPTH);
 		
-		Point towerLocation = this.parsePoint(loc);
+		Point towerLocation = parsePoint(loc);
 		float towerRotation = (float) (2 * Math.PI * rot.getFloat() / 360f);
 		float towerWidth = wid.getFloat();
 		float towerDepth = dep.getFloat();
-		return morph.rectangle(towerLocation, towerWidth, towerDepth, towerRotation);
+		return Morph.rectangle(towerLocation, towerWidth, towerDepth, towerRotation);
 	}
 
 	/**
@@ -236,10 +230,10 @@ public class Builder {
 	 * @param vertexGroup a list of 2D or 3D vectors
 	 * @return a new polygon made from the vertices in the group
 	 */
-	private Polygon parsePolygon(Setting vertexGroup) {
+	private static Polygon parsePolygon(Setting vertexGroup) {
 		Polygon shape = new Polygon();
 		for (Setting vertex : vertexGroup.settings) {
-			shape.addVertex(this.parsePoint(vertex));
+			shape.addVertex(parsePoint(vertex));
 		}
 		return shape;
 	}
@@ -250,7 +244,7 @@ public class Builder {
 	 * @param a vertex
 	 * @return a new point made from the Setting
 	 */
-	private Point parsePoint(Setting vector) {
+	private static Point parsePoint(Setting vector) {
 		float[] coord = vector.getVector();
 		if (coord.length == 2) {
 			return new Point(coord[0], coord[1]);
@@ -268,7 +262,7 @@ public class Builder {
 	 * @param function a string of the function
 	 * @return an enum of type Use
 	 */
-	private Function parseUse(String function) {
+	private static Function parseUse(String function) {
 		try	{
 			return Function.valueOf(function);
 		} catch (Exception e) {
@@ -282,7 +276,7 @@ public class Builder {
 	 * @param orientation a string of the function
 	 * @return an enum of type Use
 	 */
-	private Orientation parseOrientation(String orientation) {
+	private static Orientation parseOrientation(String orientation) {
 		String value = orientation.replace(" ", "_");
 		try	{
 			return Orientation.valueOf(value);

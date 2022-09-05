@@ -3,8 +3,8 @@ package edu.mit.ira.fuzzy.test;
 import java.util.HashMap;
 import java.util.Map;
 
-import edu.mit.ira.fuzzy.io.user.Register;
-import edu.mit.ira.fuzzy.io.user.UserType;
+import edu.mit.ira.fuzzy.server.user.Register;
+import edu.mit.ira.fuzzy.server.user.UserType;
 
 // IMPORTANT! Delete 'data/users/register.tsv' 'data/users/deactivated.tsv' before running
 

@@ -1,6 +1,6 @@
 package edu.mit.ira.fuzzy;
 
-import edu.mit.ira.fuzzy.io.Server;
+import edu.mit.ira.fuzzy.server.Server;
 
 public class FuzzyIO {
 	
