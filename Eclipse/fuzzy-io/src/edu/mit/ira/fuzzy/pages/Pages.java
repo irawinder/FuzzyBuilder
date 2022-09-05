@@ -1,6 +1,7 @@
 package edu.mit.ira.fuzzy.pages;
 
 import edu.mit.ira.fuzzy.io.user.Register;
+import edu.mit.ira.fuzzy.io.user.RegisterUtil;
 import edu.mit.ira.fuzzy.io.user.UserPrefixStudy;
 import edu.mit.ira.fuzzy.io.user.UserType;
 
@@ -341,13 +342,7 @@ public class Pages {
 	
 	private static String makeStudyBody(String user, String page, boolean deactivated) {
 
-		UserPrefixStudy ups;
-		if (user.length() > Register.CODE_LENGTH) {
-			String prefix = user.substring(0, user.length() - Register.CODE_LENGTH).toUpperCase();
-			ups = UserPrefixStudy.valueOf(prefix);
-		} else {
-			ups = null;
-		}
+		UserPrefixStudy ups = RegisterUtil.parseStudyPrefix(user);
 		
 		String body = "<body>";
 
@@ -614,11 +609,11 @@ public class Pages {
 		} else if (page.equals("finish")) {
 			
 			String adminUserID = "";
-			String email = Register.email(user);
+			String email = Register.getEmail(user);
 			if (deactivated) {
-				adminUserID = Register.user(email);
+				adminUserID = Register.getUser(email);
 			} else {
-				Register.deactivate(user);
+				Register.deactivateUser(user);
 				if (email != null) {
 					adminUserID = Register.makeUser(email, UserType.ADMIN);
 				} else {

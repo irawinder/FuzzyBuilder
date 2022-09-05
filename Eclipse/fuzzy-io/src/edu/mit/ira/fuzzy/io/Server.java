@@ -25,6 +25,7 @@ import com.sun.net.httpserver.HttpServer;
 
 import edu.mit.ira.fuzzy.io.log.UserLog;
 import edu.mit.ira.fuzzy.io.user.Register;
+import edu.mit.ira.fuzzy.io.user.RegisterUtil;
 import edu.mit.ira.fuzzy.io.user.UserPrefixAdmin;
 import edu.mit.ira.fuzzy.io.user.UserPrefixStudy;
 import edu.mit.ira.fuzzy.io.user.UserType;
@@ -124,8 +125,8 @@ public class Server {
 			// Log Request
 			ServerUtil.log(t, "Request: " + requestMethod + " " +  requestURI + ", Request Length: " + requestLength);
 			
-			boolean deactivated = Register.deactivated(user);
-			boolean permit = Register.active(user) || user.equals(ServerUtil.DEFAULT_USER) || requestResource.equals("REGISTER");
+			boolean deactivated = Register.isDeactivated(user);
+			boolean permit = Register.isActive(user) || user.equals(ServerUtil.DEFAULT_USER) || requestResource.equals("REGISTER");
 			
 			// Run if a deactivated user is trying to view the site
 			if (deactivated) {
@@ -148,9 +149,9 @@ public class Server {
 				if (requestResource.equals("")) 
 				{	
 					String responseBody = "boochy";
-					if (Register.hasPrefix(user, UserPrefixAdmin.SQUID)) {
+					if (RegisterUtil.hasPrefix(user, UserPrefixAdmin.SQUID)) {
 						responseBody = Pages.generalSite();
-					} else if (Register.active(user)) {
+					} else if (Register.isActive(user)) {
 						responseBody = Pages.studySite(user, page, false);
 						UserLog.add(user, clientIP, "HOME", "Visited FuzzyIO Home Page " + page);
 					} else {
@@ -173,7 +174,7 @@ public class Server {
 						if (userID != null) {
 							responseBody = Pages.registrationCompleteSite(userID, email);
 						} else {
-							if (Register.emailExists(email)) {
+							if (Register.isActiveEmail(email)) {
 								responseBody = Pages.registrationSite("This email has already been used.");
 							} else {
 								responseBody = Pages.registrationSite("Something went wrong and we can't register this email address. Please contact ira [at] mit [dot] edu for help.");
@@ -188,7 +189,7 @@ public class Server {
 				else if (requestResource.equals("INIT")) 
 				{
 					// Add global files to new user's scenarios
-					if (!Register.hasPrefix(user, UserPrefixStudy.COBRA)) addGlobalScenarios(user);
+					if (!RegisterUtil.hasPrefix(user, UserPrefixStudy.COBRA)) addGlobalScenarios(user);
 				
 					// Send the setting configuration to the GUI
 					String responseBody = schemaData(user);
@@ -384,19 +385,19 @@ public class Server {
 	}
 	
 	private String schemaData(String user, String userFeedback) {
-		if (Register.hasPrefix(user, UserPrefixStudy.ZEBRA))
+		if (RegisterUtil.hasPrefix(user, UserPrefixStudy.ZEBRA))
 		{
 			return schemaData(readOnlyConfig, userFeedback);
 		} 
-		else if (Register.hasPrefix(user, UserPrefixStudy.COBRA))
+		else if (RegisterUtil.hasPrefix(user, UserPrefixStudy.COBRA))
 		{
 			return schemaData(fullConfig, userFeedback);
 		} 
-		else if (Register.hasPrefix(user, UserPrefixStudy.PANDA))
+		else if (RegisterUtil.hasPrefix(user, UserPrefixStudy.PANDA))
 		{
 			return schemaData(fullConfig, userFeedback);
 		} 
-		else if (Register.hasPrefix(user, UserPrefixAdmin.SQUID))
+		else if (RegisterUtil.hasPrefix(user, UserPrefixAdmin.SQUID))
 		{
 			return schemaData(adminConfig, userFeedback);
 		} 

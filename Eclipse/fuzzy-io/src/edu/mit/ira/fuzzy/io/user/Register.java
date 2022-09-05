@@ -26,30 +26,42 @@ public class Register {
 	
 	// Registry Entry row is of form: {userID, email}
 	private static int REGISTER_COLUMNS = 2;
-	private static File REGISTER_FILE = new File(REGISTER_PATH);
-	private static File PERMA_REGISTER_FILE = new File(PERMA_REGISTER_PATH);
 	
-	// List of User IDs that have been deactivated
-	private static File DEACTIVATED_FILE = new File(DEACTIVATED_PATH);
+	/**
+	 * Check if a user ID is already registered and active (ignores case)
+	 * @param userID
+	 * @return true if registered AND not deactivate; otherwise false
+	 */
+	public static boolean isActive(String userID) {
+		if (getEntryBy(userID, 0) != null) {
+			return true;
+		}
+		
+		return false;
+	}
 	
-	public static int CODE_LENGTH = 6;
-	
-	// Purposely excluded the following, since they can be confused with each other:
-	// '1', 'I', 'L', '0', 'O' 
-	private static char[] CODE_CHARS = { 
-		'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 
-		'J', 'K', 'M', 'N', 'P', 'Q', 'R', 'S', 
-		'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '2', 
-		'3', '4', '5', '6', '7', '8', '9'
-	};
+	/**
+	 * Check if a given User ID has been explicitly deactivated (ignores case)
+	 * @param userID
+	 * @return true if inactive
+	 */
+	public static boolean isDeactivated(String userID) {
+		String[] deactivated = getDeactivatedUsers();
+		for (String deactivatedUserID : deactivated) {
+			if (RegisterUtil.ignoreCaseEquals(deactivatedUserID, userID)) {
+				return true;
+			}
+		}
+		return false;
+	}
 	
 	/**
 	 * Get email associated with this user; returns null if not found
 	 * @param userID
 	 * @return email as string; null if not found
 	 */
-	public static String email(String userID) {
-		return entryBy(userID, 0)[1];
+	public static String getEmail(String userID) {
+		return getEntryBy(userID, 0)[1];
 	}
 	
 	/**
@@ -57,85 +69,8 @@ public class Register {
 	 * @param userID
 	 * @return email as string; null if not found
 	 */
-	public static String user(String email) {
-		return entryBy(email, 1)[0];
-	}
-	
-	/**
-	 * Check if a user ID is already registered
-	 * @param userID
-	 * @return true if registered
-	 */
-	public static boolean active(String userID) {
-		if (entryBy(userID, 0) != null) {
-			return true;
-		}
-		
-		return false;
-	}
-	
-	/**
-	 * Write user to register of deactivated users
-	 * @param userID
-	 * @return true if successful
-	 */
-	public static boolean deactivate(String userID) {
-		
-		// Can't deactivate the user if it's already deactivated
-		if (!deactivated(userID)) {
-			
-			// Make new Entry
-			String row = "";
-			if (deactivated().length > 0) row += "\n";
-			row += userID;
-	
-			// Write user to register of deactivated users
-			byte data[] = row.getBytes();
-			Path p = Paths.get(DEACTIVATED_PATH);
-			try (OutputStream out = new BufferedOutputStream(
-					Files.newOutputStream(p, StandardOpenOption.CREATE, StandardOpenOption.APPEND))) {
-				out.write(data, 0, data.length);
-			} catch (IOException x) {
-				System.out.println("Error: Could not write to inactive file");
-				System.err.println(x);
-			}
-	
-			return true;
-		}
-			
-		return false;
-	}
-	
-	/**
-	 * Checks if user has a prefix associated with the given index
-	 * @param userID
-	 * @param index
-	 * @return true if match
-	 */
-	public static boolean hasPrefix(String userID, UserPrefixStudy p) {
-		String prefix = p.lc();
-		if (userID.length() > prefix.length()) {
-			String prefixUser = userID.substring(0, prefix.length());
-			return ignoreCaseEquals(prefix, prefixUser);
-		} else {
-			return false;
-		}
-	}
-	
-	/**
-	 * Checks if user has a prefix associated with the given index
-	 * @param userID
-	 * @param index
-	 * @return true if match
-	 */
-	public static boolean hasPrefix(String userID, UserPrefixAdmin p) {
-		String prefix = p.lc();
-		if (userID.length() > prefix.length()) {
-			String prefixUser = userID.substring(0, prefix.length());
-			return ignoreCaseEquals(prefix, prefixUser);
-		} else {
-			return false;
-		}
+	public static String getUser(String email) {
+		return getEntryBy(email, 1)[0];
 	}
 	
 	/**
@@ -143,8 +78,23 @@ public class Register {
 	 * @param userID
 	 * @return true if registered
 	 */
-	public static boolean emailExists(String email) {
+	public static boolean isActiveEmail(String email) {
 		return !isUniqueEmail(email);
+	}
+	
+	/**
+	 * Initialize main register with permanent users
+	 */
+	public static void init() {
+		if (getEntries().length == 0) {
+			String[] permaEntries = getPermaEntries();
+			for (String row : permaEntries) {
+				String[] permaEntry = row.split("\t");
+				if (permaEntry.length == REGISTER_COLUMNS) {
+					addEntry(permaEntry[0], permaEntry[1]);
+				}
+			}
+		}
 	}
 	
 	/**
@@ -156,7 +106,7 @@ public class Register {
 	public static String makeUser(String email, UserType type) {
 
 		// Check for duplicate email address
-		if (!isValidEmail(email)) {
+		if (!RegisterUtil.isValidEmail(email)) {
 			return null;
 		}
 
@@ -198,7 +148,7 @@ public class Register {
 				return null;
 			}
 			
-			String code = makeCode();
+			String code = RegisterUtil.makeCode();
 			userID = prefix + code;
 			valid = isUniqueUser(userID);
 		}
@@ -209,76 +159,37 @@ public class Register {
 	}
 	
 	/**
-	 * Initialize main register with permanent users
-	 */
-	public static void init() {
-		if (entries().length == 0) {
-			String[] permaEntries = permaEntries();
-			for (String row : permaEntries) {
-				String[] permaEntry = row.split("\t");
-				if (permaEntry.length == REGISTER_COLUMNS) {
-					addEntry(permaEntry[0], permaEntry[1]);
-				}
-			}
-		}
-	}
-	
-	/**
-	 * Check if the candidate username is unique (ignores case)
+	 * Write user to register of deactivated users
 	 * @param userID
-	 * @return true if unique (no duplicates found)
+	 * @return true if successful; false if user is already deactivated
 	 */
-	private static boolean isUniqueUser(String userID) {
-		if(entryBy(userID, 0) != null) {
-			return false;
-		}
-		return true;
-	}
-	
-	/**
-	 * Check if the candidate email is unique (ignores case)
-	 * @param userID
-	 * @return true if unique (no duplicates found)
-	 */
-	private static boolean isUniqueEmail(String email) {
+	public static boolean deactivateUser(String userID) {
 		
-		if(entryBy(email, 1) != null) {
-			return false;
-		}
-		return true;
-	}
+		// Can't deactivate the user if it's already deactivated
+		if (!isDeactivated(userID)) {
+			
+			// Make new Entry
+			String row = "";
+			if (getDeactivatedUsers().length > 0) row += "\n";
+			row += userID;
 	
-	/**
-	 * Checks if email is of format "email@domain.name"
-	 * @param email
-	 * @return true if valid
-	 */
-	private static boolean isValidEmail(String email) {
-		String temp = email.replace(".", ":");
-		String[] array = temp.split("@");
-		if (array.length == 2) {
-			if (array[1].split(":").length == 2) {
-				return true;
+			// Write user to register of deactivated users
+			byte data[] = row.getBytes();
+			Path p = Paths.get(DEACTIVATED_PATH);
+			try (OutputStream out = new BufferedOutputStream(
+					Files.newOutputStream(p, StandardOpenOption.CREATE, StandardOpenOption.APPEND))) {
+				out.write(data, 0, data.length);
+			} catch (IOException x) {
+				System.out.println("Error: Could not write to inactive file");
+				System.err.println(x);
 			}
+	
+			return true;
 		}
-		System.out.println(email + " is not a valid email address");
+			
 		return false;
 	}
 	
-	/**
-	 * Make a CODE for a user ID
-	 * @return
-	 */
-	private static String makeCode() {
-		Random r = new Random();
-		String code = "";
-		for (int i=0; i<CODE_LENGTH; i++) {
-			int charIndex = r.nextInt(CODE_CHARS.length);
-			code += CODE_CHARS[charIndex];
-		}
-		return code;
-	}
-
 	/**
 	 * Add a new user-email pair to the register, checking for duplicates
 	 * @return true if successful; false if failure
@@ -287,7 +198,7 @@ public class Register {
 		
 		// Make new Entry
 		String row = "";
-		if (entries().length > 0) row += "\n";
+		if (getEntries().length > 0) row += "\n";
 		row += userID + "\t" + email;
 
 		// Write user-email pair to registration
@@ -303,44 +214,54 @@ public class Register {
 
 		return true;
 	}
-
+	
 	/**
-	 * Return a list of registered entities
-	 * @return empty list if there was an error creating/reading registration file
+	 * Check if the candidate email is unique (ignores case)
+	 * @param userID
+	 * @return true if unique (no duplicates found)
 	 */
-	private static String[] entries() {
+	private static boolean isUniqueEmail(String email) {
 		
-		// Check that register exists
-		if (REGISTER_FILE.exists() && REGISTER_FILE.isFile()) {
-			try {
-				return Files.readString(Path.of(REGISTER_PATH)).split("\n");
-			} catch (IOException e) {
-				System.out.println("The user registration file is currupted");
-				e.printStackTrace();
-				return new String[0];
-			}
-		} else {
-			return new String[0];
+		if(getEntryBy(email, 1) != null) {
+			return false;
 		}
+		return true;
 	}
 	
 	/**
-	 * Get first Register Entry  associate with a particular column and value
+	 * Check if the candidate username is unique (ignores case)
+	 * @param userID
+	 * @return true if unique (no duplicates found)
+	 */
+	private static boolean isUniqueUser(String userID) {
+		if(getEntryBy(userID, 0) != null) {
+			return false;
+		}
+		return true;
+	}
+	
+	/**
+	 * Get first Register Entry associated with a particular column and value
 	 * @param value
 	 * @param index
 	 * @return entry if found, null if not found
 	 */
-	private static String[] entryBy(String value, int index) {
-		String[] entries = entries();
+	private static String[] getEntryBy(String value, int index) {
+		String[] entries = getEntries();
 		for (String row : entries) {
 			String[] entry = row.split("\t");
 			if (entry.length == REGISTER_COLUMNS && index < REGISTER_COLUMNS) {
-				if (ignoreCaseEquals(entry[index], value)) {
-					// don't match emails with deactivated accounts
+				if (RegisterUtil.ignoreCaseEquals(entry[index], value)) {
+					
+					// Getting entry by email
 					if (index == 1) {
-						if (!deactivated(entry[0])) {
+						
+						// ignore existing emails associated with deactivated User IDs
+						if (!isDeactivated(entry[0])) {
 							return entry;
 						}
+						
+					// Getting Entry by User ID
 					} else {
 						return entry;
 					}
@@ -351,69 +272,26 @@ public class Register {
 	}
 	
 	/**
-	 * Check if a given User ID has been deactivated (ignores case)
-	 * @param userID
-	 * @return true if inactive
-	 */
-	public static boolean deactivated(String userID) {
-		String[] deactivated = deactivated();
-		for (String deactivatedUserID : deactivated) {
-			if (ignoreCaseEquals(deactivatedUserID, userID)) {
-				return true;
-			}
-		}
-		return false;
-	}
-	
-	/**
 	 * Return a list of registered entities
 	 * @return empty list if there was an error creating/reading registration file
 	 */
-	private static String[] deactivated() {
-		
-		// Check that register exists
-		if (DEACTIVATED_FILE.exists() && DEACTIVATED_FILE.isFile()) {
-			try {
-				return Files.readString(Path.of(DEACTIVATED_PATH)).split("\n");
-			} catch (IOException e) {
-				System.out.println("The inactive user file is currupted");
-				e.printStackTrace();
-				return new String[0];
-			}
-		} else {
-			return new String[0];
-		}
+	private static String[] getEntries() {
+		return RegisterUtil.getRows(REGISTER_PATH);
 	}
 	
 	/**
 	 * Return a list of permanently registered entities
 	 * @return empty list if there was an error creating/reading registration file
 	 */
-	private static String[] permaEntries() {
-		
-		// Check that register exists
-		if (PERMA_REGISTER_FILE.exists() && PERMA_REGISTER_FILE.isFile()) {
-			try {
-				return Files.readString(Path.of(PERMA_REGISTER_PATH)).split("\n");
-			} catch (IOException e) {
-				System.out.println("The user registration file is currupted");
-				e.printStackTrace();
-				return new String[0];
-			}
-		} else {
-			return new String[0];
-		}
+	private static String[] getPermaEntries() {
+		return RegisterUtil.getRows(PERMA_REGISTER_PATH);
 	}
 	
 	/**
-	 * Check if two strings are equal, ignoring case
-	 * @param str1
-	 * @param str2
-	 * @return true if equal, ignoring case
+	 * Return a list of registered entities
+	 * @return empty list if there was an error creating/reading registration file
 	 */
-	private static boolean ignoreCaseEquals(String str1, String str2) {
-		String str1_lc = str1.toLowerCase();
-		String str2_lc = str2.toLowerCase();
-		return str1_lc.equals(str2_lc);
+	private static String[] getDeactivatedUsers() {
+		return RegisterUtil.getRows(DEACTIVATED_PATH);
 	}
 }
