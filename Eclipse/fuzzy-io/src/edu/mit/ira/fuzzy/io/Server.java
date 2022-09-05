@@ -43,7 +43,7 @@ import edu.mit.ira.opensui.setting.Configuration;
 public class Server {
 	
 	public static final String NAME = "FuzzyIO";
-	public static final String VERSION = "v1.3.19";
+	public static final String VERSION = "v1.3.20";
 	public static final String AUTHOR = "Ira Winder, Daniel Fink, and Max Walker";
 	public static final String SPONSOR = "MIT Center for Real Estate";
 	public static final String CONTACT = "fuzzy-io@mit.edu";
@@ -77,6 +77,7 @@ public class Server {
 		server.setExecutor(null); // creates a default executor
 		server.start();
 		
+		Register.init();
 		readOnlyConfig = Schema.get(false, false, true, false); // !save, !delete load, !config
 		fullConfig = Schema.get(true, false, true, true); // save, !delete, load, and config
 		adminConfig = Schema.get(true, true, true, true); // save, delete, load, and config

@@ -19,13 +19,17 @@ import edu.mit.ira.fuzzy.io.Server;
  */
 public class Register {
 	
-	// Registry Entry row is of form:
-	// userID	email	type	status
+	private static String USERS_PATH = Server.RELATIVE_DATA_PATH + File.separator + "users" + File.separator;
+	private static String REGISTER_PATH = USERS_PATH + "register.tsv";
+	private static String PERMA_REGISTER_PATH = USERS_PATH + "perma_register.tsv";
+	private static String DEACTIVATED_PATH = USERS_PATH + "deactivated.tsv";
 	
+	// Registry Entry row is of form: {userID, email}
 	private static int REGISTER_COLUMNS = 2;
-	private static String REGISTER_PATH = Server.RELATIVE_DATA_PATH + File.separator + "users" + File.separator + "register.tsv";
-	private static String DEACTIVATED_PATH = Server.RELATIVE_DATA_PATH + File.separator + "users" + File.separator + "deactivated.tsv";
 	private static File REGISTER_FILE = new File(REGISTER_PATH);
+	private static File PERMA_REGISTER_FILE = new File(PERMA_REGISTER_PATH);
+	
+	// List of User IDs that have been deactivated
 	private static File DEACTIVATED_FILE = new File(DEACTIVATED_PATH);
 	
 	public static int CODE_LENGTH = 6;
@@ -205,6 +209,21 @@ public class Register {
 	}
 	
 	/**
+	 * Initialize main register with permanent users
+	 */
+	public static void init() {
+		if (entries().length == 0) {
+			String[] permaEntries = permaEntries();
+			for (String row : permaEntries) {
+				String[] permaEntry = row.split("\t");
+				if (permaEntry.length == REGISTER_COLUMNS) {
+					addEntry(permaEntry[0], permaEntry[1]);
+				}
+			}
+		}
+	}
+	
+	/**
 	 * Check if the candidate username is unique (ignores case)
 	 * @param userID
 	 * @return true if unique (no duplicates found)
@@ -358,6 +377,26 @@ public class Register {
 				return Files.readString(Path.of(DEACTIVATED_PATH)).split("\n");
 			} catch (IOException e) {
 				System.out.println("The inactive user file is currupted");
+				e.printStackTrace();
+				return new String[0];
+			}
+		} else {
+			return new String[0];
+		}
+	}
+	
+	/**
+	 * Return a list of permanently registered entities
+	 * @return empty list if there was an error creating/reading registration file
+	 */
+	private static String[] permaEntries() {
+		
+		// Check that register exists
+		if (PERMA_REGISTER_FILE.exists() && PERMA_REGISTER_FILE.isFile()) {
+			try {
+				return Files.readString(Path.of(PERMA_REGISTER_PATH)).split("\n");
+			} catch (IOException e) {
+				System.out.println("The user registration file is currupted");
 				e.printStackTrace();
 				return new String[0];
 			}
