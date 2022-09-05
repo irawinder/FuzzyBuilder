@@ -43,7 +43,6 @@ public class TestDevelopment {
 	public Development development() {
 		int time = millis();
 
-		Morph morph = new Morph();
 		Development development = new Development();
 
 		development.plotShapes.clear();
@@ -64,7 +63,7 @@ public class TestDevelopment {
 			for (int j = 0; j < NUM_TOWERS; j++) {
 				float t_x = p_x + random(-.5f, .5f) * PLOT_MIN_RADIUS;
 				float t_y = p_y + random(-.1f, .1f) * PLOT_MIN_RADIUS;
-				Polygon towerShape = morph.rectangle(new Point(t_x, t_y), TOWER_WIDTH, TOWER_DEPTH, j * TOWER_ROTATION);
+				Polygon towerShape = Morph.rectangle(new Point(t_x, t_y), TOWER_WIDTH, TOWER_DEPTH, j * TOWER_ROTATION);
 				tShapes.add(towerShape);
 			}
 			development.towerShapes.put(plotShape, tShapes);
@@ -88,39 +87,39 @@ public class TestDevelopment {
 
 				time = millis();
 
-				VoxelArray plot = morph.make(plotShape, VOXEL_WIDTH, 0, VOXEL_ROTATION, VOXEL_TRANSLATE);
-				development.site = morph.add(development.site, plot);
+				VoxelArray plot = Morph.make(plotShape, VOXEL_WIDTH, 0, VOXEL_ROTATION, VOXEL_TRANSLATE);
+				development.site = Morph.add(development.site, plot);
 
 				VoxelArray plotMassing = new VoxelArray();
 
-				VoxelArray podiumTemplate = morph.hardCloneVoxelArray(plot);
-				podiumTemplate = morph.setback(podiumTemplate, SETBACK_DISTANCE);
+				VoxelArray podiumTemplate = Morph.hardCloneVoxelArray(plot);
+				podiumTemplate = Morph.setback(podiumTemplate, SETBACK_DISTANCE);
 				podiumTemplate.setVoxelHeight(VOXEL_HEIGHT);
 
 				int pZones = (int) random(1, 4);
 				for (int i = 0; i < pZones; i++) {
 					int levels = (int) random(1, 5);
-					plotMassing = morph.makeAndDrop(podiumTemplate, plotMassing, levels, this.use(),
+					plotMassing = Morph.makeAndDrop(podiumTemplate, plotMassing, levels, this.use(),
 							CANTILEVER_ALLOWANCE);
 				}
 
 				for (Polygon towerShape : development.towerShapes.get(plotShape)) {
 					if (plotShape.containsPolygon(towerShape)) {
 
-						VoxelArray towerTemplate = morph.hardCloneVoxelArray(plot);
+						VoxelArray towerTemplate = Morph.hardCloneVoxelArray(plot);
 						towerTemplate.setVoxelHeight(VOXEL_HEIGHT);
-						towerTemplate = morph.clip(towerTemplate, towerShape);
+						towerTemplate = Morph.clip(towerTemplate, towerShape);
 
 						int tZones = (int) random(1, 5);
 						for (int i = 0; i < tZones; i++) {
 							int levels = (int) random(1, 10);
-							plotMassing = morph.makeAndDrop(towerTemplate, plotMassing, levels, this.use(),
+							plotMassing = Morph.makeAndDrop(towerTemplate, plotMassing, levels, this.use(),
 									CANTILEVER_ALLOWANCE);
 						}
 					}
 				}
 
-				development.massing = morph.add(development.massing, plotMassing);
+				development.massing = Morph.add(development.massing, plotMassing);
 			}
 		}
 		System.out.println("Time to generate: " + (millis() - time) / 1000.0 / (1 / 60.0) + " frames at 60fps");
