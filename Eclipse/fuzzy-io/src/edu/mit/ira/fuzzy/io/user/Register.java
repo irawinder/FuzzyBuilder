@@ -33,6 +33,10 @@ public class Register {
 	 * @return true if registered AND not deactivate; otherwise false
 	 */
 	public static boolean isActive(String userID) {
+		
+		// Init register file if null
+		init();
+		
 		if (getEntryBy(userID, 0) != null) {
 			return true;
 		}
@@ -62,6 +66,10 @@ public class Register {
 	 * @return email as string; null if not found
 	 */
 	public static String getEmail(String userID) {
+		
+		// Init register file if null
+		init();
+				
 		if (userID != null) {
 			return getEntryBy(userID, 0)[1];
 		}
@@ -74,6 +82,10 @@ public class Register {
 	 * @return email as string; null if not found
 	 */
 	public static String getUser(String email) {
+		
+		// Init register file if null
+		init();
+				
 		if (email != null) {
 			return getEntryBy(email, 1)[0];
 		}
@@ -86,6 +98,10 @@ public class Register {
 	 * @return true if registered
 	 */
 	public static boolean isActiveEmail(String email) {
+		
+		// Init register file if null
+		init();
+		
 		if (email != null) {
 			return !isUniqueEmail(email);
 		}
@@ -96,7 +112,8 @@ public class Register {
 	 * Initialize main register with permanent users
 	 */
 	public static void init() {
-		if (getEntries().length == 0) {
+		File f = new File(REGISTER_PATH);
+		if (!f.exists()) {
 			String[] permaEntries = getPermaEntries();
 			for (String row : permaEntries) {
 				String[] permaEntry = row.split("\t");
@@ -162,6 +179,9 @@ public class Register {
 			userID = prefix + code;
 			valid = isUniqueUser(userID);
 		}
+		
+		// init register file if null
+		init();
 		
 		// Add new user
 		addEntry(userID, email);
