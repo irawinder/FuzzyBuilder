@@ -36,7 +36,6 @@ public class Register {
 		if (getEntryBy(userID, 0) != null) {
 			return true;
 		}
-		
 		return false;
 	}
 	
@@ -46,10 +45,12 @@ public class Register {
 	 * @return true if inactive
 	 */
 	public static boolean isDeactivated(String userID) {
-		String[] deactivated = getDeactivatedUsers();
-		for (String deactivatedUserID : deactivated) {
-			if (RegisterUtil.ignoreCaseEquals(deactivatedUserID, userID)) {
-				return true;
+		if (userID != null) {
+			String[] deactivated = getDeactivatedUsers();
+			for (String deactivatedUserID : deactivated) {
+				if (RegisterUtil.ignoreCaseEquals(deactivatedUserID, userID)) {
+					return true;
+				}
 			}
 		}
 		return false;
@@ -61,7 +62,10 @@ public class Register {
 	 * @return email as string; null if not found
 	 */
 	public static String getEmail(String userID) {
-		return getEntryBy(userID, 0)[1];
+		if (userID != null) {
+			return getEntryBy(userID, 0)[1];
+		}
+		return null;
 	}
 	
 	/**
@@ -70,7 +74,10 @@ public class Register {
 	 * @return email as string; null if not found
 	 */
 	public static String getUser(String email) {
-		return getEntryBy(email, 1)[0];
+		if (email != null) {
+			return getEntryBy(email, 1)[0];
+		}
+		return null;
 	}
 	
 	/**
@@ -79,7 +86,10 @@ public class Register {
 	 * @return true if registered
 	 */
 	public static boolean isActiveEmail(String email) {
-		return !isUniqueEmail(email);
+		if (email != null) {
+			return !isUniqueEmail(email);
+		}
+		return false;
 	}
 	
 	/**

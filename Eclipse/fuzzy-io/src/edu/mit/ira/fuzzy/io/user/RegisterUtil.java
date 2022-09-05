@@ -86,6 +86,10 @@ public class RegisterUtil {
 	 * @return true if equal, ignoring case
 	 */
 	public static boolean ignoreCaseEquals(String str1, String str2) {
+		if (str1 == null || str2 == null) {
+			System.out.println("Error: Cannot compare null Strings");
+			return false;
+		}
 		String str1_lc = str1.toLowerCase();
 		String str2_lc = str2.toLowerCase();
 		return str1_lc.equals(str2_lc);
