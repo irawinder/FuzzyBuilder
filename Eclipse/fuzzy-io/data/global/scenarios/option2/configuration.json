@@ -1,0 +1,3140 @@
+{
+    "apiVersion": "v1.3.16",
+    "id": "FuzzyIO",
+    "author": "Ira Winder, Daniel Fink, and Max Walker",
+    "sponsor": "MIT Center for Real Estate",
+    "contact": "fuzzy-io@mit.edu",
+    "type": "group",
+    "label": "Site",
+    "save": false,
+    "delete": false,
+    "load": false,
+    "config": false,
+    "settings": [
+        {
+            "type": "group_extendable",
+            "label": "Parcels",
+            "value": [],
+            "bounds": [],
+            "settings": [
+                {
+                    "type": "group",
+                    "label": "College Site",
+                    "value": [],
+                    "bounds": [],
+                    "settings": [
+                        {
+                            "type": "group_extendable",
+                            "label": "Vertices",
+                            "value": [],
+                            "bounds": [],
+                            "settings": [
+                                {
+                                    "type": "control_point",
+                                    "label": "Vertex_1",
+                                    "value": [
+                                        "-116.891",
+                                        "0",
+                                        "155.805"
+                                    ],
+                                    "bounds": [
+                                        "-1500",
+                                        "0",
+                                        "-1500",
+                                        "1500",
+                                        "0",
+                                        "1500"
+                                    ],
+                                    "settings": [],
+                                    "template": []
+                                },
+                                {
+                                    "type": "control_point",
+                                    "label": "Vertex_2",
+                                    "value": [
+                                        "-41.543",
+                                        "0",
+                                        "148.965"
+                                    ],
+                                    "bounds": [
+                                        "-1500",
+                                        "0",
+                                        "-1500",
+                                        "1500",
+                                        "0",
+                                        "1500"
+                                    ],
+                                    "settings": [],
+                                    "template": []
+                                },
+                                {
+                                    "type": "control_point",
+                                    "label": "Vertex_3",
+                                    "value": [
+                                        "-46.747",
+                                        "0",
+                                        "96.562"
+                                    ],
+                                    "bounds": [
+                                        "-1500",
+                                        "0",
+                                        "-1500",
+                                        "1500",
+                                        "0",
+                                        "1500"
+                                    ],
+                                    "settings": [],
+                                    "template": []
+                                },
+                                {
+                                    "type": "control_point",
+                                    "label": "Vertex_4",
+                                    "value": [
+                                        "-21.165",
+                                        "0",
+                                        "-42.319"
+                                    ],
+                                    "bounds": [
+                                        "-1500",
+                                        "0",
+                                        "-1500",
+                                        "1500",
+                                        "0",
+                                        "1500"
+                                    ],
+                                    "settings": [],
+                                    "template": []
+                                },
+                                {
+                                    "type": "control_point",
+                                    "label": "Vertex_5",
+                                    "value": [
+                                        "-142.276",
+                                        "0",
+                                        "-98.098"
+                                    ],
+                                    "bounds": [
+                                        "-1500",
+                                        "0",
+                                        "-1500",
+                                        "1500",
+                                        "0",
+                                        "1500"
+                                    ],
+                                    "settings": [],
+                                    "template": []
+                                }
+                            ],
+                            "template": [
+                                {
+                                    "type": "control_point",
+                                    "label": "Vertex",
+                                    "value": [
+                                        "0",
+                                        "0",
+                                        "0"
+                                    ],
+                                    "bounds": [
+                                        "-1500",
+                                        "-0",
+                                        "-1500",
+                                        "1500",
+                                        "0",
+                                        "1500"
+                                    ],
+                                    "settings": [],
+                                    "template": []
+                                }
+                            ]
+                        },
+                        {
+                            "type": "slider",
+                            "label": "Grid Size [ft]",
+                            "value": [
+                                "10"
+                            ],
+                            "bounds": [
+                                "10",
+                                "30"
+                            ],
+                            "settings": [],
+                            "template": []
+                        },
+                        {
+                            "type": "slider",
+                            "label": "Grid Rotation [degrees]",
+                            "value": [
+                                "-6"
+                            ],
+                            "bounds": [
+                                "-45",
+                                "45"
+                            ],
+                            "settings": [],
+                            "template": []
+                        },
+                        {
+                            "type": "slider",
+                            "label": "Grid X Offset [%]",
+                            "value": [
+                                "-50"
+                            ],
+                            "bounds": [
+                                "-50",
+                                "50"
+                            ],
+                            "settings": [],
+                            "template": []
+                        },
+                        {
+                            "type": "slider",
+                            "label": "Grid Y Offset [%]",
+                            "value": [
+                                "0"
+                            ],
+                            "bounds": [
+                                "-50",
+                                "50"
+                            ],
+                            "settings": [],
+                            "template": []
+                        },
+                        {
+                            "type": "group_extendable",
+                            "label": "Podium Volumes",
+                            "value": [],
+                            "bounds": [],
+                            "settings": [
+                                {
+                                    "type": "group",
+                                    "label": "Basement",
+                                    "value": [],
+                                    "bounds": [],
+                                    "settings": [
+                                        {
+                                            "type": "dropdown",
+                                            "label": "Orientation",
+                                            "value": [
+                                                "Below Ground"
+                                            ],
+                                            "bounds": [
+                                                "Above Ground",
+                                                "Below Ground"
+                                            ],
+                                            "settings": [],
+                                            "template": []
+                                        },
+                                        {
+                                            "type": "slider",
+                                            "label": "Setback [ft]",
+                                            "value": [
+                                                "0"
+                                            ],
+                                            "bounds": [
+                                                "0",
+                                                "80"
+                                            ],
+                                            "settings": [],
+                                            "template": []
+                                        },
+                                        {
+                                            "type": "group_extendable",
+                                            "label": "Zones",
+                                            "value": [],
+                                            "bounds": [],
+                                            "settings": [
+                                                {
+                                                    "type": "group",
+                                                    "label": "Mechanical",
+                                                    "value": [],
+                                                    "bounds": [],
+                                                    "settings": [
+                                                        {
+                                                            "type": "dropdown",
+                                                            "label": "Function",
+                                                            "value": [
+                                                                "Institutional"
+                                                            ],
+                                                            "bounds": [
+                                                                "Residential",
+                                                                "Institutional",
+                                                                "Industrial",
+                                                                "Retail",
+                                                                "Office",
+                                                                "Hotel",
+                                                                "Parking",
+                                                                "Unspecified"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        },
+                                                        {
+                                                            "type": "slider",
+                                                            "label": "Floors [#]",
+                                                            "value": [
+                                                                "1"
+                                                            ],
+                                                            "bounds": [
+                                                                "1",
+                                                                "10"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        },
+                                                        {
+                                                            "type": "slider",
+                                                            "label": "Floor Height [ft]",
+                                                            "value": [
+                                                                "10"
+                                                            ],
+                                                            "bounds": [
+                                                                "1",
+                                                                "50"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        }
+                                                    ],
+                                                    "template": []
+                                                },
+                                                {
+                                                    "type": "group",
+                                                    "label": "Parking",
+                                                    "value": [],
+                                                    "bounds": [],
+                                                    "settings": [
+                                                        {
+                                                            "type": "dropdown",
+                                                            "label": "Function",
+                                                            "value": [
+                                                                "Parking"
+                                                            ],
+                                                            "bounds": [
+                                                                "Residential",
+                                                                "Institutional",
+                                                                "Industrial",
+                                                                "Retail",
+                                                                "Office",
+                                                                "Hotel",
+                                                                "Parking",
+                                                                "Unspecified"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        },
+                                                        {
+                                                            "type": "slider",
+                                                            "label": "Floors [#]",
+                                                            "value": [
+                                                                "3"
+                                                            ],
+                                                            "bounds": [
+                                                                "1",
+                                                                "10"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        },
+                                                        {
+                                                            "type": "slider",
+                                                            "label": "Floor Height [ft]",
+                                                            "value": [
+                                                                "10"
+                                                            ],
+                                                            "bounds": [
+                                                                "1",
+                                                                "50"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        }
+                                                    ],
+                                                    "template": []
+                                                }
+                                            ],
+                                            "template": [
+                                                {
+                                                    "type": "group",
+                                                    "label": "Zone",
+                                                    "value": [],
+                                                    "bounds": [],
+                                                    "settings": [
+                                                        {
+                                                            "type": "dropdown",
+                                                            "label": "Function",
+                                                            "value": [
+                                                                "Retail"
+                                                            ],
+                                                            "bounds": [
+                                                                "Residential",
+                                                                "Institutional",
+                                                                "Industrial",
+                                                                "Retail",
+                                                                "Office",
+                                                                "Hotel",
+                                                                "Parking",
+                                                                "Unspecified"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        },
+                                                        {
+                                                            "type": "slider",
+                                                            "label": "Floors [#]",
+                                                            "value": [
+                                                                "1"
+                                                            ],
+                                                            "bounds": [
+                                                                "1",
+                                                                "10"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        },
+                                                        {
+                                                            "type": "slider",
+                                                            "label": "Floor Height [ft]",
+                                                            "value": [
+                                                                "10"
+                                                            ],
+                                                            "bounds": [
+                                                                "1",
+                                                                "50"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        }
+                                                    ],
+                                                    "template": []
+                                                }
+                                            ]
+                                        }
+                                    ],
+                                    "template": []
+                                },
+                                {
+                                    "type": "group",
+                                    "label": "Above Ground",
+                                    "value": [],
+                                    "bounds": [],
+                                    "settings": [
+                                        {
+                                            "type": "dropdown",
+                                            "label": "Orientation",
+                                            "value": [
+                                                "Above Ground"
+                                            ],
+                                            "bounds": [
+                                                "Above Ground",
+                                                "Below Ground"
+                                            ],
+                                            "settings": [],
+                                            "template": []
+                                        },
+                                        {
+                                            "type": "slider",
+                                            "label": "Setback [ft]",
+                                            "value": [
+                                                "0"
+                                            ],
+                                            "bounds": [
+                                                "0",
+                                                "80"
+                                            ],
+                                            "settings": [],
+                                            "template": []
+                                        },
+                                        {
+                                            "type": "group_extendable",
+                                            "label": "Zones",
+                                            "value": [],
+                                            "bounds": [],
+                                            "settings": [
+                                                {
+                                                    "type": "group",
+                                                    "label": "College",
+                                                    "value": [],
+                                                    "bounds": [],
+                                                    "settings": [
+                                                        {
+                                                            "type": "dropdown",
+                                                            "label": "Function",
+                                                            "value": [
+                                                                "Institutional"
+                                                            ],
+                                                            "bounds": [
+                                                                "Residential",
+                                                                "Institutional",
+                                                                "Industrial",
+                                                                "Retail",
+                                                                "Office",
+                                                                "Hotel",
+                                                                "Parking",
+                                                                "Unspecified"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        },
+                                                        {
+                                                            "type": "slider",
+                                                            "label": "Floors [#]",
+                                                            "value": [
+                                                                "4"
+                                                            ],
+                                                            "bounds": [
+                                                                "1",
+                                                                "10"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        },
+                                                        {
+                                                            "type": "slider",
+                                                            "label": "Floor Height [ft]",
+                                                            "value": [
+                                                                "12"
+                                                            ],
+                                                            "bounds": [
+                                                                "1",
+                                                                "50"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        }
+                                                    ],
+                                                    "template": []
+                                                }
+                                            ],
+                                            "template": [
+                                                {
+                                                    "type": "group",
+                                                    "label": "Zone",
+                                                    "value": [],
+                                                    "bounds": [],
+                                                    "settings": [
+                                                        {
+                                                            "type": "dropdown",
+                                                            "label": "Function",
+                                                            "value": [
+                                                                "Retail"
+                                                            ],
+                                                            "bounds": [
+                                                                "Residential",
+                                                                "Institutional",
+                                                                "Industrial",
+                                                                "Retail",
+                                                                "Office",
+                                                                "Hotel",
+                                                                "Parking",
+                                                                "Unspecified"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        },
+                                                        {
+                                                            "type": "slider",
+                                                            "label": "Floors [#]",
+                                                            "value": [
+                                                                "1"
+                                                            ],
+                                                            "bounds": [
+                                                                "1",
+                                                                "10"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        },
+                                                        {
+                                                            "type": "slider",
+                                                            "label": "Floor Height [ft]",
+                                                            "value": [
+                                                                "10"
+                                                            ],
+                                                            "bounds": [
+                                                                "1",
+                                                                "50"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        }
+                                                    ],
+                                                    "template": []
+                                                }
+                                            ]
+                                        }
+                                    ],
+                                    "template": []
+                                }
+                            ],
+                            "template": [
+                                {
+                                    "type": "group",
+                                    "label": "Podium Volume",
+                                    "value": [],
+                                    "bounds": [],
+                                    "settings": [
+                                        {
+                                            "type": "dropdown",
+                                            "label": "Orientation",
+                                            "value": [
+                                                "Above Ground"
+                                            ],
+                                            "bounds": [
+                                                "Above Ground",
+                                                "Below Ground"
+                                            ],
+                                            "settings": [],
+                                            "template": []
+                                        },
+                                        {
+                                            "type": "slider",
+                                            "label": "Setback [ft]",
+                                            "value": [
+                                                "20"
+                                            ],
+                                            "bounds": [
+                                                "0",
+                                                "80"
+                                            ],
+                                            "settings": [],
+                                            "template": []
+                                        },
+                                        {
+                                            "type": "group_extendable",
+                                            "label": "Zones",
+                                            "value": [],
+                                            "bounds": [],
+                                            "settings": [
+                                                {
+                                                    "type": "group",
+                                                    "label": "Zone",
+                                                    "value": [],
+                                                    "bounds": [],
+                                                    "settings": [
+                                                        {
+                                                            "type": "dropdown",
+                                                            "label": "Function",
+                                                            "value": [
+                                                                "Retail"
+                                                            ],
+                                                            "bounds": [
+                                                                "Residential",
+                                                                "Institutional",
+                                                                "Industrial",
+                                                                "Retail",
+                                                                "Office",
+                                                                "Hotel",
+                                                                "Parking",
+                                                                "Unspecified"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        },
+                                                        {
+                                                            "type": "slider",
+                                                            "label": "Floors [#]",
+                                                            "value": [
+                                                                "1"
+                                                            ],
+                                                            "bounds": [
+                                                                "1",
+                                                                "10"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        },
+                                                        {
+                                                            "type": "slider",
+                                                            "label": "Floor Height [ft]",
+                                                            "value": [
+                                                                "10"
+                                                            ],
+                                                            "bounds": [
+                                                                "1",
+                                                                "50"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        }
+                                                    ],
+                                                    "template": []
+                                                }
+                                            ],
+                                            "template": [
+                                                {
+                                                    "type": "group",
+                                                    "label": "Zone",
+                                                    "value": [],
+                                                    "bounds": [],
+                                                    "settings": [
+                                                        {
+                                                            "type": "dropdown",
+                                                            "label": "Function",
+                                                            "value": [
+                                                                "Retail"
+                                                            ],
+                                                            "bounds": [
+                                                                "Residential",
+                                                                "Institutional",
+                                                                "Industrial",
+                                                                "Retail",
+                                                                "Office",
+                                                                "Hotel",
+                                                                "Parking",
+                                                                "Unspecified"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        },
+                                                        {
+                                                            "type": "slider",
+                                                            "label": "Floors [#]",
+                                                            "value": [
+                                                                "1"
+                                                            ],
+                                                            "bounds": [
+                                                                "1",
+                                                                "10"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        },
+                                                        {
+                                                            "type": "slider",
+                                                            "label": "Floor Height [ft]",
+                                                            "value": [
+                                                                "10"
+                                                            ],
+                                                            "bounds": [
+                                                                "1",
+                                                                "50"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        }
+                                                    ],
+                                                    "template": []
+                                                }
+                                            ]
+                                        }
+                                    ],
+                                    "template": []
+                                }
+                            ]
+                        }
+                    ],
+                    "template": []
+                },
+                {
+                    "type": "group",
+                    "label": "Mixed Site",
+                    "value": [],
+                    "bounds": [],
+                    "settings": [
+                        {
+                            "type": "group_extendable",
+                            "label": "Vertices",
+                            "value": [],
+                            "bounds": [],
+                            "settings": [
+                                {
+                                    "type": "control_point",
+                                    "label": "Vertex_1",
+                                    "value": [
+                                        "-19.923",
+                                        "0",
+                                        "-41.787"
+                                    ],
+                                    "bounds": [
+                                        "-1500",
+                                        "0",
+                                        "-1500",
+                                        "1500",
+                                        "0",
+                                        "1500"
+                                    ],
+                                    "settings": [],
+                                    "template": []
+                                },
+                                {
+                                    "type": "control_point",
+                                    "label": "Vertex_2",
+                                    "value": [
+                                        "81.502",
+                                        "0",
+                                        "3.153"
+                                    ],
+                                    "bounds": [
+                                        "-1500",
+                                        "0",
+                                        "-1500",
+                                        "1500",
+                                        "0",
+                                        "1500"
+                                    ],
+                                    "settings": [],
+                                    "template": []
+                                },
+                                {
+                                    "type": "control_point",
+                                    "label": "Vertex_3",
+                                    "value": [
+                                        "93.97",
+                                        "0",
+                                        "136.782"
+                                    ],
+                                    "bounds": [
+                                        "-1500",
+                                        "0",
+                                        "-1500",
+                                        "1500",
+                                        "0",
+                                        "1500"
+                                    ],
+                                    "settings": [],
+                                    "template": []
+                                },
+                                {
+                                    "type": "control_point",
+                                    "label": "Vertex_4",
+                                    "value": [
+                                        "-39.41",
+                                        "0",
+                                        "148.62"
+                                    ],
+                                    "bounds": [
+                                        "-1500",
+                                        "0",
+                                        "-1500",
+                                        "1500",
+                                        "0",
+                                        "1500"
+                                    ],
+                                    "settings": [],
+                                    "template": []
+                                },
+                                {
+                                    "type": "control_point",
+                                    "label": "Vertex_5",
+                                    "value": [
+                                        "-45.016",
+                                        "0",
+                                        "96.895"
+                                    ],
+                                    "bounds": [
+                                        "-1500",
+                                        "0",
+                                        "-1500",
+                                        "1500",
+                                        "0",
+                                        "1500"
+                                    ],
+                                    "settings": [],
+                                    "template": []
+                                }
+                            ],
+                            "template": [
+                                {
+                                    "type": "control_point",
+                                    "label": "Vertex",
+                                    "value": [
+                                        "0",
+                                        "0",
+                                        "0"
+                                    ],
+                                    "bounds": [
+                                        "-1500",
+                                        "-0",
+                                        "-1500",
+                                        "1500",
+                                        "0",
+                                        "1500"
+                                    ],
+                                    "settings": [],
+                                    "template": []
+                                }
+                            ]
+                        },
+                        {
+                            "type": "slider",
+                            "label": "Grid Size [ft]",
+                            "value": [
+                                "10"
+                            ],
+                            "bounds": [
+                                "10",
+                                "30"
+                            ],
+                            "settings": [],
+                            "template": []
+                        },
+                        {
+                            "type": "slider",
+                            "label": "Grid Rotation [degrees]",
+                            "value": [
+                                "24"
+                            ],
+                            "bounds": [
+                                "-45",
+                                "45"
+                            ],
+                            "settings": [],
+                            "template": []
+                        },
+                        {
+                            "type": "slider",
+                            "label": "Grid X Offset [%]",
+                            "value": [
+                                "-13"
+                            ],
+                            "bounds": [
+                                "-50",
+                                "50"
+                            ],
+                            "settings": [],
+                            "template": []
+                        },
+                        {
+                            "type": "slider",
+                            "label": "Grid Y Offset [%]",
+                            "value": [
+                                "-48"
+                            ],
+                            "bounds": [
+                                "-50",
+                                "50"
+                            ],
+                            "settings": [],
+                            "template": []
+                        },
+                        {
+                            "type": "group_extendable",
+                            "label": "Podium Volumes",
+                            "value": [],
+                            "bounds": [],
+                            "settings": [
+                                {
+                                    "type": "group",
+                                    "label": "Bookstore 0L",
+                                    "value": [],
+                                    "bounds": [],
+                                    "settings": [
+                                        {
+                                            "type": "dropdown",
+                                            "label": "Orientation",
+                                            "value": [
+                                                "Below Ground"
+                                            ],
+                                            "bounds": [
+                                                "Above Ground",
+                                                "Below Ground"
+                                            ],
+                                            "settings": [],
+                                            "template": []
+                                        },
+                                        {
+                                            "type": "slider",
+                                            "label": "Setback [ft]",
+                                            "value": [
+                                                "0"
+                                            ],
+                                            "bounds": [
+                                                "0",
+                                                "80"
+                                            ],
+                                            "settings": [],
+                                            "template": []
+                                        },
+                                        {
+                                            "type": "group_extendable",
+                                            "label": "Zones",
+                                            "value": [],
+                                            "bounds": [],
+                                            "settings": [
+                                                {
+                                                    "type": "group",
+                                                    "label": "Bookstore",
+                                                    "value": [],
+                                                    "bounds": [],
+                                                    "settings": [
+                                                        {
+                                                            "type": "dropdown",
+                                                            "label": "Function",
+                                                            "value": [
+                                                                "Retail"
+                                                            ],
+                                                            "bounds": [
+                                                                "Residential",
+                                                                "Institutional",
+                                                                "Industrial",
+                                                                "Retail",
+                                                                "Office",
+                                                                "Hotel",
+                                                                "Parking",
+                                                                "Unspecified"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        },
+                                                        {
+                                                            "type": "slider",
+                                                            "label": "Floors [#]",
+                                                            "value": [
+                                                                "1"
+                                                            ],
+                                                            "bounds": [
+                                                                "1",
+                                                                "10"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        },
+                                                        {
+                                                            "type": "slider",
+                                                            "label": "Floor Height [ft]",
+                                                            "value": [
+                                                                "15"
+                                                            ],
+                                                            "bounds": [
+                                                                "1",
+                                                                "50"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        }
+                                                    ],
+                                                    "template": []
+                                                },
+                                                {
+                                                    "type": "group",
+                                                    "label": "Convention",
+                                                    "value": [],
+                                                    "bounds": [],
+                                                    "settings": [
+                                                        {
+                                                            "type": "dropdown",
+                                                            "label": "Function",
+                                                            "value": [
+                                                                "Parking"
+                                                            ],
+                                                            "bounds": [
+                                                                "Residential",
+                                                                "Institutional",
+                                                                "Industrial",
+                                                                "Retail",
+                                                                "Office",
+                                                                "Hotel",
+                                                                "Parking",
+                                                                "Unspecified"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        },
+                                                        {
+                                                            "type": "slider",
+                                                            "label": "Floors [#]",
+                                                            "value": [
+                                                                "3"
+                                                            ],
+                                                            "bounds": [
+                                                                "1",
+                                                                "10"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        },
+                                                        {
+                                                            "type": "slider",
+                                                            "label": "Floor Height [ft]",
+                                                            "value": [
+                                                                "10"
+                                                            ],
+                                                            "bounds": [
+                                                                "1",
+                                                                "50"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        }
+                                                    ],
+                                                    "template": []
+                                                }
+                                            ],
+                                            "template": [
+                                                {
+                                                    "type": "group",
+                                                    "label": "Zone",
+                                                    "value": [],
+                                                    "bounds": [],
+                                                    "settings": [
+                                                        {
+                                                            "type": "dropdown",
+                                                            "label": "Function",
+                                                            "value": [
+                                                                "Retail"
+                                                            ],
+                                                            "bounds": [
+                                                                "Residential",
+                                                                "Institutional",
+                                                                "Industrial",
+                                                                "Retail",
+                                                                "Office",
+                                                                "Hotel",
+                                                                "Parking",
+                                                                "Unspecified"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        },
+                                                        {
+                                                            "type": "slider",
+                                                            "label": "Floors [#]",
+                                                            "value": [
+                                                                "1"
+                                                            ],
+                                                            "bounds": [
+                                                                "1",
+                                                                "10"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        },
+                                                        {
+                                                            "type": "slider",
+                                                            "label": "Floor Height [ft]",
+                                                            "value": [
+                                                                "10"
+                                                            ],
+                                                            "bounds": [
+                                                                "1",
+                                                                "50"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        }
+                                                    ],
+                                                    "template": []
+                                                }
+                                            ]
+                                        }
+                                    ],
+                                    "template": []
+                                },
+                                {
+                                    "type": "group",
+                                    "label": "Bookstore 1L",
+                                    "value": [],
+                                    "bounds": [],
+                                    "settings": [
+                                        {
+                                            "type": "dropdown",
+                                            "label": "Orientation",
+                                            "value": [
+                                                "Above Ground"
+                                            ],
+                                            "bounds": [
+                                                "Above Ground",
+                                                "Below Ground"
+                                            ],
+                                            "settings": [],
+                                            "template": []
+                                        },
+                                        {
+                                            "type": "slider",
+                                            "label": "Setback [ft]",
+                                            "value": [
+                                                "0"
+                                            ],
+                                            "bounds": [
+                                                "0",
+                                                "80"
+                                            ],
+                                            "settings": [],
+                                            "template": []
+                                        },
+                                        {
+                                            "type": "group_extendable",
+                                            "label": "Zones",
+                                            "value": [],
+                                            "bounds": [],
+                                            "settings": [
+                                                {
+                                                    "type": "group",
+                                                    "label": "Bookstore",
+                                                    "value": [],
+                                                    "bounds": [],
+                                                    "settings": [
+                                                        {
+                                                            "type": "dropdown",
+                                                            "label": "Function",
+                                                            "value": [
+                                                                "Retail"
+                                                            ],
+                                                            "bounds": [
+                                                                "Residential",
+                                                                "Institutional",
+                                                                "Industrial",
+                                                                "Retail",
+                                                                "Office",
+                                                                "Hotel",
+                                                                "Parking",
+                                                                "Unspecified"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        },
+                                                        {
+                                                            "type": "slider",
+                                                            "label": "Floors [#]",
+                                                            "value": [
+                                                                "1"
+                                                            ],
+                                                            "bounds": [
+                                                                "1",
+                                                                "10"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        },
+                                                        {
+                                                            "type": "slider",
+                                                            "label": "Floor Height [ft]",
+                                                            "value": [
+                                                                "15"
+                                                            ],
+                                                            "bounds": [
+                                                                "1",
+                                                                "50"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        }
+                                                    ],
+                                                    "template": []
+                                                }
+                                            ],
+                                            "template": [
+                                                {
+                                                    "type": "group",
+                                                    "label": "Zone",
+                                                    "value": [],
+                                                    "bounds": [],
+                                                    "settings": [
+                                                        {
+                                                            "type": "dropdown",
+                                                            "label": "Function",
+                                                            "value": [
+                                                                "Retail"
+                                                            ],
+                                                            "bounds": [
+                                                                "Residential",
+                                                                "Institutional",
+                                                                "Industrial",
+                                                                "Retail",
+                                                                "Office",
+                                                                "Hotel",
+                                                                "Parking",
+                                                                "Unspecified"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        },
+                                                        {
+                                                            "type": "slider",
+                                                            "label": "Floors [#]",
+                                                            "value": [
+                                                                "1"
+                                                            ],
+                                                            "bounds": [
+                                                                "1",
+                                                                "10"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        },
+                                                        {
+                                                            "type": "slider",
+                                                            "label": "Floor Height [ft]",
+                                                            "value": [
+                                                                "10"
+                                                            ],
+                                                            "bounds": [
+                                                                "1",
+                                                                "50"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        }
+                                                    ],
+                                                    "template": []
+                                                }
+                                            ]
+                                        }
+                                    ],
+                                    "template": []
+                                },
+                                {
+                                    "type": "group",
+                                    "label": "Mixed",
+                                    "value": [],
+                                    "bounds": [],
+                                    "settings": [
+                                        {
+                                            "type": "dropdown",
+                                            "label": "Orientation",
+                                            "value": [
+                                                "Above Ground"
+                                            ],
+                                            "bounds": [
+                                                "Above Ground",
+                                                "Below Ground"
+                                            ],
+                                            "settings": [],
+                                            "template": []
+                                        },
+                                        {
+                                            "type": "slider",
+                                            "label": "Setback [ft]",
+                                            "value": [
+                                                "20"
+                                            ],
+                                            "bounds": [
+                                                "0",
+                                                "80"
+                                            ],
+                                            "settings": [],
+                                            "template": []
+                                        },
+                                        {
+                                            "type": "group_extendable",
+                                            "label": "Zones",
+                                            "value": [],
+                                            "bounds": [],
+                                            "settings": [
+                                                {
+                                                    "type": "group",
+                                                    "label": "Auditorium",
+                                                    "value": [],
+                                                    "bounds": [],
+                                                    "settings": [
+                                                        {
+                                                            "type": "dropdown",
+                                                            "label": "Function",
+                                                            "value": [
+                                                                "Institutional"
+                                                            ],
+                                                            "bounds": [
+                                                                "Residential",
+                                                                "Institutional",
+                                                                "Industrial",
+                                                                "Retail",
+                                                                "Office",
+                                                                "Hotel",
+                                                                "Parking",
+                                                                "Unspecified"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        },
+                                                        {
+                                                            "type": "slider",
+                                                            "label": "Floors [#]",
+                                                            "value": [
+                                                                "2"
+                                                            ],
+                                                            "bounds": [
+                                                                "1",
+                                                                "10"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        },
+                                                        {
+                                                            "type": "slider",
+                                                            "label": "Floor Height [ft]",
+                                                            "value": [
+                                                                "15"
+                                                            ],
+                                                            "bounds": [
+                                                                "1",
+                                                                "50"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        }
+                                                    ],
+                                                    "template": []
+                                                },
+                                                {
+                                                    "type": "group",
+                                                    "label": "Hotel",
+                                                    "value": [],
+                                                    "bounds": [],
+                                                    "settings": [
+                                                        {
+                                                            "type": "dropdown",
+                                                            "label": "Function",
+                                                            "value": [
+                                                                "Hotel"
+                                                            ],
+                                                            "bounds": [
+                                                                "Residential",
+                                                                "Institutional",
+                                                                "Industrial",
+                                                                "Retail",
+                                                                "Office",
+                                                                "Hotel",
+                                                                "Parking",
+                                                                "Unspecified"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        },
+                                                        {
+                                                            "type": "slider",
+                                                            "label": "Floors [#]",
+                                                            "value": [
+                                                                "4"
+                                                            ],
+                                                            "bounds": [
+                                                                "1",
+                                                                "10"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        },
+                                                        {
+                                                            "type": "slider",
+                                                            "label": "Floor Height [ft]",
+                                                            "value": [
+                                                                "10"
+                                                            ],
+                                                            "bounds": [
+                                                                "1",
+                                                                "50"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        }
+                                                    ],
+                                                    "template": []
+                                                },
+                                                {
+                                                    "type": "group",
+                                                    "label": "Restaurant",
+                                                    "value": [],
+                                                    "bounds": [],
+                                                    "settings": [
+                                                        {
+                                                            "type": "dropdown",
+                                                            "label": "Function",
+                                                            "value": [
+                                                                "Retail"
+                                                            ],
+                                                            "bounds": [
+                                                                "Residential",
+                                                                "Institutional",
+                                                                "Industrial",
+                                                                "Retail",
+                                                                "Office",
+                                                                "Hotel",
+                                                                "Parking",
+                                                                "Unspecified"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        },
+                                                        {
+                                                            "type": "slider",
+                                                            "label": "Floors [#]",
+                                                            "value": [
+                                                                "1"
+                                                            ],
+                                                            "bounds": [
+                                                                "1",
+                                                                "10"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        },
+                                                        {
+                                                            "type": "slider",
+                                                            "label": "Floor Height [ft]",
+                                                            "value": [
+                                                                "10"
+                                                            ],
+                                                            "bounds": [
+                                                                "1",
+                                                                "50"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        }
+                                                    ],
+                                                    "template": []
+                                                }
+                                            ],
+                                            "template": [
+                                                {
+                                                    "type": "group",
+                                                    "label": "Zone",
+                                                    "value": [],
+                                                    "bounds": [],
+                                                    "settings": [
+                                                        {
+                                                            "type": "dropdown",
+                                                            "label": "Function",
+                                                            "value": [
+                                                                "Retail"
+                                                            ],
+                                                            "bounds": [
+                                                                "Residential",
+                                                                "Institutional",
+                                                                "Industrial",
+                                                                "Retail",
+                                                                "Office",
+                                                                "Hotel",
+                                                                "Parking",
+                                                                "Unspecified"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        },
+                                                        {
+                                                            "type": "slider",
+                                                            "label": "Floors [#]",
+                                                            "value": [
+                                                                "1"
+                                                            ],
+                                                            "bounds": [
+                                                                "1",
+                                                                "10"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        },
+                                                        {
+                                                            "type": "slider",
+                                                            "label": "Floor Height [ft]",
+                                                            "value": [
+                                                                "10"
+                                                            ],
+                                                            "bounds": [
+                                                                "1",
+                                                                "50"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        }
+                                                    ],
+                                                    "template": []
+                                                }
+                                            ]
+                                        }
+                                    ],
+                                    "template": []
+                                }
+                            ],
+                            "template": [
+                                {
+                                    "type": "group",
+                                    "label": "Podium Volume",
+                                    "value": [],
+                                    "bounds": [],
+                                    "settings": [
+                                        {
+                                            "type": "dropdown",
+                                            "label": "Orientation",
+                                            "value": [
+                                                "Above Ground"
+                                            ],
+                                            "bounds": [
+                                                "Above Ground",
+                                                "Below Ground"
+                                            ],
+                                            "settings": [],
+                                            "template": []
+                                        },
+                                        {
+                                            "type": "slider",
+                                            "label": "Setback [ft]",
+                                            "value": [
+                                                "20"
+                                            ],
+                                            "bounds": [
+                                                "0",
+                                                "80"
+                                            ],
+                                            "settings": [],
+                                            "template": []
+                                        },
+                                        {
+                                            "type": "group_extendable",
+                                            "label": "Zones",
+                                            "value": [],
+                                            "bounds": [],
+                                            "settings": [
+                                                {
+                                                    "type": "group",
+                                                    "label": "Zone",
+                                                    "value": [],
+                                                    "bounds": [],
+                                                    "settings": [
+                                                        {
+                                                            "type": "dropdown",
+                                                            "label": "Function",
+                                                            "value": [
+                                                                "Retail"
+                                                            ],
+                                                            "bounds": [
+                                                                "Residential",
+                                                                "Institutional",
+                                                                "Industrial",
+                                                                "Retail",
+                                                                "Office",
+                                                                "Hotel",
+                                                                "Parking",
+                                                                "Unspecified"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        },
+                                                        {
+                                                            "type": "slider",
+                                                            "label": "Floors [#]",
+                                                            "value": [
+                                                                "1"
+                                                            ],
+                                                            "bounds": [
+                                                                "1",
+                                                                "10"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        },
+                                                        {
+                                                            "type": "slider",
+                                                            "label": "Floor Height [ft]",
+                                                            "value": [
+                                                                "10"
+                                                            ],
+                                                            "bounds": [
+                                                                "1",
+                                                                "50"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        }
+                                                    ],
+                                                    "template": []
+                                                }
+                                            ],
+                                            "template": [
+                                                {
+                                                    "type": "group",
+                                                    "label": "Zone",
+                                                    "value": [],
+                                                    "bounds": [],
+                                                    "settings": [
+                                                        {
+                                                            "type": "dropdown",
+                                                            "label": "Function",
+                                                            "value": [
+                                                                "Retail"
+                                                            ],
+                                                            "bounds": [
+                                                                "Residential",
+                                                                "Institutional",
+                                                                "Industrial",
+                                                                "Retail",
+                                                                "Office",
+                                                                "Hotel",
+                                                                "Parking",
+                                                                "Unspecified"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        },
+                                                        {
+                                                            "type": "slider",
+                                                            "label": "Floors [#]",
+                                                            "value": [
+                                                                "1"
+                                                            ],
+                                                            "bounds": [
+                                                                "1",
+                                                                "10"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        },
+                                                        {
+                                                            "type": "slider",
+                                                            "label": "Floor Height [ft]",
+                                                            "value": [
+                                                                "10"
+                                                            ],
+                                                            "bounds": [
+                                                                "1",
+                                                                "50"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        }
+                                                    ],
+                                                    "template": []
+                                                }
+                                            ]
+                                        }
+                                    ],
+                                    "template": []
+                                }
+                            ]
+                        }
+                    ],
+                    "template": []
+                }
+            ],
+            "template": [
+                {
+                    "type": "group",
+                    "label": "Parcel",
+                    "value": [],
+                    "bounds": [],
+                    "settings": [
+                        {
+                            "type": "group_extendable",
+                            "label": "Vertices",
+                            "value": [],
+                            "bounds": [],
+                            "settings": [],
+                            "template": [
+                                {
+                                    "type": "control_point",
+                                    "label": "Vertex",
+                                    "value": [
+                                        "0",
+                                        "0",
+                                        "0"
+                                    ],
+                                    "bounds": [
+                                        "-1500",
+                                        "-0",
+                                        "-1500",
+                                        "1500",
+                                        "0",
+                                        "1500"
+                                    ],
+                                    "settings": [],
+                                    "template": []
+                                }
+                            ]
+                        },
+                        {
+                            "type": "slider",
+                            "label": "Grid Size [ft]",
+                            "value": [
+                                "30"
+                            ],
+                            "bounds": [
+                                "10",
+                                "30"
+                            ],
+                            "settings": [],
+                            "template": []
+                        },
+                        {
+                            "type": "slider",
+                            "label": "Grid Rotation [degrees]",
+                            "value": [
+                                "0"
+                            ],
+                            "bounds": [
+                                "-45",
+                                "45"
+                            ],
+                            "settings": [],
+                            "template": []
+                        },
+                        {
+                            "type": "slider",
+                            "label": "Grid X Offset [%]",
+                            "value": [
+                                "0"
+                            ],
+                            "bounds": [
+                                "-50",
+                                "+50"
+                            ],
+                            "settings": [],
+                            "template": []
+                        },
+                        {
+                            "type": "slider",
+                            "label": "Grid Y Offset [%]",
+                            "value": [
+                                "0"
+                            ],
+                            "bounds": [
+                                "-50",
+                                "+50"
+                            ],
+                            "settings": [],
+                            "template": []
+                        },
+                        {
+                            "type": "group_extendable",
+                            "label": "Podium Volumes",
+                            "value": [],
+                            "bounds": [],
+                            "settings": [
+                                {
+                                    "type": "group",
+                                    "label": "Podium Volume",
+                                    "value": [],
+                                    "bounds": [],
+                                    "settings": [
+                                        {
+                                            "type": "dropdown",
+                                            "label": "Orientation",
+                                            "value": [
+                                                "Above Ground"
+                                            ],
+                                            "bounds": [
+                                                "Above Ground",
+                                                "Below Ground"
+                                            ],
+                                            "settings": [],
+                                            "template": []
+                                        },
+                                        {
+                                            "type": "slider",
+                                            "label": "Setback [ft]",
+                                            "value": [
+                                                "20"
+                                            ],
+                                            "bounds": [
+                                                "0",
+                                                "80"
+                                            ],
+                                            "settings": [],
+                                            "template": []
+                                        },
+                                        {
+                                            "type": "group_extendable",
+                                            "label": "Zones",
+                                            "value": [],
+                                            "bounds": [],
+                                            "settings": [
+                                                {
+                                                    "type": "group",
+                                                    "label": "Zone",
+                                                    "value": [],
+                                                    "bounds": [],
+                                                    "settings": [
+                                                        {
+                                                            "type": "dropdown",
+                                                            "label": "Function",
+                                                            "value": [
+                                                                "Retail"
+                                                            ],
+                                                            "bounds": [
+                                                                "Residential",
+                                                                "Institutional",
+                                                                "Industrial",
+                                                                "Retail",
+                                                                "Office",
+                                                                "Hotel",
+                                                                "Parking",
+                                                                "Unspecified"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        },
+                                                        {
+                                                            "type": "slider",
+                                                            "label": "Floors [#]",
+                                                            "value": [
+                                                                "1"
+                                                            ],
+                                                            "bounds": [
+                                                                "1",
+                                                                "10"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        },
+                                                        {
+                                                            "type": "slider",
+                                                            "label": "Floor Height [ft]",
+                                                            "value": [
+                                                                "10"
+                                                            ],
+                                                            "bounds": [
+                                                                "1",
+                                                                "50"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        }
+                                                    ],
+                                                    "template": []
+                                                }
+                                            ],
+                                            "template": [
+                                                {
+                                                    "type": "group",
+                                                    "label": "Zone",
+                                                    "value": [],
+                                                    "bounds": [],
+                                                    "settings": [
+                                                        {
+                                                            "type": "dropdown",
+                                                            "label": "Function",
+                                                            "value": [
+                                                                "Retail"
+                                                            ],
+                                                            "bounds": [
+                                                                "Residential",
+                                                                "Institutional",
+                                                                "Industrial",
+                                                                "Retail",
+                                                                "Office",
+                                                                "Hotel",
+                                                                "Parking",
+                                                                "Unspecified"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        },
+                                                        {
+                                                            "type": "slider",
+                                                            "label": "Floors [#]",
+                                                            "value": [
+                                                                "1"
+                                                            ],
+                                                            "bounds": [
+                                                                "1",
+                                                                "10"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        },
+                                                        {
+                                                            "type": "slider",
+                                                            "label": "Floor Height [ft]",
+                                                            "value": [
+                                                                "10"
+                                                            ],
+                                                            "bounds": [
+                                                                "1",
+                                                                "50"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        }
+                                                    ],
+                                                    "template": []
+                                                }
+                                            ]
+                                        }
+                                    ],
+                                    "template": []
+                                }
+                            ],
+                            "template": [
+                                {
+                                    "type": "group",
+                                    "label": "Podium Volume",
+                                    "value": [],
+                                    "bounds": [],
+                                    "settings": [
+                                        {
+                                            "type": "dropdown",
+                                            "label": "Orientation",
+                                            "value": [
+                                                "Above Ground"
+                                            ],
+                                            "bounds": [
+                                                "Above Ground",
+                                                "Below Ground"
+                                            ],
+                                            "settings": [],
+                                            "template": []
+                                        },
+                                        {
+                                            "type": "slider",
+                                            "label": "Setback [ft]",
+                                            "value": [
+                                                "20"
+                                            ],
+                                            "bounds": [
+                                                "0",
+                                                "80"
+                                            ],
+                                            "settings": [],
+                                            "template": []
+                                        },
+                                        {
+                                            "type": "group_extendable",
+                                            "label": "Zones",
+                                            "value": [],
+                                            "bounds": [],
+                                            "settings": [
+                                                {
+                                                    "type": "group",
+                                                    "label": "Zone",
+                                                    "value": [],
+                                                    "bounds": [],
+                                                    "settings": [
+                                                        {
+                                                            "type": "dropdown",
+                                                            "label": "Function",
+                                                            "value": [
+                                                                "Retail"
+                                                            ],
+                                                            "bounds": [
+                                                                "Residential",
+                                                                "Institutional",
+                                                                "Industrial",
+                                                                "Retail",
+                                                                "Office",
+                                                                "Hotel",
+                                                                "Parking",
+                                                                "Unspecified"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        },
+                                                        {
+                                                            "type": "slider",
+                                                            "label": "Floors [#]",
+                                                            "value": [
+                                                                "1"
+                                                            ],
+                                                            "bounds": [
+                                                                "1",
+                                                                "10"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        },
+                                                        {
+                                                            "type": "slider",
+                                                            "label": "Floor Height [ft]",
+                                                            "value": [
+                                                                "10"
+                                                            ],
+                                                            "bounds": [
+                                                                "1",
+                                                                "50"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        }
+                                                    ],
+                                                    "template": []
+                                                }
+                                            ],
+                                            "template": [
+                                                {
+                                                    "type": "group",
+                                                    "label": "Zone",
+                                                    "value": [],
+                                                    "bounds": [],
+                                                    "settings": [
+                                                        {
+                                                            "type": "dropdown",
+                                                            "label": "Function",
+                                                            "value": [
+                                                                "Retail"
+                                                            ],
+                                                            "bounds": [
+                                                                "Residential",
+                                                                "Institutional",
+                                                                "Industrial",
+                                                                "Retail",
+                                                                "Office",
+                                                                "Hotel",
+                                                                "Parking",
+                                                                "Unspecified"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        },
+                                                        {
+                                                            "type": "slider",
+                                                            "label": "Floors [#]",
+                                                            "value": [
+                                                                "1"
+                                                            ],
+                                                            "bounds": [
+                                                                "1",
+                                                                "10"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        },
+                                                        {
+                                                            "type": "slider",
+                                                            "label": "Floor Height [ft]",
+                                                            "value": [
+                                                                "10"
+                                                            ],
+                                                            "bounds": [
+                                                                "1",
+                                                                "50"
+                                                            ],
+                                                            "settings": [],
+                                                            "template": []
+                                                        }
+                                                    ],
+                                                    "template": []
+                                                }
+                                            ]
+                                        }
+                                    ],
+                                    "template": []
+                                }
+                            ]
+                        }
+                    ],
+                    "template": []
+                }
+            ]
+        },
+        {
+            "type": "group_extendable",
+            "label": "Tower Volumes",
+            "value": [],
+            "bounds": [],
+            "settings": [
+                {
+                    "type": "group",
+                    "label": "Midlevel",
+                    "value": [],
+                    "bounds": [],
+                    "settings": [
+                        {
+                            "type": "control_point",
+                            "label": "Location",
+                            "value": [
+                                "18.969",
+                                "0",
+                                "82.268"
+                            ],
+                            "bounds": [
+                                "-1500",
+                                "0",
+                                "-1500",
+                                "1500",
+                                "0",
+                                "1500"
+                            ],
+                            "settings": [],
+                            "template": []
+                        },
+                        {
+                            "type": "slider",
+                            "label": "Rotation [degrees]",
+                            "value": [
+                                "-66"
+                            ],
+                            "bounds": [
+                                "-90",
+                                "90"
+                            ],
+                            "settings": [],
+                            "template": []
+                        },
+                        {
+                            "type": "slider",
+                            "label": "Width [ft]",
+                            "value": [
+                                "90"
+                            ],
+                            "bounds": [
+                                "75",
+                                "150"
+                            ],
+                            "settings": [],
+                            "template": []
+                        },
+                        {
+                            "type": "slider",
+                            "label": "Depth [ft]",
+                            "value": [
+                                "50"
+                            ],
+                            "bounds": [
+                                "50",
+                                "100"
+                            ],
+                            "settings": [],
+                            "template": []
+                        },
+                        {
+                            "type": "group_extendable",
+                            "label": "Zones",
+                            "value": [],
+                            "bounds": [],
+                            "settings": [
+                                {
+                                    "type": "group",
+                                    "label": "Hotel",
+                                    "value": [],
+                                    "bounds": [],
+                                    "settings": [
+                                        {
+                                            "type": "dropdown",
+                                            "label": "Function",
+                                            "value": [
+                                                "Hotel"
+                                            ],
+                                            "bounds": [
+                                                "Residential",
+                                                "Institutional",
+                                                "Industrial",
+                                                "Retail",
+                                                "Office",
+                                                "Hotel",
+                                                "Parking",
+                                                "Unspecified"
+                                            ],
+                                            "settings": [],
+                                            "template": []
+                                        },
+                                        {
+                                            "type": "slider",
+                                            "label": "Floors [#]",
+                                            "value": [
+                                                "5"
+                                            ],
+                                            "bounds": [
+                                                "1",
+                                                "40"
+                                            ],
+                                            "settings": [],
+                                            "template": []
+                                        },
+                                        {
+                                            "type": "slider",
+                                            "label": "Floor Height [ft]",
+                                            "value": [
+                                                "10"
+                                            ],
+                                            "bounds": [
+                                                "10",
+                                                "20"
+                                            ],
+                                            "settings": [],
+                                            "template": []
+                                        }
+                                    ],
+                                    "template": []
+                                },
+                                {
+                                    "type": "group",
+                                    "label": "Apartments",
+                                    "value": [],
+                                    "bounds": [],
+                                    "settings": [
+                                        {
+                                            "type": "dropdown",
+                                            "label": "Function",
+                                            "value": [
+                                                "Residential"
+                                            ],
+                                            "bounds": [
+                                                "Residential",
+                                                "Institutional",
+                                                "Industrial",
+                                                "Retail",
+                                                "Office",
+                                                "Hotel",
+                                                "Parking",
+                                                "Unspecified"
+                                            ],
+                                            "settings": [],
+                                            "template": []
+                                        },
+                                        {
+                                            "type": "slider",
+                                            "label": "Floors [#]",
+                                            "value": [
+                                                "5"
+                                            ],
+                                            "bounds": [
+                                                "1",
+                                                "40"
+                                            ],
+                                            "settings": [],
+                                            "template": []
+                                        },
+                                        {
+                                            "type": "slider",
+                                            "label": "Floor Height [ft]",
+                                            "value": [
+                                                "10"
+                                            ],
+                                            "bounds": [
+                                                "10",
+                                                "20"
+                                            ],
+                                            "settings": [],
+                                            "template": []
+                                        }
+                                    ],
+                                    "template": []
+                                }
+                            ],
+                            "template": [
+                                {
+                                    "type": "group",
+                                    "label": "Zone",
+                                    "value": [],
+                                    "bounds": [],
+                                    "settings": [
+                                        {
+                                            "type": "dropdown",
+                                            "label": "Function",
+                                            "value": [
+                                                "Residential"
+                                            ],
+                                            "bounds": [
+                                                "Residential",
+                                                "Institutional",
+                                                "Industrial",
+                                                "Retail",
+                                                "Office",
+                                                "Hotel",
+                                                "Parking",
+                                                "Unspecified"
+                                            ],
+                                            "settings": [],
+                                            "template": []
+                                        },
+                                        {
+                                            "type": "slider",
+                                            "label": "Floors [#]",
+                                            "value": [
+                                                "3"
+                                            ],
+                                            "bounds": [
+                                                "1",
+                                                "40"
+                                            ],
+                                            "settings": [],
+                                            "template": []
+                                        },
+                                        {
+                                            "type": "slider",
+                                            "label": "Floor Height [ft]",
+                                            "value": [
+                                                "10"
+                                            ],
+                                            "bounds": [
+                                                "10",
+                                                "20"
+                                            ],
+                                            "settings": [],
+                                            "template": []
+                                        }
+                                    ],
+                                    "template": []
+                                }
+                            ]
+                        }
+                    ],
+                    "template": []
+                },
+                {
+                    "type": "group",
+                    "label": "Premium",
+                    "value": [],
+                    "bounds": [],
+                    "settings": [
+                        {
+                            "type": "control_point",
+                            "label": "Location",
+                            "value": [
+                                "15.433",
+                                "0",
+                                "89.072"
+                            ],
+                            "bounds": [
+                                "-1500",
+                                "0",
+                                "-1500",
+                                "1500",
+                                "0",
+                                "1500"
+                            ],
+                            "settings": [],
+                            "template": []
+                        },
+                        {
+                            "type": "slider",
+                            "label": "Rotation [degrees]",
+                            "value": [
+                                "-66"
+                            ],
+                            "bounds": [
+                                "-90",
+                                "90"
+                            ],
+                            "settings": [],
+                            "template": []
+                        },
+                        {
+                            "type": "slider",
+                            "label": "Width [ft]",
+                            "value": [
+                                "75"
+                            ],
+                            "bounds": [
+                                "75",
+                                "150"
+                            ],
+                            "settings": [],
+                            "template": []
+                        },
+                        {
+                            "type": "slider",
+                            "label": "Depth [ft]",
+                            "value": [
+                                "50"
+                            ],
+                            "bounds": [
+                                "50",
+                                "100"
+                            ],
+                            "settings": [],
+                            "template": []
+                        },
+                        {
+                            "type": "group_extendable",
+                            "label": "Zones",
+                            "value": [],
+                            "bounds": [],
+                            "settings": [
+                                {
+                                    "type": "group",
+                                    "label": "Luxury",
+                                    "value": [],
+                                    "bounds": [],
+                                    "settings": [
+                                        {
+                                            "type": "dropdown",
+                                            "label": "Function",
+                                            "value": [
+                                                "Residential"
+                                            ],
+                                            "bounds": [
+                                                "Residential",
+                                                "Institutional",
+                                                "Industrial",
+                                                "Retail",
+                                                "Office",
+                                                "Hotel",
+                                                "Parking",
+                                                "Unspecified"
+                                            ],
+                                            "settings": [],
+                                            "template": []
+                                        },
+                                        {
+                                            "type": "slider",
+                                            "label": "Floors [#]",
+                                            "value": [
+                                                "10"
+                                            ],
+                                            "bounds": [
+                                                "1",
+                                                "40"
+                                            ],
+                                            "settings": [],
+                                            "template": []
+                                        },
+                                        {
+                                            "type": "slider",
+                                            "label": "Floor Height [ft]",
+                                            "value": [
+                                                "12"
+                                            ],
+                                            "bounds": [
+                                                "10",
+                                                "20"
+                                            ],
+                                            "settings": [],
+                                            "template": []
+                                        }
+                                    ],
+                                    "template": []
+                                },
+                                {
+                                    "type": "group",
+                                    "label": "Observation",
+                                    "value": [],
+                                    "bounds": [],
+                                    "settings": [
+                                        {
+                                            "type": "dropdown",
+                                            "label": "Function",
+                                            "value": [
+                                                "Retail"
+                                            ],
+                                            "bounds": [
+                                                "Residential",
+                                                "Institutional",
+                                                "Industrial",
+                                                "Retail",
+                                                "Office",
+                                                "Hotel",
+                                                "Parking",
+                                                "Unspecified"
+                                            ],
+                                            "settings": [],
+                                            "template": []
+                                        },
+                                        {
+                                            "type": "slider",
+                                            "label": "Floors [#]",
+                                            "value": [
+                                                "1"
+                                            ],
+                                            "bounds": [
+                                                "1",
+                                                "40"
+                                            ],
+                                            "settings": [],
+                                            "template": []
+                                        },
+                                        {
+                                            "type": "slider",
+                                            "label": "Floor Height [ft]",
+                                            "value": [
+                                                "10"
+                                            ],
+                                            "bounds": [
+                                                "10",
+                                                "20"
+                                            ],
+                                            "settings": [],
+                                            "template": []
+                                        }
+                                    ],
+                                    "template": []
+                                }
+                            ],
+                            "template": [
+                                {
+                                    "type": "group",
+                                    "label": "Zone",
+                                    "value": [],
+                                    "bounds": [],
+                                    "settings": [
+                                        {
+                                            "type": "dropdown",
+                                            "label": "Function",
+                                            "value": [
+                                                "Residential"
+                                            ],
+                                            "bounds": [
+                                                "Residential",
+                                                "Institutional",
+                                                "Industrial",
+                                                "Retail",
+                                                "Office",
+                                                "Hotel",
+                                                "Parking",
+                                                "Unspecified"
+                                            ],
+                                            "settings": [],
+                                            "template": []
+                                        },
+                                        {
+                                            "type": "slider",
+                                            "label": "Floors [#]",
+                                            "value": [
+                                                "3"
+                                            ],
+                                            "bounds": [
+                                                "1",
+                                                "40"
+                                            ],
+                                            "settings": [],
+                                            "template": []
+                                        },
+                                        {
+                                            "type": "slider",
+                                            "label": "Floor Height [ft]",
+                                            "value": [
+                                                "10"
+                                            ],
+                                            "bounds": [
+                                                "10",
+                                                "20"
+                                            ],
+                                            "settings": [],
+                                            "template": []
+                                        }
+                                    ],
+                                    "template": []
+                                }
+                            ]
+                        }
+                    ],
+                    "template": []
+                }
+            ],
+            "template": [
+                {
+                    "type": "group",
+                    "label": "Tower Volume",
+                    "value": [],
+                    "bounds": [],
+                    "settings": [
+                        {
+                            "type": "control_point",
+                            "label": "Location",
+                            "value": [
+                                "0",
+                                "0",
+                                "0"
+                            ],
+                            "bounds": [
+                                "-1500",
+                                "-0",
+                                "-1500",
+                                "1500",
+                                "0",
+                                "1500"
+                            ],
+                            "settings": [],
+                            "template": []
+                        },
+                        {
+                            "type": "slider",
+                            "label": "Rotation [degrees]",
+                            "value": [
+                                "0"
+                            ],
+                            "bounds": [
+                                "-90",
+                                "90"
+                            ],
+                            "settings": [],
+                            "template": []
+                        },
+                        {
+                            "type": "slider",
+                            "label": "Width [ft]",
+                            "value": [
+                                "75"
+                            ],
+                            "bounds": [
+                                "75",
+                                "150"
+                            ],
+                            "settings": [],
+                            "template": []
+                        },
+                        {
+                            "type": "slider",
+                            "label": "Depth [ft]",
+                            "value": [
+                                "50"
+                            ],
+                            "bounds": [
+                                "50",
+                                "100"
+                            ],
+                            "settings": [],
+                            "template": []
+                        },
+                        {
+                            "type": "group_extendable",
+                            "label": "Zones",
+                            "value": [],
+                            "bounds": [],
+                            "settings": [
+                                {
+                                    "type": "group",
+                                    "label": "Zone",
+                                    "value": [],
+                                    "bounds": [],
+                                    "settings": [
+                                        {
+                                            "type": "dropdown",
+                                            "label": "Function",
+                                            "value": [
+                                                "Residential"
+                                            ],
+                                            "bounds": [
+                                                "Residential",
+                                                "Institutional",
+                                                "Industrial",
+                                                "Retail",
+                                                "Office",
+                                                "Hotel",
+                                                "Parking",
+                                                "Unspecified"
+                                            ],
+                                            "settings": [],
+                                            "template": []
+                                        },
+                                        {
+                                            "type": "slider",
+                                            "label": "Floors [#]",
+                                            "value": [
+                                                "3"
+                                            ],
+                                            "bounds": [
+                                                "1",
+                                                "40"
+                                            ],
+                                            "settings": [],
+                                            "template": []
+                                        },
+                                        {
+                                            "type": "slider",
+                                            "label": "Floor Height [ft]",
+                                            "value": [
+                                                "10"
+                                            ],
+                                            "bounds": [
+                                                "10",
+                                                "20"
+                                            ],
+                                            "settings": [],
+                                            "template": []
+                                        }
+                                    ],
+                                    "template": []
+                                }
+                            ],
+                            "template": [
+                                {
+                                    "type": "group",
+                                    "label": "Zone",
+                                    "value": [],
+                                    "bounds": [],
+                                    "settings": [
+                                        {
+                                            "type": "dropdown",
+                                            "label": "Function",
+                                            "value": [
+                                                "Residential"
+                                            ],
+                                            "bounds": [
+                                                "Residential",
+                                                "Institutional",
+                                                "Industrial",
+                                                "Retail",
+                                                "Office",
+                                                "Hotel",
+                                                "Parking",
+                                                "Unspecified"
+                                            ],
+                                            "settings": [],
+                                            "template": []
+                                        },
+                                        {
+                                            "type": "slider",
+                                            "label": "Floors [#]",
+                                            "value": [
+                                                "3"
+                                            ],
+                                            "bounds": [
+                                                "1",
+                                                "40"
+                                            ],
+                                            "settings": [],
+                                            "template": []
+                                        },
+                                        {
+                                            "type": "slider",
+                                            "label": "Floor Height [ft]",
+                                            "value": [
+                                                "10"
+                                            ],
+                                            "bounds": [
+                                                "10",
+                                                "20"
+                                            ],
+                                            "settings": [],
+                                            "template": []
+                                        }
+                                    ],
+                                    "template": []
+                                }
+                            ]
+                        }
+                    ],
+                    "template": []
+                }
+            ]
+        },
+        {
+            "type": "group_extendable",
+            "label": "Podium Exclusion Areas",
+            "value": [],
+            "bounds": [],
+            "settings": [
+                {
+                    "type": "group",
+                    "label": "Park Access",
+                    "value": [],
+                    "bounds": [],
+                    "settings": [
+                        {
+                            "type": "group_extendable",
+                            "label": "Vertices",
+                            "value": [],
+                            "bounds": [],
+                            "settings": [
+                                {
+                                    "type": "control_point",
+                                    "label": "Vertex_1",
+                                    "value": [
+                                        "147.959",
+                                        "0",
+                                        "30.261"
+                                    ],
+                                    "bounds": [
+                                        "-Infinity",
+                                        "-Infinity",
+                                        "-Infinity",
+                                        "Infinity",
+                                        "Infinity",
+                                        "Infinity"
+                                    ],
+                                    "settings": [],
+                                    "template": []
+                                },
+                                {
+                                    "type": "control_point",
+                                    "label": "Vertex_2",
+                                    "value": [
+                                        "43.903",
+                                        "0",
+                                        "250.182"
+                                    ],
+                                    "bounds": [
+                                        "-Infinity",
+                                        "-Infinity",
+                                        "-Infinity",
+                                        "Infinity",
+                                        "Infinity",
+                                        "Infinity"
+                                    ],
+                                    "settings": [],
+                                    "template": []
+                                },
+                                {
+                                    "type": "control_point",
+                                    "label": "Vertex_3",
+                                    "value": [
+                                        "-42.499",
+                                        "0",
+                                        "256.153"
+                                    ],
+                                    "bounds": [
+                                        "-Infinity",
+                                        "-Infinity",
+                                        "-Infinity",
+                                        "Infinity",
+                                        "Infinity",
+                                        "Infinity"
+                                    ],
+                                    "settings": [],
+                                    "template": []
+                                },
+                                {
+                                    "type": "control_point",
+                                    "label": "Vertex_4",
+                                    "value": [
+                                        "-77.269",
+                                        "0",
+                                        "-71.584"
+                                    ],
+                                    "bounds": [
+                                        "-Infinity",
+                                        "-Infinity",
+                                        "-Infinity",
+                                        "Infinity",
+                                        "Infinity",
+                                        "Infinity"
+                                    ],
+                                    "settings": [],
+                                    "template": []
+                                },
+                                {
+                                    "type": "control_point",
+                                    "label": "Vertex_6",
+                                    "value": [
+                                        "26.935",
+                                        "0",
+                                        "-25.212"
+                                    ],
+                                    "bounds": [
+                                        "-Infinity",
+                                        "-Infinity",
+                                        "-Infinity",
+                                        "Infinity",
+                                        "Infinity",
+                                        "Infinity"
+                                    ],
+                                    "settings": [],
+                                    "template": []
+                                },
+                                {
+                                    "type": "control_point",
+                                    "label": "Vertex_7",
+                                    "value": [
+                                        "-38.118",
+                                        "0",
+                                        "125.83"
+                                    ],
+                                    "bounds": [
+                                        "-Infinity",
+                                        "-Infinity",
+                                        "-Infinity",
+                                        "Infinity",
+                                        "Infinity",
+                                        "Infinity"
+                                    ],
+                                    "settings": [],
+                                    "template": []
+                                },
+                                {
+                                    "type": "control_point",
+                                    "label": "Vertex_8",
+                                    "value": [
+                                        "16.293",
+                                        "0",
+                                        "149.598"
+                                    ],
+                                    "bounds": [
+                                        "-Infinity",
+                                        "-Infinity",
+                                        "-Infinity",
+                                        "Infinity",
+                                        "Infinity",
+                                        "Infinity"
+                                    ],
+                                    "settings": [],
+                                    "template": []
+                                },
+                                {
+                                    "type": "control_point",
+                                    "label": "Vertex_9",
+                                    "value": [
+                                        "84.366",
+                                        "0",
+                                        "-0.967"
+                                    ],
+                                    "bounds": [
+                                        "-Infinity",
+                                        "-Infinity",
+                                        "-Infinity",
+                                        "Infinity",
+                                        "Infinity",
+                                        "Infinity"
+                                    ],
+                                    "settings": [],
+                                    "template": []
+                                }
+                            ],
+                            "template": [
+                                {
+                                    "type": "control_point",
+                                    "label": "Vertex",
+                                    "value": [
+                                        "0",
+                                        "0",
+                                        "0"
+                                    ],
+                                    "bounds": [],
+                                    "settings": [],
+                                    "template": []
+                                }
+                            ]
+                        }
+                    ],
+                    "template": []
+                },
+                {
+                    "type": "group",
+                    "label": "Street Corner",
+                    "value": [],
+                    "bounds": [],
+                    "settings": [
+                        {
+                            "type": "group_extendable",
+                            "label": "Vertices",
+                            "value": [],
+                            "bounds": [],
+                            "settings": [
+                                {
+                                    "type": "control_point",
+                                    "label": "Vertex_1",
+                                    "value": [
+                                        "-80.947",
+                                        "0",
+                                        "-73.2"
+                                    ],
+                                    "bounds": [
+                                        "-Infinity",
+                                        "-Infinity",
+                                        "-Infinity",
+                                        "Infinity",
+                                        "Infinity",
+                                        "Infinity"
+                                    ],
+                                    "settings": [],
+                                    "template": []
+                                },
+                                {
+                                    "type": "control_point",
+                                    "label": "Vertex_2",
+                                    "value": [
+                                        "-145.019",
+                                        "0",
+                                        "-68.152"
+                                    ],
+                                    "bounds": [
+                                        "-Infinity",
+                                        "-Infinity",
+                                        "-Infinity",
+                                        "Infinity",
+                                        "Infinity",
+                                        "Infinity"
+                                    ],
+                                    "settings": [],
+                                    "template": []
+                                },
+                                {
+                                    "type": "control_point",
+                                    "label": "Vertex_3",
+                                    "value": [
+                                        "-147.145",
+                                        "0",
+                                        "-105.032"
+                                    ],
+                                    "bounds": [
+                                        "-Infinity",
+                                        "-Infinity",
+                                        "-Infinity",
+                                        "Infinity",
+                                        "Infinity",
+                                        "Infinity"
+                                    ],
+                                    "settings": [],
+                                    "template": []
+                                }
+                            ],
+                            "template": [
+                                {
+                                    "type": "control_point",
+                                    "label": "Vertex",
+                                    "value": [
+                                        "0",
+                                        "0",
+                                        "0"
+                                    ],
+                                    "bounds": [],
+                                    "settings": [],
+                                    "template": []
+                                }
+                            ]
+                        }
+                    ],
+                    "template": []
+                }
+            ],
+            "template": [
+                {
+                    "type": "group",
+                    "label": "Area",
+                    "value": [],
+                    "bounds": [],
+                    "settings": [
+                        {
+                            "type": "group_extendable",
+                            "label": "Vertices",
+                            "value": [],
+                            "bounds": [],
+                            "settings": [],
+                            "template": [
+                                {
+                                    "type": "control_point",
+                                    "label": "Vertex",
+                                    "value": [
+                                        "0",
+                                        "0",
+                                        "0"
+                                    ],
+                                    "bounds": [],
+                                    "settings": [],
+                                    "template": []
+                                }
+                            ]
+                        }
+                    ],
+                    "template": []
+                }
+            ]
+        }
+    ],
+    "legend": {
+        "label": "Function",
+        "entries": [
+            {
+                "label": "Residential",
+                "color": "#fdde37"
+            },
+            {
+                "label": "Institutional",
+                "color": "#db499f"
+            },
+            {
+                "label": "Industrial",
+                "color": "#9646c8"
+            },
+            {
+                "label": "Retail",
+                "color": "#bf1921"
+            },
+            {
+                "label": "Office",
+                "color": "#17629c"
+            },
+            {
+                "label": "Hotel",
+                "color": "#3ca171"
+            },
+            {
+                "label": "Parking",
+                "color": "#757575"
+            },
+            {
+                "label": "Unspecified",
+                "color": "#CCCCCC"
+            },
+            {
+                "label": "Plot",
+                "color": "#000000"
+            },
+            {
+                "label": "Tower",
+                "color": "#00FF00"
+            },
+            {
+                "label": "Open",
+                "color": "#FF0000"
+            }
+        ]
+    }
+}
