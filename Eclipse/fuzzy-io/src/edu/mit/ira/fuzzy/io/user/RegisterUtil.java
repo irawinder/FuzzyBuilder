@@ -80,6 +80,23 @@ public class RegisterUtil {
 	}
 	
 	/**
+	 * Get the formal case for a User ID. For example, sQuid4txabc becomes squid4TXABC
+	 * @param user
+	 * @return formal case as String; or original string if there's a problem
+	 */
+	public static String formalCase(String userID) {
+		
+		// User ID is long enough to be compatible with naming system
+		if (userID.length() > RegisterUtil.CODE_LENGTH) {
+			int splitIndex = userID.length() - RegisterUtil.CODE_LENGTH;
+			String prefix = userID.substring(0, splitIndex).toLowerCase();
+			String code = userID.substring(splitIndex, userID.length()).toUpperCase();
+			return prefix + code;
+		}
+		return userID;
+	}
+	
+	/**
 	 * Check if two strings are equal, ignoring case
 	 * @param str1
 	 * @param str2

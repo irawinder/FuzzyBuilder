@@ -23,6 +23,7 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
+import edu.mit.ira.fuzzy.io.log.ServerLog;
 import edu.mit.ira.fuzzy.io.log.UserLog;
 import edu.mit.ira.fuzzy.io.user.Register;
 import edu.mit.ira.fuzzy.io.user.RegisterUtil;
@@ -44,7 +45,7 @@ import edu.mit.ira.opensui.setting.Configuration;
 public class Server {
 	
 	public static final String NAME = "FuzzyIO";
-	public static final String VERSION = "v1.4.2";
+	public static final String VERSION = "v1.4.3";
 	public static final String AUTHOR = "Ira Winder, Daniel Fink, and Max Walker";
 	public static final String SPONSOR = "MIT Center for Real Estate";
 	public static final String CONTACT = "fuzzy-io@mit.edu";
@@ -105,10 +106,12 @@ public class Server {
 			String clientIP = t.getRemoteAddress().toString();
 			String[] resource = ServerUtil.parseResource(requestURI);
 			Map<String, String> requestParameters = ServerUtil.parseParameters(requestURI);
-			String user = requestParameters.get("user");
+			String user = RegisterUtil.formalCase(requestParameters.get("user"));
+			
+			System.out.println(user);
 			
 			// Log Request
-			ServerUtil.log(t, "Request: " + method + " " +  requestURI);
+			ServerLog.add(t, "Request: " + method + " " +  requestURI);
 			
 			boolean simResource = resource[0].equals("OPENSUI") && resource.length > 1;
 			boolean htmlResource = resource[0].equals("") || resource[0].equals("REGISTER");
@@ -158,7 +161,6 @@ public class Server {
 				String responseBody = Pages.studySite(user, "finish", deactivated);
 				ServerUtil.packItShipIt(t, 200, "HTML Delivered", responseBody, htmlContent);
 				UserLog.add(user, clientIP, "HOME", "Visited FuzzyIO Study Page : FINISH");
-				System.out.println(user + " is deactivated");
 			
 			// General Web Resources
 			} else if (resource[0].equals("")) {	
@@ -308,7 +310,7 @@ public class Server {
 				}
 			
 			// Load a previously saved setting configuration
-			} else if (resource[1].equals("LOAD")) {	
+			} else if (resource[1].equals("LOAD")) {
 			
 				// Send the default setting configuration to the GUI
 				if (scenario.equals("default configuration")) {
