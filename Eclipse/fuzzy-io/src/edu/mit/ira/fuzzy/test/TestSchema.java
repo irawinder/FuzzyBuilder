@@ -7,7 +7,7 @@ public class TestSchema {
 
 	public static void main(String[] args) throws Exception {
 
-		Configuration base = Schema.get(true, true, true, true);
+		Configuration base = Schema.get(true, true, true, true, false);
 		System.out.println(base.serialize().toString(4));
 	}
 }

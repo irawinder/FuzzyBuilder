@@ -42,13 +42,14 @@ public class Schema {
 	 * make and return the setting schema for this model
 	 * @return
 	 */
-	public static Configuration get(boolean allowSave, boolean allowDelete, boolean allowLoad, boolean allowConfig) {
+	public static Configuration get(boolean allowSave, boolean allowDelete, boolean allowLoad, boolean allowConfig, boolean loadBasemap) {
 		
 		int XExtent = 1500;
 		int YExtent = 0;
 		int ZExtent = 1500;
 		
-		Configuration base = new Configuration(UNIVERSE_NAME, Server.VERSION, Server.NAME, Server.AUTHOR, Server.SPONSOR, Server.CONTACT, allowSave, allowDelete, allowLoad, allowConfig);
+		Configuration base = new Configuration(UNIVERSE_NAME, Server.VERSION, Server.NAME, Server.AUTHOR, Server.SPONSOR, Server.CONTACT, 
+				allowSave, allowDelete, allowLoad, allowConfig, loadBasemap);
 		
 		Setting plots = new Setting(GUI.GROUP_EXTENDABLE, PARCELS);
 		Setting plot = new Setting(GUI.GROUP, PARCEL);

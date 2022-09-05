@@ -6,10 +6,10 @@ import org.json.JSONObject;
 public class Configuration extends Setting {
 	private String apiVersion, id, author, sponsor, contact;
 	public Legend legend;
-	private boolean allowSave, allowDelete, allowLoad, allowConfig;
+	private boolean allowSave, allowDelete, allowLoad, allowConfig, loadBasemap;
 	
 	public Configuration(String label, String apiVersion, String id, String author, String sponsor, String contact) {
-		this(label, apiVersion, id, author, sponsor, contact, true, true, true, true);
+		this(label, apiVersion, id, author, sponsor, contact, true, true, true, true, false);
 	}
 	
 	/**
@@ -21,7 +21,8 @@ public class Configuration extends Setting {
 	 * @param sponsor
 	 * @param contact
 	 */
-	public Configuration(String label, String apiVersion, String id, String author, String sponsor, String contact, boolean allowSave, boolean allowDelete, boolean allowLoad, boolean allowConfig) {
+	public Configuration(String label, String apiVersion, String id, String author, String sponsor, String contact, 
+			boolean allowSave, boolean allowDelete, boolean allowLoad, boolean allowConfig, boolean loadBasemap) {
 		super(GUI.GROUP, label);
 		this.apiVersion = apiVersion;
 		this.id = id;
@@ -33,6 +34,7 @@ public class Configuration extends Setting {
 		this.allowDelete = allowDelete;
 		this.allowLoad = allowLoad;
 		this.allowConfig = allowConfig;
+		this.loadBasemap = loadBasemap;
 	}
 
 	public JSONObject serialize() {
@@ -54,6 +56,7 @@ public class Configuration extends Setting {
 		configJSON.put("delete", this.allowDelete);
 		configJSON.put("load", this.allowLoad);
 		configJSON.put("config", this.allowConfig);
+		configJSON.put("basemap", this.loadBasemap);
 		configJSON.put("settings", settingsJSON);
 		configJSON.put("legend", legend.serialize());
 		return configJSON;

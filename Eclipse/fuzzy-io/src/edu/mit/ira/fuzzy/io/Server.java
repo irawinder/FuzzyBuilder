@@ -44,7 +44,7 @@ import edu.mit.ira.opensui.setting.Configuration;
 public class Server {
 	
 	public static final String NAME = "FuzzyIO";
-	public static final String VERSION = "v1.4.0";
+	public static final String VERSION = "v1.4.1";
 	public static final String AUTHOR = "Ira Winder, Daniel Fink, and Max Walker";
 	public static final String SPONSOR = "MIT Center for Real Estate";
 	public static final String CONTACT = "fuzzy-io@mit.edu";
@@ -79,11 +79,11 @@ public class Server {
 		server.start();
 		
 		Register.init();
-		 // save, delete, load, config
-		guestConfig = Schema.get(false, false, true, true);
-		readOnlyConfig = Schema.get(false, false, true, false);
-		fullConfig = Schema.get(true, false, true, true);
-		adminConfig = Schema.get(true, true, true, true);
+		 // save, delete, load, config, auto-load-basemap
+		guestConfig = Schema.get(false, false, true, true, false);
+		readOnlyConfig = Schema.get(false, false, true, false, true);
+		fullConfig = Schema.get(true, false, true, true, true);
+		adminConfig = Schema.get(true, true, true, true, false);
 		
 		builder = new Builder();
 		evaluator = new Evaluator();
