@@ -60,7 +60,7 @@ public class Server {
 	private String info;
 	
 	// Fuzzy Objects
-	private Configuration readOnlyConfig, fullConfig, adminConfig;
+	private Configuration adminConfig, fullConfig, readOnlyConfig, guestConfig;
 	private Builder builder;
 	private Evaluator evaluator;
 	private Deserializer adapter;
@@ -79,9 +79,11 @@ public class Server {
 		server.start();
 		
 		Register.init();
-		readOnlyConfig = Schema.get(false, false, true, false); // !save, !delete load, !config
-		fullConfig = Schema.get(true, false, true, true); // save, !delete, load, and config
-		adminConfig = Schema.get(true, true, true, true); // save, delete, load, and config
+		 // save, delete load, config
+		guestConfig = Schema.get(false, false, true, true);
+		readOnlyConfig = Schema.get(false, false, true, false);
+		fullConfig = Schema.get(true, false, true, true);
+		adminConfig = Schema.get(true, true, true, true);
 		
 		builder = new Builder();
 		evaluator = new Evaluator();
@@ -98,18 +100,153 @@ public class Server {
 		public void handle(HttpExchange t) throws IOException {
 			
 			// Parse Request Header
-			String requestMethod = t.getRequestMethod();
+			String method = t.getRequestMethod();
 			String requestURI = t.getRequestURI().toString();
 			String clientIP = t.getRemoteAddress().toString();
-			String requestResource = ServerUtil.resource(requestURI);
-			Map<String, String> requestParameters = ServerUtil.parameters(requestURI);
+			String[] resource = ServerUtil.parseResource(requestURI);
+			Map<String, String> requestParameters = ServerUtil.parseParameters(requestURI);
 			String user = requestParameters.get("user");
-			String email = requestParameters.get("email").toLowerCase();
-			String page = requestParameters.get("page");
-			String scenario = requestParameters.get("scenario").toLowerCase();
-			String basemap = requestParameters.get("filename").toLowerCase();
 			
-			// Parse Request Body
+			// Log Request
+			ServerUtil.log(t, "Request: " + method + " " +  requestURI);
+			
+			boolean simResource = resource[0].equals("OPENSUI") && resource.length > 1;
+			boolean htmlResource = resource[0].equals("") || resource[0].equals("REGISTER");
+			boolean deactivated = Register.isDeactivated(user);
+			boolean permit = Register.isActive(user) || RegisterUtil.ignoreCaseEquals(user, ServerUtil.DEFAULT_USER) || deactivated;
+			
+			// Options Requested
+			if (method.equals("OPTIONS")) {
+				
+				// OPTIONS request is something browsers ask before 
+				// allowing an external server to provide data
+				String message = "HTTP Options Delivered";
+				ServerUtil.packItShipIt(t, 200, message);
+			
+			// Web Resource Requested
+			} else if (htmlResource) {
+				htmlRequest(t, clientIP, method, resource, requestParameters, user, permit, deactivated);
+			
+			// OpenSUI is requesting resource
+			} else if (simResource) {
+				simRequest(t, clientIP, method, resource, requestParameters, user, permit, deactivated);
+				
+			// 404 Resource Note Found
+			} else {
+				String responseBody = Pages.nullSite("404", "Resource Not Found");
+				ServerUtil.packItShipIt(t, 404, "Resource Not Found", responseBody, "text/html");
+			}
+		}
+	}
+	
+	private void htmlRequest(HttpExchange t, String clientIP, String method, String[] resource, Map<String, String> params, String user, boolean permit, boolean deactivated) throws IOException {
+		
+		String email = params.get("email").toLowerCase();
+		String page = params.get("page");
+		String htmlContent = "text/html";
+		
+		// Forbid if not permitted
+		if (!permit) {
+			ServerUtil.packItShipIt(t, 403, "Forbidden");
+
+			// HTTP GET Request
+		} else if (method.equals("GET")) {
+			
+			// Redirect deactivated users to "finish" page
+			if (deactivated) {
+				String responseBody = Pages.studySite(user, "finish", deactivated);
+				ServerUtil.packItShipIt(t, 200, "HTML Delivered", responseBody, htmlContent);
+				UserLog.add(user, clientIP, "HOME", "Visited FuzzyIO Study Page : FINISH");
+				System.out.println(user + " is deactivated");
+			
+			// General Web Resources
+			} else if (resource[0].equals("")) {	
+				
+				String responseBody, message;
+				
+				// Is Admin User
+				if (RegisterUtil.hasPrefix(user, UserPrefixAdmin.SQUID)) {
+					responseBody = Pages.generalSite();
+					message = "HTML Delivered";
+					UserLog.add(user, clientIP, "HOME", "Visited FuzzyIO General Page : GENERAL");
+					
+				// Is other active user (e.g. study user)	
+				} else if (Register.isActive(user)) {
+					responseBody = Pages.studySite(user, page, false);
+					message = "HTML Delivered";
+					UserLog.add(user, clientIP, "HOME", "Visited FuzzyIO Study Page : " + page.toUpperCase());
+					
+				// Is guest (unregistered) user (e.g. 'user' parameter is blank)
+				} else if (user.equals(ServerUtil.DEFAULT_USER)){
+					responseBody = Pages.studyIntroSite();
+					message = "HTML Delivered";
+					UserLog.add(user, clientIP, "HOME", "Visited FuzzyIO Study Page : INTRO");
+				}
+				
+				// No Resource available
+				else {
+					message = "Bad Request";
+					responseBody = Pages.nullSite("400", message);
+				}
+				ServerUtil.packItShipIt(t, 200, message, responseBody, htmlContent);
+			}
+			
+			// Client is trying to register an email address
+			else if (resource[0].equals("REGISTER")) 
+			{	
+				String responseBody;
+				
+				// blank registration form (no email parameter is submitted)
+				if (email.equals(ServerUtil.DEFAULT_EMAIL)) {
+					responseBody = Pages.registrationSite("");
+					
+				// Try to Register new "study" user in system
+				} else {
+					String userID = Register.makeUser(email, UserType.STUDY);
+					
+					// Registration Successful
+					if (userID != null) {
+						responseBody = Pages.registrationCompleteSite(userID, email);
+						
+					// Registration failed
+					} else {
+						
+						// Email already active
+						if (Register.isActiveEmail(email)) {
+							responseBody = Pages.registrationSite("This email has already been used.");
+						
+						// Something else went wrong
+						} else {
+							responseBody = Pages.registrationSite("Something went wrong and we can't register this email address. Please contact ira [at] mit [dot] edu for help.");
+						}
+					}
+				}
+				ServerUtil.packItShipIt(t, 200, "Success", responseBody, htmlContent);
+			} 
+			
+		// Method Not Allowed
+		} else {
+			String responseBody = Pages.nullSite("405", "Method Not Allowed");
+			String contentType = "text/html";
+			String message = "Method Not Allowed";
+			ServerUtil.packItShipIt(t, 405, message, responseBody, contentType);
+		}
+	}
+	
+	private void simRequest(HttpExchange t, String clientIP, String method, String[] resource, Map<String, String> params, String user, boolean permit, boolean deactivated) throws IOException {
+		
+		String scenario = params.get("scenario").toLowerCase();
+		String basemap = params.get("filename").toLowerCase();
+		String jsonContent = "application/json";
+		String requestBody = "";
+		
+		// Forbid and exit function if not permitted
+		if (!permit || deactivated) {
+			ServerUtil.packItShipIt(t, 403, "Forbidden");
+			return;
+			
+		// Parse Request Body
+		} else {
 			InputStreamReader isr = new InputStreamReader(t.getRequestBody(), "utf-8");
 			BufferedReader br = new BufferedReader(isr);
 			int b;
@@ -119,290 +256,184 @@ public class Server {
 			}
 			br.close();
 			isr.close();
-			String requestBody = buf.toString();
-			int requestLength = requestBody.length();
-			
-			// Log Request
-			ServerUtil.log(t, "Request: " + requestMethod + " " +  requestURI + ", Request Length: " + requestLength);
-			
-			boolean deactivated = Register.isDeactivated(user);
-			boolean permit = Register.isActive(user) || user.equals(ServerUtil.DEFAULT_USER) || requestResource.equals("REGISTER");
-			
-			// Run if a deactivated user is trying to view the site
-			if (deactivated) {
-				String responseBody = Pages.studySite(user, "finish", deactivated);
-				String contentType = "text/html";
-				String message = "HTML Delivered";
-				ServerUtil.packItShipIt(t, 200, message, responseBody.getBytes(), contentType);
-				UserLog.add(user, clientIP, "HOME", "Visited FuzzyIO Study Page : FINISH");
-				System.out.println(user + " is deactivated");
-			} 
-			// User is not permitted to access any of the requested resources
-			else if (!permit) 
-			{
-				ServerUtil.packItShipIt(t, 403, "Forbidden");
-			}
-			// HTTP GET Request
-			else if (requestMethod.equals("GET")) 
-			{
-				// Homepage for serving public introduction and and study pages
-				if (requestResource.equals("")) 
-				{	
-					String responseBody = "boochy";
-					if (RegisterUtil.hasPrefix(user, UserPrefixAdmin.SQUID)) {
-						responseBody = Pages.generalSite();
-					} else if (Register.isActive(user)) {
-						responseBody = Pages.studySite(user, page, false);
-						UserLog.add(user, clientIP, "HOME", "Visited FuzzyIO Home Page " + page);
-					} else {
-						responseBody = Pages.studyIntroSite();
-					}
-					String contentType = "text/html";
-					String message = "HTML Delivered";
-					ServerUtil.packItShipIt(t, 200, message, responseBody.getBytes(), contentType);
-				} 
-				if (requestResource.equals("REGISTER")) 
-				{	
-					String responseBody;
-					if (email.equals(ServerUtil.DEFAULT_EMAIL)) {
-						responseBody = Pages.registrationSite("");
-					} else {
-						
-						// Register new "study" user in system
-						String userID = Register.makeUser(email, UserType.STUDY);
-						
-						if (userID != null) {
-							responseBody = Pages.registrationCompleteSite(userID, email);
-						} else {
-							if (Register.isActiveEmail(email)) {
-								responseBody = Pages.registrationSite("This email has already been used.");
-							} else {
-								responseBody = Pages.registrationSite("Something went wrong and we can't register this email address. Please contact ira [at] mit [dot] edu for help.");
-							}
-						}
-					}
-					
-					String contentType = "text/html";
-					String message = "HTML Delivered";
-					ServerUtil.packItShipIt(t, 200, message, responseBody.getBytes(), contentType);
-				} 
-				else if (requestResource.equals("INIT")) 
-				{
-					// Add global files to new user's scenarios
-					if (!RegisterUtil.hasPrefix(user, UserPrefixStudy.COBRA)) addGlobalScenarios(user);
+			requestBody = buf.toString();
+		}
+
+		// HTTP GET Request
+		if (method.equals("GET")) {
+
+			// Send the setting configuration to the GUI
+			if (resource[1].equals("INIT")) {
 				
-					// Send the setting configuration to the GUI
-					String responseBody = schemaData(user);
-					String contentType = "application/json";
+				// Add global files to new user's scenarios
+				boolean isCobra = RegisterUtil.hasPrefix(user, UserPrefixStudy.COBRA);
+				if (!isCobra) addGlobalScenarios(user);
+				
+				// Send Schema to user
+				String responseBody = schemaData(user);
+				String message = "Settings Delivered to " + user;
+				ServerUtil.packItShipIt(t, 200, message, responseBody, jsonContent);
+				UserLog.add(user, clientIP, "LOGIN", "Initialize New Session");
+			
+			// Send a list of scenarios saved by this user
+			} else if (resource[1].equals("LIST")) {	
+				String responseBody = ServerUtil.fileNames("./data/users/" + user + "/scenarios");
+				String message = "Scenario Names Delivers for " + user;
+				ServerUtil.packItShipIt(t, 200, message, responseBody, jsonContent);
+			
+			// Send a list of basemaps saved by this user
+			} else if (resource[1].equals("BASEMAPS")) {	
+				String responseBody = ServerUtil.fileNames("./data/basemaps");
+				String message = "Scenario Names Delivers for " + user;
+				ServerUtil.packItShipIt(t, 200, message, responseBody, jsonContent);
+			
+			// Delete a Scenario
+			} else if (resource[1].equals("DELETE")) {
+				
+				// Delete the data for this scenario
+				if (hasScenario(user, scenario)) {
+					deleteScenario(user, scenario);
+					String message = "Scenario " + scenario + " deleted for " + user;
+					ServerUtil.packItShipIt(t, 200, message);
+					UserLog.add(user, clientIP, "DELETE SCENARIO", scenario);
+				
+				// Scenario Not Found
+				} else {
+					ServerUtil.packItShipIt(t, 400, "Bad Request");
+				}
+			
+			// Load a previously saved setting configuration
+			} else if (resource[1].equals("LOAD")) {	
+			
+				// Send the default setting configuration to the GUI
+				if (scenario.equals("default configuration")) {
+					String userFeedback = "Scenario Loaded: " + scenario;
+					String responseBody = schemaData(user, userFeedback);
 					String message = "Settings Delivered to " + user;
-					ServerUtil.packItShipIt(t, 200, message, responseBody.getBytes(), contentType);
-					UserLog.add(user, clientIP, "LOGIN", "Initialize New Session");
-				} 
-				else if (requestResource.equals("LIST"))
-				{	
-					// Send a list of scenarios saved by this user
-					String responseBody = ServerUtil.fileNames("./data/users/" + user + "/scenarios");
-					String contentType = "application/json";
-					String message = "Scenario Names Delivers for " + user;
-					ServerUtil.packItShipIt(t, 200, message, responseBody.getBytes(), contentType);
-				} 
-				else if (requestResource.equals("BASEMAPS"))
-				{	
-					// Send a list of basemaps saved by this user
-					String responseBody = ServerUtil.fileNames("./data/basemaps");
-					String contentType = "application/json";
-					String message = "Scenario Names Delivers for " + user;
-					ServerUtil.packItShipIt(t, 200, message, responseBody.getBytes(), contentType);
-				} 
-				else if (requestResource.equals("DELETE"))
-				{
-					// Load a previously saved setting configuration
-					if (hasScenario(user, scenario)) {
-						
-						// Delete the data for this scenario
-						deleteScenario(user, scenario);
-						String message = "Scenario " + scenario + " deleted for " + user;
-						ServerUtil.packItShipIt(t, 200, message);
-						UserLog.add(user, clientIP, "DELETE SCENARIO", scenario);
-					} else {
-						
-						// Resource Not Found
-						String responseBody = Pages.nullSite();
-						String contentType = "text/html";
-						String message = "Resource not found";
-						ServerUtil.packItShipIt(t, 404, message, responseBody.getBytes(), contentType);
-					}
+					ServerUtil.packItShipIt(t, 200, message, responseBody, jsonContent);
+					UserLog.add(user, clientIP, "LOAD SCENARIO", scenario);
+				
+				// Send the scenario to the GUI
+				} else if (hasScenario(user, scenario)) {
+					String responseBody = scenarioData(user, scenario, REQUEST_FILE);
+					String message = "Scenario " + scenario + " loaded for " + user;
+					ServerUtil.packItShipIt(t, 200, message, responseBody, jsonContent);
+					UserLog.add(user, clientIP, "LOAD SCENARIO", scenario);
+				
+				// Scenario Not Found
+				} else {
+					ServerUtil.packItShipIt(t, 400, "Bad Request");
 				}
-				else if (requestResource.equals("LOAD")) 
-				{	
-					// Load a previously saved setting configuration
-					if (scenario.equals("default configuration")) {
-						
-						// Send the default setting configuration to the GUI
-						String userFeedback = "Scenario Loaded: " + scenario;
-						String responseBody = schemaData(user, userFeedback);
-						String contentType = "application/json";
-						String message = "Settings Delivered to " + user;
-						ServerUtil.packItShipIt(t, 200, message, responseBody.getBytes(), contentType);
-						UserLog.add(user, clientIP, "LOAD SCENARIO", scenario);
-					} else if (hasScenario(user, scenario)) {
-						
-						// Send the scenario to the GUI
-						String responseBody = scenarioData(user, scenario, REQUEST_FILE);
-						String contentType = "application/json";
-						String message = "Scenario " + scenario + " loaded for " + user;
-						ServerUtil.packItShipIt(t, 200, message, responseBody.getBytes(), contentType);
-						UserLog.add(user, clientIP, "LOAD SCENARIO", scenario);
-					} else {
-						
-						// Resource Not Found
-						String responseBody = Pages.nullSite();
-						String contentType = "text/html";
-						String message = "Resource not found";
-						ServerUtil.packItShipIt(t, 404, message, responseBody.getBytes(), contentType);
-					}
-				} 
-				else if (requestResource.equals("BASEMAP")) 
-				{
-					// Load the image as bytes
-					byte[] imageAsBytes = null;
-					String[] splitName = basemap.split("\\.");
-					if (splitName.length == 2) {
-						imageAsBytes = basemapData(basemap, splitName[1]);
-					}
+				
+			} else if (resource[1].equals("BASEMAP")) {
+			
+				// Load the image as bytes
+				byte[] imageAsBytes = null;
+				String[] splitName = basemap.split("\\.");
+				if (splitName.length == 2) {
+					imageAsBytes = basemapData(basemap, splitName[1]);
+				}
+				
+				// image loaded successfully
+				if (imageAsBytes != null) {
+					String contentType = "image/" + splitName[1];
+					String message = "Basemap " + basemap + " sent to " + user;
+					ServerUtil.packItShipIt(t, 200, message, imageAsBytes, contentType);
+					UserLog.add(user, clientIP, "LOAD BASEMAP", basemap);
 					
-					// image loaded successfully
-					if (imageAsBytes != null) {
-						
-						// Send the image
-						String contentType = "image/" + splitName[1];
-						String message = "Basemap " + basemap + " sent to " + user;
-						ServerUtil.packItShipIt(t, 200, message, imageAsBytes, contentType);
-						UserLog.add(user, clientIP, "LOAD BASEMAP", basemap);
-					} else {
-						
-						// Resource Not Found
-						String responseBody = Pages.nullSite();
-						String contentType = "text/html";
-						String message = "Resource not found";
-						ServerUtil.packItShipIt(t, 404, message, responseBody.getBytes(), contentType);
-					}
+				// Basemap Not Found
+				} else {
+					ServerUtil.packItShipIt(t, 400, "Bad Request");
 				}
-				else if (requestResource.equals("SUMMARY"))
-				{
-					// Send the default setting configuration to the GUI
-					String responseBody = summaryData(user);
-					String contentType = "application/csv";
-					String message = "Summary Delivered to " + user;
-					ServerUtil.packItShipIt(t, 200, message, responseBody.getBytes(), contentType);
-					UserLog.add(user, clientIP, "EXPORT CSV", "user exported CSV of model");
-				}
-				else
-				{
-					// Resource Not Found
-					String responseBody = Pages.nullSite();
-					String contentType = "text/html";
-					String message = "Resource not found";
-					ServerUtil.packItShipIt(t, 404, message, responseBody.getBytes(), contentType);
-				}
+			
+			// Send the default setting configuration to the GUI
+			} else if (resource[1].equals("SUMMARY")) {
+				String responseBody = summaryData(user);
+				String contentType = "application/csv";
+				String message = "Summary Delivered to " + user;
+				ServerUtil.packItShipIt(t, 200, message, responseBody, contentType);
+				UserLog.add(user, clientIP, "EXPORT CSV", "user exported CSV of model");
+			
+			// Resource Not Found
+			} else {
+				ServerUtil.packItShipIt(t, 404, "Resource Not Found");
 			}
 			
-			// HTTP POST Request
-			else if (requestMethod.equals("POST")) 
-			{	
-				if (requestResource.equals("RUN")) 
-				{
-					// Send the default setting configuration to the GUI
-					String feedback = null;
-					String responseBody = solutionData(requestBody, feedback, user);
-					String contentType = "application/json";
-					String message = "Solution Delivered to " + user;
-					ServerUtil.packItShipIt(t, 200, message, responseBody.getBytes(), contentType);
-					UserLog.add(user, clientIP, "RUN", "Model Changed");
-				} 
-				else if (requestResource.equals("SAVE")) 
-				{
-					// Save a submitted setting configuration
-					String userFeedback;
-					String message = "Solution Delivered to " + user;
-					boolean save;
-					if(scenario.equals(""))
-					{
-						userFeedback = "You must give your scenario a name";
-						message += "; Save Denied";
-						save = false;
-					}
-					else if (user.equals("guest") || scenario.equals("default configuration")) 
-					{
-						userFeedback = "You may not save scenario";
-						message += "; Save Denied";
-						save = false;
-					} 
-					else 
-					{
-						userFeedback = "Scenario saved as \"" + scenario + "\"";
-						message += "; Saved scenario: " + scenario;
-						save = true;
-						UserLog.add(user, clientIP, "SAVE SCENARIO", scenario);
-					}
-					String responseBody = solutionData(requestBody, userFeedback, user);
-					String contentType = "application/json";
-					if (save) {
-						saveScenario(user, scenario, REQUEST_FILE, requestBody);
-						saveScenario(user, scenario, RESPONSE_FILE, responseBody);
-					}
-					ServerUtil.packItShipIt(t, 200, message, responseBody.getBytes(), contentType);
-				} 
-				else
-				{
-					// Resource Not Found
-					String message = "Resource not found";
-					ServerUtil.packItShipIt(t, 404, message);
-				}
-			}
+		// HTTP POST Request
+		} else if (method.equals("POST")) {
 			
-			// HTTP OPTIONS Request
-			else if (requestMethod.equals("OPTIONS")) {
+			// Send the default setting configuration to the GUI
+			if (resource[1].equals("RUN")) {
+				String feedback = null;
+				String responseBody = solutionData(requestBody, feedback, user);
+				String message = "Solution Delivered to " + user;
+				ServerUtil.packItShipIt(t, 200, message, responseBody, jsonContent);
+				UserLog.add(user, clientIP, "RUN", "Model Changed");
+			
+			// Save a submitted setting configuration
+			} else if (resource[1].equals("SAVE")) {
+				String userFeedback;
+				String message = "Solution Delivered to " + user;
+				boolean save;
 				
-				// OPTIONS request is something browsers ask before 
-				// allowing an external server to provide data
-				String message = "HTTP Options Delivered";
-				ServerUtil.packItShipIt(t, 200, message);
-			}
-			
-			// HTTP Request (other)
-			else  {
+				if(scenario.equals("")) {
+					userFeedback = "You must give your scenario a name";
+					message += "; Save Denied";
+					save = false;
+					
+				} else if (user.equals("guest") || scenario.equals("default configuration")) {
+					userFeedback = "You may not save scenario";
+					message += "; Save Denied";
+					save = false;
+					
+				} else {
+					userFeedback = "Scenario saved as \"" + scenario + "\"";
+					message += "; Saved scenario: " + scenario;
+					save = true;
+					UserLog.add(user, clientIP, "SAVE SCENARIO", scenario);
+				}
 				
-				// Other methods not allowed
-				String message = "Method Not Allowed";
-				ServerUtil.packItShipIt(t, 405, message);
+				String responseBody = solutionData(requestBody, userFeedback, user);
+				if (save) {
+					saveScenario(user, scenario, REQUEST_FILE, requestBody);
+					saveScenario(user, scenario, RESPONSE_FILE, responseBody);
+				}
+				ServerUtil.packItShipIt(t, 200, message, responseBody, jsonContent);
+
+			// Other Resources not allowed
+			} else {
+				ServerUtil.packItShipIt(t, 404, "Resource Not Found");
 			}
+
+		// Method Not Allowed
+		} else {
+			ServerUtil.packItShipIt(t, 405, "Method Not Allowed");
 		}
 	}
+	
 	
 	private String schemaData(String user) {
 		return schemaData(user, null);
 	}
 	
 	private String schemaData(String user, String userFeedback) {
-		if (RegisterUtil.hasPrefix(user, UserPrefixStudy.ZEBRA))
-		{
+		
+		if (RegisterUtil.hasPrefix(user, UserPrefixStudy.ZEBRA)) {
 			return schemaData(readOnlyConfig, userFeedback);
-		} 
-		else if (RegisterUtil.hasPrefix(user, UserPrefixStudy.COBRA))
-		{
+			
+		} else if (RegisterUtil.hasPrefix(user, UserPrefixStudy.COBRA)) {
 			return schemaData(fullConfig, userFeedback);
-		} 
-		else if (RegisterUtil.hasPrefix(user, UserPrefixStudy.PANDA))
-		{
+			
+		} else if (RegisterUtil.hasPrefix(user, UserPrefixStudy.PANDA)) {
 			return schemaData(fullConfig, userFeedback);
-		} 
-		else if (RegisterUtil.hasPrefix(user, UserPrefixAdmin.SQUID))
-		{
+			
+		} else if (RegisterUtil.hasPrefix(user, UserPrefixAdmin.SQUID)) {
 			return schemaData(adminConfig, userFeedback);
-		} 
-		else 
-		{
+		
+		} else if (RegisterUtil.ignoreCaseEquals(user, "guest")) {
+			return schemaData(guestConfig, userFeedback);
+			
+		} else {
 			return schemaData(adminConfig, userFeedback);
 		}
 	}

@@ -57,13 +57,14 @@ public class ServerUtil {
 	}
 	
 	/**
-	 * Parse the resoure requestde (e.g. "LOAD")
+	 * Parse the resource requests (e.g. "/opensui/load" becomes {"opensui", "load"})
 	 * @param requestURI
 	 * @return
 	 */
-	public static String resource(String requestURI) {
-		String[] process_params = requestURI.replace("?", ";").split(";");
-		return process_params[0].toUpperCase().replace("/", "");
+	public static String[] parseResource(String requestURI) {
+		String grossResource = requestURI.replace("?", ";").split(";")[0];
+		grossResource = grossResource.substring(1, grossResource.length());
+		return grossResource.toUpperCase().split("/");
 	}
 	
 	/**
@@ -71,7 +72,7 @@ public class ServerUtil {
 	 * @param requestURI
 	 * @return
 	 */
-	public static Map<String, String> parameters(String requestURI) {
+	public static Map<String, String> parseParameters(String requestURI) {
 		String[] process_params = requestURI.replace("?", ";").split(";");
 		Map<String, String> parameters = new HashMap<String, String>();
 		if(process_params.length > 1) {
@@ -137,10 +138,12 @@ public class ServerUtil {
 	}
 	
 	/**
-	 * Attach Data and Headers to HttpResponse and send it off to the client
+	 * 
 	 * @param t
 	 * @param responseCode
-	 * @param data a byte[] of responseBody, such as a JSON file
+	 * @param responseMessage
+	 * @param responseBody as bytes
+	 * @param contentType
 	 * @throws IOException
 	 */
 	public static void packItShipIt(HttpExchange t, int responseCode, String responseMessage, byte[] responseBody, String contentType) throws IOException {
@@ -154,9 +157,23 @@ public class ServerUtil {
 	}
 	
 	/**
+	 * Attach Data and Headers to HttpResponse and send it off to the client
+	 * @param t
+	 * @param responseCode
+	 * @param responseMessage
+	 * @param responseBody as String
+	 * @param contentType
+	 * @throws IOException
+	 */
+	public static void packItShipIt(HttpExchange t, int responseCode, String responseMessage, String responseBody, String contentType) throws IOException {
+		packItShipIt(t, responseCode, responseMessage, responseBody.getBytes(), contentType);
+	}
+	
+	/**
 	 * Attach Headers to HttpResponse and send it off to client
 	 * @param t
 	 * @param responseCode
+	 * @param responseMessage
 	 * @throws IOException
 	 */
 	public static void packItShipIt(HttpExchange t, int responseCode, String responseMessage) throws IOException {
@@ -169,6 +186,7 @@ public class ServerUtil {
 	
 	/**
 	 * Return a list of filenames in a directory as JSON Object
+	 * @param directoryName
 	 * @return
 	 */
 	public static String fileNames(String directoryName) {

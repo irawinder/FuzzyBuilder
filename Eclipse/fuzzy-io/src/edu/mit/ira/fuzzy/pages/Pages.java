@@ -42,9 +42,9 @@ public class Pages {
 		return assemblePage(head, body);
 	}
 
-	public static String nullSite() {
+	public static String nullSite(String errorCode, String errorMessage) {
 		String head = makeHead();
-		String body = makeNullBody();
+		String body = makeNullBody(errorCode, errorMessage);
 		return assemblePage(head, body);
 	}
 
@@ -651,7 +651,7 @@ public class Pages {
 			
 		} else {
 
-			return makeNullBody();
+			return makeNullBody("404", "Resource Not Found");
 
 		}
 		
@@ -678,12 +678,12 @@ public class Pages {
 		return body;
 	}
 
-	private static String makeNullBody() {
+	private static String makeNullBody(String errorCode, String errorMessage) {
 
 		String body = "<body>";
 
-		body += wrapText("h1", "404");
-		body += wrapText("p", "Resource Not Found");
+		body += wrapText("h1", errorCode);
+		body += wrapText("p", errorMessage);
 
 		body += "</body>";
 
