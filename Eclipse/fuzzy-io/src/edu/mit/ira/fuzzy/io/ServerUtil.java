@@ -168,7 +168,7 @@ public class ServerUtil {
 	
 	
 	/**
-	 * Return a list of filenames in a directory
+	 * Return a list of filenames in a directory as JSON Object
 	 * @return
 	 */
 	public static String fileNames(String directoryName) {
