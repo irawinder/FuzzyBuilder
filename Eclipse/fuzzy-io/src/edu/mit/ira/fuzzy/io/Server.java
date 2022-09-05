@@ -79,7 +79,7 @@ public class Server {
 		server.start();
 		
 		Register.init();
-		 // save, delete load, config
+		 // save, delete, load, config
 		guestConfig = Schema.get(false, false, true, true);
 		readOnlyConfig = Schema.get(false, false, true, false);
 		fullConfig = Schema.get(true, false, true, true);
@@ -113,7 +113,7 @@ public class Server {
 			boolean simResource = resource[0].equals("OPENSUI") && resource.length > 1;
 			boolean htmlResource = resource[0].equals("") || resource[0].equals("REGISTER");
 			boolean deactivated = Register.isDeactivated(user);
-			boolean permit = Register.isActive(user) || RegisterUtil.ignoreCaseEquals(user, ServerUtil.DEFAULT_USER) || deactivated;
+			boolean permitted = Register.isActive(user) || RegisterUtil.ignoreCaseEquals(user, ServerUtil.DEFAULT_USER) || deactivated;
 			
 			// Options Requested
 			if (method.equals("OPTIONS")) {
@@ -125,11 +125,11 @@ public class Server {
 			
 			// Web Resource Requested
 			} else if (htmlResource) {
-				htmlRequest(t, clientIP, method, resource, requestParameters, user, permit, deactivated);
+				htmlRequest(t, clientIP, method, resource, requestParameters, user, permitted, deactivated);
 			
 			// OpenSUI is requesting resource
 			} else if (simResource) {
-				simRequest(t, clientIP, method, resource, requestParameters, user, permit, deactivated);
+				simRequest(t, clientIP, method, resource, requestParameters, user, permitted, deactivated);
 				
 			// 404 Resource Note Found
 			} else {
@@ -139,17 +139,18 @@ public class Server {
 		}
 	}
 	
-	private void htmlRequest(HttpExchange t, String clientIP, String method, String[] resource, Map<String, String> params, String user, boolean permit, boolean deactivated) throws IOException {
+	private void htmlRequest(HttpExchange t, String clientIP, String method, String[] resource, Map<String, String> params, String user, boolean permitted, boolean deactivated) throws IOException {
 		
 		String email = params.get("email").toLowerCase();
 		String page = params.get("page");
 		String htmlContent = "text/html";
 		
 		// Forbid if not permitted
-		if (!permit) {
-			ServerUtil.packItShipIt(t, 403, "Forbidden");
+		if (!permitted) {
+			String responseBody = Pages.nullSite("401", "Unauthorized");
+			ServerUtil.packItShipIt(t, 401, "Unauthorized", responseBody, "text/html");
 
-			// HTTP GET Request
+		// HTTP GET Request
 		} else if (method.equals("GET")) {
 			
 			// Redirect deactivated users to "finish" page
@@ -233,31 +234,35 @@ public class Server {
 		}
 	}
 	
-	private void simRequest(HttpExchange t, String clientIP, String method, String[] resource, Map<String, String> params, String user, boolean permit, boolean deactivated) throws IOException {
+	private void simRequest(HttpExchange t, String clientIP, String method, String[] resource, Map<String, String> params, String user, boolean permitted, boolean deactivated) throws IOException {
 		
 		String scenario = params.get("scenario").toLowerCase();
 		String basemap = params.get("filename").toLowerCase();
 		String jsonContent = "application/json";
 		String requestBody = "";
 		
-		// Forbid and exit function if not permitted
-		if (!permit || deactivated) {
+		// User has been deactivated
+		if (deactivated) {
 			ServerUtil.packItShipIt(t, 403, "Forbidden");
 			return;
-			
-		// Parse Request Body
-		} else {
-			InputStreamReader isr = new InputStreamReader(t.getRequestBody(), "utf-8");
-			BufferedReader br = new BufferedReader(isr);
-			int b;
-			StringBuilder buf = new StringBuilder(512);
-			while ((b = br.read()) != -1) {
-				buf.append((char) b);
-			}
-			br.close();
-			isr.close();
-			requestBody = buf.toString();
+		
+		// User is not valid
+		} else if (!permitted) {
+			ServerUtil.packItShipIt(t, 401, "Unauthorized");
+			return;
 		}
+		
+		// Parse Request Body
+		InputStreamReader isr = new InputStreamReader(t.getRequestBody(), "utf-8");
+		BufferedReader br = new BufferedReader(isr);
+		int b;
+		StringBuilder buf = new StringBuilder(512);
+		while ((b = br.read()) != -1) {
+			buf.append((char) b);
+		}
+		br.close();
+		isr.close();
+		requestBody = buf.toString();
 
 		// HTTP GET Request
 		if (method.equals("GET")) {
