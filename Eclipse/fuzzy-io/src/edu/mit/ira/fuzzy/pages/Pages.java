@@ -67,7 +67,6 @@ public class Pages {
 		
 		String generalCSS = "text-align:left;"
 				+ "margin-left: 40px;"
-				+ "margin-right: 40px;"
 				+ "font-family:Helvetica, sans-serif;";
 		
 		String bodyTextCSS = "font-size:14px;"
@@ -97,6 +96,7 @@ public class Pages {
 		head += "ul li { margin-bottom: 10px; }";
 		head += "ol li { margin-bottom: 10px; }";
 		head += "img { margin-left: 40px; }";
+		head += "iframe { margin-left: 40px; }";
 
 		head += "</style>";
 
@@ -158,7 +158,7 @@ public class Pages {
 		body += studyBodyHeader();
 		
 		String imgUrl = "https://github.com/irawinder/FuzzyBuilder/blob/master/screenshots/v1.0-invert_sm.png?raw=true";
-		body += "<img style=\"width: 600px; max-width: 90%;\" src=\"" + imgUrl + "\" alt=\"Screenshot of Digital Model, FuzzyIO\">";
+		body += "<img style=\"width: 600px; max-width: 100%;\" src=\"" + imgUrl + "\" alt=\"Screenshot of Digital Model, FuzzyIO\">";
 		
 		body += wrapText("h2", "Introduction");
 		
@@ -384,34 +384,36 @@ public class Pages {
 
 			body += wrapText("p", "Now, we need you to prepare for your role by watching a quick tutorial video.");
 
-			body += wrapText("p", "Please watch the entire video with the sound on, and do not skip any parts.");
+			body += wrapText("p", "Please watch the entire video on <u>full screen</u> with <u>sound on</u>. Do not skip any parts.");
+			
+			body += wrapText("p", "If the video is blurry, go to settings and make sure <b>Quality</b> is set to 1080p.");
+			
+			body += wrapText("p", "The video should have English subtitles by default, "
+					+ "but Youtube can also provide subtitles in your preferred language (Settings > Subtitles/CC > Auot-translate).");
 
 			String tutorialUrl;
 			
 			if (ups == UserPrefixStudy.ZEBRA) {
 				
-				// Needs to be updated
-				tutorialUrl = "https://youtu.be/cNoS-bhRPEw";
+				tutorialUrl = "https://www.youtube.com/embed/JaT714oQQJ8?cc_load_policy=1&vq=hd1080";
 				
 			} else if (ups == UserPrefixStudy.COBRA) {
 				
-				// Needs to be updated
-				tutorialUrl = "https://youtu.be/cNoS-bhRPEw";
-				
-			} else if (ups == UserPrefixStudy.PANDA) {
-				
-				// Needs to be updated
-				tutorialUrl = "https://youtu.be/cNoS-bhRPEw";
-				
+				tutorialUrl = "https://www.youtube.com/embed/BA4LlQF8Ieo?cc_load_policy=1&vq=hd1080";
+			
+			// Full tutorial for PANDA (or any other user that makes it to this page)
 			} else {
 				
-				tutorialUrl = "https://youtu.be/cNoS-bhRPEw";
+				tutorialUrl = "https://www.youtube.com/embed/NgYlDAg1De8?cc_load_policy=1&vq=hd1080";
 				
 			}
 
-			body += wrapText("p", "--> <a href=\"" + tutorialUrl + "\" target=\"_blank\">FuzzyIO Tutorial</a>");
+			body += "<iframe style=\"width: 560px; height: 315px; max-width: 100%\" src=\"" + tutorialUrl + "\" "
+					+ "title=\"FuzzyIO Tutorial\" frameborder=\"0\" "
+					+ "allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture\" "
+					+ "allowfullscreen></iframe>";
 
-			body += wrapText("p", "(The video will open in a new tab. Come back here and click \"CONTINUE\" when you are done.)");
+			body += wrapText("p", "Click \"CONTINUE\" when you are done watching the video.");
 
 		} else if (page.equals("3")) {
 
