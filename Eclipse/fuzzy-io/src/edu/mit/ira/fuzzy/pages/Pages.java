@@ -381,10 +381,49 @@ public class Pages {
 
 		} else if (page.equals("2")) {
 
+			body += wrapText("h2", "FuzzyIO Model");
+			
+			body += wrapText("p", "During this exercise, it's important that you understand how the model is structured.");
+			
+			body += wrapText("p", "Review this diagram for the model, as well as a glossary of important terms.");
+			
+			String imgUrl = "https://github.com/irawinder/FuzzyBuilder/blob/master/screenshots/modelDiagram_sm.png?raw=true";
+			body += "<img style=\"width: 600px; max-width: 100%;\" src=\"" + imgUrl + "\" alt=\"Diagram of Model Components for FuzzyIO\">";
+			
+			body += wrapText("h2", "FuzzyIO Glossary");
+
+			body += "<ul>";
+
+			body += wrapText("li", "A <b>Function</b> describes the principal activity within a volume of enclosed space. (e.g. \"Residential\" or \"Retail\")");
+
+			body += wrapText("li", "A <b>Voxel</b> is a small, indivisible unit of enclosed space consisting of a square base, height, and single Function");
+
+			body += wrapText("li", "A <b>Zone</b> is a grid-based array of Voxels< with a common Function. If a Zone consists of multiple floors, all floors share the same footprint.");
+
+			body += wrapText("li", "A <b>Volume</b> is a stack of Zones that all share a common footprint, but each zone may have a different Function and number of floors");
+
+			body += wrapText("li", "A <b>Podium Volume</b> is a special Volume with a footprint defined by an off-set from a Parcel's edges and subtracting any Podium Exclusion Areas");
+
+			body += wrapText("li", "A <b>Podium Exclusion Area</b> is an area, defined by a polygon, where Voxels cannot be placed.");
+
+			body += wrapText("li", "A <b>Tower Volume</b> is a special Volume with a rectangular footprint. It must be placed within a Parcel.");
+
+			body += wrapText("li", "A <b>Parcel</b> is the set of flat, grid-based Voxels that fit within the boundaries of a defined polygon. Parcels cannot overlap each other.");
+			
+			body += wrapText("li", "A <b>Scenario</b> is a specific configuration of Voxels specified by Parcels, Volumes, and Zones.");
+			
+			body += wrapText("li", "<b>Gross Land Area</b> (GLA) - Total area of land defined by all parcels [sqft]");
+
+			body += wrapText("li", "<b>Gross Floor Area</b> (GFA) - Total floor area of all buildings [sqft]");
+
+			body += wrapText("li", "<b>Floor Area Ratio</b> (FAR) - Ratio of Gross Above-ground Floor Area to Gross Land Area [sqft/sqft]");
+			
+			body += "</ul>";
+			
 			body += wrapText("h2", "FuzzyIO Tutorial");
 
-			body += wrapText("p", "Now, we need you to prepare for your role by watching a quick tutorial video.");
-
+			body += wrapText("p", "Next, we need you to prepare for your role by watching a quick tutorial video.");
+			
 			body += wrapText("p", "Please watch the entire video on <u>full screen</u> with <u>sound on</u>. Do not skip any parts.");
 			
 			body += wrapText("p", "If the video is blurry, make sure <b>Quality</b> is set to 1080p."
@@ -415,8 +454,9 @@ public class Pages {
 					+ "title=\"FuzzyIO Tutorial\" frameborder=\"0\" "
 					+ "allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture\" "
 					+ "allowfullscreen></iframe>";
-
-			body += wrapText("p", "Click \"CONTINUE\" when you are done watching the video.");
+			
+			body += wrapText("p", "Click \"CONTINUE\" when you are done watching the video."
+					+ "<br><i>(Feel free to come back to this page later for reference)</i>");
 
 		} else if (page.equals("3")) {
 
@@ -442,41 +482,11 @@ public class Pages {
 
 			body += "<ul>";
 
-			body += wrapText("li", "The building must have AT LEAST <u>40,000</u> sqft of <b>residential function</b>");
+			body += wrapText("li", "The building must have AT LEAST <u>50,000</u> sqft of <b>residential function</b>");
 
-			body += wrapText("li", "The building must have AT LEAST <u>10,000</u> sqft of <b>commercial function</b>");
+			body += wrapText("li", "The building must have AT LEAST <u>80,000</u> sqft of <b>institutional function</b>");
 
-			body += wrapText("li", "The building's Floor Area Ratio (FAR) must be NO MORE than <u>4.0</u>");
-
-			body += "</ul>";
-
-			body += wrapText("h2", "Glossary");
-
-			body += "<ul>";
-
-			body += wrapText("li", "<b>Gross Land Area</b> (GLA) - Total area of land defined by all parcels [sqft]");
-
-			body += wrapText("li", "<b>Gross Floor Area</b> (GFA) - Total floor area of all buildings [sqft]");
-
-			body += wrapText("li", "<b>Floor Area Ratio</b> (FAR) - Ratio of Gross Above-ground Floor Area to Gross Land Area [sqft/sqft]");
-
-			body += wrapText("li", "A <b>Scenario</b> is a specific configuration of Voxels specified by Parcels, Volumes, and Zones.");
-
-			body += wrapText("li", "A <b>Function</b> describes the principal activity within a volume of enclosed space. (e.g. \"Residential\" or \"Retail\")");
-
-			body += wrapText("li", "A <b>Voxel</b> is a small, indivisible unit of enclosed space consisting of a square base, height, and single Function");
-
-			body += wrapText("li", "A <b>Zone</b> is a grid-based array of Voxels< with a common Function. If a Zone consists of multiple floors, all floors share the same footprint.");
-
-			body += wrapText("li", "A <b>Volume</b> is a stack of Zones that all share a common footprint, but each zone may have a different Function and number of floors");
-
-			body += wrapText("li", "A <b>Podium Volume</b> is a special Volume with a footprint defined by an off-set from a Parcel's edges and subtracting any Podium Exclusion Areas");
-
-			body += wrapText("li", "A <b>Podium Exclusion Area</b> is an area, defined by a polygon, where Voxels cannot be placed.");
-
-			body += wrapText("li", "A <b>Tower Volume</b> is a special Volume with a rectangular footprint. It must be placed within a Parcel.");
-
-			body += wrapText("li", "A <b>Parcel</b> is the set of flat, grid-based Voxels that fit within the boundaries of a defined polygon. Parcels cannot overlap each other.");
+			body += wrapText("li", "The building's Floor Area Ratio (FAR) must be NO MORE than <u>5.0</u>");
 
 			body += "</ul>";
 			
@@ -528,13 +538,12 @@ public class Pages {
 			
 			body += wrapText("p", "Take as long as you like, just be sure to finish everything in <u>one sitting</u>.</i>");
 			
-			body += wrapText("p", "Go ahead and login to FuzzyIO with the <b>User ID</b> at the top of this page.");
+			body += wrapText("p", "Log in to FuzzyIO with the <b>User ID</b> at the top of this page. "
+					+ "Clicking the link below will open FuzzyIO in a new tab, but feel free to come back and view this page while you work");
 			
 			String fuzzyUrl = "http://opensui.org";
 
 			body += wrapText("p", "<b>Fuzzy IO</b>:<br><a href=\"http://opensui.org\" target=\"_blank\">" + fuzzyUrl + "</a>");
-
-			body += wrapText("p", "(FuzzyIO will open in a new tab, but feel free to view this page while you work)");
 			
 			body += wrapText("h2", "Submitting your Final Design");
 			
