@@ -97,6 +97,7 @@ public class Pages {
 		head += "ol li { margin-bottom: 10px; }";
 		head += "img { margin-left: 40px; }";
 		head += "iframe { margin-left: 40px; }";
+		head += ".tab {display: inline-block; margin-left: 40px; }";
 
 		head += "</style>";
 
@@ -386,10 +387,12 @@ public class Pages {
 
 			body += wrapText("p", "Please watch the entire video on <u>full screen</u> with <u>sound on</u>. Do not skip any parts.");
 			
-			body += wrapText("p", "If the video is blurry, go to settings and make sure <b>Quality</b> is set to 1080p.");
+			body += wrapText("p", "If the video is blurry, make sure <b>Quality</b> is set to 1080p."
+					+ "<br><br><span class=\"tab\"></span><i>Settings</i> > <i>Quality</i> > <i>1080p</i>");
 			
-			body += wrapText("p", "The video should have English subtitles by default, "
-					+ "but Youtube can also provide subtitles in your preferred language (Settings > Subtitles/CC > Auot-translate).");
+			body += wrapText("p", "The video has English subtitles by default, "
+					+ "but Youtube can also provide <b>Subtitles</b> in your preferred language."
+					+ "<br><br><span class=\"tab\"></span><i>Settings</i> > <i>Subtitles/CC</i> > <i>Auto-translate</i>");
 
 			String tutorialUrl;
 			
