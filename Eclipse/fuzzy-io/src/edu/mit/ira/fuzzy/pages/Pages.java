@@ -645,7 +645,7 @@ public class Pages {
 			
 			body += wrapText("h2", "Finishing Up");
 
-			body += wrapText("p", "Have you completed everything in the exerise? If so, click \"I'm Finished\".");
+			body += wrapText("p", "Have you completed everything in the exercise? If so, click \"I'm Finished!\".");
 			
 			body += "<p style=\"color: red;\">WARNING: You will not be able to return to the experiment.</p>";
 			
