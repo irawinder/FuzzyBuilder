@@ -165,7 +165,7 @@ public class Pages {
 
 		bodyText += "<ul>";
 
-		bodyText += wrapText("li", "A <b>Function</b> describes the principal activity within a volume of enclosed space. (e.g. \"Residential\" or \"Retail\")");
+		bodyText += wrapText("li", "A <b>Function</b> describes the principal activity within a volume of enclosed space. (Residential, Retail, Office, etc)");
 		bodyText += wrapText("li", "A <b>Voxel</b> is a small, indivisible unit of enclosed space consisting of a square base, height, and single Function");
 		bodyText += wrapText("li", "A <b>Zone</b> is an array of Voxels with a common Function. If a Zone consists of multiple floors, all floors share the same footprint.");
 		bodyText += wrapText("li", "A <b>Volume</b> is a stack of Zones that all share a common footprint, but each zone may have a different Function and number of floors");
