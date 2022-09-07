@@ -9,6 +9,7 @@ public class Pages {
 	
 	public static String BODY_BACKGROUND_URL = "https://github.com/irawinder/FuzzyBuilder/blob/master/res/images/massing.png?raw=true";
 	public static String MODEL_DIAGRAM_URL = "https://github.com/irawinder/FuzzyBuilder/blob/master/res/images/modelDiagram_sm.png?raw=true";
+	public static String MODEL_DIAGRAM_LG_URL = "https://github.com/irawinder/FuzzyBuilder/blob/master/res/images/modelDiagram.png?raw=true";
 	public static String SITE_BASEMAP_URL = "https://github.com/irawinder/FuzzyBuilder/blob/master/res/images/beaverton_site.jpg?raw=true";
 	public static String ZEBRA_TUTORIAL_URL = "https://www.youtube.com/embed/JaT714oQQJ8?cc_load_policy=1&vq=hd1080";
 	public static String COBRA_TUTORIAL_URL = "https://www.youtube.com/embed/BA4LlQF8Ieo?cc_load_policy=1&vq=hd1080";
@@ -77,7 +78,13 @@ public class Pages {
 
 		head += "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">";
 		head += "<meta name=\"keywords\" content=\"MIT, University of Tokyo, Ira Winder\">";
-		head += "<meta name=\"description\" content=\"Beaverton is an experimental study conducted by Ira Winder from MIT.\">";
+		head += "<meta name=\"description\" content=\"Beaverton is a study by MIT\">";
+		head += "<meta property=’og:title’ content='Beaverton'/>";
+		head += "<meta property=’og:image’ content='" + MODEL_DIAGRAM_LG_URL + "’/>";
+		head += "<meta property=’og:description’ content='Beaverton is a study by MIT'/>";
+		head += "<meta property=’og:url’ content='http://fuzzy.glassmatrix.org'/>";
+		head += "<meta property='og:image:width' content='1920' />";
+		head += "<meta property='og:image:height' content='1107' />";
 
 		head += "<style>";
 		
