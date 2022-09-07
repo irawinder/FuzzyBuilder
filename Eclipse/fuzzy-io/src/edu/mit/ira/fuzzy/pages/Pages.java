@@ -78,13 +78,13 @@ public class Pages {
 
 		head += "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">";
 		head += "<meta name=\"keywords\" content=\"MIT, University of Tokyo, Ira Winder\">";
-		head += "<meta name=\"description\" content=\"Beaverton is a study by MIT\">";
+		head += "<meta name=\"description\" content=\"A Study by MIT\">";
 		head += "<meta property=’og:title’ content='Beaverton'/>";
 		head += "<meta property=’og:image’ content='" + MODEL_DIAGRAM_LG_URL + "’/>";
 		head += "<meta property=’og:description’ content='A Study by MIT'/>";
 		head += "<meta property=’og:url’ content='http://fuzzy.glassmatrix.org'/>";
 		head += "<meta property='og:image:width' content='1920' />";
-		head += "<meta property='og:image:height' content='1107' />";
+		head += "<meta property='og:image:height' content='1080' />";
 
 		head += "<style>";
 		
