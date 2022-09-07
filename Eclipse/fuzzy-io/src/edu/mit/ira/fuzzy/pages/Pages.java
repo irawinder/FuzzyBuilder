@@ -142,25 +142,7 @@ public class Pages {
 		
 		body += "<img style=\"width: 600px; max-width: 100%;\" src=\"" + MODEL_DIAGRAM_URL + "\" alt=\"Diagram of Model Components for FuzzyIO\">";
 		
-		body += wrapText("h2", "Glossary");
-
-		body += "<ul>";
-
-		body += wrapText("li", "A <b>Function</b> describes the principal activity within a volume of enclosed space. (e.g. \"Residential\" or \"Retail\")");
-		body += wrapText("li", "A <b>Voxel</b> is a small, indivisible unit of enclosed space consisting of a square base, height, and single Function");
-		body += wrapText("li", "A <b>Zone</b> is a grid-based array of Voxels with a common Function. If a Zone consists of multiple floors, all floors share the same footprint.");
-		body += wrapText("li", "A <b>Volume</b> is a stack of Zones that all share a common footprint, but each zone may have a different Function and number of floors");
-		body += wrapText("li", "A <b>Podium Volume</b> is a special Volume with a footprint defined by an off-set from a Parcel's edges and subtracting any Podium Exclusion Areas");
-		body += wrapText("li", "A <b>Podium Exclusion Area</b> is an area, defined by a polygon, where Voxels cannot be placed.");
-		body += wrapText("li", "A <b>Tower Volume</b> is a special Volume with a rectangular footprint. It must be placed within a Parcel.");
-		body += wrapText("li", "A <b>Parcel</b> is the set of flat, grid-based Voxels that fit within the boundaries of a defined polygon. Parcels cannot overlap each other.");
-		body += wrapText("li", "A <b>Scenario</b> is a specific configuration of Voxels specified by Parcels, Volumes, and Zones.");
-		
-		body += wrapText("li", "<b>Gross Land Area</b> (GLA) - Total area of land defined by all parcels [sqft]");
-		body += wrapText("li", "<b>Gross Floor Area</b> (GFA) - Total floor area of all buildings [sqft]");
-		body += wrapText("li", "<b>Floor Area Ratio</b> (FAR) - Ratio of Gross Above-ground Floor Area to Gross Land Area [sqft/sqft]");
-		
-		body += "</ul>";
+		body += glossary();
 		
 		body += wrapText("h2", "Resources");
 
@@ -173,6 +155,32 @@ public class Pages {
 		body += "</body>";
 
 		return body;
+	}
+	
+	private static String glossary() {
+		
+		String bodyText = "";
+		
+		bodyText += wrapText("h2", "FuzzyIO Glossary");
+
+		bodyText += "<ul>";
+
+		bodyText += wrapText("li", "A <b>Function</b> describes the principal activity within a volume of enclosed space. (e.g. \"Residential\" or \"Retail\")");
+		bodyText += wrapText("li", "A <b>Voxel</b> is a small, indivisible unit of enclosed space consisting of a square base, height, and single Function");
+		bodyText += wrapText("li", "A <b>Zone</b> is an array of Voxels with a common Function. If a Zone consists of multiple floors, all floors share the same footprint.");
+		bodyText += wrapText("li", "A <b>Volume</b> is a stack of Zones that all share a common footprint, but each zone may have a different Function and number of floors");
+		bodyText += wrapText("li", "A <b>Podium Volume</b> is a special Volume with a footprint defined by an off-set from a Parcel's edges and subtracting any Podium Exclusion Areas");
+		bodyText += wrapText("li", "A <b>Podium Exclusion Area</b> is an area, defined by a polygon, where Voxels cannot be placed.");
+		bodyText += wrapText("li", "A <b>Tower Volume</b> is a special Volume with a rectangular footprint. It must be placed within a Parcel.");
+		bodyText += wrapText("li", "A <b>Parcel</b> is the set of flat Voxels that fit within the boundaries of a defined polygon. Parcels cannot overlap each other.");
+		bodyText += wrapText("li", "A <b>Scenario</b> is a specific configuration of Voxels specified by Parcels, Volumes, and Zones.");
+		bodyText += wrapText("li", "<b>Gross Land Area</b> (GLA) - Total area of land defined by all parcels [sqft]");
+		bodyText += wrapText("li", "<b>Gross Floor Area</b> (GFA) - Total floor area of all buildings [sqft]");
+		bodyText += wrapText("li", "<b>Floor Area Ratio</b> (FAR) - Ratio of Gross Above-ground Floor Area to Gross Land Area [sqft/sqft]");
+		
+		bodyText += "</ul>";
+		
+		return bodyText;
 	}
 	
 	private static String studyBodyHeader() {
@@ -442,35 +450,7 @@ public class Pages {
 			
 			body += "<img style=\"width: 600px; max-width: 100%;\" src=\"" + MODEL_DIAGRAM_URL + "\" alt=\"Diagram of Model Components for FuzzyIO\">";
 			
-			body += wrapText("h2", "FuzzyIO Glossary");
-
-			body += "<ul>";
-
-			body += wrapText("li", "A <b>Function</b> describes the principal activity within a volume of enclosed space. (Residential, Office, Retail, etc)");
-
-			body += wrapText("li", "A <b>Voxel</b> is a small, indivisible unit of enclosed space consisting of a square base, height, and single Function");
-
-			body += wrapText("li", "A <b>Zone</b> is a grid-based array of Voxels with a common Function. If a Zone consists of multiple floors, all floors share the same footprint.");
-
-			body += wrapText("li", "A <b>Volume</b> is a stack of Zones that all share a common footprint, but each zone may have a different Function and number of floors");
-
-			body += wrapText("li", "A <b>Podium Volume</b> is a special Volume with a footprint defined by an off-set from a Parcel's edges and subtracting any Podium Exclusion Areas");
-
-			body += wrapText("li", "A <b>Podium Exclusion Area</b> is an area, defined by a polygon, where Podium Voxels cannot be placed.");
-
-			body += wrapText("li", "A <b>Tower Volume</b> is a special Volume with a rectangular footprint. It must be placed within a Parcel.");
-
-			body += wrapText("li", "A <b>Parcel</b> is the set of flat, grid-based Voxels that fit within the boundaries of a defined polygon. Parcels cannot overlap each other.");
-			
-			body += wrapText("li", "A <b>Scenario</b> is a specific configuration of Voxels specified by Parcels, Volumes, and Zones.");
-			
-			body += wrapText("li", "<b>Gross Land Area</b> (GLA) - Total area of land defined by all parcels [sqft]");
-
-			body += wrapText("li", "<b>Gross Floor Area</b> (GFA) - Total floor area of all buildings [sqft]");
-
-			body += wrapText("li", "<b>Floor Area Ratio</b> (FAR) - Ratio of Gross Above-ground Floor Area to Gross Land Area [sqft/sqft]");
-			
-			body += "</ul>";
+			body += glossary();
 			
 			body += wrapText("h2", "FuzzyIO Tutorial");
 
