@@ -7,6 +7,22 @@ import edu.mit.ira.fuzzy.server.user.UserType;
 
 public class Pages {
 	
+	public static String BODY_BACKGROUND_URL = "https://github.com/irawinder/FuzzyBuilder/blob/master/res/images/massing.png?raw=true";
+	public static String MODEL_DIAGRAM_URL = "https://github.com/irawinder/FuzzyBuilder/blob/master/res/images/modelDiagram_sm.png?raw=true";
+	public static String SITE_BASEMAP_URL = "https://github.com/irawinder/FuzzyBuilder/blob/master/res/images/beaverton_site.jpg?raw=true";
+	public static String ZEBRA_TUTORIAL_URL = "https://www.youtube.com/embed/JaT714oQQJ8?cc_load_policy=1&vq=hd1080";
+	public static String COBRA_TUTORIAL_URL = "https://www.youtube.com/embed/BA4LlQF8Ieo?cc_load_policy=1&vq=hd1080";
+	public static String PANDA_TUTORIAL_URL = "https://www.youtube.com/embed/NgYlDAg1De8?cc_load_policy=1&vq=hd1080";
+	public static String ENTRY_SURVEY_URL = "https://forms.gle/cK3dQozbQyt1S2zn7";
+	public static String ZEBRA_EXIT_SURVEY_URL = "https://forms.gle/JkDfk8sqxWxtg8kw6";
+	public static String COBRA_EXIT_SURVEY_URL = "https://forms.gle/rkLnBX2TgAiPHi8b7";
+	public static String PANDA_EXIT_SURVEY_URL = "https://forms.gle/EY1ntPzmbRZrtC159";
+	public static String OPENSUI_URL = "http://opensui.org";
+	public static String THIS_URL = "http://fuzzy.glassmatrix.org";
+	
+	public static String OLD_TUTORIAL_URL = "https://youtu.be/cNoS-bhRPEw";
+	public static String TIMELAPSE_URL = "https://youtu.be/z7514vh02u0";
+	
 	public static String generalSite() {
 		String head = makeHead();
 		String body = makeGeneralBody();
@@ -62,8 +78,6 @@ public class Pages {
 		head += "<meta name=\"description\" content=\"Beaverton is an experimental study conducted by Ira Winder from MIT.\">";
 
 		head += "<style>";
-
-		String imgUrl = "https://github.com/irawinder/FuzzyBuilder/blob/master/screenshots/massing.png?raw=true";
 		
 		String generalCSS = "text-align:left;"
 				+ "margin-left: 40px;"
@@ -79,7 +93,7 @@ public class Pages {
 				+ "margin-top: 40px;"
 				+ "max-width: 600px;"
 				+ "background-color:#ffffff;"
-				+ "background-image:url(" + imgUrl + ");"
+				+ "background-image:url(" + BODY_BACKGROUND_URL + ");"
 				+ "background-repeat:no-repeat;"
 				+ "background-position:center center;"
 				+ "background-attachment:fixed;"
@@ -117,12 +131,11 @@ public class Pages {
 		
 		body += wrapText("p", "FuzzyIO is a server for generating \"fuzzy\" resolution real estate development scenarios.");
 		body += wrapText("p", "To interact with FuzzyIO, you need to use a \"front end\" user interface like OpenSUI.");
-		body += wrapText("p", "<b>OpenSUI</b>:<br><a href=\"http://opensui.org\" target=\"_blank\">http://opensui.org</a>");
+		body += wrapText("p", "<b>OpenSUI</b>:<br><a href=\"" + OPENSUI_URL + "\" target=\"_blank\">" + OPENSUI_URL + "</a>");
 
 		body += wrapText("h2", "FuzzyIO Model");
 		
-		String imgUrl = "https://github.com/irawinder/FuzzyBuilder/blob/master/screenshots/modelDiagram_sm.png?raw=true";
-		body += "<img style=\"width: 600px; max-width: 100%;\" src=\"" + imgUrl + "\" alt=\"Diagram of Model Components for FuzzyIO\">";
+		body += "<img style=\"width: 600px; max-width: 100%;\" src=\"" + MODEL_DIAGRAM_URL + "\" alt=\"Diagram of Model Components for FuzzyIO\">";
 		
 		body += wrapText("h2", "Glossary");
 
@@ -147,9 +160,9 @@ public class Pages {
 		body += wrapText("h2", "Resources");
 
 		body += "<ul>";
-		body += wrapText("li", "Launch <a href=\"http://opensui.org/\" target=\"_blank\">openSUI</a> (to use FuzzyIO)");
-		body += wrapText("li", "<a href=\"https://youtu.be/cNoS-bhRPEw\" target=\"_blank\">FuzzyIO Tutorial</a> on Youtube");
-		body += wrapText("li", "<a href=\"https://youtu.be/z7514vh02u0\" target=\"_blank\">FuzzyIO Usage</a> (Timelapse) on Youtube");
+		body += wrapText("li", "Launch <a href=\"" + OPENSUI_URL + "\" target=\"_blank\">openSUI</a> (to use FuzzyIO)");
+		body += wrapText("li", "<a href=\"" + OLD_TUTORIAL_URL + "\" target=\"_blank\">FuzzyIO Tutorial</a> on Youtube");
+		body += wrapText("li", "<a href=\"" + TIMELAPSE_URL + "\" target=\"_blank\">FuzzyIO Usage</a> (Timelapse) on Youtube");
 		body += "</ul>";
 
 		body += "</body>";
@@ -174,8 +187,7 @@ public class Pages {
 		
 		body += studyBodyHeader();
 		
-		String imgUrl = "https://github.com/irawinder/FuzzyBuilder/blob/master/screenshots/modelDiagram_sm.png?raw=true";
-		body += "<img style=\"width: 600px; max-width: 100%;\" src=\"" + imgUrl + "\" alt=\"Screenshot of Digital Model, FuzzyIO\">";
+		body += "<img style=\"width: 600px; max-width: 100%;\" src=\"" + MODEL_DIAGRAM_URL + "\" alt=\"Screenshot of Digital Model, FuzzyIO\">";
 		
 		body += wrapText("h2", "Introduction");
 		
@@ -355,9 +367,7 @@ public class Pages {
 		body += wrapText("p", "Remember, we would like you to complete the exercise in one sitting, so please make sure that you are ready.");
 		
 		body += wrapText("p", "<b>Personal Access Link</b>:<br>"
-				+ "<a href=\"/?user=" + userID + "\">http://fuzzy.glassmatrix.org/?user=" + userID + "</a>");
-		
-		
+				+ "<a href=\"/?user=" + userID + "\">" + THIS_URL + "/?user=" + userID + "</a>");
 		
 		body += "</body>";
 		
@@ -398,9 +408,7 @@ public class Pages {
 			
 			body += wrapText("p", "When you click \"Take Entry Survey\", the survey will open in a new tab.");
 
-			String presurveyUrl = "https://forms.gle/cK3dQozbQyt1S2zn7";
-
-			body += "<input type=\"button\" value=\"Take Entry Survey\" onclick=\"window.open('" + presurveyUrl + "', '_blank');\">";
+			body += "<input type=\"button\" value=\"Take Entry Survey\" onclick=\"window.open('" + ENTRY_SURVEY_URL + "', '_blank');\">";
 
 			body += wrapText("p", "Once you've submitted the survey, come back here and click \"CONTINUE\".");
 
@@ -408,18 +416,17 @@ public class Pages {
 
 			body += wrapText("h2", "FuzzyIO Model");
 			
-			body += wrapText("p", "During this exercise, it's important that you understand how the model is structured.");
+			body += wrapText("p", "During this exercise, it's important that you understand some vocabulary.");
 			
-			body += wrapText("p", "Review this diagram for the model, as well as a glossary of important terms.");
+			body += wrapText("p", "Review this diagram of a real estate development model, as well as a glossary of important terms.");
 			
-			String imgUrl = "https://github.com/irawinder/FuzzyBuilder/blob/master/screenshots/modelDiagram_sm.png?raw=true";
-			body += "<img style=\"width: 600px; max-width: 100%;\" src=\"" + imgUrl + "\" alt=\"Diagram of Model Components for FuzzyIO\">";
+			body += "<img style=\"width: 600px; max-width: 100%;\" src=\"" + MODEL_DIAGRAM_URL + "\" alt=\"Diagram of Model Components for FuzzyIO\">";
 			
 			body += wrapText("h2", "FuzzyIO Glossary");
 
 			body += "<ul>";
 
-			body += wrapText("li", "A <b>Function</b> describes the principal activity within a volume of enclosed space. (e.g. \"Residential\" or \"Retail\")");
+			body += wrapText("li", "A <b>Function</b> describes the principal activity within a volume of enclosed space. (Residential, Office, Retail, etc)");
 
 			body += wrapText("li", "A <b>Voxel</b> is a small, indivisible unit of enclosed space consisting of a square base, height, and single Function");
 
@@ -429,7 +436,7 @@ public class Pages {
 
 			body += wrapText("li", "A <b>Podium Volume</b> is a special Volume with a footprint defined by an off-set from a Parcel's edges and subtracting any Podium Exclusion Areas");
 
-			body += wrapText("li", "A <b>Podium Exclusion Area</b> is an area, defined by a polygon, where Voxels cannot be placed.");
+			body += wrapText("li", "A <b>Podium Exclusion Area</b> is an area, defined by a polygon, where Podium Voxels cannot be placed.");
 
 			body += wrapText("li", "A <b>Tower Volume</b> is a special Volume with a rectangular footprint. It must be placed within a Parcel.");
 
@@ -449,7 +456,7 @@ public class Pages {
 
 			body += wrapText("p", "Next, we need you to prepare for your role by watching a quick tutorial video.");
 			
-			body += wrapText("p", "Please watch the entire video on <u>full screen</u> with <u>sound on</u>. Do not skip any parts.");
+			body += wrapText("p", "Please watch the entire video on <u>full screen</u> with the <u>sound on</u>.");
 			
 			body += wrapText("p", "If the video is blurry, make sure <b>Quality</b> is set to 1080p."
 					+ "<br><br><span class=\"tab\"></span><i>Settings</i> > <i>Quality</i> > <i>1080p</i>");
@@ -462,16 +469,16 @@ public class Pages {
 			
 			if (ups == UserPrefixStudy.ZEBRA) {
 				
-				tutorialUrl = "https://www.youtube.com/embed/JaT714oQQJ8?cc_load_policy=1&vq=hd1080";
+				tutorialUrl = ZEBRA_TUTORIAL_URL;
 				
 			} else if (ups == UserPrefixStudy.COBRA) {
 				
-				tutorialUrl = "https://www.youtube.com/embed/BA4LlQF8Ieo?cc_load_policy=1&vq=hd1080";
+				tutorialUrl = COBRA_TUTORIAL_URL;
 			
 			// Full tutorial for PANDA (or any other user that makes it to this page)
 			} else {
 				
-				tutorialUrl = "https://www.youtube.com/embed/NgYlDAg1De8?cc_load_policy=1&vq=hd1080";
+				tutorialUrl = PANDA_TUTORIAL_URL;
 				
 			}
 
@@ -485,24 +492,26 @@ public class Pages {
 
 		} else if (page.equals("3")) {
 
-			body += wrapText("h2", "Mission Background");
+			body += wrapText("h2", "Background");
 
-			body += wrapText("p", "Beaverton Needs You!");
-
-			body += wrapText("p", "The owner of a vacant lot in Beaverton has decided to develop their land into a building.");
-
-			body += wrapText("p", "In order for the project to move forward, however, the design must be finalized by the local community.");
-
+			body += wrapText("p", "A generous benfactor recently donated a vacant peice of land (\"the Site\") to the City of Beaverton.");
+			
+			body += wrapText("p", "The only condition is that the site must be used to host a new <i>College for the Arts</i>, along with <i>new housing</i> for the local community.");
+			
+			body += wrapText("h2", "The Site");
+			
+			body += "<img style=\"width: 600px; max-width: 100%;\" src=\"" + SITE_BASEMAP_URL + "\" alt=\"Diagram of Model Components for FuzzyIO\">";
+			
 			body += wrapText("h2", "Your Role");
 
-			body += wrapText("p", "As a trusted local community member, citizens have elected you to finalize the design.");
+			body += wrapText("p", "As a trusted local community member, citizens have elected you to finalize the design of a new building for the site.");
 
 			body += wrapText("p", "Aside from a few building requirements set by the city, the design of the building is completely up to you!");
 
 			body += wrapText("p", "You will be given exclusive access to a web tool called FuzzyIO, allowing you to view different design sceanrios.");
 
 			body += wrapText("p", "At the end, you will be asked to choose a single scenario.");
-
+			
 			body += wrapText("h2", "Requirements");
 
 			body += "<ul>";
@@ -565,10 +574,8 @@ public class Pages {
 			
 			body += wrapText("p", "Log in to FuzzyIO with the <b>User ID</b> at the top of this page. "
 					+ "Clicking the link below will open FuzzyIO in a new tab, but feel free to come back and view this page while you work");
-			
-			String fuzzyUrl = "http://opensui.org";
 
-			body += wrapText("p", "<b>Fuzzy IO</b>:<br><a href=\"http://opensui.org\" target=\"_blank\">" + fuzzyUrl + "</a>");
+			body += wrapText("p", "<b>Fuzzy IO</b>:<br><a href=\"" + OPENSUI_URL + "\" target=\"_blank\">" + OPENSUI_URL + "</a>");
 			
 			body += wrapText("h2", "Submitting your Final Design");
 			
@@ -611,19 +618,19 @@ public class Pages {
 
 			body += wrapText("p", "Now that you've finished the exercise, we need you to complete one more short survey. We promise this is the last thing!");
 
-			String postsurveyUrl = "";
+			String postsurveyUrl;
 
 			if (ups == UserPrefixStudy.ZEBRA) {
 
-				postsurveyUrl = "https://forms.gle/JkDfk8sqxWxtg8kw6";
+				postsurveyUrl = ZEBRA_EXIT_SURVEY_URL;
 
 			} else if (ups == UserPrefixStudy.COBRA) {
 
-				postsurveyUrl = "https://forms.gle/rkLnBX2TgAiPHi8b7";
+				postsurveyUrl = COBRA_EXIT_SURVEY_URL;
 
-			} else if (ups == UserPrefixStudy.PANDA) {
+			} else {
 
-				postsurveyUrl = "https://forms.gle/EY1ntPzmbRZrtC159";
+				postsurveyUrl = PANDA_EXIT_SURVEY_URL;
 
 			}
 			
@@ -674,7 +681,7 @@ public class Pages {
 			
 			body += wrapText("p", "Please note that the <i>Old</i> User ID is no longer usable.</i>");
 			
-			body += wrapText("p", "<b>Fuzzy IO</b>:<br><a href=\"http://opensui.org\" target=\"_blank\">http://opensui.org</a>");
+			body += wrapText("p", "<b>Fuzzy IO</b>:<br><a href=\"" + OPENSUI_URL + "\" target=\"_blank\">" + OPENSUI_URL + "</a>");
 			
 			body += wrapText("p", "<b>New User ID</b>:<br>" + adminUserID);
 			
