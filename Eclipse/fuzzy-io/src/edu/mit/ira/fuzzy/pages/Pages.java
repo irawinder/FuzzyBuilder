@@ -19,6 +19,8 @@ public class Pages {
 	public static String PANDA_EXIT_SURVEY_URL = "https://forms.gle/EY1ntPzmbRZrtC159";
 	public static String OPENSUI_URL = "http://opensui.org";
 	public static String THIS_URL = "http://fuzzy.glassmatrix.org";
+	public static String STUDY_CONTACT_URL = "beaverton <i>[at]</i> mit <i>[dot]</i> edu";
+	public static String GENERAL_CONTACT_URL = "ira <i>[at]</i> mit <i>[dot]</i> edu";
 	
 	public static String OLD_TUTORIAL_URL = "https://youtu.be/cNoS-bhRPEw";
 	public static String TIMELAPSE_URL = "https://youtu.be/z7514vh02u0";
@@ -74,7 +76,7 @@ public class Pages {
 		head += "<title>Beaverton</title>";
 
 		head += "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">";
-		head += "<meta name=\"keywords\" content=\"MIT, University of Tokyo, Ira Winder, Daniel Fink, Max Walker\">";
+		head += "<meta name=\"keywords\" content=\"MIT, University of Tokyo, Ira Winder\">";
 		head += "<meta name=\"description\" content=\"Beaverton is an experimental study conducted by Ira Winder from MIT.\">";
 
 		head += "<style>";
@@ -112,6 +114,7 @@ public class Pages {
 		head += "img { margin-left: 40px; }";
 		head += "iframe { margin-left: 40px; }";
 		head += ".tab {display: inline-block; margin-left: 40px; }";
+		head += ".column { width: 50%; }";
 
 		head += "</style>";
 
@@ -124,9 +127,11 @@ public class Pages {
 
 		String body = "<body>";
 		
+		body += "<div style=\"float: center\">";
+		
 		body += wrapText("h1", "FuzzyIO");
 		body += wrapText("p", "A Real Estate Configuration Interface by MIT"
-				+ "<br>Contact: Ira Winder<br><i>ira [at] mit [dot] edu</i>");
+				+ "<br>Contact: Ira Winder<br>" + GENERAL_CONTACT_URL);
 		body += "<hr>";
 		
 		body += wrapText("p", "FuzzyIO is a server for generating \"fuzzy\" resolution real estate development scenarios.");
@@ -173,9 +178,15 @@ public class Pages {
 	private static String studyBodyHeader() {
 		String bodyText = "";
 		bodyText += wrapText("h1", "Beaverton");
-		bodyText += wrapText("p", "<i>A Research Study</i>");
-		bodyText += wrapText("p", "<b>Univeristy of Tokyo</b> and <b>MIT</b><br>Contact: Ira Winder<br><i>ira [at] mit [dot] edu</i>");
+		bodyText += wrapText("p", "A Research Study<br>by <b>Univeristy of Tokyo</b> and <b>MIT</b>");
 		bodyText += "<hr>";
+		return bodyText;
+	}
+	
+	private static String studyBodyFooter() {
+		String bodyText = "";
+		bodyText += "<br><br><hr>";
+		bodyText += wrapText("p", "Beaverton | <b>Univeristy of Tokyo</b> and <b>MIT</b> | Contact: " + STUDY_CONTACT_URL);
 		return bodyText;
 	}
 	
@@ -202,14 +213,15 @@ public class Pages {
 		
 		body += wrapText("p", "<b>Ira Winder</b>"
 				+ "<br>Project Researcher, Graduate School of Frontier Sciences, University of Tokyo"
-				+ "<br>Research Affiliate, Engineering Systems Laboratory, MIT");
+				+ "<br>Research Affiliate, Engineering Systems Laboratory, MIT"
+				+ "<br>Contact: " + GENERAL_CONTACT_URL);
 		
 		body += wrapText("p", "<b>Kazuo Hiekata</b>"
 				+ "<br>Professor, Graduate School of Frontier Sciences, University of Tokyo");
 		
 		body += wrapText("h2", "During the Experiment");
 		
-		body += wrapText("p", "Participants will perform the following activities over the course of 30-60 minutes:");
+		body += wrapText("p", "Participants will perform the following activities:");
 		
 		body += "<ol>";
 		
@@ -249,12 +261,16 @@ public class Pages {
 				"<br><i>(There is no time limit, but this exercise may take <b>30 - 60 minutes</b>)</i>");
 
 		body += "</ul>";
+		
+		body += "<hr>";
 
 		body += wrapText("h2", "Get Started!");
 		
 		body += wrapText("p", "Click \"Continue to Registration\" to proceed.");
 		
 		body += "<button onclick=\"register()\">Continue to Registration</button>";
+		
+		body += studyBodyFooter();
 		
 		body += "</body>";
 		
@@ -341,6 +357,8 @@ public class Pages {
 		
 		body += wrapText("p", "<i>Your personal information will not be shared.<br>Email addresses are only used for authentication,<br>or in the rare case that we need to contact you. </i>");
 		
+		body += studyBodyFooter();
+		
 		body += "</body>";
 
 		return body;
@@ -368,6 +386,8 @@ public class Pages {
 		
 		body += wrapText("p", "<b>Personal Access Link</b>:<br>"
 				+ "<a href=\"/?user=" + userID + "\">" + THIS_URL + "/?user=" + userID + "</a>");
+		
+		body += studyBodyFooter();
 		
 		body += "</body>";
 		
@@ -494,7 +514,7 @@ public class Pages {
 
 			body += wrapText("h2", "Background");
 
-			body += wrapText("p", "A generous benfactor recently donated a vacant peice of land (\"the Site\") to the City of Beaverton.");
+			body += wrapText("p", "A generous benfactor recently donated a vacant piece of land (\"The Site\") to the City of Beaverton.");
 			
 			body += wrapText("p", "The only condition is that the site must be used to host a new <i>College for the Arts</i>, along with <i>new housing</i> for the local community.");
 			
@@ -502,26 +522,28 @@ public class Pages {
 			
 			body += "<img style=\"width: 600px; max-width: 100%;\" src=\"" + SITE_BASEMAP_URL + "\" alt=\"Diagram of Model Components for FuzzyIO\">";
 			
-			body += wrapText("h2", "Your Role");
-
-			body += wrapText("p", "As a trusted local community member, citizens have elected you to finalize the design of a new building for the site.");
-
-			body += wrapText("p", "Aside from a few building requirements set by the city, the design of the building is completely up to you!");
-
-			body += wrapText("p", "You will be given exclusive access to a web tool called FuzzyIO, allowing you to view different design sceanrios.");
-
-			body += wrapText("p", "At the end, you will be asked to choose a single scenario.");
-			
 			body += wrapText("h2", "Requirements");
 
 			body += "<ul>";
 
-			body += wrapText("li", "The building must have AT LEAST <u>50,000</u> sqft of <b>residential function</b>");
+			body += wrapText("li", "The Site must have AT LEAST <u>50,000</u> sqft of <b>residential function</b>");
 
-			body += wrapText("li", "The building must have AT LEAST <u>80,000</u> sqft of <b>institutional function</b>");
+			body += wrapText("li", "The Site must have AT LEAST <u>80,000</u> sqft of <b>institutional function</b> (Arts College)");
 
-			body += wrapText("li", "The building's Floor Area Ratio (FAR) must be NO MORE than <u>5.0</u>");
+			body += wrapText("li", "The Site's Floor Area Ratio (FAR) must be NO MORE than <u>5.0</u>");
 
+			body += "</ul>";
+			
+			body += wrapText("h2", "Your Role");
+			
+			body += "<ul>";
+			
+			body += wrapText("li", "As a trusted local community member, citizens have elected you to finalize the design for the site.");
+
+			body += wrapText("li", "Aside from the requirements above, the design of the site is completely up to you.");
+
+			body += wrapText("li", "Ultimately, you must choose a single scenario.");
+			
 			body += "</ul>";
 			
 			body += "<hr>";
@@ -534,15 +556,15 @@ public class Pages {
 			
 			if (ups != UserPrefixStudy.COBRA) {
 			
-				body += wrapText("li", "Use FuzzyIO to load and analyze 3 pre-designed scenarios for the area marked \"SITE\"");
+				body += wrapText("li", "Use FuzzyIO to load and analyze pre-designed scenarios:");
 	
 				body += "<ul>";
 	
-				body += wrapText("li", "option1");
+				body += wrapText("li", "Option 1");
 	
-				body += wrapText("li", "option2");
+				body += wrapText("li", "Option 2");
 	
-				body += wrapText("li", "option3");
+				body += wrapText("li", "Option 3");
 	
 				body += "</ul>";
 			
@@ -550,7 +572,7 @@ public class Pages {
 			
 			if (ups == UserPrefixStudy.PANDA) {
 
-				body += wrapText("li", "Use FuzzyIO to edit predesigned scenarios (A, B, or C) and save them as new scenarios with a differnt name of your choosing.");
+				body += wrapText("li", "Use FuzzyIO to edit predesigned scenarios (Option 1, 2, or 3) and save them as new scenarios with a differnt name of your choosing.");
 			
 			}
 			
@@ -561,12 +583,9 @@ public class Pages {
 				body += wrapText("li", "Use the \"Save Scenario\" toolbox to name and save variations.");
 				
 				body += wrapText("li", "You may make as many new scenarios as you like, so don't hold back!");
-					
 			}
 			
 			body += "</ol>";
-			
-			body += wrapText("p", "<i>If you experience any technical difficulties or errors during your exercise, you may reload FuzzyIO in your browser and log in again.</i>");
 
 			body += wrapText("h2", "Using FuzzyIO");
 			
@@ -577,9 +596,11 @@ public class Pages {
 
 			body += wrapText("p", "<b>Fuzzy IO</b>:<br><a href=\"" + OPENSUI_URL + "\" target=\"_blank\">" + OPENSUI_URL + "</a>");
 			
+			body += wrapText("p", "<i>If you experience any technical difficulties or errors during your exercise, you may reload FuzzyIO in your browser and log in again.</i>");
+			
 			body += wrapText("h2", "Submitting your Final Design");
 			
-			body += wrapText("p", "When you have identified your favorite scenario, you need to submit it.");
+			body += wrapText("p", "To finish, you need to select your preferred favorite scenario.");
 			
 			if (ups == UserPrefixStudy.ZEBRA) {
 			
@@ -591,13 +612,13 @@ public class Pages {
 				
 			} else if (ups == UserPrefixStudy.PANDA) {
 				
-				body += wrapText("p", "You may choose <b>one</b> of the pre-designed scenarios (Option 1, Option 2, or Option 3), or a scenario of your own editing or making.");
+				body += wrapText("p", "You may choose <b>one</b> of the pre-designed scenarios (Option 1, Option 2, or Option 3), or a scenario that you made or edited.");
 				
 			}
 			
 			if (ups != UserPrefixStudy.ZEBRA) {
 				
-				body += wrapText("p", "To submit your final decision, make sure the scenario of your choosing is loaded and visible."
+				body += wrapText("p", "To submit your final decision, make sure the scenario of your choosing is loaded and visible on the screen."
 						+ " Then, save the scenario with the name <b>final</b>");
 	
 				body += wrapText("p", "Confirm that the scenario <b>final</b> is saved by looking in the list of scenarios available to load; the word \"final\" should show up in the list.");
@@ -667,33 +688,34 @@ public class Pages {
 				}
 			}
 			
-			body += "<p style=\"color: red;\">Please save or print a copy of this page for your records.</p>";
-			
 			body += wrapText("h2", "Congratulations!");
+			
+			body += "<p style=\"color: green;\">Please save or print a copy of this page for your records.</p>";
 
 			body += wrapText("p", "We hope you had a good time, and we are incredibly grateful for your help with this research.");
 			
 			body += wrapText("h2", "After the Experiment");
 			
-			body += wrapText("p", "If you would like to keep playing with FuzzyIO, please do!");
+			body += wrapText("p", "Please note that the User ID, <b>" + user + "</b>, is now deactivated.</i>");
 			
-			body += wrapText("p", "For this purpose, we've generated a <i>New</i> User ID that you can use indefinitely.");
+			body += wrapText("p", "However, we've generated a <i>New</i> User ID, <b>" + adminUserID + "</b>, just for you, that you can use indefinitely.");
 			
-			body += wrapText("p", "Please note that the <i>Old</i> User ID is no longer usable.</i>");
+			body += wrapText("p", "The new User ID will allow you to use certain features that may have been unlocked during the exercise. "
+					+ "(For example, the ability edit and delete scenarios)");
 			
-			body += wrapText("p", "<b>Fuzzy IO</b>:<br><a href=\"" + OPENSUI_URL + "\" target=\"_blank\">" + OPENSUI_URL + "</a>");
+			body += wrapText("p", "So, if you would like to keep playing with FuzzyIO, please do so with your new User ID.");
+			
+			body += wrapText("p", "<b>Email</b>:<br>" + email);
 			
 			body += wrapText("p", "<b>New User ID</b>:<br>" + adminUserID);
 			
-			body += wrapText("p", "<b>Old User ID </b>:<br>" + user);
-			
-			body += wrapText("p", "<b>Email</b>:<br>" + email);
+			body += wrapText("p", "<b>Fuzzy IO</b>:<br><a href=\"" + OPENSUI_URL + "\" target=\"_blank\">" + OPENSUI_URL + "</a>");
 			
 			body += wrapText("p", "If you have any questions or concerns about your participation, or have trouble using your new User ID, please contact Ira.");
 			
 			body += "<hr>";
 			
-			body += wrapText("p", "You may now close all browser windows related to this experiment.");
+			body += wrapText("p", "Once your have saved this page for your records, you may close all browser windows related to this experiment.");
 			
 		} else {
 
@@ -705,20 +727,30 @@ public class Pages {
 		
 		// Add Next Page Button
 		if (!page.equals("finish")) {
+			
 			int pageInt = Integer.valueOf(page);
-			int nextPage = pageInt + 1;
-			int prevPage = pageInt - 1;
-			String navigation = "";
-				
-			if (pageInt > 1 && pageInt <= NUM_STUDY_PAGES) 
-				navigation += "< <a href=\"/?user=" + user + "&page=" + prevPage + "\">Go Back</a>";
-			if (pageInt > 1 && pageInt < NUM_STUDY_PAGES) 
-				navigation += "\t|\t";
-			if (pageInt >= 1 && pageInt < NUM_STUDY_PAGES) 
-				navigation += "<a href=\"/?user=" + user + "&page=" + nextPage + "\">CONTINUE</a> >";
-			body += wrapText("p", navigation);
+			
+			body += "<div class=\"row\">";
+			
+			body += "<div class=\"column\" style=\"float: left\">";
+			if (pageInt > 1 && pageInt <= NUM_STUDY_PAGES) {
+				int prevPage = pageInt - 1;
+				body += "<p>< <a href=\"/?user=" + user + "&page=" + prevPage + "\">Go Back</a></p>";
+			}
+			body += "</div>";
+			
+			body += "<div class=\"column\" style=\"float: right\">";
+			if (pageInt >= 1 && pageInt < NUM_STUDY_PAGES) {
+				int nextPage = pageInt + 1;
+				body += "<p style=\"float: right;\"><a href=\"/?user=" + user + "&page=" + nextPage + "\">CONTINUE</a> ></p>";
+			}
+			body += "</div>";
+			
+			body += "</div>";
 		}
-
+		
+		body += studyBodyFooter();
+		
 		body += "</body>";
 
 		return body;
