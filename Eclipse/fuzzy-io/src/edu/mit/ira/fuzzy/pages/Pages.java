@@ -109,23 +109,41 @@ public class Pages {
 	private static String makeGeneralBody() {
 
 		String body = "<body>";
-
+		
 		body += wrapText("h1", "FuzzyIO");
+		body += wrapText("p", "A Real Estate Configuration Interface by MIT"
+				+ "<br>Contact: Ira Winder<br><i>ira [at] mit [dot] edu</i>");
+		body += "<hr>";
+		
 		body += wrapText("p", "FuzzyIO is a server for generating \"fuzzy\" resolution real estate development scenarios.");
-		body += wrapText("p", "This is just the \"back end\". If you want to use fuzzy builder,  you need to use a \"front end\" user interface like <a href=\"http://opensui.org/\" target=\"_blank\">openSUI</a>.");
+		body += wrapText("p", "To interact with FuzzyIO, you need to use a \"front end\" user interface like OpenSUI.");
+		body += wrapText("p", "<b>OpenSUI</b>:<br><a href=\"http://opensui.org\" target=\"_blank\">http://opensui.org</a>");
 
-		body += wrapText("h2", "Model Components");
-		body += wrapText("p", "A <b>Function</b> describes the principal activity within a volume of enclosed space. (e.g. \"Residential\" or \"Retail\")");
-		body += wrapText("p", "A <b>Voxel</b> is a small, indivisible unit of enclosed space consisting of a square base, height, and single <b>Function</b>");
+		body += wrapText("h2", "FuzzyIO Model");
+		
+		String imgUrl = "https://github.com/irawinder/FuzzyBuilder/blob/master/screenshots/modelDiagram_sm.png?raw=true";
+		body += "<img style=\"width: 600px; max-width: 100%;\" src=\"" + imgUrl + "\" alt=\"Diagram of Model Components for FuzzyIO\">";
+		
+		body += wrapText("h2", "Glossary");
 
-		body += wrapText("p", "A <b>Zone</b> is a grid-based array of <b>Voxels</b> with a common <b>Function</b>. If a <b>Zone</b> consists of multiple floors, all floors share the same footprint.");
-		body += wrapText("p", "A <b>Volume</b> is a stack of <b>Zones</b> that all share a common footprint, but each zone may have a different <b>Function</b> and number of floors");
-		body += wrapText("p", "A <b>Podium Volume</b> is a special <b>Volume</b> with a footprint defined by an off-set from a <b>Parcel</b>'s edges and subtracting any <b>Podium Exclusion Areas</b>");
-		body += wrapText("p", "A <b>Podium Exclusion Area</b> is an area, defined by a polygon, where <b>Voxels</b> cannot be placed.");
-		body += wrapText("p", "A <b>Tower Volume</b> is a special <b>Volume</b> with a rectangular footprint. It must be placed within a <b>Parcel</b>.");
-		body += wrapText("p", "A <b>Parcel</b> is the set of flat, grid-based <b>Voxels</b> that fit within the boundaries of a defined polygon. Parcels cannot overlap each other.");
-		body += wrapText("p", "A <b>Scenario</b> is a specific configuration of <b>Voxels</b> specified by <b>Parcels</b>, <b>Volumes</b>, and <b>Zones</b>.");
+		body += "<ul>";
 
+		body += wrapText("li", "A <b>Function</b> describes the principal activity within a volume of enclosed space. (e.g. \"Residential\" or \"Retail\")");
+		body += wrapText("li", "A <b>Voxel</b> is a small, indivisible unit of enclosed space consisting of a square base, height, and single Function");
+		body += wrapText("li", "A <b>Zone</b> is a grid-based array of Voxels with a common Function. If a Zone consists of multiple floors, all floors share the same footprint.");
+		body += wrapText("li", "A <b>Volume</b> is a stack of Zones that all share a common footprint, but each zone may have a different Function and number of floors");
+		body += wrapText("li", "A <b>Podium Volume</b> is a special Volume with a footprint defined by an off-set from a Parcel's edges and subtracting any Podium Exclusion Areas");
+		body += wrapText("li", "A <b>Podium Exclusion Area</b> is an area, defined by a polygon, where Voxels cannot be placed.");
+		body += wrapText("li", "A <b>Tower Volume</b> is a special Volume with a rectangular footprint. It must be placed within a Parcel.");
+		body += wrapText("li", "A <b>Parcel</b> is the set of flat, grid-based Voxels that fit within the boundaries of a defined polygon. Parcels cannot overlap each other.");
+		body += wrapText("li", "A <b>Scenario</b> is a specific configuration of Voxels specified by Parcels, Volumes, and Zones.");
+		
+		body += wrapText("li", "<b>Gross Land Area</b> (GLA) - Total area of land defined by all parcels [sqft]");
+		body += wrapText("li", "<b>Gross Floor Area</b> (GFA) - Total floor area of all buildings [sqft]");
+		body += wrapText("li", "<b>Floor Area Ratio</b> (FAR) - Ratio of Gross Above-ground Floor Area to Gross Land Area [sqft/sqft]");
+		
+		body += "</ul>";
+		
 		body += wrapText("h2", "Resources");
 
 		body += "<ul>";
@@ -133,9 +151,6 @@ public class Pages {
 		body += wrapText("li", "<a href=\"https://youtu.be/cNoS-bhRPEw\" target=\"_blank\">FuzzyIO Tutorial</a> on Youtube");
 		body += wrapText("li", "<a href=\"https://youtu.be/z7514vh02u0\" target=\"_blank\">FuzzyIO Usage</a> (Timelapse) on Youtube");
 		body += "</ul>";
-
-		body += wrapText("h2", "Contact");
-		body += wrapText("p", "fuzzy-io <i>[at]</i> mit <i>[dot]</i> edu");
 
 		body += "</body>";
 
@@ -145,7 +160,8 @@ public class Pages {
 	private static String studyBodyHeader() {
 		String bodyText = "";
 		bodyText += wrapText("h1", "Beaverton");
-		bodyText += wrapText("p", "A Research Study<br>MIT and Univeristy of Tokyo<br><br>Contact: Ira Winder<br><i>ira [at] mit [dot] edu</i>");
+		bodyText += wrapText("p", "<i>A Research Study</i>");
+		bodyText += wrapText("p", "<b>Univeristy of Tokyo</b> and <b>MIT</b><br>Contact: Ira Winder<br><i>ira [at] mit [dot] edu</i>");
 		bodyText += "<hr>";
 		return bodyText;
 	}
@@ -158,7 +174,7 @@ public class Pages {
 		
 		body += studyBodyHeader();
 		
-		String imgUrl = "https://github.com/irawinder/FuzzyBuilder/blob/master/screenshots/v1.0-invert_sm.png?raw=true";
+		String imgUrl = "https://github.com/irawinder/FuzzyBuilder/blob/master/screenshots/modelDiagram_sm.png?raw=true";
 		body += "<img style=\"width: 600px; max-width: 100%;\" src=\"" + imgUrl + "\" alt=\"Screenshot of Digital Model, FuzzyIO\">";
 		
 		body += wrapText("h2", "Introduction");
@@ -167,20 +183,31 @@ public class Pages {
 
 		body += wrapText("p", "The University of Tokyo and MIT are investigating how people make decisions using interactive models.");
 		
-		body += wrapText("p", "We deeply appreciate your participation.");
+		body += wrapText("p", "Participants will work individually, from the comfort of their own computer, "
+				+ "to help design a mixed-use building in the hypothetical city of Beaverton.");
+		
+		body += wrapText("h2", "Investigators");
+		
+		body += wrapText("p", "<b>Ira Winder</b>"
+				+ "<br>Project Researcher, Graduate School of Frontier Sciences, University of Tokyo"
+				+ "<br>Research Affiliate, Engineering Systems Laboratory, MIT");
+		
+		body += wrapText("p", "<b>Kazuo Hiekata</b>"
+				+ "<br>Professor, Graduate School of Frontier Sciences, University of Tokyo");
 		
 		body += wrapText("h2", "During the Experiment");
 		
-		body += wrapText("p", "In this exercise, we will ask you to help design a building in the hypothetical city of Beaverton.");
+		body += wrapText("p", "Participants will perform the following activities over the course of 30-60 minutes:");
 		
 		body += "<ol>";
 		
-		body += wrapText("li", "First, we'll ask you to consent to the terms of the study, along with a short survey.");
+		body += wrapText("li", "First, participants will complete an entry survey where they can review and consent to the terms of the study.");
 		
-		body += wrapText("li", "Then, we'll guide you through a series of steps to complete the exercise. "
-				+ "As you work, we'll be collecting data as you interact with a digital model.");
+		body += wrapText("li", "Then, participants will watch a short tutorial and Youtube video explaining how to use the modeling software, \"FuzzyIO\".");
 		
-		body += wrapText("li", "At the end, you will be asked to complete a short post-survey.");
+		body += wrapText("li", "After that, participants will follow a prompt to help design a mixed-use building.");
+		
+		body += wrapText("li", "At the finish, participants will complete a short exit survey.");
 		
 		body += "</ol>";
 		
@@ -207,7 +234,7 @@ public class Pages {
 				"<br><i>(Track pad is fine, but you may have better experience using a two-button mouse)</i>");
 		
 		body += wrapText("li", "You must complete the exercise in <u>one sitting</u>" +
-				"<br><i>(There is no time limit, but this exercise may take 30 - 90 minutes)</i>");
+				"<br><i>(There is no time limit, but this exercise may take <b>30 - 60 minutes</b>)</i>");
 
 		body += "</ul>";
 
@@ -315,11 +342,9 @@ public class Pages {
 		
 		body += wrapText("h2", "Registration Complete!");
 		
-		body += "<p style=\"color: red;\">Please save or print a copy of this page for your records.</p>";
+		body += "<p style=\"color: green;\">Please save or print a copy of this page for your records; you won't be able to see it again.</p>";
 		
 		body += wrapText("p", "<b>Email</b>:<br>" + email);
-		
-		body += wrapText("p", "<i>(You will not be able to register with this email address again)</i>");
 		
 		body += wrapText("h2", "Personal Access Link");
 		
@@ -363,7 +388,7 @@ public class Pages {
 			
 			body += wrapText("h2", "User ID");
 
-			body += wrapText("p", "You have been assigned an exclusive User ID.");
+			body += wrapText("p", "You have been assigned an exclusive User ID: <b>" + user + "</b>");
 
 			body += wrapText("p", "The User ID will remain at the top of every page for reference.");
 
@@ -398,7 +423,7 @@ public class Pages {
 
 			body += wrapText("li", "A <b>Voxel</b> is a small, indivisible unit of enclosed space consisting of a square base, height, and single Function");
 
-			body += wrapText("li", "A <b>Zone</b> is a grid-based array of Voxels< with a common Function. If a Zone consists of multiple floors, all floors share the same footprint.");
+			body += wrapText("li", "A <b>Zone</b> is a grid-based array of Voxels with a common Function. If a Zone consists of multiple floors, all floors share the same footprint.");
 
 			body += wrapText("li", "A <b>Volume</b> is a stack of Zones that all share a common footprint, but each zone may have a different Function and number of floors");
 
@@ -516,7 +541,7 @@ public class Pages {
 			
 			if (ups == UserPrefixStudy.PANDA) {
 
-				body += wrapText("li", "Use FuzzyIO to edit predesigned scenarios (A, B, or C) and save them as a new scenarios with a differnt name of your choosing.");
+				body += wrapText("li", "Use FuzzyIO to edit predesigned scenarios (A, B, or C) and save them as new scenarios with a differnt name of your choosing.");
 			
 			}
 			
