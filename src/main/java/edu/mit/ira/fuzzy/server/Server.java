@@ -49,7 +49,7 @@ import edu.mit.ira.opensui.setting.Configuration;
 public class Server {
 	
 	public static final String NAME = "FuzzyIO";
-	public static final String VERSION = "v1.4.20";
+	public static final String VERSION = "v1.4.21";
 	public static final String AUTHOR = "Ira Winder, Daniel Fink, and Max Walker";
 	public static final String SPONSOR = "MIT Center for Real Estate";
 	public static final String CONTACT = "fuzzy-io@mit.edu";
@@ -149,7 +149,8 @@ public class Server {
 		// HTTP GET Request
 		if (method.equals("GET")) {
 			
-			String responseBody = Javascript.load(resource[1]);
+			String fileName = resource[1].toLowerCase();
+			String responseBody = Javascript.load(fileName);
 			if (responseBody != null ) {
 				ServerUtil.packItShipIt(t, 200, "Javascript Delivered", responseBody, "application/javascript");
 				

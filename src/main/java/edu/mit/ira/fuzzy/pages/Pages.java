@@ -1,6 +1,5 @@
 package edu.mit.ira.fuzzy.pages;
 
-import edu.mit.ira.fuzzy.javascript.Javascript;
 import edu.mit.ira.fuzzy.server.Server;
 import edu.mit.ira.fuzzy.server.user.Register;
 import edu.mit.ira.fuzzy.server.user.RegisterUtil;
