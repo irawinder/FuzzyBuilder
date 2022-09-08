@@ -3,17 +3,7 @@
 *.settings
 *.DS_Store
 
-Eclipse/fuzzybuilder-core/bin/
-Eclipse/fuzzybuilder-core/lib/
+/res/users/
+/res/log/
 
-Eclipse/fuzzybuilder-javafx/bin/
-Eclipse/fuzzybuilder-javafx/lib/
-Eclipse/fuzzybuilder-javafx/build/dist/
-Eclipse/fuzzybuilder-javafx/build/mac/
-
-Eclipse/fuzzybuilder-processing/bin/
-Eclipse/fuzzybuilder-processing/lib/
-Eclipse/fuzzybuilder-processing/build/dist/
-Eclipse/fuzzybuilder-processing/build/fuzzybuilder/
-Eclipse/fuzzy-io/logs.txt
-Eclipse/fuzzy-io/data/users/
+/bin/
