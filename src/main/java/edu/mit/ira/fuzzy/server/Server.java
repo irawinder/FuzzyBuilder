@@ -23,6 +23,7 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
+import edu.mit.ira.fuzzy.javascript.Javascript;
 import edu.mit.ira.fuzzy.model.Development;
 import edu.mit.ira.fuzzy.model.build.Build;
 import edu.mit.ira.fuzzy.model.evaluate.Evaluate;
@@ -48,7 +49,7 @@ import edu.mit.ira.opensui.setting.Configuration;
 public class Server {
 	
 	public static final String NAME = "FuzzyIO";
-	public static final String VERSION = "v1.4.16";
+	public static final String VERSION = "v1.4.17";
 	public static final String AUTHOR = "Ira Winder, Daniel Fink, and Max Walker";
 	public static final String SPONSOR = "MIT Center for Real Estate";
 	public static final String CONTACT = "fuzzy-io@mit.edu";
@@ -109,6 +110,7 @@ public class Server {
 			// Log Request
 			ServerLog.add(t, "Request: " + method + " " +  requestURI);
 			
+			boolean jsResource = resource[0].equals("JS") && resource.length > 1;
 			boolean simResource = resource[0].equals("OPENSUI") && resource.length > 1;
 			boolean htmlResource = resource[0].equals("") || resource[0].equals("REGISTER");
 			boolean deactivated = Register.isDeactivated(user);
@@ -122,6 +124,10 @@ public class Server {
 				String message = "HTTP Options Delivered";
 				ServerUtil.packItShipIt(t, 200, message);
 			
+			// Javascript Resource Requested
+			} else if (jsResource) {
+				jsRequest(t, method, resource);
+				
 			// Web Resource Requested
 			} else if (htmlResource) {
 				htmlRequest(t, clientIP, method, resource, requestParameters, user, permitted, deactivated);
@@ -135,6 +141,27 @@ public class Server {
 				String responseBody = Pages.nullSite("404", "Resource Not Found");
 				ServerUtil.packItShipIt(t, 404, "Resource Not Found", responseBody, "text/html");
 			}
+		}
+	}
+	
+	private void jsRequest(HttpExchange t, String method, String[] resource) throws IOException {
+		
+		// HTTP GET Request
+		if (method.equals("GET")) {
+			
+			String responseBody = Javascript.load(resource[1]);
+			if (responseBody != null ) {
+				ServerUtil.packItShipIt(t, 200, "Javascript Delivered", responseBody, "application/javascript");
+				
+			} else {
+				String message = "Resource Not Found";
+				ServerUtil.packItShipIt(t, 404, message);
+			}
+			
+		// Method Not Allowed
+		} else {
+			String message = "Method Not Allowed";
+			ServerUtil.packItShipIt(t, 405, message);
 		}
 	}
 	
