@@ -141,8 +141,7 @@ public class Pages {
 		head += "</style>";
 		
 		for (String fileName : scripts) {
-			//head += "<script src=\"js/" + fileName + "\"></script>";
-			head += "<script>" + Javascript.load(fileName) + "</script>";
+			head += "<script src=\"js/" + fileName + "\"></script>";
 		}
 		
 		head +="</head>";
