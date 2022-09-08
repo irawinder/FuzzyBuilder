@@ -2,7 +2,7 @@ package edu.mit.ira.fuzzy;
 
 import edu.mit.ira.fuzzy.server.Server;
 
-public class FuzzyIO {
+public class Main {
 	
 	private static final int PORT = 8080;
 	

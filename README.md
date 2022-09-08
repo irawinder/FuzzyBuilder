@@ -1,9 +1,9 @@
-# GlassMatrix
+# FuzzyBuilder
 by Ira Winder
 
-GlassMatrix (formerly known as FuzzyBuilder) is an application for generating "fuzzy" resolution development scenarios on a configurable parcel, meant for a process somewhere between site acquisition and highly resolved scenario evaluation.
+FuzzyBuilder is an application for generating "fuzzy" resolution development scenarios on a configurable parcel, meant for a process somewhere between site acquisition and highly resolved scenario evaluation.
 
-![GlassMatrix by Ira Winder](screenshots/massing.png "GlassMatrix by Ira Winder")
+![FuzzyBuilder by Ira Winder](screenshots/massing.png "FuzzyBuilder by Ira Winder")
 
 More Recent Development is conducted using a more traditional java project. Thusly, we recommend reviewing and contributing using the Eclipse IDE.
 
@@ -12,11 +12,11 @@ More Recent Development is conducted using a more traditional java project. Thus
 2. Open terminal in root directory
 4. Build the docker container with the `Dockerfile` (don't forget to run docker on the background)
     ```
-    docker build -t glassmatrix:1.0 .
+    docker build -t fuzzy:1.0 .
     ```
 5. Run the container previously created
     ```
-    docker container run --name GlassMatrix -d -p 8080:8080 glassmatrix:1.0
+    docker container run --name fuzzy -d -p 8080:8080 fuzzy:1.0
     ```
 6. go to http://localhost:8080 on your browser
 

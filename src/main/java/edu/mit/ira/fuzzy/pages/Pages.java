@@ -1,5 +1,6 @@
 package edu.mit.ira.fuzzy.pages;
 
+import edu.mit.ira.fuzzy.server.Server;
 import edu.mit.ira.fuzzy.server.user.Register;
 import edu.mit.ira.fuzzy.server.user.RegisterUtil;
 import edu.mit.ira.fuzzy.server.user.UserPrefixStudy;
@@ -18,7 +19,7 @@ public class Pages {
 	public static String COBRA_EXIT_SURVEY_URL = "https://forms.gle/rkLnBX2TgAiPHi8b7";
 	public static String PANDA_EXIT_SURVEY_URL = "https://forms.gle/EY1ntPzmbRZrtC159";
 	public static String OPENSUI_URL = "http://opensui.org";
-	public static String THIS_URL = "http://fuzzy.glassmatrix.org";
+	public static String THIS_URL = "http://glassmatrix.org";
 	public static String STUDY_CONTACT_URL = "beaverton <i>[at]</i> mit <i>[dot]</i> edu";
 	public static String GENERAL_CONTACT_URL = "ira <i>[at]</i> mit <i>[dot]</i> edu";
 	
@@ -81,7 +82,7 @@ public class Pages {
 		head += "<meta property=’og:title’ content='Beaverton'/>";
 		head += "<meta property=’og:image’ content='" + MODEL_DIAGRAM_URL + "’/>";
 		head += "<meta property=’og:description’ content='A Study by MIT'/>";
-		head += "<meta property=’og:url’ content='http://fuzzy.glassmatrix.org'/>";
+		head += "<meta property=’og:url’ content='" + THIS_URL + "'/>";
 		head += "<meta property='og:image:width' content='1920' />";
 		head += "<meta property='og:image:height' content='1080' />";
 
@@ -135,27 +136,27 @@ public class Pages {
 		
 		body += "<div style=\"float: center\">";
 		
-		body += wrapText("h1", "FuzzyIO");
+		body += wrapText("h1", Server.NAME);
 		body += wrapText("p", "A Real Estate Configuration Interface by MIT"
 				+ "<br>Contact: Ira Winder<br>" + GENERAL_CONTACT_URL);
 		body += "<hr>";
 		
-		body += wrapText("p", "FuzzyIO is a server for generating \"fuzzy\" resolution real estate development scenarios.");
-		body += wrapText("p", "To interact with FuzzyIO, you need to use a \"front end\" user interface like OpenSUI.");
+		body += wrapText("p", Server.NAME + " is a server for generating \"fuzzy\" resolution real estate development scenarios.");
+		body += wrapText("p", "To interact with " + Server.NAME + ", you need to use a \"front end\" user interface like OpenSUI.");
 		body += wrapText("p", "<b>OpenSUI</b>:<br><a href=\"" + OPENSUI_URL + "\" target=\"_blank\">" + OPENSUI_URL + "</a>");
 
-		body += wrapText("h2", "FuzzyIO Model");
+		body += wrapText("h2", "Model");
 		
-		body += "<img style=\"width: 600px; max-width: 100%;\" src=\"" + MODEL_DIAGRAM_URL + "\" alt=\"Diagram of Model Components for FuzzyIO\">";
+		body += "<img style=\"width: 600px; max-width: 100%;\" src=\"" + MODEL_DIAGRAM_URL + "\" alt=\"Diagram of Model Components for " + Server.NAME + "\">";
 		
 		body += glossary();
 		
 		body += wrapText("h2", "Resources");
 
 		body += "<ul>";
-		body += wrapText("li", "Launch <a href=\"" + OPENSUI_URL + "\" target=\"_blank\">openSUI</a> (to use FuzzyIO)");
-		body += wrapText("li", "<a href=\"" + OLD_TUTORIAL_URL + "\" target=\"_blank\">FuzzyIO Tutorial</a> on Youtube");
-		body += wrapText("li", "<a href=\"" + TIMELAPSE_URL + "\" target=\"_blank\">FuzzyIO Usage</a> (Timelapse) on Youtube");
+		body += wrapText("li", "Launch <a href=\"" + OPENSUI_URL + "\" target=\"_blank\">openSUI</a> (to use " + Server.NAME + ")");
+		body += wrapText("li", "<a href=\"" + OLD_TUTORIAL_URL + "\" target=\"_blank\">" + Server.NAME + " Tutorial</a> on Youtube");
+		body += wrapText("li", "<a href=\"" + TIMELAPSE_URL + "\" target=\"_blank\">" + Server.NAME + " Usage</a> (Timelapse) on Youtube");
 		body += "</ul>";
 
 		body += "</body>";
@@ -167,7 +168,7 @@ public class Pages {
 		
 		String bodyText = "";
 		
-		bodyText += wrapText("h2", "FuzzyIO Glossary");
+		bodyText += wrapText("h2", "Glossary");
 
 		bodyText += "<ul>";
 
@@ -212,7 +213,7 @@ public class Pages {
 		
 		body += studyBodyHeader();
 		
-		body += "<img style=\"width: 600px; max-width: 100%;\" src=\"" + MODEL_DIAGRAM_URL + "\" alt=\"Screenshot of Digital Model, FuzzyIO\">";
+		body += "<img style=\"width: 600px; max-width: 100%;\" src=\"" + MODEL_DIAGRAM_URL + "\" alt=\"Screenshot of Digital Model, " + Server.NAME + "\">";
 		
 		body += wrapText("h2", "Introduction");
 		
@@ -243,7 +244,7 @@ public class Pages {
 		
 		body += wrapText("li", "First, participants will complete an entry survey where they can review and consent to the terms of the study.");
 		
-		body += wrapText("li", "Then, participants will watch a short tutorial and Youtube video explaining how to use the modeling software, \"FuzzyIO\".");
+		body += wrapText("li", "Then, participants will watch a short tutorial and Youtube video explaining how to use the modeling software, \"" + Server.NAME + "\".");
 		
 		body += wrapText("li", "After that, participants will follow a prompt to help design a mixed-use building.");
 		
@@ -454,17 +455,17 @@ public class Pages {
 
 		} else if (page.equals("2")) {
 
-			body += wrapText("h2", "FuzzyIO Model");
+			body += wrapText("h2", Server.NAME + " Model");
 			
 			body += wrapText("p", "During this exercise, it's important that you understand some vocabulary.");
 			
 			body += wrapText("p", "Review this diagram of a real estate development model, as well as a glossary of important terms.");
 			
-			body += "<img style=\"width: 600px; max-width: 100%;\" src=\"" + MODEL_DIAGRAM_URL + "\" alt=\"Diagram of Model Components for FuzzyIO\">";
+			body += "<img style=\"width: 600px; max-width: 100%;\" src=\"" + MODEL_DIAGRAM_URL + "\" alt=\"Diagram of Model Components for " + Server.NAME + "\">";
 			
 			body += glossary();
 			
-			body += wrapText("h2", "FuzzyIO Tutorial");
+			body += wrapText("h2", "Tutorial");
 
 			body += wrapText("p", "Next, we need you to prepare for your role by watching a quick tutorial video.");
 			
@@ -495,7 +496,7 @@ public class Pages {
 			}
 
 			body += "<iframe style=\"width: 560px; height: 315px; max-width: 100%\" src=\"" + tutorialUrl + "\" "
-					+ "title=\"FuzzyIO Tutorial\" frameborder=\"0\" "
+					+ "title=\"" + Server.NAME + " Tutorial\" frameborder=\"0\" "
 					+ "allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture\" "
 					+ "allowfullscreen></iframe>";
 			
@@ -512,7 +513,7 @@ public class Pages {
 			
 			body += wrapText("h2", "The Site");
 			
-			body += "<img style=\"width: 600px; max-width: 100%;\" src=\"" + SITE_BASEMAP_URL + "\" alt=\"Diagram of Model Components for FuzzyIO\">";
+			body += "<img style=\"width: 600px; max-width: 100%;\" src=\"" + SITE_BASEMAP_URL + "\" alt=\"Diagram of Model Components for " + Server.NAME + "\">";
 			
 			body += wrapText("h2", "Requirements");
 
@@ -542,13 +543,13 @@ public class Pages {
 			
 			body += wrapText("h2", "Get Started!");
 
-			body += wrapText("p", "You may now do any or all of the following with FuzzyIO:");
+			body += wrapText("p", "You may now do any or all of the following with " + Server.NAME + ":");
 
 			body += "<ol>";
 			
 			if (ups != UserPrefixStudy.COBRA) {
 			
-				body += wrapText("li", "Use FuzzyIO to load and analyze pre-designed scenarios:");
+				body += wrapText("li", "Use " + Server.NAME + " to load and analyze pre-designed scenarios:");
 	
 				body += "<ul>";
 	
@@ -564,13 +565,13 @@ public class Pages {
 			
 			if (ups == UserPrefixStudy.PANDA) {
 
-				body += wrapText("li", "Use FuzzyIO to edit predesigned scenarios (Option 1, 2, or 3) and save them as new scenarios with a differnt name of your choosing.");
+				body += wrapText("li", "Use " + Server.NAME + " to edit predesigned scenarios (Option 1, 2, or 3) and save them as new scenarios with a differnt name of your choosing.");
 			
 			}
 			
 			if (ups != UserPrefixStudy.ZEBRA) {
 
-				body += wrapText("li", "Use FuzzyIO to design scenarios from scratch, saving them with names of your choosing.");
+				body += wrapText("li", "Use " + Server.NAME + " to design scenarios from scratch, saving them with names of your choosing.");
 
 				body += wrapText("li", "Use the \"Save Scenario\" toolbox to name and save variations.");
 				
@@ -579,16 +580,16 @@ public class Pages {
 			
 			body += "</ol>";
 
-			body += wrapText("h2", "Using FuzzyIO");
+			body += wrapText("h2", "Using " + Server.NAME);
 			
 			body += wrapText("p", "Take as long as you like, just be sure to finish everything in <u>one sitting</u>.</i>");
 			
-			body += wrapText("p", "Log in to FuzzyIO with the <b>User ID</b> at the top of this page. "
-					+ "Clicking the link below will open FuzzyIO in a new tab, but feel free to come back and view this page while you work");
+			body += wrapText("p", "Log in to " + Server.NAME + " with the <b>User ID</b> at the top of this page. "
+					+ "Clicking the link below will open " + Server.NAME + " in a new tab, but feel free to come back and view this page while you work");
 
-			body += wrapText("p", "<b>Fuzzy IO</b>:<br><a href=\"" + OPENSUI_URL + "\" target=\"_blank\">" + OPENSUI_URL + "</a>");
+			body += wrapText("p", "<b>" + Server.NAME + "</b>:<br><a href=\"" + OPENSUI_URL + "\" target=\"_blank\">" + OPENSUI_URL + "</a>");
 			
-			body += wrapText("p", "<i>If you experience any technical difficulties or errors during your exercise, you may reload FuzzyIO in your browser and log in again.</i>");
+			body += wrapText("p", "<i>If you experience any technical difficulties or errors during your exercise, you may reload " + Server.NAME + " in your browser and log in again.</i>");
 			
 			body += wrapText("h2", "Submitting your Final Design");
 			
@@ -695,7 +696,7 @@ public class Pages {
 			body += wrapText("p", "The new User ID will allow you to use certain features that may have been unlocked during the exercise. "
 					+ "(For example, the ability edit and delete scenarios)");
 			
-			body += wrapText("p", "So, if you would like to keep playing with FuzzyIO, please do so with your new User ID.");
+			body += wrapText("p", "So, if you would like to keep playing with " + Server.NAME + ", please do so with your new User ID.");
 			
 			body += wrapText("p", "<b>Email</b>:<br>" + email);
 			

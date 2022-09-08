@@ -40,7 +40,7 @@ import edu.mit.ira.opensui.objective.MultiObjective;
 import edu.mit.ira.opensui.setting.Configuration;
 
 /**
- * Fuzzy Server listens and responds to requests for fuzzy masses via HTTP
+ * Server listens and responds to requests for fuzzy masses via HTTP
  *
  * @author Ira Winder
  *
@@ -63,11 +63,11 @@ public class Server {
 	private HttpServer server;
 	private String info;
 	
-	// Fuzzy Objects
+	// Model Objects
 	private Configuration adminConfig, fullConfig, readOnlyConfig, guestConfig;
 	
 	/**
-	 * Construct a new FuzzyIO Server
+	 * Construct a new Server
 	 * @param name name of server
 	 * @param version version of server
 	 * @param port port to open for HTTP Requests
@@ -156,7 +156,7 @@ public class Server {
 			if (deactivated) {
 				String responseBody = Pages.studySite(user, "finish", deactivated);
 				ServerUtil.packItShipIt(t, 200, "HTML Delivered", responseBody, htmlContent);
-				UserLog.add(user, clientIP, "HOME", "Visited FuzzyIO Study Page : FINISH");
+				UserLog.add(user, clientIP, "HOME", "Visited Study Page : FINISH");
 			
 			// General Web Resources
 			} else if (resource[0].equals("")) {	
@@ -167,19 +167,19 @@ public class Server {
 				if (RegisterUtil.hasPrefix(user, UserPrefixAdmin.SQUID)) {
 					responseBody = Pages.generalSite();
 					message = "HTML Delivered";
-					UserLog.add(user, clientIP, "HOME", "Visited FuzzyIO General Page : GENERAL");
+					UserLog.add(user, clientIP, "HOME", "Visited General Page : GENERAL");
 					
 				// Is other active user (e.g. study user)	
 				} else if (Register.isActive(user)) {
 					responseBody = Pages.studySite(user, page, false);
 					message = "HTML Delivered";
-					UserLog.add(user, clientIP, "HOME", "Visited FuzzyIO Study Page : " + page.toUpperCase());
+					UserLog.add(user, clientIP, "HOME", "Visited Study Page : " + page.toUpperCase());
 					
 				// Is guest (unregistered) user (e.g. 'user' parameter is blank)
 				} else if (user.equals(ServerUtil.DEFAULT_USER)){
 					responseBody = Pages.studyIntroSite();
 					message = "HTML Delivered";
-					UserLog.add(user, clientIP, "HOME", "Visited FuzzyIO Study Page : INTRO");
+					UserLog.add(user, clientIP, "HOME", "Visited Study Page : INTRO");
 				}
 				
 				// No Resource available
@@ -473,7 +473,7 @@ public class Server {
 			System.out.println("Warning: requestBody has no data");
 		}
 
-		// Generate FuzzyIO Response Data
+		// Generate Response Data
 		Configuration config = ParseConfiguration.fromJson(requestBody);
 		Development solution = Build.development(config);
 		MultiObjective performance = Evaluate.development(solution);
