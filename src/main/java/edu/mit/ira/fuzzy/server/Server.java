@@ -549,11 +549,11 @@ public class Server {
 	 */
 	private void addGlobalScenarios(String user) {
 
-		String globalPath = "data" + File.separator + "global" + File.separator + "scenarios";
+		String globalPath = RELATIVE_DATA_PATH + File.separator + "global" + File.separator + "scenarios";
 		File globalDir = new File(globalPath);
 		if(!globalDir.exists()) globalDir.mkdirs();
 
-		String userPath = "data" + File.separator + "users" + File.separator + user + File.separator + "scenarios";
+		String userPath = RELATIVE_DATA_PATH + File.separator + "users" + File.separator + user + File.separator + "scenarios";
 		File userDir = new File(userPath);
 		if(!userDir.exists()) userDir.mkdirs();
 

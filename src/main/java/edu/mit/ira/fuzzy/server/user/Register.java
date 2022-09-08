@@ -19,10 +19,10 @@ import edu.mit.ira.fuzzy.server.Server;
  */
 public class Register {
 	
-	private static String USERS_PATH = Server.RELATIVE_DATA_PATH + File.separator + "users" + File.separator;
-	private static String REGISTER_PATH = USERS_PATH + "register.tsv";
-	private static String PERMA_REGISTER_PATH = USERS_PATH + "perma_register.tsv";
-	private static String DEACTIVATED_PATH = USERS_PATH + "deactivated.tsv";
+	private static String REGISTER_FOLDER_PATH = Server.RELATIVE_DATA_PATH + File.separator + "register" + File.separator;
+	private static String REGISTER_FILE_PATH = REGISTER_FOLDER_PATH + "register.tsv";
+	private static String PERMA_REGISTER_PATH = REGISTER_FOLDER_PATH + "perma_register.tsv";
+	private static String DEACTIVATED_PATH = REGISTER_FOLDER_PATH + "deactivated.tsv";
 	
 	// Registry Entry row is of form: {userID, email}
 	private static int REGISTER_COLUMNS = 2;
@@ -112,7 +112,7 @@ public class Register {
 	 * Initialize main register with permanent users
 	 */
 	public static void init() {
-		File f = new File(REGISTER_PATH);
+		File f = new File(REGISTER_FILE_PATH);
 		if (!f.exists()) {
 			String[] permaEntries = getPermaEntries();
 			for (String row : permaEntries) {
@@ -233,7 +233,7 @@ public class Register {
 
 		// Write user-email pair to registration
 		byte data[] = row.getBytes();
-		Path p = Paths.get(REGISTER_PATH);
+		Path p = Paths.get(REGISTER_FILE_PATH);
 		try (OutputStream out = new BufferedOutputStream(
 				Files.newOutputStream(p, StandardOpenOption.CREATE, StandardOpenOption.APPEND))) {
 			out.write(data, 0, data.length);
@@ -306,7 +306,7 @@ public class Register {
 	 * @return empty list if there was an error creating/reading registration file
 	 */
 	private static String[] getEntries() {
-		return RegisterUtil.getRows(REGISTER_PATH);
+		return RegisterUtil.getRows(REGISTER_FILE_PATH);
 	}
 	
 	/**

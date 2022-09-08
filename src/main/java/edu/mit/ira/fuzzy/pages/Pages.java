@@ -734,23 +734,24 @@ public class Pages {
 			
 			int pageInt = Integer.valueOf(page);
 			
+			String leftNav = "<p>---</p>";
+			String rightNav = "<p style=\"float: right;\">---</p>";
+			if (pageInt > 1 && pageInt <= NUM_STUDY_PAGES) {
+				int prevPage = pageInt - 1;
+				leftNav = "<p>< <a href=\"/?user=" + user + "&page=" + prevPage + "\">Go Back</a></p>";
+			}
+			if (pageInt >= 1 && pageInt < NUM_STUDY_PAGES) {
+				int nextPage = pageInt + 1;
+				rightNav = "<p style=\"float: right;\"><a href=\"/?user=" + user + "&page=" + nextPage + "\">CONTINUE</a> ></p>";
+			}
+			
 			bodyText += "<hr>";
 			
 			bodyText += "<div class=\"row\">";
 			
-			bodyText += "<div class=\"column\" style=\"float: left\">";
-			if (pageInt > 1 && pageInt <= NUM_STUDY_PAGES) {
-				int prevPage = pageInt - 1;
-				bodyText += "<p>< <a href=\"/?user=" + user + "&page=" + prevPage + "\">Go Back</a></p>";
-			}
-			bodyText += "</div>";
+			bodyText += "<div class=\"column\" style=\"float: left\">" + leftNav + "</div>";
 			
-			bodyText += "<div class=\"column\" style=\"float: right\">";
-			if (pageInt >= 1 && pageInt < NUM_STUDY_PAGES) {
-				int nextPage = pageInt + 1;
-				bodyText += "<p style=\"float: right;\"><a href=\"/?user=" + user + "&page=" + nextPage + "\">CONTINUE</a> ></p>";
-			}
-			bodyText += "</div>";
+			bodyText += "<div class=\"column\" style=\"float: right\">" + rightNav + "</div>";
 			
 			bodyText += "</div>";
 		}
