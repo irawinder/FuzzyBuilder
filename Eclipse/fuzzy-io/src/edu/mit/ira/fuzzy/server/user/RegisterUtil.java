@@ -142,7 +142,7 @@ public class RegisterUtil {
 		String temp = email.replace(".", ":");
 		String[] array = temp.split("@");
 		if (array.length == 2) {
-			if (array[1].split(":").length == 2) {
+			if (array[1].split(":").length > 1) {
 				return true;
 			}
 		}

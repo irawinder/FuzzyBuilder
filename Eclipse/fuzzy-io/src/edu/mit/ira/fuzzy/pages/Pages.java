@@ -199,7 +199,7 @@ public class Pages {
 	
 	private static String studyBodyFooter() {
 		String bodyText = "";
-		bodyText += "<br><br><hr>";
+		bodyText += "<hr>";
 		bodyText += wrapText("p", "Beaverton | <b>Univeristy of Tokyo</b> and <b>MIT</b> | Contact: " + STUDY_CONTACT_URL);
 		return bodyText;
 	}
@@ -232,6 +232,8 @@ public class Pages {
 		
 		body += wrapText("p", "<b>Kazuo Hiekata</b>"
 				+ "<br>Professor, Graduate School of Frontier Sciences, University of Tokyo");
+		
+		body += wrapText("p", "<i>Approved by the University of Tokyo Research Ethics Committee (ref. 22-100)</i>");
 		
 		body += wrapText("h2", "During the Experiment");
 		
@@ -284,6 +286,8 @@ public class Pages {
 		
 		body += "<button onclick=\"register()\">Continue to Registration</button>";
 		
+		body += "<br><br>";
+		
 		body += studyBodyFooter();
 		
 		body += "</body>";
@@ -309,7 +313,7 @@ public class Pages {
 				+ "var valid1 = false;"
 				+ "if (email1.split(\"@\").length == 2)"
 				+ "{"
-				+ "if (email1.split(\"@\")[1].split(\".\").length == 2)"
+				+ "if (email1.split(\"@\")[1].split(\".\").length > 1)"
 				+ "{"
 				+ "valid1 = true;"
 				+ "}"
@@ -318,7 +322,7 @@ public class Pages {
 				+ "var valid2 = false;"
 				+ "if (email2.split(\"@\").length == 2)"
 				+ "{"
-				+ "if (email2.split(\"@\")[1].split(\".\").length == 2)"
+				+ "if (email2.split(\"@\")[1].split(\".\").length > 1)"
 				+ "{"
 				+ "valid2 = true;"
 				+ "}"
@@ -370,6 +374,8 @@ public class Pages {
 		body += "<p style=\"color: red;\" id=\"feedback\">" + feedback + "</p>";
 		
 		body += wrapText("p", "<i>Your personal information will not be shared.<br>Email addresses are only used for authentication,<br>or in the rare case that we need to contact you. </i>");
+		
+		body += "<br><br>";
 		
 		body += studyBodyFooter();
 		
@@ -701,7 +707,7 @@ public class Pages {
 			
 			body += "<hr>";
 			
-			body += wrapText("p", "Once your have saved this page for your records, you may close all browser windows related to this experiment.");
+			body += wrapText("p", "You may now close all browser windows related to this experiment.");
 			
 		} else {
 
@@ -709,37 +715,46 @@ public class Pages {
 
 		}
 		
-		body += "<hr>";
-		
-		// Add Next Page Button
-		if (!page.equals("finish")) {
-			
-			int pageInt = Integer.valueOf(page);
-			
-			body += "<div class=\"row\">";
-			
-			body += "<div class=\"column\" style=\"float: left\">";
-			if (pageInt > 1 && pageInt <= NUM_STUDY_PAGES) {
-				int prevPage = pageInt - 1;
-				body += "<p>< <a href=\"/?user=" + user + "&page=" + prevPage + "\">Go Back</a></p>";
-			}
-			body += "</div>";
-			
-			body += "<div class=\"column\" style=\"float: right\">";
-			if (pageInt >= 1 && pageInt < NUM_STUDY_PAGES) {
-				int nextPage = pageInt + 1;
-				body += "<p style=\"float: right;\"><a href=\"/?user=" + user + "&page=" + nextPage + "\">CONTINUE</a> ></p>";
-			}
-			body += "</div>";
-			
-			body += "</div>";
-		}
+		body += studyNavigation(user, page);
 		
 		body += studyBodyFooter();
 		
 		body += "</body>";
 
 		return body;
+	}
+	
+	private static String studyNavigation(String user, String page) {
+		
+		String bodyText = "";
+		
+		// Add Next Page Button
+		if (!page.equals("finish")) {
+			
+			int pageInt = Integer.valueOf(page);
+			
+			bodyText += "<hr>";
+			
+			bodyText += "<div class=\"row\">";
+			
+			bodyText += "<div class=\"column\" style=\"float: left\">";
+			if (pageInt > 1 && pageInt <= NUM_STUDY_PAGES) {
+				int prevPage = pageInt - 1;
+				bodyText += "<p>< <a href=\"/?user=" + user + "&page=" + prevPage + "\">Go Back</a></p>";
+			}
+			bodyText += "</div>";
+			
+			bodyText += "<div class=\"column\" style=\"float: right\">";
+			if (pageInt >= 1 && pageInt < NUM_STUDY_PAGES) {
+				int nextPage = pageInt + 1;
+				bodyText += "<p style=\"float: right;\"><a href=\"/?user=" + user + "&page=" + nextPage + "\">CONTINUE</a> ></p>";
+			}
+			bodyText += "</div>";
+			
+			bodyText += "</div>";
+		}
+		
+		return bodyText;
 	}
 
 	private static String makeNullBody(String errorCode, String errorMessage) {
