@@ -49,7 +49,7 @@ import edu.mit.ira.opensui.setting.Configuration;
 public class Server {
 	
 	public static final String NAME = "FuzzyIO";
-	public static final String VERSION = "v1.4.17";
+	public static final String VERSION = "v1.4.18";
 	public static final String AUTHOR = "Ira Winder, Daniel Fink, and Max Walker";
 	public static final String SPONSOR = "MIT Center for Real Estate";
 	public static final String CONTACT = "fuzzy-io@mit.edu";
@@ -307,13 +307,13 @@ public class Server {
 			
 			// Send a list of scenarios saved by this user
 			} else if (resource[1].equals("LIST")) {	
-				String responseBody = ServerUtil.fileNames("./data/users/" + user + "/scenarios");
+				String responseBody = ServerUtil.fileNames(RELATIVE_DATA_PATH + "/users/" + user + "/scenarios");
 				String message = "Scenario Names Delivers for " + user;
 				ServerUtil.packItShipIt(t, 200, message, responseBody, jsonContent);
 			
 			// Send a list of basemaps saved by this user
 			} else if (resource[1].equals("BASEMAPS")) {	
-				String responseBody = ServerUtil.fileNames("./data/basemaps");
+				String responseBody = ServerUtil.fileNames(RELATIVE_DATA_PATH + "/basemaps");
 				String message = "Scenario Names Delivers for " + user;
 				ServerUtil.packItShipIt(t, 200, message, responseBody, jsonContent);
 			
@@ -521,7 +521,7 @@ public class Server {
 	 * @return
 	 */
 	private boolean hasScenario(String user, String scenario) {
-		String directoryName = "./data/users/" + user + "/scenarios";
+		String directoryName = RELATIVE_DATA_PATH + "/users/" + user + "/scenarios";
 		File directory = new File(directoryName);
 		if (directory.exists()) {
 			String[] nameList = directory.list();
@@ -540,7 +540,7 @@ public class Server {
 	 * @param scenario
 	 */
 	private void deleteScenario(String user, String scenario) {
-		String directoryName = "./data/users/" + user + "/scenarios/" + scenario;
+		String directoryName = RELATIVE_DATA_PATH + "/users/" + user + "/scenarios/" + scenario;
 		File directory = new File(directoryName);
 		if (directory.exists()) {
 			ServerUtil.deleteDir(directory);
@@ -556,7 +556,7 @@ public class Server {
 	 */
 	private void saveScenario(String user, String scenario, String fileName, String dataString) {
 		
-		String directoryName = "./data/users/" + user + "/scenarios/" + scenario;
+		String directoryName = RELATIVE_DATA_PATH + "/users/" + user + "/scenarios/" + scenario;
 		File directory = new File(directoryName);
 		if (!directory.exists()) {
 			directory.mkdirs();
@@ -615,7 +615,7 @@ public class Server {
 	 */
 	private void saveSummary(String user, String dataString) {
 		
-		String directoryName = "./data/users/" + user;
+		String directoryName = RELATIVE_DATA_PATH + "/users/" + user;
 		File directory = new File(directoryName);
 		if (!directory.exists()) {
 			directory.mkdirs();
@@ -635,7 +635,7 @@ public class Server {
 	 * @return
 	 */
 	private String summaryData(String user) {
-		Path filePath = Path.of("./data/users/" + user + "/" + SUMMARY_FILE);
+		Path filePath = Path.of(RELATIVE_DATA_PATH + "/users/" + user + "/" + SUMMARY_FILE);
 	    try {
 			return Files.readString(filePath);
 		} catch (IOException e) {
@@ -652,7 +652,7 @@ public class Server {
 	 * @return
 	 */
 	private String scenarioData(String user, String scenario, String fileName) {
-		Path filePath = Path.of("./data/users/" + user + "/scenarios/" + scenario + "/" + fileName);
+		Path filePath = Path.of(RELATIVE_DATA_PATH + "/users/" + user + "/scenarios/" + scenario + "/" + fileName);
 	    try {
 			return Files.readString(filePath);
 		} catch (IOException e) {
@@ -668,7 +668,7 @@ public class Server {
 	 */
 	private byte[] basemapData(String fileName, String type) {
 		try {
-			BufferedImage bImage = ImageIO.read(new File("./data/basemaps/" + fileName));
+			BufferedImage bImage = ImageIO.read(new File(RELATIVE_DATA_PATH + "/basemaps/" + fileName));
 		    ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		    ImageIO.write(bImage, type, bos );
 		    return bos.toByteArray();
