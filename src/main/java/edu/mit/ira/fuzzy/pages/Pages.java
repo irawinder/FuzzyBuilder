@@ -1,5 +1,6 @@
 package edu.mit.ira.fuzzy.pages;
 
+import edu.mit.ira.fuzzy.javascript.Javascript;
 import edu.mit.ira.fuzzy.server.Server;
 import edu.mit.ira.fuzzy.server.user.Register;
 import edu.mit.ira.fuzzy.server.user.RegisterUtil;
@@ -51,13 +52,13 @@ public class Pages {
 	}
 
 	public static String studySite(String user, String page, boolean deactivated) {
-		String head = makeHead();
-		String body;
-		if (deactivated) {
-			body = makeStudyBody(user, page, deactivated);
+		String head;
+		if (page.equals("1") || page.equals("4")) {
+			head = makeHead(new String[] {"survey.js"});
 		} else {
-			body = makeStudyBody(user, page, deactivated);
+			head = makeHead();
 		}
+		String body = makeStudyBody(user, page, deactivated);
 		return assemblePage(head, body);
 	}
 
@@ -140,7 +141,8 @@ public class Pages {
 		head += "</style>";
 		
 		for (String fileName : scripts) {
-			head += "<script src=\"js/" + fileName + "\"></script>";
+			//head += "<script src=\"js/" + fileName + "\"></script>";
+			head += "<script>" + Javascript.load(fileName) + "</script>";
 		}
 		
 		head +="</head>";
