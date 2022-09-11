@@ -49,7 +49,7 @@ import edu.mit.ira.opensui.setting.Configuration;
 public class Server {
 	
 	public static final String NAME = "FuzzyIO";
-	public static final String VERSION = "v1.4.21";
+	public static final String VERSION = "v1.4.22";
 	public static final String AUTHOR = "Ira Winder, Daniel Fink, and Max Walker";
 	public static final String SPONSOR = "MIT Center for Real Estate";
 	public static final String CONTACT = "fuzzy-io@mit.edu";
@@ -259,7 +259,7 @@ public class Server {
 						
 						// Something else went wrong
 						} else {
-							responseBody = Pages.registrationSite("Something went wrong and we can't register this email address. Please contact ira [at] mit [dot] edu for help.");
+							responseBody = Pages.registrationSite("Something went wrong and we can't register this email address.");
 						}
 					}
 				}

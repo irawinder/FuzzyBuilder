@@ -1,7 +1,3 @@
-function goRegister() { 
-	location.replace("register");
-}
-
 function register() {
 	document.getElementById("feedback").innerHTML = "";
 	document.getElementById("email1_feedback").innerHTML = "";

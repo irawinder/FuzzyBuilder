@@ -33,7 +33,7 @@ public class Pages {
 	}
 	
 	public static String studyIntroSite() {
-		String head = makeHead(new String[]{"register.js"});
+		String head = makeHead(new String[]{"goRegister.js"});
 		String body = makeStudyIntroBody();
 		return assemblePage(head, body);
 	}
@@ -284,11 +284,14 @@ public class Pages {
 		
 		body += wrapText("h2", "User Registration");
 		body += "<label for=\"email1\">Email:</label><br>";
-		body += "<input type=\"text\" id=\"email1\" style=\"width: 300px;\"><p style=\"color: red;\" id=\"email1_feedback\"></p><br><br>";
+		body += "<input type=\"text\" id=\"email1\" style=\"width: 300px;\">";
+		body += "<p style=\"color: red;\" id=\"email1_feedback\"></p><br><br>";
 		body += "<label for=\"email2\">Confirm Email:</label><br>";
-		body += "<input onSubmit=\"register()\" type=\"text\" id=\"email2\" style=\"width: 300px;\"><p style=\"color: red;\" id=\"email2_feedback\"></p><br><br>";
-		body += "<button onclick=\"register()\">Register</button>";
+		body += "<input type=\"text\" id=\"email2\" style=\"width: 300px;\">";
+		body += "<p style=\"color: red;\" id=\"email2_feedback\"></p><br><br>";
+		body += "<button id=\"register\" onclick=\"register()\">Register</button>";
 		body += "<p style=\"color: red;\" id=\"feedback\">" + feedback + "</p>";
+		
 		body += wrapText("p", "<i>Your personal information will not be shared.<br>Email addresses are only used for authentication,<br>or in the rare case that we need to contact you. </i>");
 		body += "<br><br>";
 		
