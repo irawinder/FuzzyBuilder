@@ -60,6 +60,21 @@ public class Server {
 	private static final String RESPONSE_FILE = "solution.json";
 	private static final String SUMMARY_FILE = "summary.csv";
 	
+	// Resource identifiers
+	public static final String RES_ROOT = "";
+	public static final String RES_JS = "js";
+	public static final String RES_REGISTER = "register";
+	public static final String RES_SIM = "opensui";
+	public static final String RES_SIM_INIT = "init";
+	public static final String RES_SIM_LIST = "list";
+	public static final String RES_SIM_BASEMAP = "basemap";
+	public static final String RES_SIM_BASEMAPS = "basemaps";
+	public static final String RES_SIM_SUMMARY = "summary";
+	public static final String RES_SIM_SAVE = "save";
+	public static final String RES_SIM_LOAD = "load";
+	public static final String RES_SIM_DELETE = "delete";
+	public static final String RES_SIM_RUN = "run";
+	
 	// Server Objects
 	private HttpServer server;
 	private String info;
@@ -110,9 +125,9 @@ public class Server {
 			// Log Request
 			ServerLog.add(t, "Request: " + method + " " +  requestURI);
 			
-			boolean jsResource = resource[0].equals("JS") && resource.length > 1;
-			boolean simResource = resource[0].equals("OPENSUI") && resource.length > 1;
-			boolean htmlResource = resource[0].equals("") || resource[0].equals("REGISTER");
+			boolean jsResource = resource[0].equals(RES_JS) && resource.length > 1;
+			boolean simResource = resource[0].equals(RES_SIM) && resource.length > 1;
+			boolean htmlResource = resource[0].equals(RES_ROOT) || resource[0].equals(RES_REGISTER);
 			boolean deactivated = Register.isDeactivated(user);
 			boolean permitted = Register.isActive(user) || RegisterUtil.ignoreCaseEquals(user, ServerUtil.DEFAULT_USER) || deactivated;
 			
@@ -149,7 +164,7 @@ public class Server {
 		// HTTP GET Request
 		if (method.equals("GET")) {
 			
-			String fileName = resource[1].toLowerCase();
+			String fileName = resource[1];
 			String responseBody = Javascript.load(fileName);
 			if (responseBody != null ) {
 				ServerUtil.packItShipIt(t, 200, "Javascript Delivered", responseBody, "application/javascript");
@@ -187,7 +202,7 @@ public class Server {
 				UserLog.add(user, clientIP, "HOME", "Visited Study Page : FINISH");
 			
 			// General Web Resources
-			} else if (resource[0].equals("")) {	
+			} else if (resource[0].equals(RES_ROOT)) {	
 				
 				String responseBody, message;
 				
@@ -219,7 +234,7 @@ public class Server {
 			}
 			
 			// Client is trying to register an email address
-			else if (resource[0].equals("REGISTER")) 
+			else if (resource[0].equals(RES_REGISTER)) 
 			{	
 				String responseBody;
 				
@@ -294,7 +309,7 @@ public class Server {
 		if (method.equals("GET")) {
 
 			// Send the setting configuration to the GUI
-			if (resource[1].equals("INIT")) {
+			if (resource[1].equals(RES_SIM_INIT)) {
 				
 				// Add global files to new user's scenarios
 				boolean isCobra = RegisterUtil.hasPrefix(user, UserPrefixStudy.COBRA);
@@ -307,19 +322,19 @@ public class Server {
 				UserLog.add(user, clientIP, "LOGIN", "Initialize New Session");
 			
 			// Send a list of scenarios saved by this user
-			} else if (resource[1].equals("LIST")) {	
+			} else if (resource[1].equals(RES_SIM_LIST)) {	
 				String responseBody = ServerUtil.fileNames(RELATIVE_DATA_PATH + "/users/" + user + "/scenarios");
 				String message = "Scenario Names Delivers for " + user;
 				ServerUtil.packItShipIt(t, 200, message, responseBody, jsonContent);
 			
 			// Send a list of basemaps saved by this user
-			} else if (resource[1].equals("BASEMAPS")) {	
+			} else if (resource[1].equals(RES_SIM_BASEMAPS)) {	
 				String responseBody = ServerUtil.fileNames(RELATIVE_DATA_PATH + "/basemaps");
 				String message = "Scenario Names Delivers for " + user;
 				ServerUtil.packItShipIt(t, 200, message, responseBody, jsonContent);
 			
 			// Delete a Scenario
-			} else if (resource[1].equals("DELETE")) {
+			} else if (resource[1].equals(RES_SIM_DELETE)) {
 				
 				// Delete the data for this scenario
 				if (hasScenario(user, scenario)) {
@@ -334,7 +349,7 @@ public class Server {
 				}
 			
 			// Load a previously saved setting configuration
-			} else if (resource[1].equals("LOAD")) {
+			} else if (resource[1].equals(RES_SIM_LOAD)) {
 			
 				// Send the default setting configuration to the GUI
 				if (scenario.equals("default configuration")) {
@@ -356,7 +371,7 @@ public class Server {
 					ServerUtil.packItShipIt(t, 400, "Bad Request");
 				}
 				
-			} else if (resource[1].equals("BASEMAP")) {
+			} else if (resource[1].equals(RES_SIM_BASEMAP)) {
 			
 				// Load the image as bytes
 				byte[] imageAsBytes = null;
@@ -378,7 +393,7 @@ public class Server {
 				}
 			
 			// Send the default setting configuration to the GUI
-			} else if (resource[1].equals("SUMMARY")) {
+			} else if (resource[1].equals(RES_SIM_SUMMARY)) {
 				String responseBody = summaryData(user);
 				String contentType = "application/csv";
 				String message = "Summary Delivered to " + user;
@@ -394,7 +409,7 @@ public class Server {
 		} else if (method.equals("POST")) {
 			
 			// Send the default setting configuration to the GUI
-			if (resource[1].equals("RUN")) {
+			if (resource[1].equals(RES_SIM_RUN)) {
 				String feedback = null;
 				String responseBody = solutionData(requestBody, feedback, user);
 				String message = "Solution Delivered to " + user;
@@ -402,7 +417,7 @@ public class Server {
 				UserLog.add(user, clientIP, "RUN", "Model Changed");
 			
 			// Save a submitted setting configuration
-			} else if (resource[1].equals("SAVE")) {
+			} else if (resource[1].equals(RES_SIM_SAVE)) {
 				String userFeedback;
 				String message = "Solution Delivered to " + user;
 				boolean save;

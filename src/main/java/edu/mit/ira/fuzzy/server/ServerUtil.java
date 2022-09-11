@@ -31,7 +31,7 @@ public class ServerUtil {
 	public static String[] parseResource(String requestURI) {
 		String grossResource = requestURI.replace("?", ";").split(";")[0];
 		grossResource = grossResource.substring(1, grossResource.length());
-		return grossResource.toUpperCase().split("/");
+		return grossResource.toLowerCase().split("/");
 	}
 	
 	/**
