@@ -292,6 +292,11 @@ public class Pages {
 		body += "<button id=\"register\" onclick=\"register()\">Register</button>";
 		body += "<p style=\"color: red;\" id=\"feedback\">" + feedback + "</p>";
 		
+		String fileName = "clickOnEnter.js";
+		body += "<script src=\"js/" + fileName + "\"></script>";
+		body += "<script>clickOnEnter(\"email1\", \"register\");</script>";
+		body += "<script>clickOnEnter(\"email2\", \"register\");</script>";
+		
 		body += wrapText("p", "<i>Your personal information will not be shared.<br>Email addresses are only used for authentication,<br>or in the rare case that we need to contact you. </i>");
 		body += "<br><br>";
 		
