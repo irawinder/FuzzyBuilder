@@ -221,7 +221,7 @@ public class Pages {
 		String body = "<body>";
 		body += studyBodyHeader();
 		
-		body += "<img style=\"width: 600px; max-width: 100%;\" src=\"" + MODEL_DIAGRAM_URL + "\" alt=\"Screenshot of Digital Model, " + Server.NAME + "\">";
+		body += "<img style=\"width: 560px; max-width: 100%;\" src=\"" + MODEL_DIAGRAM_URL + "\" alt=\"Screenshot of Digital Model, " + Server.NAME + "\">";
 		
 		body += wrapText("h2", "Introduction");
 		body += wrapText("p", "Welcome to Beaverton, a research study!");
@@ -355,7 +355,7 @@ public class Pages {
 			body += wrapText("h2", Server.NAME + " Model");
 			body += wrapText("p", "During this exercise, it's important that you understand some vocabulary.");
 			body += wrapText("p", "Review this diagram of a real estate development model, as well as a glossary of important terms.");
-			body += "<img style=\"width: 600px; max-width: 100%;\" src=\"" + MODEL_DIAGRAM_URL + "\" alt=\"Diagram of Model Components for " + Server.NAME + "\">";
+			body += "<img style=\"width: 560px; max-width: 100%;\" src=\"" + MODEL_DIAGRAM_URL + "\" alt=\"Diagram of Model Components for " + Server.NAME + "\">";
 			
 			body += glossary();
 			
@@ -393,7 +393,7 @@ public class Pages {
 			body += wrapText("p", "The only condition is that the site must be used to host a new <i>College for the Arts</i>, along with <i>new housing</i> for the local community.");
 			
 			body += wrapText("h2", "The Site");
-			body += "<img style=\"width: 600px; max-width: 100%;\" src=\"" + SITE_BASEMAP_URL + "\" alt=\"Diagram of Model Components for " + Server.NAME + "\">";
+			body += "<img style=\"width: 560px; max-width: 100%;\" src=\"" + SITE_BASEMAP_URL + "\" alt=\"Diagram of Model Components for " + Server.NAME + "\">";
 			
 			body += wrapText("h2", "Requirements");
 			body += "<ul>";
