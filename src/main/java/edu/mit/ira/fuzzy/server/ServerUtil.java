@@ -1,8 +1,11 @@
 package edu.mit.ira.fuzzy.server;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
@@ -184,5 +187,34 @@ public class ServerUtil {
 	        }
 	    }
 	    file.delete();		
+	}
+	
+	/**
+	 * Parse Request Body
+	 * @param t
+	 * @return
+	 */
+	public static String parseRequestBody(HttpExchange t) {
+		try {
+			InputStreamReader isr = new InputStreamReader(t.getRequestBody(), "utf-8");
+			BufferedReader br = new BufferedReader(isr);
+			int b;
+			StringBuilder buf = new StringBuilder(512);
+			while ((b = br.read()) != -1) {
+				buf.append((char) b);
+			}
+			br.close();
+			isr.close();
+			return buf.toString();
+			
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+			return "";
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+			return "";
+			
+		}
 	}
 }

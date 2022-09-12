@@ -2,11 +2,9 @@ package edu.mit.ira.fuzzy.server;
 
 import java.awt.image.BufferedImage;
 import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.nio.file.Files;
@@ -17,6 +15,7 @@ import java.util.Map;
 
 import javax.imageio.ImageIO;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.sun.net.httpserver.HttpExchange;
@@ -129,9 +128,10 @@ public class Server {
 			ServerLog.add(t, "Request: " + method + " " +  requestURI);
 			
 			boolean jsResource = resource[0].equals(RES_JS) && resource.length > 1;
+			boolean registerResource = resource[0].equals(RES_REGISTER);
 			boolean surveyResource = resource[0].equals(RES_SURVEY) && resource.length > 1 && !user.equals(ServerUtil.DEFAULT_USER);
 			boolean simResource = resource[0].equals(RES_SIM) && resource.length > 1;
-			boolean htmlResource = resource[0].equals(RES_ROOT) || resource[0].equals(RES_REGISTER);
+			boolean siteResource = resource[0].equals(RES_ROOT);
 			boolean deactivated = Register.isDeactivated(user);
 			boolean permitted = Register.isActive(user) || RegisterUtil.ignoreCaseEquals(user, ServerUtil.DEFAULT_USER) || deactivated;
 			
@@ -150,10 +150,14 @@ public class Server {
 			// Survey Resource Requested
 			} else if (surveyResource) {
 				surveyRequest(t, method, resource, user, permitted, deactivated);
-
-				// Web Resource Requested
-			} else if (htmlResource) {
-				htmlRequest(t, clientIP, method, resource, requestParameters, user, permitted, deactivated);
+			
+			// Registration Requested
+			} else if (registerResource) {
+				registerRequest(t, method, resource, requestParameters);
+				
+			// Web Resource Requested
+			} else if (siteResource) {
+				pageRequest(t, clientIP, method, resource, requestParameters, user, permitted, deactivated);
 			
 			// OpenSUI is requesting resource
 			} else if (simResource) {
@@ -182,6 +186,60 @@ public class Server {
 				ServerUtil.packItShipIt(t, 404, message);
 			}
 			
+		// Method Not Allowed
+		} else {
+			String message = "Method Not Allowed";
+			ServerUtil.packItShipIt(t, 405, message);
+		}
+	}
+	
+	private void registerRequest(HttpExchange t, String method, String[] resource, Map<String, String> params) throws IOException {
+		
+		String email = params.get("email").toLowerCase();
+		
+		if (method.equals("POST")) {
+			
+			if (email.equals(ServerUtil.DEFAULT_EMAIL)) {
+				ServerUtil.packItShipIt(t, 400, "Bad Request", "Must Send Email as Parameter", "text/plain");
+				
+			} else {
+				String userID = Register.makeUser(email, UserType.STUDY);
+				String requestBody = ServerUtil.parseRequestBody(t);
+				
+				JSONArray consent = new JSONArray(requestBody);
+				String agreement = consent.getJSONObject(0).getString("n");
+				String fullName = consent.getJSONObject(1).getString("a");
+				
+				// Registration Successful
+				if (userID != null) {
+					Survey.save(userID, SurveyType.CONSENT, requestBody);
+					String responseBody = Pages.makeRegistrationCompleteHTML(userID, agreement, fullName, email);
+					ServerUtil.packItShipIt(t, 200, "Registration Successful", responseBody, "text/html");
+
+				// Registration failed
+				} else {
+
+					// Email already active
+					if (Register.isActiveEmail(email)) {
+						ServerUtil.packItShipIt(t, 403, "Forbidden", "This email is already in use.", "text/plain");
+
+						// Something else went wrong
+					} else {
+						ServerUtil.packItShipIt(t, 403, "Forbidden", "Something went wrong and we don't know why.", "text/plain");
+					}
+				}
+			}
+		
+		} else if (method.equals("GET")) {
+			
+			// blank registration form (no email parameter is submitted)
+			if (email.equals(ServerUtil.DEFAULT_EMAIL)) {
+				ServerUtil.packItShipIt(t, 200, "Success", Pages.registrationSite(""), "text/html");
+			
+			} else {
+				ServerUtil.packItShipIt(t, 400, "Bad Request");
+			}
+		
 		// Method Not Allowed
 		} else {
 			String message = "Method Not Allowed";
@@ -220,16 +278,7 @@ public class Server {
 		if (method.equals("POST")) {
 
 			// Parse Request Body
-			InputStreamReader isr = new InputStreamReader(t.getRequestBody(), "utf-8");
-			BufferedReader br = new BufferedReader(isr);
-			int b;
-			StringBuilder buf = new StringBuilder(512);
-			while ((b = br.read()) != -1) {
-				buf.append((char) b);
-			}
-			br.close();
-			isr.close();
-			String requestBody = buf.toString();
+			String requestBody = ServerUtil.parseRequestBody(t);
 				
 			// Cannot save over existing results
 			if (Survey.exists(user, surveyType)) {
@@ -263,9 +312,8 @@ public class Server {
 		}
 	}
 	
-	private void htmlRequest(HttpExchange t, String clientIP, String method, String[] resource, Map<String, String> params, String user, boolean permitted, boolean deactivated) throws IOException {
+	private void pageRequest(HttpExchange t, String clientIP, String method, String[] resource, Map<String, String> params, String user, boolean permitted, boolean deactivated) throws IOException {
 		
-		String email = params.get("email").toLowerCase();
 		String page = params.get("page");
 		String htmlContent = "text/html";
 		
@@ -314,40 +362,7 @@ public class Server {
 				}
 				ServerUtil.packItShipIt(t, 200, message, responseBody, htmlContent);
 			}
-			
-			// Client is trying to register an email address
-			else if (resource[0].equals(RES_REGISTER)) 
-			{	
-				String responseBody;
-				
-				// blank registration form (no email parameter is submitted)
-				if (email.equals(ServerUtil.DEFAULT_EMAIL)) {
-					responseBody = Pages.registrationSite("");
-					
-				// Try to Register new "study" user in system
-				} else {
-					String userID = Register.makeUser(email, UserType.STUDY);
-					
-					// Registration Successful
-					if (userID != null) {
-						responseBody = Pages.registrationCompleteSite(userID, email);
-						
-					// Registration failed
-					} else {
-						
-						// Email already active
-						if (Register.isActiveEmail(email)) {
-							responseBody = Pages.registrationSite("This email has already been used.");
-						
-						// Something else went wrong
-						} else {
-							responseBody = Pages.registrationSite("Something went wrong and we can't register this email address.");
-						}
-					}
-				}
-				ServerUtil.packItShipIt(t, 200, "Success", responseBody, htmlContent);
-			} 
-			
+		
 		// Method Not Allowed
 		} else {
 			String responseBody = Pages.nullSite("405", "Method Not Allowed");
@@ -362,7 +377,6 @@ public class Server {
 		String scenario = params.get("scenario").toLowerCase();
 		String basemap = params.get("filename").toLowerCase();
 		String jsonContent = "application/json";
-		String requestBody = "";
 		
 		// User has been deactivated
 		if (deactivated) {
@@ -376,16 +390,7 @@ public class Server {
 		}
 		
 		// Parse Request Body
-		InputStreamReader isr = new InputStreamReader(t.getRequestBody(), "utf-8");
-		BufferedReader br = new BufferedReader(isr);
-		int b;
-		StringBuilder buf = new StringBuilder(512);
-		while ((b = br.read()) != -1) {
-			buf.append((char) b);
-		}
-		br.close();
-		isr.close();
-		requestBody = buf.toString();
+		String requestBody = ServerUtil.parseRequestBody(t);
 
 		// HTTP GET Request
 		if (method.equals("GET")) {

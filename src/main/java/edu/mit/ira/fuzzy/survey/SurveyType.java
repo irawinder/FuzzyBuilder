@@ -2,7 +2,8 @@ package edu.mit.ira.fuzzy.survey;
 
 public enum SurveyType {
 	ENTRY("entry"),
-	EXIT("exit");
+	EXIT("exit"),
+	CONSENT("consent");
 	
 	private String lc;
 	

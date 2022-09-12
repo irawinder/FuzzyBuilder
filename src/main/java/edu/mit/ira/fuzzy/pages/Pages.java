@@ -5,6 +5,8 @@ import edu.mit.ira.fuzzy.server.user.Register;
 import edu.mit.ira.fuzzy.server.user.RegisterUtil;
 import edu.mit.ira.fuzzy.server.user.UserPrefixStudy;
 import edu.mit.ira.fuzzy.server.user.UserType;
+import edu.mit.ira.fuzzy.survey.Survey;
+import edu.mit.ira.fuzzy.survey.SurveyType;
 import edu.mit.ira.fuzzy.survey.SurveyUtil;
 
 public class Pages {
@@ -41,14 +43,8 @@ public class Pages {
 	}
 	
 	public static String registrationSite(String feedback) {
-		String head = makeHead(new String[]{"register.js"});
+		String head = makeHead(new String[]{"register.js", "survey.js"});
 		String body = makeRegistrationBody(feedback);
-		return assemblePage(head, body);
-	}
-	
-	public static String registrationCompleteSite(String userID, String email) {
-		String head = makeHead();
-		String body = makeRegistrationCompleteBody(userID, email);
 		return assemblePage(head, body);
 	}
 
@@ -284,23 +280,41 @@ public class Pages {
 		String body = "<body>";
 		body += studyBodyHeader();
 		
+		body += "<span id=\"reg_form\">";
+		
+		// Informed Consent
+		body += wrapText("h2", "Informed Consent");
+		body += wrapText("p", "Please read carefully and type your full name to agree:");
+		String consent = "I voluntarily agree to take part in this study. I understand that I am free to withdraw from this study at any time, "
+				+ "without reason and without cost. I understand I will not receive financial compensation for my participation in this study. "
+				+ "I understand that any personally identifiable information collected during this study will be kept private and will not be shared.";
+		body += "<p id=\"n1\">" + consent + "</p><br><br>";
+
+		String q1 = "Full Name";
+		body += SurveyUtil.shortTextHTML(q1, "1");
+
 		body += wrapText("h2", "User Registration");
-		body += "<label for=\"email1\">Email:</label><br>";
-		body += "<input type=\"text\" id=\"email1\" style=\"width: 300px;\">";
-		body += "<p style=\"color: red;\" id=\"email1_feedback\"></p><br><br>";
-		body += "<label for=\"email2\">Confirm Email:</label><br>";
-		body += "<input type=\"text\" id=\"email2\" style=\"width: 300px;\">";
-		body += "<p style=\"color: red;\" id=\"email2_feedback\"></p><br><br>";
+		body += "<label for=\"email1\">Email:</label><br><br>";
+		body += "<input type=\"text\" id=\"email1\" style=\"width: 300px; max-width: 70%;\">";
+		body += "<p style=\"color: red;\" id=\"email1_feedback\"></p><br>";
+		body += "<label for=\"email2\">Confirm Email:</label><br><br>";
+		body += "<input type=\"text\" id=\"email2\" style=\"width: 300px; max-width: 70%;\">";
+		body += "<p style=\"color: red;\" id=\"email2_feedback\"></p><br>";
+		
 		body += "<button id=\"register\" onclick=\"register()\">Register</button>";
 		body += "<p style=\"color: red;\" id=\"feedback\">" + feedback + "</p>";
+		
+		body += wrapText("p", "<i>Your personal information will not be shared."
+				+ "<br>Email addresses are only used for authentication,"
+				+ "<br>or in the rare case that we need to contact you. </i>");
+		body += "<br><br>";
 		
 		String fileName = "clickOnEnter.js";
 		body += "<script src=\"js/" + fileName + "\"></script>";
 		body += "<script>clickOnEnter(\"email1\", \"register\");</script>";
 		body += "<script>clickOnEnter(\"email2\", \"register\");</script>";
 		
-		body += wrapText("p", "<i>Your personal information will not be shared.<br>Email addresses are only used for authentication,<br>or in the rare case that we need to contact you. </i>");
-		body += "<br><br>";
+		body += "</span>";
 		
 		body += studyBodyFooter();
 		body += "</body>";
@@ -308,26 +322,25 @@ public class Pages {
 		return body;
 	}
 	
-	private static String makeRegistrationCompleteBody(String userID, String email) {
+	public static String makeRegistrationCompleteHTML(String userID, String agreement, String fullName, String email) {
 
-		String body = "<body>";
-		body += studyBodyHeader();
+		String html = "";
 		
-		body += wrapText("h2", "Registration Complete!");
-		body += "<p style=\"color: green;\">Please save or print a copy of this page for your records; you won't be able to see it again.</p>";
-		body += wrapText("p", "<b>Email</b>:<br>" + email);
+		html += wrapText("h2", "Registration Complete!");
+		html += "<p style=\"color: green;\">Please save or print a copy of this page for your records;<br>you won't be able to see it again.</p>";
+		html += wrapText("p", "<i>" + agreement + "</i>");
+		html += wrapText("p", "<b>Signed</b>:<br>" + fullName);
+		html += wrapText("p", "<b>Email</b>:<br>" + email);
 		
-		body += wrapText("h2", "Personal Access Link");
-		body += wrapText("p", "We have generated a unique personal access link, made just for you.");
-		body += wrapText("p", "The begin the exercise, click the link to continue.");
-		body += wrapText("p", "Remember, we would like you to complete the exercise in one sitting, so please make sure that you are ready.");
-		body += wrapText("p", "<b>Personal Access Link</b>:<br>"
+		html += wrapText("h2", "Personal Access Link");
+		html += wrapText("p", "We have generated a unique personal access link, made just for you.");
+		html += wrapText("p", "The begin the exercise, click the link to continue.");
+		html += wrapText("p", "Remember, we would like you to complete the exercise in one sitting, so please make sure that you are ready.");
+		html += wrapText("p", "<b>Personal Access Link</b>:<br>"
 				+ "<a href=\"/?user=" + userID + "\">" + THIS_URL + "/?user=" + userID + "</a>");
+		html += "<br><br>";
 		
-		body += studyBodyFooter();
-		body += "</body>";
-		
-		return body;
+		return html;
 	}
 	
 	private static int NUM_STUDY_PAGES = 5;
@@ -350,68 +363,65 @@ public class Pages {
 			body += wrapText("p", "Welcome!");
 			body += wrapText("p", "Now that you've begun, please continue to the end until you are finished.");
 			
-			body += wrapText("h2", "User ID");
-			body += wrapText("p", "You have been assigned an exclusive User ID: <b>" + user + "</b>");
-			body += wrapText("p", "The User ID will remain at the top of every page for reference.");
-			
-			// Informed Consent
-			body += wrapText("h2", "Informed Consent");
-			body += wrapText("p", "Please read carefully and sign to continue.");
-			String consent = "\"I voluntarily agree to take part in this study. I understand that I am free to withdraw from this study at any time, "
-					+ "without reason and without cost. I understand I will not receive financial compensation for my participation in this study. "
-					+ "I understand that any personally identifiable information collected during this study will be kept private and will not be shared.\"";
-			body += wrapText("p", "<i>" + consent + "</i><br><br>");
-			
-			String q1 = "Type your full name to agree";
-			body += SurveyUtil.textHTML(q1, "1");
-			
 			body += "<hr>";
 			body += wrapText("h2", "Entry Survey");
 			
-			// Age
-			String q2 = "What is your age?";
-			body += SurveyUtil.choicesHTML(q2, "2", new String[]{
-					"18 - 24", 
-					"25 - 34", 
-					"35 - 44", 
-					"45 - 54", 
-					"55 - 64", 
-					"65 +"
-			});
+			body += "<span id=\"survey\">";
 			
-			// Background
-			String q3 = "Do you have any background in architecture, urban planning, or real estate?";
-			body += SurveyUtil.choicesHTML(q3, "3", new String[]{
-					"Yes", 
-					"No"
-			});
+			if(Survey.exists(user, SurveyType.ENTRY)) {
+				
+				body += "<p style=\"color: green\">You have already completed the survey. Thanks!</p>";
+				
+			} else {
+				
+				// Age
+				String _age = "What is your age?";
+				body += SurveyUtil.choicesHTML(_age, "_age", new String[]{
+						"18 - 24", 
+						"25 - 34", 
+						"35 - 44", 
+						"45 - 54", 
+						"55 - 64", 
+						"65 +"
+				});
+				
+				// Background
+				String _background = "Do you have any background in architecture, urban planning, or real estate?";
+				body += SurveyUtil.choicesHTML(_background, "_background", new String[]{
+						"Yes", 
+						"No"
+				});
+				
+				// Field Expertise
+				String _fieldExp = "Please rate your expertise in the following fields:";
+				body += "<p id=\"n_fieldExp\">" + _fieldExp + "</p>";
+				body += SurveyUtil.rangeHTML("Architecture", "_fieldExp.1", "None", "Expert", 5);
+				body += SurveyUtil.rangeHTML("Urban Planning", "_fieldExp.2", "None", "Expert", 5);
+				body += SurveyUtil.rangeHTML("Real Estate Development", "_fieldExp.3", "None", "Expert", 5);
+				body += SurveyUtil.rangeHTML("Computer Science", "_fieldExp.4", "None", "Expert", 5);
+				body += SurveyUtil.rangeHTML("Other Engineering", "_fieldExp.5", "None", "Expert", 5);
+				
+				body += "<br>";
+				
+				// CAD Expertise
+				String _cadExp = "Please rate your experience using computer-aided design or spatial software such as AutoCAD, ArcGIS, or SketchUp:";
+				body += SurveyUtil.rangeHTML(_cadExp, "_cadExp", "None", "Expert", 5);
+				
+				// CAD Frequency
+				String _cadFreq = "How often do you use computer-aided design or spatial modeling software?";
+				body += SurveyUtil.choicesHTML(_cadFreq, "_cadFreq", new String[] {
+						"At least once per week",
+						"At least once per month",
+						"At least once per year",
+						"Rarely or Never"
+				});
+				
+				
+				body += "<br><input type=\"button\" onclick=\"entrySurvey()\" value=\"Submit\"><br><br>";
+			}
 			
-			// Field Expertise
-			String n4 = "Please rate your expertise in the following fields:";
-			body += "<p id=\"n4\">" + n4 + "</p>";
-			body += SurveyUtil.rangeHTML("Architecture", "4.1", "None", "Expert", 5);
-			body += SurveyUtil.rangeHTML("Urban Planning", "4.2", "None", "Expert", 5);
-			body += SurveyUtil.rangeHTML("Real Estate Development", "4.3", "None", "Expert", 5);
-			body += SurveyUtil.rangeHTML("Computer Science", "4.4", "None", "Expert", 5);
-			body += SurveyUtil.rangeHTML("Other Engineering", "4.5", "None", "Expert", 5);
-			
-			body += "<br>";
-			
-			// CAD Expertise
-			String q5 = "Please rate your experience using computer-aided design or spatial software such as AutoCAD, ArcGIS, or SketchUp:";
-			body += SurveyUtil.rangeHTML(q5, "5", "None", "Expert", 5);
-			
-			// CAD Frequency
-			String q6 = "How often do you use computer-aided design or spatial modeling software?";
-			body += SurveyUtil.choicesHTML(q6, "6", new String[] {
-					"At least once per week",
-					"At least once per month",
-					"At least once per year",
-					"Rarely or Never"
-			});
-			
+			body += "</span>";
 			body += "<p id=\"feedback\" style=\"color: red;\"></p>";
-			body += "<br><input type=\"button\" onclick=\"entrySurvey()\" value=\"Submit\"><br><br>";
 
 		// Page 2
 		} else if (page.equals("2")) {

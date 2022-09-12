@@ -43,11 +43,11 @@ public class SurveyUtil {
 		return html + "<br>";
 	}
 	
-	public static String textHTML(String question, String id) {
+	public static String shortTextHTML(String question, String id) {
 		String qID = "q" + id;
 		String aID = "a" + id;
 		String html = "<p id=\"" + qID + "\">" + question + "</p>";
-		html += "<input type=\"text\" id=\"" + aID + "\">";
+		html += "<input type=\"text\" id=\"" + aID + "\" style=\"width: 300px; max-width: 70%;\">";
 		html += "<br><br>";
 		return html;
 	}

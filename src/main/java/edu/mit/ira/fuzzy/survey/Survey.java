@@ -15,6 +15,7 @@ public class Survey {
 
 	private static final String USERS_PATH = Server.RELATIVE_DATA_PATH + File.separator + "users";
 	private static final String SURVEYS_FOLDER = "surveys";
+	private static final String CONSENT_SURVEY = "consent.json";
 	private static final String ENTRY_SURVEY = "entry.json";
 	private static final String EXIT_SURVEY = "exit.json";
 
@@ -74,10 +75,12 @@ public class Survey {
 	
 	private static String surveyPath(String user, SurveyType type) {
 		switch(type) {
-			case ENTRY:
-				return surveysPath(user) + File.separator + ENTRY_SURVEY;
-			case EXIT:
-				return surveysPath(user) + File.separator + EXIT_SURVEY;
+		case ENTRY:
+			return surveysPath(user) + File.separator + ENTRY_SURVEY;
+		case EXIT:
+			return surveysPath(user) + File.separator + EXIT_SURVEY;
+		case CONSENT:
+			return surveysPath(user) + File.separator + CONSENT_SURVEY;
 			default:
 				return null;
 		}
