@@ -25,7 +25,8 @@ function exitSurvey() {
 	data.push(confidence);
 
 	// Comments
-	var comments = getText("_comments");
+	var required = false;
+	var comments = getText("_comments", required);
 	if (comments === null) return;
 	data.push(comments);
 

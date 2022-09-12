@@ -37,6 +37,10 @@ function noteObject(n) {
 }
 
 function getText(id) {
+	return getText(id, true);
+}
+
+function getText(id, required) {
 	let qID = "q" + id;
 	let aID = "a" + id;
 	var qElement = document.getElementById(qID);
@@ -45,7 +49,7 @@ function getText(id) {
 		if (aElement != null ){
 			var q = qElement.innerHTML;
 			var a = aElement.value;
-			if (a != "") {
+			if (a != "" || !required) {
 				return surveyObject(q, a)
 			} else {
 				return surveyObject(q, null);
