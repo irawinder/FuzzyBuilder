@@ -9,30 +9,24 @@ import edu.mit.ira.fuzzy.survey.SurveyUtil;
 
 public class Pages {
 	
-	public static String BODY_BACKGROUND_URL = "https://github.com/irawinder/FuzzyBuilder/blob/master/res/images/massing.png?raw=true";
-	public static String MODEL_DIAGRAM_URL = "https://github.com/irawinder/FuzzyBuilder/blob/master/res/images/modelDiagram.png?raw=true";
-	public static String SITE_BASEMAP_URL = "https://github.com/irawinder/FuzzyBuilder/blob/master/res/images/beaverton_site.jpg?raw=true";
-	public static String ZEBRA_TUTORIAL_URL = "https://www.youtube.com/embed/JaT714oQQJ8?cc_load_policy=1&vq=hd1080";
-	public static String COBRA_TUTORIAL_URL = "https://www.youtube.com/embed/BA4LlQF8Ieo?cc_load_policy=1&vq=hd1080";
-	public static String PANDA_TUTORIAL_URL = "https://www.youtube.com/embed/NgYlDAg1De8?cc_load_policy=1&vq=hd1080";
+	private static String BODY_BACKGROUND_URL = "https://github.com/irawinder/FuzzyBuilder/blob/master/res/images/massing.png?raw=true";
+	private static String MODEL_DIAGRAM_URL = "https://github.com/irawinder/FuzzyBuilder/blob/master/res/images/modelDiagram.png?raw=true";
+	private static String SITE_BASEMAP_URL = "https://github.com/irawinder/FuzzyBuilder/blob/master/res/images/beaverton_site.jpg?raw=true";
+	private static String ZEBRA_TUTORIAL_URL = "https://www.youtube.com/embed/JaT714oQQJ8?cc_load_policy=1&vq=hd1080";
+	private static String COBRA_TUTORIAL_URL = "https://www.youtube.com/embed/BA4LlQF8Ieo?cc_load_policy=1&vq=hd1080";
+	private static String PANDA_TUTORIAL_URL = "https://www.youtube.com/embed/NgYlDAg1De8?cc_load_policy=1&vq=hd1080";
 	
-	public static String ENTRY_SURVEY_EMBED_URL = "https://docs.google.com/forms/d/e/1FAIpQLSdHaNz9Rw4UKJiSNDxYNFZlQEQvjX08Hychd2_WzlV3Z5erZA/viewform?embedded=true";
-	public static String ZEBRA_EXIT_SURVEY_EMBED_URL = "";
-	public static String COBRA_EXIT_SURVEY_EMBED_URL = "";
-	public static String PANDA_EXIT_SURVEY_EMBED_URL = "";
+	private static String ZEBRA_EXIT_SURVEY_URL = "https://forms.gle/JkDfk8sqxWxtg8kw6";
+	private static String COBRA_EXIT_SURVEY_URL = "https://forms.gle/rkLnBX2TgAiPHi8b7";
+	private static String PANDA_EXIT_SURVEY_URL = "https://forms.gle/EY1ntPzmbRZrtC159";
 	
-	public static String ENTRY_SURVEY_URL = "https://forms.gle/cK3dQozbQyt1S2zn7";
-	public static String ZEBRA_EXIT_SURVEY_URL = "https://forms.gle/JkDfk8sqxWxtg8kw6";
-	public static String COBRA_EXIT_SURVEY_URL = "https://forms.gle/rkLnBX2TgAiPHi8b7";
-	public static String PANDA_EXIT_SURVEY_URL = "https://forms.gle/EY1ntPzmbRZrtC159";
+	private static String OPENSUI_URL = "http://opensui.org";
+	private static String THIS_URL = "http://glassmatrix.org";
+	private static String STUDY_CONTACT_URL = "beaverton <i>[at]</i> mit <i>[dot]</i> edu";
+	private static String GENERAL_CONTACT_URL = "ira <i>[at]</i> mit <i>[dot]</i> edu";
 	
-	public static String OPENSUI_URL = "http://opensui.org";
-	public static String THIS_URL = "http://glassmatrix.org";
-	public static String STUDY_CONTACT_URL = "beaverton <i>[at]</i> mit <i>[dot]</i> edu";
-	public static String GENERAL_CONTACT_URL = "ira <i>[at]</i> mit <i>[dot]</i> edu";
-	
-	public static String OLD_TUTORIAL_URL = "https://youtu.be/cNoS-bhRPEw";
-	public static String TIMELAPSE_URL = "https://youtu.be/z7514vh02u0";
+	private static String OLD_TUTORIAL_URL = "https://youtu.be/cNoS-bhRPEw";
+	private static String TIMELAPSE_URL = "https://youtu.be/z7514vh02u0";
 	
 	public static String generalSite() {
 		String head = makeHead();
@@ -418,16 +412,6 @@ public class Pages {
 			
 			body += "<p id=\"feedback\" style=\"color: red;\"></p>";
 			body += "<br><input type=\"button\" onclick=\"entrySurvey()\" value=\"Submit\"><br><br>";
-			
-//			body += "<iframe style=\"margin-left: 12px;\" src=\"" + ENTRY_SURVEY_EMBED_URL + "\" "
-//					+ "width=\"610\" height=\"3350\" frameborder=\"0\" "
-//					+ "marginheight=\"0\" marginwidth=\"0\"></iframe>";
-			
-//			body += wrapText("h2", "Entry Survey");
-//			body += wrapText("p", "Now, please complete a short entry survey using <i>Google Forms</i>.");
-//			body += wrapText("p", "When you click \"Take Entry Survey\", the survey will open in a new tab.");
-//			body += "<input type=\"button\" value=\"Take Entry Survey\" onclick=\"window.open('" + ENTRY_SURVEY_URL + "', '_blank');\">";
-//			body += wrapText("p", "Once you've submitted the survey, come back here and click \"CONTINUE\".");
 
 		// Page 2
 		} else if (page.equals("2")) {

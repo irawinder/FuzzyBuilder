@@ -18,7 +18,7 @@ public class SurveyUtil {
 	public static String rangeHTML(String question, String id, String leftRange, String rightRange, int intervals) {
 		String qID = "q" + id;
 		String aID = "a" + id;
-		String html = "<b><p id=\"" + qID + "\">" + question + "</p></b>";
+		String html = "<p id=\"" + qID + "\">" + question + "</p>";
 		html += "<label><i>" + leftRange + "</i></label>";
 		for (int i=1; i<=intervals; i++) {
 			String iStr = "" + i;
@@ -35,7 +35,7 @@ public class SurveyUtil {
 	public static String choicesHTML(String question, String id, String[] labels) {
 		String qID = "q" + id;
 		String aID = "a" + id;
-		String html = "<b><p id=\"" + qID + "\">" + question + "</p></b>";
+		String html = "<p id=\"" + qID + "\">" + question + "</p>";
 		for (int i=1; i<=labels.length; i++) {
 			html += SurveyUtil.radioHTML(aID, aID + "-" + i, labels[i-1], labels[i-1]);
 			html += "<br>";
