@@ -17,7 +17,8 @@ import edu.mit.ira.fuzzy.server.Server;
 
 public class ServerLog {
 	
-	private static String SERVER_LOG_PATH = Server.RELATIVE_DATA_PATH + File.separator + "log" + File.separator + "log.txt";
+	private static String SERVER_LOG_DIRECTORY = Server.RELATIVE_DATA_PATH + File.separator + "log";
+	private static String SERVER_LOG_PATH = SERVER_LOG_DIRECTORY + File.separator + "log.txt";
 	
 	/**
 	 * Prints a log to console. Also returns the log as a string
@@ -36,7 +37,13 @@ public class ServerLog {
 
 		// Write Log to Console
 		System.out.print(log);
-
+		
+		// Make a directory if there is not one
+		File dir = new File(SERVER_LOG_DIRECTORY);
+		if (!dir.exists()) {
+			dir.mkdirs();
+		}
+		
 		// Write Log to File
 		byte data[] = log.getBytes();
 		Path p = Paths.get(SERVER_LOG_PATH);
