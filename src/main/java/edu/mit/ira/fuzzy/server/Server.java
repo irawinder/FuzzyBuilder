@@ -623,7 +623,7 @@ public class Server {
 	 * @param scenario
 	 * @return
 	 */
-	private boolean hasScenario(String user, String scenario) {
+	public static boolean hasScenario(String user, String scenario) {
 		String directoryName = RELATIVE_DATA_PATH + "/users/" + user + "/scenarios";
 		File directory = new File(directoryName);
 		if (directory.exists()) {

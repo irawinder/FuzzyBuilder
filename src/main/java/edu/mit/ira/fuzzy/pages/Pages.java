@@ -1,5 +1,7 @@
 package edu.mit.ira.fuzzy.pages;
 
+import java.util.ArrayList;
+
 import edu.mit.ira.fuzzy.server.Server;
 import edu.mit.ira.fuzzy.server.user.Register;
 import edu.mit.ira.fuzzy.server.user.RegisterUtil;
@@ -17,10 +19,6 @@ public class Pages {
 	private static String ZEBRA_TUTORIAL_URL = "https://www.youtube.com/embed/JaT714oQQJ8?cc_load_policy=1&vq=hd1080";
 	private static String COBRA_TUTORIAL_URL = "https://www.youtube.com/embed/BA4LlQF8Ieo?cc_load_policy=1&vq=hd1080";
 	private static String PANDA_TUTORIAL_URL = "https://www.youtube.com/embed/NgYlDAg1De8?cc_load_policy=1&vq=hd1080";
-	
-	private static String ZEBRA_EXIT_SURVEY_URL = "https://forms.gle/JkDfk8sqxWxtg8kw6";
-	private static String COBRA_EXIT_SURVEY_URL = "https://forms.gle/rkLnBX2TgAiPHi8b7";
-	private static String PANDA_EXIT_SURVEY_URL = "https://forms.gle/EY1ntPzmbRZrtC159";
 	
 	private static String OPENSUI_URL = "http://opensui.org";
 	private static String THIS_URL = "http://glassmatrix.org";
@@ -50,8 +48,10 @@ public class Pages {
 
 	public static String studySite(String user, String page, boolean deactivated) {
 		String head;
-		if (page.equals("1") || page.equals("4")) {
-			head = makeHead(new String[] {"survey.js"});
+		if (page.equals("1")) {
+			head = makeHead(new String[] {"survey.js", "entrySurvey.js"});
+		} else if (page.equals("4")) {
+			head = makeHead(new String[] {"survey.js", "exitSurvey.js"});
 		} else {
 			head = makeHead();
 		}
@@ -126,6 +126,7 @@ public class Pages {
 		head += "p { " + generalCSS + bodyTextCSS + " }";
 		head += "label { " + generalCSS + bodyTextCSS + " }";
 		head += "input { " + generalCSS + bodyTextCSS + " }";
+		head += "textarea { " + generalCSS + bodyTextCSS + "resize: none; }";
 		head += "button { " + generalCSS + bodyTextCSS + " }";
 		head += "li {" + generalCSS + bodyTextCSS + "}";
 		head += "ul li { margin-bottom: 10px; }";
@@ -281,17 +282,6 @@ public class Pages {
 		body += studyBodyHeader();
 		
 		body += "<span id=\"reg_form\">";
-		
-		// Informed Consent
-		body += wrapText("h2", "Informed Consent");
-		body += wrapText("p", "Please read carefully and type your full name to agree:");
-		String consent = "I voluntarily agree to take part in this study. I understand that I am free to withdraw from this study at any time, "
-				+ "without reason and without cost. I understand I will not receive financial compensation for my participation in this study. "
-				+ "I understand that any personally identifiable information collected during this study will be kept private and will not be shared.";
-		body += "<p id=\"n1\">" + consent + "</p><br><br>";
-
-		String q1 = "Full Name";
-		body += SurveyUtil.shortTextHTML(q1, "1");
 
 		body += wrapText("h2", "User Registration");
 		body += "<label for=\"email1\">Email:</label><br><br>";
@@ -300,6 +290,17 @@ public class Pages {
 		body += "<label for=\"email2\">Confirm Email:</label><br><br>";
 		body += "<input type=\"text\" id=\"email2\" style=\"width: 300px; max-width: 70%;\">";
 		body += "<p style=\"color: red;\" id=\"email2_feedback\"></p><br>";
+		
+		// Informed Consent
+		body += wrapText("h2", "Informed Consent");
+		body += wrapText("p", "Please read carefully and type your full name to agree:");
+		String agreement = "I voluntarily agree to take part in this study. I understand that I am free to withdraw from this study at any time, "
+				+ "without reason and without cost. I understand I will not receive financial compensation for my participation in this study. "
+				+ "I understand that any personally identifiable information collected during this study will be kept private and will not be shared.";
+		body += "<p id=\"n_agreement\">" + agreement + "</p><br>";
+
+		String consent = "Full Name";
+		body += SurveyUtil.shortTextHTML(consent, "_consent");
 		
 		body += "<button id=\"register\" onclick=\"register()\">Register</button>";
 		body += "<p style=\"color: red;\" id=\"feedback\">" + feedback + "</p>";
@@ -313,6 +314,7 @@ public class Pages {
 		body += "<script src=\"js/" + fileName + "\"></script>";
 		body += "<script>clickOnEnter(\"email1\", \"register\");</script>";
 		body += "<script>clickOnEnter(\"email2\", \"register\");</script>";
+		body += "<script>clickOnEnter(\"a_consent\", \"register\");</script>";
 		
 		body += "</span>";
 		
@@ -363,14 +365,12 @@ public class Pages {
 			body += wrapText("p", "Welcome!");
 			body += wrapText("p", "Now that you've begun, please continue to the end until you are finished.");
 			
-			body += "<hr>";
 			body += wrapText("h2", "Entry Survey");
-			
 			body += "<span id=\"survey\">";
 			
 			if(Survey.exists(user, SurveyType.ENTRY)) {
 				
-				body += "<p style=\"color: green\">You have already completed the survey. Thanks!</p>";
+				body += "<p style=\"color: green\">You have already completed the entry survey. Thanks!</p>";
 				
 			} else {
 				
@@ -541,32 +541,93 @@ public class Pages {
 		
 		// Page 4
 		} else if (page.equals("4")) {
-			body += wrapText("h2", "Exit Survey");
 			body += wrapText("p", "Thank you for helping the community of Beaverton!");
-			body += wrapText("p", "Now that you've finished the exercise, we need you to complete one more short survey. We promise this is the last thing!");
 
-			String postsurveyUrl;
-			if (ups == UserPrefixStudy.ZEBRA) {
-				postsurveyUrl = ZEBRA_EXIT_SURVEY_URL;
-
-			} else if (ups == UserPrefixStudy.COBRA) {
-				postsurveyUrl = COBRA_EXIT_SURVEY_URL;
-
+			body += wrapText("h2", "Exit Survey");
+			body += "<span id=\"survey\">";
+			
+			// Survey Is Already Completed
+			if(Survey.exists(user, SurveyType.EXIT)) {
+				body += "<p style=\"color: green\">You have already completed the exit survey. Thanks!</p>";
+			
+			// Build the Exit Survey
 			} else {
-				postsurveyUrl = PANDA_EXIT_SURVEY_URL;
-
+				body += wrapText("p", "Now that you've finished the exercise, we need you to complete one more short survey. We promise this is the last thing!");
+				
+				ArrayList<String> scenarioOptions = new ArrayList<String>();
+				if (ups != UserPrefixStudy.COBRA) {
+					scenarioOptions.add("I chose Option 1");
+					scenarioOptions.add("I chose Option 2");
+					scenarioOptions.add("I chose Option 3");
+				}
+				if (ups == UserPrefixStudy.PANDA) {
+					scenarioOptions.add("I chose a modified version of Option 1");
+					scenarioOptions.add("I chose a modified version of Option 2");
+					scenarioOptions.add("I chose a modified version of Option 3");
+				}
+				if (ups != UserPrefixStudy.ZEBRA) {
+					scenarioOptions.add("I chose my own completely original scenario");
+				}
+				scenarioOptions.add("I could not choose a scenario (please elaborate below)");
+				String[] sOptions = new String[scenarioOptions.size()];
+				for (int i=0; i<scenarioOptions.size(); i++) {
+					sOptions[i] = scenarioOptions.get(i);
+				}
+				
+				// Scenario
+				String _scenario = "What best describes the scenario you ultimately chose?";
+				body += SurveyUtil.choicesHTML(_scenario, "_scenario", sOptions);
+				
+				// Influence
+				String _influence = "Describe what factors most influenced your final decision.";
+				body += SurveyUtil.longTextHTML(_influence, "_influence");
+				
+				// Satisfaction
+				String _satisfaction = "How *satisfied* are you with your final scenario?";
+				body += SurveyUtil.rangeHTML(_satisfaction, "_satisfaction", "Not Satisfied", "Very Satisfied", 5);
+				
+				// Confidence
+				String _confidence = "How *confident* are you that the community of Beaverton will like your final scenario?";
+				body += SurveyUtil.rangeHTML(_confidence, "_confidence", "Not Confident", "Very Confident", 5);
+				
+				// Comments
+				String _comments = "Please write any other notes or feedback about your experience.";
+				body += SurveyUtil.longTextHTML(_comments, "_comments");
+				
+				body += "<br><input type=\"button\" onclick=\"exitSurvey()\" value=\"Submit\"><br><br>";
 			}
-			body += wrapText("p", "When you click \"Take Exit Survey\", the survey will open in a new tab.");
-			body += "<input type=\"button\" value=\"Take Exit Survey\" onclick=\"window.open('" + postsurveyUrl + "', '_blank');\">";
-			body += wrapText("p", "Once you've submitted the survey, come back here and click \"CONTINUE\".");
+			
+			body += "</span>";
+			body += "<p id=\"feedback\" style=\"color: red;\"></p>";
 		
 		// Page 5
 		} else if (page.equals("5")) {
 			body += wrapText("h2", "Finishing Up");
-			body += wrapText("p", "Have you completed everything in the exercise? If so, click \"I'm Finished!\".");
-			body += "<p style=\"color: red;\">WARNING: You will not be able to return to the experiment.</p>";
-			String finishedUrl = "/?user=" + user + "&page=finish";
-			body += "<input type=\"button\" value=\"I'm Finished!\" onclick=\"location.replace('" + finishedUrl + "');\">";
+			
+			boolean consentComplete = Survey.exists(user, SurveyType.CONSENT);
+			boolean entryComplete = Survey.exists(user, SurveyType.ENTRY);
+			boolean exitComplete = Survey.exists(user,  SurveyType.EXIT);
+			boolean finalComplete = Server.hasScenario(user, "final") || (ups == UserPrefixStudy.ZEBRA && exitComplete);
+			
+			body += "<p>";
+			body += completionStatus(consentComplete, "Informed Consent") + "<br>";
+			body += completionStatus(entryComplete, "Entry Survey") + "<br>";
+			body += completionStatus(exitComplete, "Exit Survey") + "<br>";
+			body += completionStatus(finalComplete, "Choose Final Scenario");
+			body += "</p>";
+			
+			if (consentComplete && entryComplete && exitComplete && finalComplete) {
+				body += wrapText("p", "It looks like you've finished everything!"
+						+ "<br>Click \"I'm Finished\" to end the experiment."
+						+ "<br><i>You will not be able to return.</i>");
+				String finishedUrl = "/?user=" + user + "&page=finish";
+				body += "<input type=\"button\" value=\"I'm Finished!\" onclick=\"location.replace('" + finishedUrl + "');\">";
+			} else {
+				body += wrapText("p", "Some items appear to be missing."
+						+ "<br>Please go back and finish them before ending the experiment."
+						+ "<br>Come back to this page when you are done.");
+			}
+			
 		
 		// Last Page
 		} else if (page.equals("finish")) {
@@ -588,13 +649,19 @@ public class Pages {
 			body += "<p style=\"color: green;\">Please save or print a copy of this page for your records.</p>";
 			body += wrapText("p", "We hope you had a good time, and we are incredibly grateful for your help with this research.");
 			
-			body += wrapText("h2", "After the Experiment");
-			body += wrapText("p", "Please note that the User ID, <b>" + user + "</b>, is now deactivated.</i>");
-			body += wrapText("p", "However, we've generated a <i>New</i> User ID, <b>" + adminUserID + "</b>, just for you, that you can use indefinitely.");
-			body += wrapText("p", "The new User ID will allow you to use certain features that may have been unlocked during the exercise. "
+			body += wrapText("h2", "Pass it Forward");
+			body += wrapText("p", "Please invite your friends and colleagues to participate in this experiment.");
+			body += wrapText("p", "<b>Beaverton Study</b>:<br><a href=\"" + THIS_URL + "\" target=\"_blank\">" + THIS_URL + "</a>");
+			body += wrapText("p", "Please don't share your experience with anyone unless they have also completed the exercise.");
+			
+			body += wrapText("h2", "Keep Using " + Server.NAME);
+			body += wrapText("p", "The User ID you had during this exercise, <b>" + user + "</b>, is now deactivated.</i>");
+			body += wrapText("p", "However, we've generated a <i>new</i> User ID, <b>" + adminUserID + "</b>, just for you, that you can use indefinitely. "
+					+ "Please don't share it with anyone.");
+			body += wrapText("p", "This new User ID will allow you to use certain features that may have been unlocked during the exercise. "
 					+ "(For example, the ability edit and delete scenarios)");
-			body += wrapText("p", "So, if you would like to keep playing with " + Server.NAME + ", please do so with your new User ID.");
-			body += wrapText("p", "<b>Email</b>:<br>" + email);
+			body += wrapText("p", "If you would like to keep using " + Server.NAME + ", please do so with your new User ID.");
+			body += wrapText("p", "<b>Your Email</b>:<br>" + email);
 			body += wrapText("p", "<b>New User ID</b>:<br>" + adminUserID);
 			body += wrapText("p", "<b>Fuzzy IO</b>:<br><a href=\"" + OPENSUI_URL + "\" target=\"_blank\">" + OPENSUI_URL + "</a>");
 			body += wrapText("p", "If you have any questions or concerns about your participation, or have trouble using your new User ID, please contact Ira.");
@@ -611,6 +678,14 @@ public class Pages {
 		body += "</body>";
 
 		return body;
+	}
+	
+	private static String completionStatus(boolean status, String item) {
+		if (status) {
+			return "<span style=\"color: green;\">[Complete] " + item + "</span>";
+		} else {
+			return "<span style=\"color: red;\">[Incomplete] " + item + "</span>";
+		}
 	}
 	
 	private static String studyNavigation(String user, String page) {

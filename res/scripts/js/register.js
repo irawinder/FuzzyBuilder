@@ -8,12 +8,12 @@ function register() {
 	var data = [];
 
 	// Agreement
-	var agreement = getNote("1");
+	var agreement = getNote("_agreement");
 	if (agreement === null) return;
 	data.push(agreement);
 
 	// Consent
-	var consent = getText("1");
+	var consent = getText("_consent");
 	if (consent === null) return;
 	data.push(consent);
 

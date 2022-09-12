@@ -51,4 +51,13 @@ public class SurveyUtil {
 		html += "<br><br>";
 		return html;
 	}
+	
+	public static String longTextHTML(String question, String id) {
+		String qID = "q" + id;
+		String aID = "a" + id;
+		String html = "<p id=\"" + qID + "\">" + question + "</p>";
+		html += "<textarea id=\"" + aID + "\" style=\"width: 560px; height: 100px; max-width: 85%;\"></textarea>";
+		html += "<br><br>";
+		return html;
+	}
 }
