@@ -597,6 +597,14 @@ public class Pages {
 				String _confidence = "How *confident* are you that the community of Beaverton will like your final scenario?";
 				body += SurveyUtil.rangeHTML(_confidence, "_confidence", "Not Confident", "Very Confident", 5);
 				
+				// Usability
+				String _usability = "How would you describe the usability of the modeling tool, \"" + Server.NAME + "\"?";
+				body += SurveyUtil.rangeHTML(_usability, "_usability", "Not Usable", "Easy to Use", 5);
+				
+				// Learning
+				String _learning = "Did this exercise allow you to learn something new about real estate design?";
+				body += SurveyUtil.rangeHTML(_learning, "_learning", "Learned Nothing", "Learned A lot", 5);
+				
 				// Comments
 				String _comments = "Please write any other notes or feedback about your experience.";
 				body += SurveyUtil.longTextHTML(_comments, "_comments");
@@ -632,7 +640,7 @@ public class Pages {
 			} else {
 				body += wrapText("p", "Some items appear to be missing."
 						+ "<br>Please go back and finish them before ending the experiment."
-						+ "<br>Come back to this page when you are done.");
+						+ "<br>Come back to this page or refresh when you are done.");
 			}
 			
 		

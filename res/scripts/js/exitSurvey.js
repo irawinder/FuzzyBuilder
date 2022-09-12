@@ -24,6 +24,16 @@ function exitSurvey() {
 	if (confidence === null) return;
 	data.push(confidence);
 
+	// Usability
+	var usability = getRadio("_usability");
+	if (usability === null) return;
+	data.push(usability);
+
+	// Learning
+	var learning = getRadio("_learning");
+	if (learning === null) return;
+	data.push(learning);
+
 	// Comments
 	var required = false;
 	var comments = getText("_comments", required);
