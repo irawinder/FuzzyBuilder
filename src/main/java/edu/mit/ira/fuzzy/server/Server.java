@@ -50,7 +50,7 @@ import edu.mit.ira.opensui.setting.Configuration;
 public class Server {
 	
 	public static final String NAME = "FuzzyIO";
-	public static final String VERSION = "v1.5.0";
+	public static final String VERSION = "v1.5.1";
 	public static final String AUTHOR = "Ira Winder, Daniel Fink, and Max Walker";
 	public static final String SPONSOR = "MIT Center for Real Estate";
 	public static final String CONTACT = "fuzzy-io@mit.edu";
@@ -270,7 +270,7 @@ public class Server {
 		
 		// Not a valid survey resource
 		if (surveyType == null) {
-			ServerUtil.packItShipIt(t, 404, "Resoure Not Found");
+			ServerUtil.packItShipIt(t, 404, "Resource Not Found");
 			return;
 		}
 
