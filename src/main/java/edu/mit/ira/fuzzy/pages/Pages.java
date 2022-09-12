@@ -127,7 +127,8 @@ public class Pages {
 		head += "label { " + generalCSS + bodyTextCSS + " }";
 		head += "input { " + generalCSS + bodyTextCSS + " }";
 		head += "textarea { " + generalCSS + bodyTextCSS + "resize: none; }";
-		head += "button { " + generalCSS + bodyTextCSS + " }";
+		head += "input[type=button] { " + generalCSS + bodyTextCSS + " width: 200px; height: 50px; text-align: center; background-color: #85965c; color: white; font-size: 16px; }";
+		head += "input[type=button]:hover { height: 50px; text-align: center; background-color: #5f6b41; color: white; font-size: 16px; }";
 		head += "li {" + generalCSS + bodyTextCSS + "}";
 		head += "ul li { margin-bottom: 10px; }";
 		head += "ol li { margin-bottom: 10px; }";
@@ -267,7 +268,7 @@ public class Pages {
 		body += "<hr>";
 		body += wrapText("h2", "Get Started!");
 		body += wrapText("p", "Click \"Continue to Registration\" to proceed.");
-		body += "<button onclick=\"goRegister()\">Continue to Registration</button>";
+		body += "<input type=\"button\" onclick=\"goRegister()\" value=\"Continue to Registration\">";
 		body += "<br><br>";
 		
 		body += studyBodyFooter();
@@ -302,7 +303,7 @@ public class Pages {
 		String consent = "Full Name";
 		body += SurveyUtil.shortTextHTML(consent, "_consent");
 		
-		body += "<button id=\"register\" onclick=\"register()\">Register</button>";
+		body += "<input id=\"register\" type=\"button\" onclick=\"register()\" value=\"Register\">";
 		body += "<p style=\"color: red;\" id=\"feedback\">" + feedback + "</p>";
 		
 		body += wrapText("p", "<i>Your personal information will not be shared."
@@ -511,8 +512,14 @@ public class Pages {
 			body += wrapText("h2", "Using " + Server.NAME);
 			body += wrapText("p", "Take as long as you like, just be sure to finish everything in <u>one sitting</u>.</i>");
 			body += wrapText("p", "Log in to " + Server.NAME + " with the <b>User ID</b> at the top of this page. "
-					+ "Clicking the link below will open " + Server.NAME + " in a new tab, but feel free to come back and view this page while you work");
-			body += wrapText("p", "<b>" + Server.NAME + "</b>:<br><a href=\"" + OPENSUI_URL + "\" target=\"_blank\">" + OPENSUI_URL + "</a>");
+					+ "Clicking the button below will open " + Server.NAME + " in a new tab, but feel free to come back and view this page while you work");
+			//body += wrapText("p", "<b>" + Server.NAME + "</b>:<br><a href=\"" + OPENSUI_URL + "\" target=\"_blank\">" + OPENSUI_URL + "</a>");
+			body += "<input "
+					+ "type=\"button\" "
+					+ "style=\"width: 560px; max-width: 93%;\" "
+					+ "value=\"Click Here To Open " + Server.NAME + "\" "
+					+ "onclick=\"window.open('" + OPENSUI_URL + "', '_blank');\">";
+			
 			body += wrapText("p", "<i>If you experience any technical difficulties or errors during your exercise, you may reload " + Server.NAME + " in your browser and log in again.</i>");
 			
 			body += wrapText("h2", "Submitting your Final Design");
@@ -652,7 +659,7 @@ public class Pages {
 			body += wrapText("h2", "Pass it Forward");
 			body += wrapText("p", "Please invite your friends and colleagues to participate in this experiment.");
 			body += wrapText("p", "<b>Beaverton Study</b>:<br><a href=\"" + THIS_URL + "\" target=\"_blank\">" + THIS_URL + "</a>");
-			body += wrapText("p", "Please don't share your experience with anyone unless they have also completed the exercise.");
+			body += wrapText("p", "We appreciate that you don't share your experience with anyone, unless they have also completed this exercise.");
 			
 			body += wrapText("h2", "Keep Using " + Server.NAME);
 			body += wrapText("p", "The User ID you had during this exercise, <b>" + user + "</b>, is now deactivated.</i>");
