@@ -36,6 +36,8 @@ import edu.mit.ira.fuzzy.server.user.RegisterUtil;
 import edu.mit.ira.fuzzy.server.user.UserPrefixAdmin;
 import edu.mit.ira.fuzzy.server.user.UserPrefixStudy;
 import edu.mit.ira.fuzzy.server.user.UserType;
+import edu.mit.ira.fuzzy.survey.Survey;
+import edu.mit.ira.fuzzy.survey.SurveyType;
 import edu.mit.ira.opensui.data.ParseConfiguration;
 import edu.mit.ira.opensui.objective.MultiObjective;
 import edu.mit.ira.opensui.setting.Configuration;
@@ -64,6 +66,7 @@ public class Server {
 	public static final String RES_ROOT = "";
 	public static final String RES_JS = "js";
 	public static final String RES_REGISTER = "register";
+	public static final String RES_SURVEY = "survey";
 	public static final String RES_SIM = "opensui";
 	public static final String RES_SIM_INIT = "init";
 	public static final String RES_SIM_LIST = "list";
@@ -126,6 +129,7 @@ public class Server {
 			ServerLog.add(t, "Request: " + method + " " +  requestURI);
 			
 			boolean jsResource = resource[0].equals(RES_JS) && resource.length > 1;
+			boolean surveyResource = resource[0].equals(RES_SURVEY) && resource.length > 1 && !user.equals(ServerUtil.DEFAULT_USER);
 			boolean simResource = resource[0].equals(RES_SIM) && resource.length > 1;
 			boolean htmlResource = resource[0].equals(RES_ROOT) || resource[0].equals(RES_REGISTER);
 			boolean deactivated = Register.isDeactivated(user);
@@ -142,8 +146,12 @@ public class Server {
 			// Javascript Resource Requested
 			} else if (jsResource) {
 				jsRequest(t, method, resource);
-				
-			// Web Resource Requested
+
+			// Survey Resource Requested
+			} else if (surveyResource) {
+				surveyRequest(t, method, resource, user, permitted, deactivated);
+
+				// Web Resource Requested
 			} else if (htmlResource) {
 				htmlRequest(t, clientIP, method, resource, requestParameters, user, permitted, deactivated);
 			
@@ -174,6 +182,80 @@ public class Server {
 				ServerUtil.packItShipIt(t, 404, message);
 			}
 			
+		// Method Not Allowed
+		} else {
+			String message = "Method Not Allowed";
+			ServerUtil.packItShipIt(t, 405, message);
+		}
+	}
+
+	private void surveyRequest(HttpExchange t, String method, String[] resource, String user, boolean permitted, boolean deactivated) throws IOException {
+		
+		// User has been deactivated
+		if (deactivated) {
+			ServerUtil.packItShipIt(t, 403, "Forbidden");
+			return;
+
+		// User is not valid
+		} else if (!permitted) {
+			ServerUtil.packItShipIt(t, 401, "Unauthorized");
+			return;
+		}
+		
+		// Parse Survey Type
+		SurveyType surveyType = null;
+		for (SurveyType sT : SurveyType.values()) {
+			if (resource[1].equals(sT.lc())) {
+				surveyType = sT;
+			}
+		}
+		
+		// Not a valid survey resource
+		if (surveyType == null) {
+			ServerUtil.packItShipIt(t, 404, "Resoure Not Found");
+			return;
+		}
+
+		// HTTP GET Request
+		if (method.equals("POST")) {
+
+			// Parse Request Body
+			InputStreamReader isr = new InputStreamReader(t.getRequestBody(), "utf-8");
+			BufferedReader br = new BufferedReader(isr);
+			int b;
+			StringBuilder buf = new StringBuilder(512);
+			while ((b = br.read()) != -1) {
+				buf.append((char) b);
+			}
+			br.close();
+			isr.close();
+			String requestBody = buf.toString();
+				
+			// Cannot save over existing results
+			if (Survey.exists(user, surveyType)) {
+				ServerUtil.packItShipIt(t, 200, surveyType + " survey already exists.");
+			
+			// Attempt to save the survey
+			} else if (Survey.save(user, surveyType, requestBody)) {
+				ServerUtil.packItShipIt(t, 200, "survey saved");
+			
+			// Something went wrong
+			} else {
+				ServerUtil.packItShipIt(t, 400, surveyType + " survey could not be saved.");
+			}
+
+		// Check if survey file exists
+		} else if (method.equals("GET")) {
+
+			// Send "true" if file exists
+			if (Survey.exists(user, surveyType)) {
+				ServerUtil.packItShipIt(t, 200, surveyType + " survey does exist", "true", "text/plain");
+
+			// Send "false" otherwise
+			} else {
+				ServerUtil.packItShipIt(t, 200, surveyType + " survey does not exist", "false", "text/plain");
+			}
+
 		// Method Not Allowed
 		} else {
 			String message = "Method Not Allowed";

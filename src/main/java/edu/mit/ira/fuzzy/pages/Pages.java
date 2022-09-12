@@ -5,6 +5,7 @@ import edu.mit.ira.fuzzy.server.user.Register;
 import edu.mit.ira.fuzzy.server.user.RegisterUtil;
 import edu.mit.ira.fuzzy.server.user.UserPrefixStudy;
 import edu.mit.ira.fuzzy.server.user.UserType;
+import edu.mit.ira.fuzzy.survey.SurveyUtil;
 
 public class Pages {
 	
@@ -14,10 +15,17 @@ public class Pages {
 	public static String ZEBRA_TUTORIAL_URL = "https://www.youtube.com/embed/JaT714oQQJ8?cc_load_policy=1&vq=hd1080";
 	public static String COBRA_TUTORIAL_URL = "https://www.youtube.com/embed/BA4LlQF8Ieo?cc_load_policy=1&vq=hd1080";
 	public static String PANDA_TUTORIAL_URL = "https://www.youtube.com/embed/NgYlDAg1De8?cc_load_policy=1&vq=hd1080";
+	
+	public static String ENTRY_SURVEY_EMBED_URL = "https://docs.google.com/forms/d/e/1FAIpQLSdHaNz9Rw4UKJiSNDxYNFZlQEQvjX08Hychd2_WzlV3Z5erZA/viewform?embedded=true";
+	public static String ZEBRA_EXIT_SURVEY_EMBED_URL = "";
+	public static String COBRA_EXIT_SURVEY_EMBED_URL = "";
+	public static String PANDA_EXIT_SURVEY_EMBED_URL = "";
+	
 	public static String ENTRY_SURVEY_URL = "https://forms.gle/cK3dQozbQyt1S2zn7";
 	public static String ZEBRA_EXIT_SURVEY_URL = "https://forms.gle/JkDfk8sqxWxtg8kw6";
 	public static String COBRA_EXIT_SURVEY_URL = "https://forms.gle/rkLnBX2TgAiPHi8b7";
 	public static String PANDA_EXIT_SURVEY_URL = "https://forms.gle/EY1ntPzmbRZrtC159";
+	
 	public static String OPENSUI_URL = "http://opensui.org";
 	public static String THIS_URL = "http://glassmatrix.org";
 	public static String STUDY_CONTACT_URL = "beaverton <i>[at]</i> mit <i>[dot]</i> edu";
@@ -338,7 +346,7 @@ public class Pages {
 		body += studyBodyHeader();
 		
 		if (!page.equals("finish")) {
-			body += wrapText("p", "Your User ID: <b>" + user + "</b>");
+			body += wrapText("p", "Your User ID: <b><span id=\"userID\">" + user + "</span></b>");
 			body += wrapText("p", "Page: " + page + " of " + NUM_STUDY_PAGES);
 			body += "<hr>";
 		}
@@ -351,12 +359,75 @@ public class Pages {
 			body += wrapText("h2", "User ID");
 			body += wrapText("p", "You have been assigned an exclusive User ID: <b>" + user + "</b>");
 			body += wrapText("p", "The User ID will remain at the top of every page for reference.");
-
+			
+			// Informed Consent
+			body += wrapText("h2", "Informed Consent");
+			body += wrapText("p", "Please read carefully and sign to continue.");
+			String consent = "\"I voluntarily agree to take part in this study. I understand that I am free to withdraw from this study at any time, "
+					+ "without reason and without cost. I understand I will not receive financial compensation for my participation in this study. "
+					+ "I understand that any personally identifiable information collected during this study will be kept private and will not be shared.\"";
+			body += wrapText("p", "<i>" + consent + "</i><br><br>");
+			
+			String q1 = "Type your full name to agree";
+			body += SurveyUtil.textHTML(q1, "1");
+			
+			body += "<hr>";
 			body += wrapText("h2", "Entry Survey");
-			body += wrapText("p", "Now, please complete a short entry survey using <i>Google Forms</i>.");
-			body += wrapText("p", "When you click \"Take Entry Survey\", the survey will open in a new tab.");
-			body += "<input type=\"button\" value=\"Take Entry Survey\" onclick=\"window.open('" + ENTRY_SURVEY_URL + "', '_blank');\">";
-			body += wrapText("p", "Once you've submitted the survey, come back here and click \"CONTINUE\".");
+			
+			// Age
+			String q2 = "What is your age?";
+			body += SurveyUtil.choicesHTML(q2, "2", new String[]{
+					"18 - 24", 
+					"25 - 34", 
+					"35 - 44", 
+					"45 - 54", 
+					"55 - 64", 
+					"65 +"
+			});
+			
+			// Background
+			String q3 = "Do you have any background in architecture, urban planning, or real estate?";
+			body += SurveyUtil.choicesHTML(q3, "3", new String[]{
+					"Yes", 
+					"No"
+			});
+			
+			// Field Expertise
+			String n4 = "Please rate your expertise in the following fields:";
+			body += "<p id=\"n4\">" + n4 + "</p>";
+			body += SurveyUtil.rangeHTML("Architecture", "4.1", "None", "Expert", 5);
+			body += SurveyUtil.rangeHTML("Urban Planning", "4.2", "None", "Expert", 5);
+			body += SurveyUtil.rangeHTML("Real Estate Development", "4.3", "None", "Expert", 5);
+			body += SurveyUtil.rangeHTML("Computer Science", "4.4", "None", "Expert", 5);
+			body += SurveyUtil.rangeHTML("Other Engineering", "4.5", "None", "Expert", 5);
+			
+			body += "<br>";
+			
+			// CAD Expertise
+			String q5 = "Please rate your experience using computer-aided design or spatial software such as AutoCAD, ArcGIS, or SketchUp:";
+			body += SurveyUtil.rangeHTML(q5, "5", "None", "Expert", 5);
+			
+			// CAD Frequency
+			String q6 = "How often do you use computer-aided design or spatial modeling software?";
+			body += SurveyUtil.choicesHTML(q6, "6", new String[] {
+					"At least once per week",
+					"At least once per month",
+					"At least once per year",
+					"Rarely or Never"
+			});
+			
+			body += "<p id=\"feedback\" style=\"color: red;\"></p>";
+			body += "<br><input type=\"button\" onclick=\"entrySurvey()\" value=\"Submit\"><br><br>";
+			
+//			body += "<iframe style=\"margin-left: 12px;\" src=\"" + ENTRY_SURVEY_EMBED_URL + "\" "
+//					+ "width=\"610\" height=\"3350\" frameborder=\"0\" "
+//					+ "marginheight=\"0\" marginwidth=\"0\"></iframe>";
+			
+//			body += wrapText("h2", "Entry Survey");
+//			body += wrapText("p", "Now, please complete a short entry survey using <i>Google Forms</i>.");
+//			body += wrapText("p", "When you click \"Take Entry Survey\", the survey will open in a new tab.");
+//			body += "<input type=\"button\" value=\"Take Entry Survey\" onclick=\"window.open('" + ENTRY_SURVEY_URL + "', '_blank');\">";
+//			body += wrapText("p", "Once you've submitted the survey, come back here and click \"CONTINUE\".");
 
 		// Page 2
 		} else if (page.equals("2")) {
