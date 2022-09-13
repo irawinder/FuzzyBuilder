@@ -153,6 +153,16 @@ public class ServerUtil {
 		ServerLog.add(t, "Response: " + responseCode + " " + responseMessage + "; Response Length: " + responseLength);
 	}
 	
+	/**
+	 * Quietly Sent and echo in response to a ping request
+	 * @param t
+	 * @param responseCode
+	 * @throws IOException
+	 */
+	public static void echo(HttpExchange t, int responseCode) throws IOException {
+		t.sendResponseHeaders(responseCode, -1);
+	}
+	
 	
 	/**
 	 * Return a list of filenames in a directory as JSON Object

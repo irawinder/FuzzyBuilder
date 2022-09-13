@@ -50,7 +50,7 @@ import edu.mit.ira.opensui.setting.Configuration;
 public class Server {
 	
 	public static final String NAME = "FuzzyIO";
-	public static final String VERSION = "v1.5.1";
+	public static final String VERSION = "v1.5.2";
 	public static final String AUTHOR = "Ira Winder, Daniel Fink, and Max Walker";
 	public static final String SPONSOR = "MIT Center for Real Estate";
 	public static final String CONTACT = "fuzzy-io@mit.edu";
@@ -62,6 +62,7 @@ public class Server {
 	private static final String SUMMARY_FILE = "summary.csv";
 	
 	// Resource identifiers
+	public static final String RES_PING = "ping";
 	public static final String RES_ROOT = "";
 	public static final String RES_JS = "js";
 	public static final String RES_REGISTER = "register";
@@ -127,6 +128,7 @@ public class Server {
 			// Log Request
 			ServerLog.add(t, "Request: " + method + " " +  requestURI);
 			
+			boolean pingResource = resource[0].equals(RES_PING);
 			boolean jsResource = resource[0].equals(RES_JS) && resource.length > 1;
 			boolean registerResource = resource[0].equals(RES_REGISTER);
 			boolean surveyResource = resource[0].equals(RES_SURVEY) && resource.length > 1 && !user.equals(ServerUtil.DEFAULT_USER);
@@ -142,8 +144,12 @@ public class Server {
 				// allowing an external server to provide data
 				String message = "HTTP Options Delivered";
 				ServerUtil.packItShipIt(t, 200, message);
-			
-			// Javascript Resource Requested
+
+			// Request a simple ping
+			} else if (pingResource) {
+				pingRequest(t, method);
+
+				// Javascript Resource Requested
 			} else if (jsResource) {
 				jsRequest(t, method, resource);
 
@@ -168,6 +174,19 @@ public class Server {
 				String responseBody = Pages.nullSite("404", "Resource Not Found");
 				ServerUtil.packItShipIt(t, 404, "Resource Not Found", responseBody, "text/html");
 			}
+		}
+	}
+	
+	private void pingRequest(HttpExchange t, String method) throws IOException {
+		
+		// HTTP HEAD Request
+		if (method.equals("HEAD")) {
+			ServerUtil.echo(t, 200);
+			
+		// Method Not Allowed
+		} else {
+			String message = "Method Not Allowed";
+			ServerUtil.packItShipIt(t, 405, message);
 		}
 	}
 	
