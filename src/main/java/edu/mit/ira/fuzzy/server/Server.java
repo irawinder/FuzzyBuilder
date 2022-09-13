@@ -50,7 +50,7 @@ import edu.mit.ira.opensui.setting.Configuration;
 public class Server {
 	
 	public static final String NAME = "FuzzyIO";
-	public static final String VERSION = "v1.5.2";
+	public static final String VERSION = "v1.5.3";
 	public static final String AUTHOR = "Ira Winder, Daniel Fink, and Max Walker";
 	public static final String SPONSOR = "MIT Center for Real Estate";
 	public static final String CONTACT = "fuzzy-io@mit.edu";
@@ -125,9 +125,6 @@ public class Server {
 			Map<String, String> requestParameters = ServerUtil.parseParameters(requestURI);
 			String user = RegisterUtil.formalCase(requestParameters.get("user"));
 			
-			// Log Request
-			ServerLog.add(t, "Request: " + method + " " +  requestURI);
-			
 			boolean pingResource = resource[0].equals(RES_PING);
 			boolean jsResource = resource[0].equals(RES_JS) && resource.length > 1;
 			boolean registerResource = resource[0].equals(RES_REGISTER);
@@ -136,6 +133,11 @@ public class Server {
 			boolean siteResource = resource[0].equals(RES_ROOT);
 			boolean deactivated = Register.isDeactivated(user);
 			boolean permitted = Register.isActive(user) || RegisterUtil.ignoreCaseEquals(user, ServerUtil.DEFAULT_USER) || deactivated;
+			
+			// Log Request
+			if (!pingResource) {
+				ServerLog.add(t, "Request: " + method + " " +  requestURI);
+			}
 			
 			// Options Requested
 			if (method.equals("OPTIONS")) {
@@ -149,7 +151,7 @@ public class Server {
 			} else if (pingResource) {
 				pingRequest(t, method);
 
-				// Javascript Resource Requested
+			// Javascript Resource Requested
 			} else if (jsResource) {
 				jsRequest(t, method, resource);
 
