@@ -204,7 +204,7 @@ public class Pages {
 	private static String studyBodyHeader() {
 		String bodyText = "";
 		bodyText += wrapText("h1", "Beaverton");
-		bodyText += wrapText("p", "A Research Study<br>by <b>Univeristy of Tokyo</b> and <b>MIT</b>");
+		bodyText += wrapText("p", "A Research Study<br>by <b>University of Tokyo</b> and <b>MIT</b>");
 		bodyText += "<hr>";
 		return bodyText;
 	}
@@ -212,7 +212,7 @@ public class Pages {
 	private static String studyBodyFooter() {
 		String bodyText = "";
 		bodyText += "<hr>";
-		bodyText += wrapText("p", "Beaverton | <b>Univeristy of Tokyo</b> and <b>MIT</b> | Contact: " + STUDY_CONTACT_URL);
+		bodyText += wrapText("p", "Beaverton | <b>University of Tokyo</b> and <b>MIT</b> | Contact: " + STUDY_CONTACT_URL);
 		return bodyText;
 	}
 	
