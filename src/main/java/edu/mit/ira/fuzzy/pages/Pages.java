@@ -255,12 +255,12 @@ public class Pages {
 		body += wrapText("h2", "Requirements");
 		body += "<ul>";
 		body += wrapText("li", "PC or laptop with speakers or earphones" +
-				"<br><i>(Do not try this exercise on a tablet or smart phone)</i>");
+				"<br><i>(Do not try this exercise on a tablet or smartphone)</i>");
 		body += wrapText("li", "Reliable internet connection");
 		body += wrapText("li", "Web browser (Chrome, Safari, Firefox, etc)" +
 				"<br><i>(The browser you are using to read this text is probably fine)</i>");
 		body += wrapText("li", "Keyboard and mouse" +
-				"<br><i>(Track pad is fine, but you may have better experience using a two-button mouse)</i>");
+				"<br><i>(Trackpad is fine, but you may have better experience using a two-button mouse)</i>");
 		body += wrapText("li", "You must complete the exercise in <u>one sitting</u>" +
 				"<br><i>(There is no time limit, but this exercise may take <b>30 - 60 minutes</b>)</i>");
 		body += "</ul>";
