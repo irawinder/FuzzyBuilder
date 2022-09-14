@@ -66,7 +66,7 @@ public class Pages {
 	}
 
 	private static String assemblePage(String head, String body) {
-		return "<!DOCTYPE html><html>" + head + body + "</html>";
+		return "<!DOCTYPE html><html lang=\"en\">" + head + body + "</html>";
 	}
 	
 	/**
