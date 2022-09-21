@@ -60,4 +60,35 @@ public class MultiObjective {
 		}
 		return result;
 	}
+	
+	public String getLogHeader() {
+		String headers = "";
+		for(int i=0; i<this.primaryObjectives.size(); i++) {
+			Objective objective = this.primaryObjectives.get(i);
+			headers += objective.name + " [" + objective.units +  "]\t";
+		}
+		for(int i=0; i<this.secondaryObjectives.size(); i++) {
+			Objective objective = this.secondaryObjectives.get(i);
+			headers += objective.name + " [" + objective.units +  "]\t";
+		}
+		headers = headers.substring(0, headers.length()-1);
+		return headers;
+	}
+	
+	/**
+	 * Serialize this object to line in log file
+	 * @return
+	 */
+	public String getLogRow() {
+		String result = "";
+		for(int i=0; i<this.primaryObjectives.size(); i++) {
+			Objective objective = this.primaryObjectives.get(i);
+			result += objective.value + "\t";
+		}
+		for(int i=0; i<this.secondaryObjectives.size(); i++) {
+			Objective objective = this.secondaryObjectives.get(i);
+			result += objective.value + "\t";
+		}
+		return result;
+	}
 }

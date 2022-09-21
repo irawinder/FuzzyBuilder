@@ -28,6 +28,7 @@ import edu.mit.ira.fuzzy.model.build.Build;
 import edu.mit.ira.fuzzy.model.evaluate.Evaluate;
 import edu.mit.ira.fuzzy.model.schema.Schema;
 import edu.mit.ira.fuzzy.pages.Pages;
+import edu.mit.ira.fuzzy.server.log.PerformanceLog;
 import edu.mit.ira.fuzzy.server.log.ServerLog;
 import edu.mit.ira.fuzzy.server.log.UserLog;
 import edu.mit.ira.fuzzy.server.user.Register;
@@ -50,7 +51,7 @@ import edu.mit.ira.opensui.setting.Configuration;
 public class Server {
 	
 	public static final String NAME = "FuzzyIO";
-	public static final String VERSION = "v1.5.6";
+	public static final String VERSION = "v1.5.7";
 	public static final String AUTHOR = "Ira Winder, Daniel Fink, and Max Walker";
 	public static final String SPONSOR = "MIT Center for Real Estate";
 	public static final String CONTACT = "fuzzy-io@mit.edu";
@@ -500,7 +501,7 @@ public class Server {
 					ServerUtil.packItShipIt(t, 400, "Bad Request");
 				}
 			
-			// Send the default setting configuration to the GUI
+			// Save summary of results
 			} else if (resource[1].equals(RES_SIM_SUMMARY)) {
 				String responseBody = summaryData(user);
 				String contentType = "application/csv";
@@ -522,7 +523,7 @@ public class Server {
 				String responseBody = solutionData(requestBody, feedback, user);
 				String message = "Solution Delivered to " + user;
 				ServerUtil.packItShipIt(t, 200, message, responseBody, jsonContent);
-				UserLog.add(user, clientIP, "RUN", "Model Changed");
+				UserLog.add(user, clientIP, "RUN", "Model Run");
 			
 			// Save a submitted setting configuration
 			} else if (resource[1].equals(RES_SIM_SAVE)) {
@@ -628,6 +629,9 @@ public class Server {
 		Configuration config = ParseConfiguration.fromJson(requestBody);
 		Development solution = Build.development(config);
 		MultiObjective performance = Evaluate.development(solution);
+		
+		// Save Performance to Log
+		PerformanceLog.add(user, performance.getLogHeader(), performance.getLogRow());
 		
 		// Save latest summary to CSV
 		saveSummary(user, performance.toCSV());

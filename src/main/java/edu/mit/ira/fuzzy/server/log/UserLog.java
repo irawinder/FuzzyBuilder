@@ -9,7 +9,7 @@ import edu.mit.ira.fuzzy.server.Server;
  */
 public class UserLog {
 	
-	private static String LOG_FILE_NAME = "log.tsv";
+	private static String LOG_FILE_NAME = "eventLog.tsv";
 	private static String USERS_PATH = Server.RELATIVE_DATA_PATH + File.separator + "users";
 	private static String[] TABLE_COLUMNS = {"user", "timestamp", "clientIP", "action", "description"};
 
