@@ -108,7 +108,7 @@ public class Morph {
 				// rotate, then translate
 				Point baseLocation = new Point(x_0, y_0);
 				Point origin = new Point(origin_x, origin_y);
-				Point offset = rotateXY(translation, origin, rotation);
+				Point offset = rotateXY(translation, new Point(0, 0), rotation);
 				Point location = rotateXY(baseLocation, origin, rotation);
 				location.x += offset.x;
 				location.y += offset.y;
