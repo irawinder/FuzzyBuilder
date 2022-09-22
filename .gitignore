@@ -7,4 +7,7 @@
 /res/users/
 /res/log/
 
+/test/processing/FingerprintParser/res/
+
 /bin/
+test/processing/FingerprintParser/summary.txt
