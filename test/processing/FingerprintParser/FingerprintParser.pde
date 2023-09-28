@@ -2,7 +2,26 @@ import java.util.*;
 
 String summary = "";
 
+int totalZebra = 0;
+int totalCobra = 0;
+int totalPanda = 0;
+  
+int totalZebraSatisfaction = 0;
+int totalCobraSatisfaction = 0;
+int totalPandaSatisfaction = 0;
+
+int totalZebraConfidence = 0;
+int totalCobraConfidence = 0;
+int totalPandaConfidence = 0;
+
+Table data;
+  
 void setup() {
+  
+  // Init Table
+  data = new Table();
+  data.addColumn("id");
+  data.addColumn("group");
   
   // Load resources
   String s = File.separator;
@@ -20,13 +39,20 @@ void setup() {
   int c = 0; int c_i = 0; // cobra, incomplete
   int p = 0; int p_i = 0; // panda, incomplete
   
-  // Entry Summary
+  // Entry/Exit Summary
   HashMap<String, HashMap<String, Integer>> entrySummary = new HashMap<String, HashMap<String, Integer>>();
   HashMap<String, HashMap<String, Integer>> exitSummary = new HashMap<String, HashMap<String, Integer>>();
   
   summary += "Completed:\n" + line + "\n";
   
   String incomplete = "Incomplete:\n" + line + "\n";
+  
+  HashMap<String, ArrayList<Integer>> runs = new HashMap<String, ArrayList<Integer>>();
+  HashMap<String, ArrayList<Integer>> saves = new HashMap<String, ArrayList<Integer>>();
+  HashMap<String, ArrayList<Integer>> loads = new HashMap<String, ArrayList<Integer>>();
+  
+  int minTime = 1000000000;
+  int maxTime = -1000000000;
   
   for (String user : users.list()) {
     String prefix = user.substring(0, 5);
@@ -42,6 +68,9 @@ void setup() {
       // User Sample is complete
       if (complete(user, deactivated)) {
         
+        TableRow dataRow = data.addRow();
+        dataRow.setString("id", user);
+        
         // Load Additional User-specific resources
         JSONArray entry = loadJSONArray(relSurveyPath + "entry.json");
         JSONArray exit = loadJSONArray(relSurveyPath + "exit.json");
@@ -53,10 +82,13 @@ void setup() {
         // Count groups
         n++;
         if (prefix.equals("zebra")) {
+          dataRow.setString("group", "zebra");
           z++;
         } else if (prefix.equals("cobra")) {
+          dataRow.setString("group", "cobra");
           c++;
         } else if (prefix.equals("panda")) {
+          dataRow.setString("group", "panda");
           p++;
         }
         
@@ -64,10 +96,33 @@ void setup() {
         summary += user + "\t" + name + ", " + email + "\n";
         
         // log entry data
-        addAnswers(entrySummary, entry);
+        addAnswers(user, entrySummary, entry, false, dataRow);
         
         // log exit data
-        addAnswers(exitSummary, exit);
+        addAnswers(user, exitSummary, exit, true, dataRow);
+        
+        // log run, save, load data
+        ArrayList<Integer> rn = new ArrayList<Integer>();
+        ArrayList<Integer> ld = new ArrayList<Integer>();
+        ArrayList<Integer> sv = new ArrayList<Integer>();
+        runs.put(user, rn);
+        saves.put(user, sv);
+        loads.put(user, ld);
+        for (String event : eventLog) {
+          String[] fields = event.split("\t");
+          if (!fields[0].equals("user")) {
+            int time = toTime(fields[1]);
+            if (fields[3].equals("RUN")) {
+              rn.add(time);
+            }else if (fields[3].equals("LOAD SCENARIO")) {
+              ld.add(time);
+            } else if (fields[3].equals("SAVE SCENARIO")) {
+              sv.add(time);
+            }
+            if (time < minTime) minTime = time;
+            if (time > maxTime) maxTime = time;
+          }
+        }
         
       // Incomplete User Sample
       } else {
@@ -101,8 +156,78 @@ void setup() {
   summary += "\n" + "Exit Survey Summary\n" + line + "\n";
   addSurvey(exitSummary);
   
+  float avgZebraSatisfaction = (float) totalZebraSatisfaction / totalZebra;
+  float avgCobraSatisfaction = (float) totalCobraSatisfaction / totalCobra;
+  float avgPandaSatisfaction = (float) totalPandaSatisfaction / totalPanda;
+  
+  float avgZebraConfidence = (float) totalZebraConfidence / totalZebra;
+  float avgCobraConfidence = (float) totalCobraConfidence / totalCobra;
+  float avgPandaConfidence = (float) totalPandaConfidence / totalPanda;
+  
+  summary += "\n" + "Average Satisfaction\n" + line + "\n";
+  summary += "Zebra: " + avgZebraSatisfaction + "\n";
+  summary += "Cobra: " + avgCobraSatisfaction + "\n";
+  summary += "Panda: " + avgPandaSatisfaction + "\n";
+  
+  summary += "\n" + "Average Confidence\n" + line + "\n";
+  summary += "Zebra: " + avgZebraConfidence + "\n";
+  summary += "Cobra: " + avgCobraConfidence + "\n";
+  summary += "Panda: " + avgPandaConfidence + "\n";
+  
   print(summary);
   saveStrings("summary.txt", new String[]{summary});
+  
+  saveTable(data, "data.tsv", "tsv");
+  
+  size(2500, 1500);
+  background(255);
+  
+  int num = runs.keySet().size();
+  int w = width - 40;
+  int h = height / num - 40;
+  int index = 0;
+  int timeRange = maxTime - minTime;
+  for (String user: runs.keySet()) {
+    //if (user.substring(0,1).equals("p")) {
+      int x = 20;
+      int y = 20 + (h + 40)*index;
+      fill(50);
+      text(user, x + 10, y + 20);
+      stroke(#CCCCCC);
+      noFill();
+      rect(x, y, w, h);
+      stroke(230);
+      line(x, y + 0.25*h, x + w, y + 0.25*h);
+      line(x, y + 0.50*h, x + w, y + 0.50*h);
+      line(x, y + 0.75*h, x + w, y + 0.75*h);
+      fill(#FF0000);
+      noStroke();
+      for (Integer time : runs.get(user)) {
+        float dx = w * (float) (time - minTime) / (float) timeRange;
+        circle(x + dx, y + 0.25 * h, 5);
+      }
+      fill(#00FF00);
+      noStroke();
+      for (Integer time : loads.get(user)) {
+        float dx = w * (float) (time - minTime) / (float) timeRange;
+        circle(x + dx, y + 0.50 * h, 5);
+      }
+      fill(#FF00FF);
+      noStroke();
+      for (Integer time : saves.get(user)) {
+        float dx = w * (float) (time - minTime) / (float) timeRange;
+        circle(x + dx, y + 0.75 * h, 5);
+      }
+      fill(#FF0000);
+      text("run", x + w - 50, y + 0.25 * h);
+      fill(#00FF00);
+      text("load", x + w - 50, y + 0.50 * h);
+      fill(#FF00FF);
+      text("save", x + w - 50, y + 0.75 * h);
+      
+      index++;
+    //}
+  }
 }
 
 boolean complete(String user, String[] deactivated) {
@@ -134,12 +259,51 @@ void addSurvey(HashMap<String, HashMap<String, Integer>> eSummary) {
   }
 }
 
-void addAnswers(HashMap<String, HashMap<String, Integer>> eSummary, JSONArray eJson) {
+void addAnswers(String user, HashMap<String, HashMap<String, Integer>> eSummary, JSONArray eJson, boolean exit, TableRow row) {
+  String qS = "How *satisfied* are you with your final scenario?";
+  String qC = "How *confident* are you that the community of Beaverton will like your final scenario?";
+  if (exit) {
+    if (user.substring(0, 1).equals("z")) {
+      totalZebra++;
+    } else if (user.substring(0, 1).equals("c")) {
+      totalCobra++;
+    } else if (user.substring(0, 1).equals("p")) {
+      totalPanda++;
+    }
+  }
   for (int i=0; i<eJson.size(); i++) {
     JSONObject element = eJson.getJSONObject(i);
     if (!element.isNull("q")) {
       String question = element.getString("q");
       String answer = element.getString("a");
+      
+      try {
+        data.getString(0, question); 
+      } catch (Exception e) {
+        data.addColumn(question);
+      }
+      
+      row.setString(question, answer.replace("\n", "; "));
+      
+      if (question.equals(qS)) {
+        if (user.substring(0, 1).equals("z")) {
+          totalZebraSatisfaction += element.getInt("a");
+        } else if (user.substring(0, 1).equals("c")) {
+          totalCobraSatisfaction += element.getInt("a");
+        } else if (user.substring(0, 1).equals("p")) {
+          totalPandaSatisfaction += element.getInt("a");
+        }
+        
+      }
+      if (question.equals(qC)) {
+        if (user.substring(0, 1).equals("z")) {
+          totalZebraConfidence += element.getInt("a");
+        } else if (user.substring(0, 1).equals("c")) {
+          totalCobraConfidence += element.getInt("a");
+        } else if (user.substring(0, 1).equals("p")) {
+          totalPandaConfidence += element.getInt("a");
+        }
+      }
       HashMap<String, Integer> counts;
       if (eSummary.containsKey(question)) {
         counts = eSummary.get(question);
@@ -156,4 +320,9 @@ void addAnswers(HashMap<String, HashMap<String, Integer>> eSummary, JSONArray eJ
       }
     }
   }
+}
+
+Integer toTime (String timeStamp) {
+  String[] timeString = timeStamp.substring(timeStamp.length() - 12, timeStamp.length()-4).split(":");
+  return (int) (3600 * Float.parseFloat(timeString[0]) + 60 * Float.parseFloat(timeString[1]) + Float.parseFloat(timeString[2]));
 }
