@@ -50,9 +50,14 @@ void setup() {
   HashMap<String, ArrayList<Integer>> runs = new HashMap<String, ArrayList<Integer>>();
   HashMap<String, ArrayList<Integer>> saves = new HashMap<String, ArrayList<Integer>>();
   HashMap<String, ArrayList<Integer>> loads = new HashMap<String, ArrayList<Integer>>();
+  HashMap<String, ArrayList<Integer>> homes = new HashMap<String, ArrayList<Integer>>();
+  
+  HashMap<String, Integer> userMinTime = new HashMap<String, Integer>();
+  HashMap<String, Integer> userMaxTime = new HashMap<String, Integer>();
   
   int minTime = 1000000000;
   int maxTime = -1000000000;
+  int maxDuration = -1000000000;
   
   for (String user : users.list()) {
     String prefix = user.substring(0, 5);
@@ -70,6 +75,10 @@ void setup() {
         
         TableRow dataRow = data.addRow();
         dataRow.setString("id", user);
+        
+        // local min/max times of user
+        userMinTime.put(user, 1000000000);
+        userMaxTime.put(user, -1000000000);
         
         // Load Additional User-specific resources
         JSONArray entry = loadJSONArray(relSurveyPath + "entry.json");
@@ -105,9 +114,11 @@ void setup() {
         ArrayList<Integer> rn = new ArrayList<Integer>();
         ArrayList<Integer> ld = new ArrayList<Integer>();
         ArrayList<Integer> sv = new ArrayList<Integer>();
+        ArrayList<Integer> hm = new ArrayList<Integer>();
         runs.put(user, rn);
         saves.put(user, sv);
         loads.put(user, ld);
+        homes.put(user, hm);
         for (String event : eventLog) {
           String[] fields = event.split("\t");
           if (!fields[0].equals("user")) {
@@ -118,11 +129,19 @@ void setup() {
               ld.add(time);
             } else if (fields[3].equals("SAVE SCENARIO")) {
               sv.add(time);
+            } else if (fields[3].equals("HOME")) {
+              hm.add(time);
             }
             if (time < minTime) minTime = time;
             if (time > maxTime) maxTime = time;
+            
+            if (time < userMinTime.get(user)) userMinTime.put(user, time);
+            if (time > userMaxTime.get(user)) userMaxTime.put(user, time);
           }
         }
+        
+        int duration = userMaxTime.get(user) - userMinTime.get(user);
+        if (maxDuration < duration) maxDuration = duration;
         
       // Incomplete User Sample
       } else {
@@ -183,50 +202,84 @@ void setup() {
   background(255);
   
   int num = runs.keySet().size();
-  int w = width - 40;
-  int h = height / num - 40;
+  int w = width - 70;
+  int h = height / num - 20;
   int index = 0;
-  int timeRange = maxTime - minTime;
-  for (String user: runs.keySet()) {
-    //if (user.substring(0,1).equals("p")) {
-      int x = 20;
-      int y = 20 + (h + 40)*index;
-      fill(50);
-      text(user, x + 10, y + 20);
-      stroke(#CCCCCC);
-      noFill();
-      rect(x, y, w, h);
-      stroke(230);
-      line(x, y + 0.25*h, x + w, y + 0.25*h);
-      line(x, y + 0.50*h, x + w, y + 0.50*h);
-      line(x, y + 0.75*h, x + w, y + 0.75*h);
-      fill(#FF0000);
-      noStroke();
-      for (Integer time : runs.get(user)) {
-        float dx = w * (float) (time - minTime) / (float) timeRange;
-        circle(x + dx, y + 0.25 * h, 5);
-      }
-      fill(#00FF00);
-      noStroke();
-      for (Integer time : loads.get(user)) {
-        float dx = w * (float) (time - minTime) / (float) timeRange;
-        circle(x + dx, y + 0.50 * h, 5);
-      }
-      fill(#FF00FF);
-      noStroke();
-      for (Integer time : saves.get(user)) {
-        float dx = w * (float) (time - minTime) / (float) timeRange;
-        circle(x + dx, y + 0.75 * h, 5);
-      }
-      fill(#FF0000);
-      text("run", x + w - 50, y + 0.25 * h);
-      fill(#00FF00);
-      text("load", x + w - 50, y + 0.50 * h);
-      fill(#FF00FF);
-      text("save", x + w - 50, y + 0.75 * h);
+  
+  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  //
+  // Artifically shorten max duration!!! (update this if data changes!!!
+  //
+  // maxDuration *= 0.6;
+  
+  for (int i=0; i<3; i++) {
+    
+    String drawingPrefix = "";
+    switch(i) {
+      case 0:
+        drawingPrefix = "zebra";
+        break;
+      case 1:
+        drawingPrefix = "cobra";
+        break;
+      case 2:
+        drawingPrefix = "panda";
+        break;
+    }
+    
+    for (String user: runs.keySet()) {
       
-      index++;
-    //}
+      String prefix = user.substring(0, 5);
+      boolean isDrawing = drawingPrefix.equals(prefix);
+      
+      if(isDrawing) {
+        
+        int x = 50;
+        int y = 20 + (h + 20)*index;
+        
+        int localMinTime = userMinTime.get(user);
+      
+        fill(50);
+        text(user, x, y - 5);
+        noFill();
+        stroke(230);
+        line(x - 10, y + 0.25*h, x + w, y + 0.25*h);
+        line(x - 10, y + 0.50*h, x + w, y + 0.50*h);
+        line(x - 10, y + 0.75*h, x + w, y + 0.75*h);
+        fill(#FF0000);
+        noStroke();
+        for (Integer time : runs.get(user)) {
+          float dx = w * (float) (time - localMinTime) / (float) maxDuration;
+          circle(x + dx, y + 0.25 * h, 3);
+        }
+        fill(#00CC00);
+        noStroke();
+        for (Integer time : loads.get(user)) {
+          float dx = w * (float) (time - localMinTime) / (float) maxDuration;
+          circle(x + dx, y + 0.50 * h, 3);
+        }
+        fill(#0000FF);
+        noStroke();
+        for (Integer time : saves.get(user)) {
+          float dx = w * (float) (time - localMinTime) / (float) maxDuration;
+          circle(x + dx, y + 0.75 * h, 3);
+        }
+        stroke(#CCCCCC);
+        for (Integer time : homes.get(user)) {
+          float dx = w * (float) (time - localMinTime) / (float) maxDuration;
+          line(x + dx, y, x + dx, y + h);
+          //circle(x + dx, y + 0.75 * h, 3);
+        }
+        fill(#FF0000);
+        text("run", 10, y + 0.25 * h + 3);
+        fill(#00CC00);
+        text("load", 10, y + 0.50 * h + 3);
+        fill(#0000FF);
+        text("save", 10, y + 0.75 * h + 3);
+        
+        index++;
+      }
+    }
   }
 }
 
