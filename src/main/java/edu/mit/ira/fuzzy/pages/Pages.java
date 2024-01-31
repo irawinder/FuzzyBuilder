@@ -20,8 +20,8 @@ public class Pages {
 	private static String COBRA_TUTORIAL_URL = "https://www.youtube.com/embed/BA4LlQF8Ieo?cc_load_policy=1&vq=hd1080";
 	private static String PANDA_TUTORIAL_URL = "https://www.youtube.com/embed/NgYlDAg1De8?cc_load_policy=1&vq=hd1080";
 	
-	private static String OPENSUI_URL = "http://opensui.org";
-	private static String THIS_URL = "http://glassmatrix.org";
+	private static String OPENSUI_URL = "https://opensui.org";
+	private static String THIS_URL = "https://glassmatrix.org";
 	private static String STUDY_CONTACT_URL = "beaverton <i>[at]</i> mit <i>[dot]</i> edu";
 	private static String GENERAL_CONTACT_URL = "ira <i>[at]</i> mit <i>[dot]</i> edu";
 	
