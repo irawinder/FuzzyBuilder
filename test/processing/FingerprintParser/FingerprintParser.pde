@@ -15,7 +15,15 @@ int totalCobraConfidence = 0;
 int totalPandaConfidence = 0;
 
 Table data;
-  
+
+HashMap<String, Integer> userSat;
+HashMap<String, Integer> userCon;
+
+HashMap<String, Integer> userRuns;
+HashMap<String, Integer> userSaves;
+HashMap<String, Integer> userLoads;
+HashMap<String, Integer> userWebs;
+
 void setup() {
   
   // Init Table
@@ -42,6 +50,14 @@ void setup() {
   // Entry/Exit Summary
   HashMap<String, HashMap<String, Integer>> entrySummary = new HashMap<String, HashMap<String, Integer>>();
   HashMap<String, HashMap<String, Integer>> exitSummary = new HashMap<String, HashMap<String, Integer>>();
+  
+  userSat = new HashMap<String, Integer>();
+  userCon = new HashMap<String, Integer>();
+  
+  userRuns = new HashMap<String, Integer>();
+  userLoads = new HashMap<String, Integer>();
+  userSaves = new HashMap<String, Integer>();
+  userWebs = new HashMap<String, Integer>();
   
   summary += "Completed:\n" + line + "\n";
   
@@ -198,19 +214,20 @@ void setup() {
   
   saveTable(data, "data.tsv", "tsv");
   
-  size(2500, 1500);
+  size(600, 1200);
   background(255);
   
   int num = runs.keySet().size();
   int w = width - 70;
-  int h = height / num - 20;
+  int h = 35;
+  int dH = height / num;
   int index = 0;
   
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   //
-  // Artifically shorten max duration!!! (update this if data changes!!!
+  // Artifically change max duration!!!
   //
-  // maxDuration *= 0.6;
+  maxDuration *= 1.01;
   
   for (int i=0; i<3; i++) {
     
@@ -228,6 +245,10 @@ void setup() {
     }
     
     for (String user: runs.keySet()) {
+      userRuns.put(user, runs.get(user).size());
+      userLoads.put(user, loads.get(user).size());
+      userSaves.put(user, saves.get(user).size());
+      userWebs.put(user, homes.get(user).size());
       
       String prefix = user.substring(0, 5);
       boolean isDrawing = drawingPrefix.equals(prefix);
@@ -235,40 +256,53 @@ void setup() {
       if(isDrawing) {
         
         int x = 50;
-        int y = 20 + (h + 20)*index;
+        int y = 20 + dH*index;
         
         int localMinTime = userMinTime.get(user);
-      
-        fill(50);
-        text(user, x, y - 5);
+        
+        // Timelines
         noFill();
         stroke(230);
         line(x - 10, y + 0.25*h, x + w, y + 0.25*h);
         line(x - 10, y + 0.50*h, x + w, y + 0.50*h);
         line(x - 10, y + 0.75*h, x + w, y + 0.75*h);
+        
+        // User Website Interactions
+        stroke(#999999);
+        int counter = 0;
+        for (Integer time : homes.get(user)) {
+          float dx = w * (float) (time - localMinTime) / (float) maxDuration;
+          line(x + dx, y + 0.2*h, x + dx, y + 0.8*h);
+          
+          if (counter == homes.get(user).size() - 1) {
+            fill(#999999);
+            text("end", x + dx + 3, y + 0.8*h + 1);
+          }
+          counter++;
+        }
+        
+        // User Run Instances
         fill(#FF0000);
         noStroke();
         for (Integer time : runs.get(user)) {
           float dx = w * (float) (time - localMinTime) / (float) maxDuration;
           circle(x + dx, y + 0.25 * h, 3);
         }
+        
+        // User Load Instances
         fill(#00CC00);
         noStroke();
         for (Integer time : loads.get(user)) {
           float dx = w * (float) (time - localMinTime) / (float) maxDuration;
-          circle(x + dx, y + 0.50 * h, 3);
+          circle(x + dx, y + 0.50 * h, 6);
         }
+        
+        // User Save Instances
         fill(#0000FF);
         noStroke();
         for (Integer time : saves.get(user)) {
           float dx = w * (float) (time - localMinTime) / (float) maxDuration;
-          circle(x + dx, y + 0.75 * h, 3);
-        }
-        stroke(#CCCCCC);
-        for (Integer time : homes.get(user)) {
-          float dx = w * (float) (time - localMinTime) / (float) maxDuration;
-          line(x + dx, y, x + dx, y + h);
-          //circle(x + dx, y + 0.75 * h, 3);
+          circle(x + dx, y + 0.75 * h, 6);
         }
         fill(#FF0000);
         text("run", 10, y + 0.25 * h + 3);
@@ -276,6 +310,30 @@ void setup() {
         text("load", 10, y + 0.50 * h + 3);
         fill(#0000FF);
         text("save", 10, y + 0.75 * h + 3);
+        
+        // User Name
+        fill(50);
+        text(user, x, y);
+  
+        // User Satisfaction
+        int satisfaction = userSat.get(user);
+        text("Sat: " + satisfaction, x + 100, y);
+        
+        // User Confidence
+        int confidence = userCon.get(user);
+        text("Con: " + confidence, x + 175, y);
+        
+        // User Runs
+        text("Runs: " + userRuns.get(user), x + 250, y);
+        
+        // User Loads
+        text("Loads: " + userLoads.get(user), x + 325, y);
+        
+        // User Saves
+        text("Saves: " + userSaves.get(user), x + 400, y);
+        
+        // User Other
+        text("Other: " + userWebs.get(user), x + 475, y);
         
         index++;
       }
@@ -313,6 +371,7 @@ void addSurvey(HashMap<String, HashMap<String, Integer>> eSummary) {
 }
 
 void addAnswers(String user, HashMap<String, HashMap<String, Integer>> eSummary, JSONArray eJson, boolean exit, TableRow row) {
+  
   String qS = "How *satisfied* are you with your final scenario?";
   String qC = "How *confident* are you that the community of Beaverton will like your final scenario?";
   if (exit) {
@@ -339,23 +398,26 @@ void addAnswers(String user, HashMap<String, HashMap<String, Integer>> eSummary,
       row.setString(question, answer.replace("\n", "; "));
       
       if (question.equals(qS)) {
+        int s = element.getInt("a");
         if (user.substring(0, 1).equals("z")) {
-          totalZebraSatisfaction += element.getInt("a");
+          totalZebraSatisfaction += s;
         } else if (user.substring(0, 1).equals("c")) {
-          totalCobraSatisfaction += element.getInt("a");
+          totalCobraSatisfaction += s;
         } else if (user.substring(0, 1).equals("p")) {
-          totalPandaSatisfaction += element.getInt("a");
+          totalPandaSatisfaction += s;
         }
-        
+        userSat.put(user, s);
       }
       if (question.equals(qC)) {
+        int c = element.getInt("a");
         if (user.substring(0, 1).equals("z")) {
-          totalZebraConfidence += element.getInt("a");
+          totalZebraConfidence += c;
         } else if (user.substring(0, 1).equals("c")) {
-          totalCobraConfidence += element.getInt("a");
+          totalCobraConfidence += c;
         } else if (user.substring(0, 1).equals("p")) {
-          totalPandaConfidence += element.getInt("a");
+          totalPandaConfidence += c;
         }
+        userCon.put(user, c);
       }
       HashMap<String, Integer> counts;
       if (eSummary.containsKey(question)) {
